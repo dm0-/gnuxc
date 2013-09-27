@@ -1,0 +1,20 @@
+--- greeter/verify.c
++++ greeter/verify.c
+@@ -468,7 +468,7 @@ Verify (struct display *d, struct greet_
+ 	if (strcmp (crypt (greet->password, user_pass), user_pass))
+ #  endif
+ 	{
+-		if(!greet->allow_null_passwd || strlen(p->pw_passwd) > 0) {
++		if(!greet->allow_null_passwd || strlen(user_pass) > 0) {
+ 			Debug ("password verify failed\n");
+ 			bzero(greet->password, strlen(greet->password));
+ 			return 0;
+--- config/Xresources.cpp
++++ config/Xresources.cpp
+@@ -80,3 +80,6 @@ Chooser*label.font:		*-new century schoo
+ Chooser*label.label:		XDMCP Host Menu from CLIENTHOST
+ Chooser*list.font:		-*-*-medium-r-normal-*-*-230-*-*-c-*-iso8859-1
+ Chooser*Command.font:		*-new century schoolbook-bold-r-normal-*-180-*
++
++xlogin.Login.allowNullPasswd:	true
++xlogin.Login.allowRootLogin:	true

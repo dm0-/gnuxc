@@ -1,0 +1,11 @@
+--- Makefile.in
++++ Makefile.in
+@@ -25,7 +25,7 @@ localedir = $(datadir)/locale
+ export SHELL = @SHELL@
+ export VPATH = .:$(srcdir)
+ 
+-DESTDIR =
++DESTDIR ?=
+ LINGUAS = $(basename $(notdir $(wildcard $(srcdir)/po/*.po)))
+ 
+ CC = @CC@

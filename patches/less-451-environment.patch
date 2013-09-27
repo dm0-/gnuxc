@@ -1,0 +1,10 @@
+--- Makefile.in
++++ Makefile.in
+@@ -32,7 +32,6 @@ datarootdir = @datarootdir@
+ mandir = @mandir@
+ manext = 1
+ manprefix = 
+-DESTDIR =
+ 
+ #### End of system configuration section. ####
+ 

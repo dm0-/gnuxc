@@ -1,0 +1,12 @@
+--- Makefile.in
++++ Makefile.in
+@@ -64,9 +64,6 @@ infodir = @infodir@
+ 
+ man3dir = $(mandir)/man3
+ 
+-# Support an alternate destination root directory for package building
+-DESTDIR =
+-
+ # Programs to make tags files.
+ ETAGS = etags
+ CTAGS = ctags -tw

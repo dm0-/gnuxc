@@ -1,0 +1,169 @@
+--- gdb/reply_mig_hack.awk
++++ gdb/reply_mig_hack.awk
+@@ -85,13 +85,20 @@ parse_phase == 5 && /^[ \t]*(auto|static
+   print; next;
+ }
+ 
++parse_phase == 5 && /^[ \t]*const mach_msg_type_t/ {
++  # The type check structure for an argument.
++  arg_check_name[num_checks] = $3;
++  num_checks++;
++  print; next;
++}
++
+ parse_phase == 5 && /^[ \t]*mig_external kern_return_t/ {
+   # The declaration of the user server function for this rpc.
+   user_function_name = $3;
+   print; next;
+ }
+ 
+-parse_phase == 5 && /^#if[ \t]TypeCheck/ {
++parse_phase == 5 && /^#if[ \t]TypeCheck/ && num_checks > 0 {
+   # The first args type checking statement; we need to insert our chunk of
+   # code that bypasses all the type checks if this is an error return, after
+   # which we're done until we get to the next function.  Handily, the size
+--- gdb/gnu-nat.c
++++ gdb/gnu-nat.c
+@@ -1902,6 +1902,142 @@ S_proc_getmsgport_reply (mach_port_t rep
+   return ill_rpc ("S_proc_getmsgport_reply");
+ }
+ 
++error_t
++S_proc_pid2task_reply (mach_port_t reply, error_t err, mach_port_t task)
++{
++  return ill_rpc ("S_proc_pid2task_reply");
++}
++
++error_t
++S_proc_task2pid_reply (mach_port_t reply, error_t err, pid_t pid)
++{
++  return ill_rpc ("S_proc_task2pid_reply");
++}
++
++error_t
++S_proc_task2proc_reply (mach_port_t reply, error_t err, mach_port_t proc)
++{
++  return ill_rpc ("S_proc_task2proc_reply");
++}
++
++error_t
++S_proc_proc2task_reply (mach_port_t reply, error_t err, mach_port_t task)
++{
++  return ill_rpc ("S_proc_proc2task_reply");
++}
++
++error_t
++S_proc_pid2proc_reply (mach_port_t reply, error_t err, mach_port_t proc)
++{
++  return ill_rpc ("S_proc_pid2proc_reply");
++}
++
++error_t
++S_proc_getprocinfo_reply (mach_port_t reply, error_t err, int flags,
++                          procinfo_t procinfo, mach_msg_type_number_t piCnt,
++                          data_t threadwaits, mach_msg_type_number_t twCnt)
++{
++  return ill_rpc ("S_proc_getprocinfo_reply");
++}
++
++error_t
++S_proc_getprocargs_reply (mach_port_t reply, error_t err,
++                          data_t procargs, mach_msg_type_number_t procargsCnt)
++{
++  return ill_rpc ("S_proc_getprocargs_reply");
++}
++
++error_t
++S_proc_getprocenv_reply (mach_port_t reply, error_t err,
++                         data_t procenv, mach_msg_type_number_t procenvCnt)
++{
++  return ill_rpc ("S_proc_getprocenv_reply");
++}
++
++error_t
++S_proc_getloginid_reply (mach_port_t reply, error_t err, pid_t login_id)
++{
++  return ill_rpc ("S_proc_getloginid_reply");
++}
++
++error_t
++S_proc_getloginpids_reply (mach_port_t reply, error_t err,
++                           pidarray_t pids, mach_msg_type_number_t pidsCnt)
++{
++  return ill_rpc ("S_proc_getloginpids_reply");
++}
++
++error_t
++S_proc_getlogin_reply (mach_port_t reply, error_t err, string_t logname)
++{
++  return ill_rpc ("S_proc_getlogin_reply");
++}
++
++error_t
++S_proc_getsid_reply (mach_port_t reply, error_t err, pid_t sid)
++{
++  return ill_rpc ("S_proc_getsid_reply");
++}
++
++error_t
++S_proc_getsessionpgids_reply (mach_port_t reply, error_t err,
++                              pidarray_t pgidset, mach_msg_type_number_t psCnt)
++{
++  return ill_rpc ("S_proc_getsessionpgids_reply");
++}
++
++error_t
++S_proc_getsessionpids_reply (mach_port_t reply, error_t err,
++                             pidarray_t pidset, mach_msg_type_number_t psCnt)
++{
++  return ill_rpc ("S_proc_getsessionpids_reply");
++}
++
++error_t
++S_proc_getsidport_reply (mach_port_t reply, error_t err, mach_port_t sessport)
++{
++  return ill_rpc ("S_proc_getsidport_reply");
++}
++
++error_t
++S_proc_getpgrp_reply (mach_port_t reply, error_t err, pid_t pgrp)
++{
++  return ill_rpc ("S_proc_getpgrp_reply");
++}
++
++error_t
++S_proc_getpgrppids_reply (mach_port_t reply, error_t err,
++                          pidarray_t pidset, mach_msg_type_number_t pidsetCnt)
++{
++  return ill_rpc ("S_proc_getpgrppids_reply");
++}
++
++error_t
++S_proc_get_tty_reply (mach_port_t reply, error_t err, mach_port_t tty)
++{
++  return ill_rpc ("S_proc_get_tty_reply");
++}
++
++error_t
++S_proc_getnports_reply (mach_port_t reply, error_t err,
++                        mach_msg_type_number_t nports)
++{
++  return ill_rpc ("S_proc_getnports_reply");
++}
++
++error_t
++S_proc_is_important_reply (mach_port_t reply, error_t err, boolean_t essential)
++{
++  return ill_rpc ("S_proc_is_important_reply");
++}
++
++error_t
++S_proc_get_code_reply (mach_port_t reply, error_t err,
++                       vm_address_t start_code, vm_address_t end_code)
++{
++  return ill_rpc ("S_proc_get_code_reply");
++}
++
+ 
+ /* Msg_reply server routines.  We only use msg_sig_post_untraced_reply.  */
+ 

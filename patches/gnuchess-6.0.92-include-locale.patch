@@ -1,0 +1,10 @@
+--- src/main.cc
++++ src/main.cc
+@@ -33,6 +33,7 @@ extern "C" {
+ #include <getopt.h>
+ #include <errno.h> 
+ #include <unistd.h>
++#include <locale.h>
+ 
+ extern "C" {
+ #include "frontend/common.h"

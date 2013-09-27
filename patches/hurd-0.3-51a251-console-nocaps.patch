@@ -1,0 +1,11 @@
+--- console-client/xkb/xkb-data/symbols/hurd
++++ console-client/xkb/xkb-data/symbols/hurd
+@@ -1,6 +1,8 @@
+ // -*- Mode: C -*- 
+ default
+ xkb_symbols "hurd" {
++  include "ctrl(nocaps)"
++
+   /* Switch to local consoles by default.  */
+   //  SwitchScreen.SameServer;
+ 

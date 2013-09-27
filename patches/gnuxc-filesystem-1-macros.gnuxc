@@ -1,0 +1,145 @@
+# RPM macros to cross-compile for GNU (Hurd) systems
+
+# System information
+%gnuxc_arch             i686
+%gnuxc_host             %{gnuxc_arch}-pc-gnu
+%gnuxc_target           %{gnuxc_host}
+
+# Directory structure
+%gnuxc_root             %{_prefix}/%{gnuxc_target}
+%gnuxc_sysroot          %{gnuxc_root}/sys-root
+%gnuxc_prefix           %{gnuxc_sysroot}%{_prefix}
+%gnuxc_exec_prefix      %{gnuxc_prefix}
+%gnuxc_bindir           %{gnuxc_exec_prefix}/bin
+%gnuxc_datadir          %{gnuxc_prefix}/share
+%gnuxc_docdir           %{gnuxc_datadir}/doc
+%gnuxc_includedir       %{gnuxc_prefix}/include
+%gnuxc_infodir          %{gnuxc_datadir}/info
+%gnuxc_libdir           %{gnuxc_exec_prefix}/lib
+%gnuxc_libexecdir       %{gnuxc_exec_prefix}/libexec
+%gnuxc_localstatedir    %{gnuxc_sysroot}/var
+%gnuxc_mandir           %{gnuxc_datadir}/man
+%gnuxc_sbindir          %{gnuxc_exec_prefix}/sbin
+%gnuxc_sharedstatedir   %{gnuxc_localstatedir}/lib
+%gnuxc_sysconfdir       %{gnuxc_sysroot}/etc
+
+# Build settings
+%gnuxc_name             %(echo -n %{name} | sed s/^gnuxc-//)
+%gnuxc_ldflags          %{__global_ldflags}
+%gnuxc_optflags         %{__global_cflags}
+
+%gnuxc_env              \
+        CC="%{gnuxc_cc} -march=%{gnuxc_arch} -mtune=generic" ; \
+        CFLAGS="${CFLAGS:-%{gnuxc_optflags}}" ; \
+        export CC ; export CFLAGS ; \
+        CXX="%{gnuxc_cxx} -march=%{gnuxc_arch} -mtune=generic" ; \
+        CXXFLAGS="${CXXFLAGS:-%{gnuxc_optflags}}" ; \
+        export CXX ; export CXXFLAGS ; \
+        FFLAGS="${FFLAGS:-%{gnuxc_optflags} -I%{_fmoddir}}" ; export FFLAGS ; \
+        LDFLAGS="${LDFLAGS:-%{gnuxc_ldflags}}" ; export LDFLAGS ; \
+        PKG_CONFIG_LIBDIR="${PKG_CONFIG_LIBDIR:-%{gnuxc_libdir}/pkgconfig}" ; \
+        PKG_CONFIG_PATH="$PKG_CONFIG_LIBDIR:%{gnuxc_datadir}/pkgconfig" ; \
+        export PKG_CONFIG_LIBDIR ; export PKG_CONFIG_PATH
+
+%gnuxc_configure        %{gnuxc_env} ; \
+        %{_configure} \\\
+        --build=%{_build} --host=%{gnuxc_host} --target=%{gnuxc_target} \\\
+        --program-prefix=%{?_program_prefix} \\\
+        --prefix='%{gnuxc_prefix}' \\\
+        --exec-prefix='${prefix}' \\\
+        --bindir='${exec_prefix}/bin' \\\
+        --datadir='${datarootdir}' \\\
+        --datarootdir='${prefix}/share' \\\
+        --includedir='${prefix}/include' \\\
+        --infodir='${datarootdir}/info' \\\
+        --libdir='${exec_prefix}/lib' \\\
+        --libexecdir='${exec_prefix}/libexec' \\\
+        --localstatedir='%{gnuxc_localstatedir}' \\\
+        --mandir='${datarootdir}/man' \\\
+        --oldincludedir='${includedir}' \\\
+        --sbindir='${exec_prefix}/sbin' \\\
+        --sharedstatedir='${localstatedir}/lib' \\\
+        --sysconfdir='%{gnuxc_sysconfdir}' \\\
+        ac_cv_func_{c,m,re}alloc_0_nonnull=yes \\\
+        ac_cv_func_memcmp_working=yes \\\
+        ac_cv_func_posix_get{grg,pwu}id_r=yes \\\
+        gl_cv_func_chown_{ctime,slash}_works=yes \\\
+        gl_cv_func_fnmatch_{gnu,posix}=yes \\\
+        gl_cv_func_getcwd_null=yes \\\
+        gl_cv_func_getopt_gnu=yes \\\
+        gl_cv_func_{gettimeofday,tzset}_clobber=no \\\
+        gl_cv_func_lstat_dereferences_slashed_symlink=yes \\\
+        gl_cv_func_mkdir_trailing_{dot,slash}_works=yes \\\
+        gl_cv_func_mkfifo_works=yes \\\
+        gl_cv_func_printf_directive_{a,f,ls}=yes \\\
+        gl_cv_func_printf_{enomem,infinite,long_double}=yes \\\
+        gl_cv_func_printf_flag_{grouping,leftadjust,zero}=yes \\\
+        gl_cv_func_printf_{positions,precision,sizes_c99}=yes \\\
+        gl_cv_func_readlink_works=yes \\\
+        gl_cv_func_realpath_works=yes \\\
+        gl_cv_func_rename_{dest,link}_works=yes \\\
+        gl_cv_func_rmdir_works=yes \\\
+        gl_cv_func_stat_{dir,file}_slash=yes \\\
+        gl_cv_func_symlink_works=yes \\\
+        gl_cv_func_working_acl_get_file=yes \\\
+        gl_cv_func_working_mktime=yes \\\
+        gl_cv_struct_dirent_d_ino=yes \\\
+        glib_cv_stack_grows=yes \\\
+        glib_cv_uscore=no
+
+%gnuxc_make             %{__make} \\\
+        .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
+
+%gnuxc_make_install     %{__make} install DESTDIR=%{buildroot} \\\
+        .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
+
+# Cross commands
+%gnuxc_ar               %{gnuxc_target}-ar
+%gnuxc_cc               %{gnuxc_gcc}
+%gnuxc_cpp              %{gnuxc_target}-cpp
+%gnuxc_cxx              %{gnuxc_target}-g++
+%gnuxc_gcc              %{gnuxc_target}-gcc
+%gnuxc_ld               %{gnuxc_target}-ld
+%gnuxc_nm               %{gnuxc_target}-nm
+%gnuxc_objcopy          %{gnuxc_target}-objcopy
+%gnuxc_objdump          %{gnuxc_target}-objdump
+%gnuxc_pkgconfig        %{gnuxc_target}-pkg-config
+%gnuxc_ranlib           %{gnuxc_target}-ranlib
+%gnuxc_readelf          %{gnuxc_target}-readelf
+%gnuxc_strip            %{gnuxc_target}-strip
+
+# RPM modifications
+%gnuxc_package_header   \
+%global __strip %{gnuxc_strip} \
+%global __objdump %{gnuxc_objdump} \
+%global __debug_install_post %%{gnuxc_debug_install_post} \
+%global debug_package %%{gnuxc_debug_package} \
+%undefine _binaries_in_noarch_packages_terminate_build \
+%global __elf_exclude_path ^(%{?__elf_exclude_path}|%{gnuxc_sysroot}/.*)$ \
+%global __libsymlink_exclude_path ^(%{?__libsymlink_exclude_path}|%{gnuxc_sysroot}/.*)$ \
+%global __arch_install_post %{__arch_install_post} \\\
+%{_rpmconfigdir}/gnuxc-expand-pc-flags.sh \
+%{nil}
+
+# (same as debug_package without the ifnarch)
+%gnuxc_debug_package    \
+%global __debug_package 1 \
+%package debuginfo \
+Summary: Debug information for package %{name} \
+Group: Development/Debug \
+AutoReqProv: 0 \
+%description debuginfo \
+This package provides debug information for package %{name}. \
+Debug information is useful when developing applications that use this \
+package or when debugging this package. \
+%files debuginfo -f debugfiles.list \
+%defattr(-,root,root) \
+%{nil}
+
+# (same as __debug_install_post with a new file name)
+%gnuxc_debug_install_post %{_rpmconfigdir}/gnuxc-find-debuginfo.sh \\\
+    %{?_missing_build_ids_terminate_build:--strict-build-id} \\\
+    %{?_include_minidebuginfo:-m} \\\
+    %{?_find_debuginfo_dwz_opts} \\\
+    %{?_find_debuginfo_opts} \\\
+    "%{_builddir}/%{?buildsubdir}"

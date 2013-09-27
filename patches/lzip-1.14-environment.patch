@@ -1,0 +1,13 @@
+--- configure
++++ configure
+@@ -22,10 +22,6 @@ bindir='$(exec_prefix)/bin'
+ datarootdir='$(prefix)/share'
+ infodir='$(datarootdir)/info'
+ mandir='$(datarootdir)/man'
+-CXX=g++
+-CPPFLAGS=
+-CXXFLAGS='-Wall -W -O2'
+-LDFLAGS=
+ 
+ # checking whether we are using GNU C++.
+ if [ ! -x /bin/g++ ] &&

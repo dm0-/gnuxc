@@ -1,0 +1,11 @@
+--- daemons/rc.sh
++++ daemons/rc.sh
+@@ -89,6 +89,8 @@ if test -d /var/run; then
+ fi
+ echo done
+ 
++exit 0
++
+ # This file must exist for e2fsck to work. XXX
+ touch /var/run/mtab
+ 

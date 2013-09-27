@@ -1,0 +1,68 @@
+# GNU Theme
+desktop-color: "#FFFFFF"
+message-bg-color: "#FFFF66"
+message-color: "#000000"
+message-font: "FreeSans Regular 14"
+terminal-font: "FreeMono Regular 14"
+title-text: ""
+
++ image {
+	file = "banner.png"
+
+	height = 100
+	left = 50%-275
+	top = 0
+	width = 550
+}
+
++ boot_menu {
+	border_color = "#000000"
+	menu_pixmap_style = "1bp_*.png"
+	scrollbar = true
+	scrollbar_width = 20
+
+	icon_height = 24
+	icon_width = 24
+	item_color = "#000000"
+	item_font = "FreeSans Regular 16"
+	item_height = 30
+	item_icon_space = 8
+	item_padding = 0
+	item_spacing = 0
+	selected_item_color= "#FFFF00"
+	selected_item_font = "FreeSans Bold 16"
+	selected_item_pixmap_style = "1mp_*.png"
+
+	height = 100%-195
+	left = 10%
+	top = 100
+	width = 80%
+}
+
++ progress_bar {
+	id = "__timeout__"
+
+	bg_color = "#FFFFFF"
+	border_color = "#000000"
+	fg_color = "#3465A4"
+	font = "FreeSans Regular 14"
+	text = "@TIMEOUT_NOTIFICATION_LONG@"
+	text_color = "#000000"
+
+	height = 20
+	left = 10%
+	top = 100%-70
+	width = 80%
+}
+
++ label {
+	align = "center"
+	color = "#000000"
+	font = "FreeSans Regular 12"
+	text = "@KEYMAP_SHORT@"
+
+	height = 20
+	left = 0
+	top = 100%-25
+	width = 100%
+}

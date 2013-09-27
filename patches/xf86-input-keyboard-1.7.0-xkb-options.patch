@@ -1,0 +1,10 @@
+--- src/kbd.c
++++ src/kbd.c
+@@ -89,6 +89,7 @@ static const char *kbdDefaults[] = {
+     "XkbRules",		"base",
+     "XkbModel",		"pc105",
+     "XkbLayout",	"us",
++    "XkbOptions",	"ctrl:nocaps,terminate:ctrl_alt_bksp",
+     NULL
+ };
+ 

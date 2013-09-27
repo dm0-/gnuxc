@@ -1,0 +1,11 @@
+--- Makefile.am
++++ Makefile.am
+@@ -27,7 +27,7 @@ Makefile: Makefile.stamp
+ Makefile.stamp: Makefile.pre
+ 	sed \
+ 	  < $< > Makefile.new \
+-	  -e '/^#*	$$(LIBTOOL)/s%`test -f.*%$$<%'
++	  -e '/^#*	\($$(AM_V_CC)\)\?$$(LIBTOOL)/s%`test -f.*%$$<%'
+ 	mv Makefile.new Makefile
+ 	echo timestamp > $@
+ 

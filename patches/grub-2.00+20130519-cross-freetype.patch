@@ -1,0 +1,37 @@
+=== modified file 'ChangeLog'
+--- ChangeLog	2013-06-07 16:36:42 +0000
++++ ChangeLog	2013-06-11 16:28:03 +0000
+@@ -1,4 +1,9 @@
++2013-06-11  David Michael  <fedora.dm0@gmail.com>
++
++	* configure.ac (FREETYPE): Change AC_CHECK_PROGS to AC_CHECK_TOOLS.
++	(freetype_cflags,freetype_libs): Change freetype-config to $FREETYPE.
++
+ 2013-05-15  Radosław Szymczyszyn  <lavrin@gmail.com>
+ 
+ 	* grub-core/partmap/dfly.c: New partition map.
+ 
+=== modified file 'configure.ac'
+--- configure.ac	2013-06-07 14:02:16 +0000
++++ configure.ac	2013-06-11 13:54:44 +0000
+@@ -944,7 +944,7 @@
+ 
+ if test x"$grub_mkfont_excuse" = x ; then
+   # Check for freetype libraries.
+-  AC_CHECK_PROGS([FREETYPE], [freetype-config])
++  AC_CHECK_TOOLS([FREETYPE], [freetype-config])
+   if test "x$FREETYPE" = x ; then
+     grub_mkfont_excuse=["need freetype2 library"]
+   fi
+@@ -952,8 +952,8 @@
+ 
+ if test x"$grub_mkfont_excuse" = x ; then
+   # Check for freetype libraries.
+-  freetype_cflags=`freetype-config --cflags`
+-  freetype_libs=`freetype-config --libs`
++  freetype_cflags=`$FREETYPE --cflags`
++  freetype_libs=`$FREETYPE --libs`
+   SAVED_CPPFLAGS="$CPPFLAGS"
+   CPPFLAGS="$CPPFLAGS $freetype_cflags"
+   AC_CHECK_HEADERS([ft2build.h], [],
+

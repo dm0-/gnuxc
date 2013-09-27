@@ -1,0 +1,12 @@
+--- Makefile.in
++++ Makefile.in
+@@ -50,9 +50,6 @@ man3dir = $(mandir)/$(manpfx)3
+ 
+ htmldir = @htmldir@
+ 
+-# Support an alternate destination root directory for package building
+-DESTDIR =
+-
+ topdir = @top_srcdir@
+ BUILD_DIR = @BUILD_DIR@
+ top_builddir = @BUILD_DIR@

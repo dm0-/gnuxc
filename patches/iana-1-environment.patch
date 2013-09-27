@@ -1,0 +1,59 @@
+--- Makefile
++++ Makefile
+@@ -231,12 +231,12 @@ GCC_DEBUG_FLAGS = -Dlint -g3 -O3 -fno-co
+ # before the first Monday in January when a "%V" format is used and January 1
+ # falls on a Friday, Saturday, or Sunday.
+ 
+-CFLAGS=
++CFLAGS ?=
+ 
+ # Linker flags.  Default to $(LFLAGS) for backwards compatibility
+ # to tzcode2012h and earlier.
+ 
+-LDFLAGS=	$(LFLAGS)
++LDFLAGS ?=	$(LFLAGS)
+ 
+ zic=		./zic
+ ZIC=		$(zic) $(ZFLAGS)
+@@ -294,7 +294,7 @@ GZIPFLAGS=	-9n
+ 
+ ###############################################################################
+ 
+-cc=		cc
++cc :=		$(CC)
+ CC=		$(cc) -DTZDIR=\"$(TZDIR)\"
+ 
+ TZCSRCS=	zic.c localtime.c asctime.c scheck.c ialloc.c
+@@ -334,13 +334,13 @@ ENCHILADA=	$(COMMON) $(DOCS) $(SOURCES)
+ 
+ SHELL=		/bin/sh
+ 
+-all:		tzselect zic zdump $(LIBOBJS) $(TABDATA)
++all:		tzselect zic zdump libtz.a $(TABDATA)
+ 
+ ALL:		all date
+ 
+ install:	all $(DATA) $(REDO) $(DESTDIR)$(TZLIB) $(MANS)
+ 		$(ZIC) -y $(YEARISTYPE) \
+-			-d $(DESTDIR)$(TZDIR) -l $(LOCALTIME) -p $(POSIXRULES)
++			-d $(DESTDIR)$(TZDIR) -p $(POSIXRULES)
+ 		-rm -f $(DESTDIR)$(TZDIR)/iso3166.tab \
+ 			$(DESTDIR)$(TZDIR)/zone.tab
+ 		cp iso3166.tab zone.tab $(DESTDIR)$(TZDIR)/.
+@@ -420,11 +420,11 @@ posix_right:	posix_only leapseconds
+ 
+ zones:		$(REDO)
+ 
+-$(DESTDIR)$(TZLIB): $(LIBOBJS)
+-		-mkdir -p $(DESTDIR)$(TOPDIR) $(DESTDIR)$(LIBDIR)
+-		ar ru $@ $(LIBOBJS)
+-		if [ -x /usr/ucb/ranlib ] || [ -x /usr/bin/ranlib ]; \
+-			then ranlib $@ ; fi
++libtz.a:	$(LIBOBJS)
++		$(AR) ru $@ $^
++		$(RANLIB) $@
++$(DESTDIR)$(TZLIB): libtz.a
++		install -Dpm 644 $< $@
+ 
+ date:		$(DATEOBJS)
+ 		$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $(DATEOBJS) $(LDLIBS)
