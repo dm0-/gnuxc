@@ -1,5 +1,5 @@
-make                    := make-3.99.92
-make_url                := http://alpha.gnu.org/gnu/make/$(make).tar.bz2
+make                    := make-4.0
+make_url                := http://ftp.gnu.org/gnu/make/$(make).tar.bz2
 
 configure-make-rule:
 	cd $(make) && ./$(configure) \

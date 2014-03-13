@@ -1,5 +1,5 @@
-texinfo                 := texinfo-5.1.90
-texinfo_url             := http://alpha.gnu.org/gnu/texinfo/$(texinfo).tar.xz
+texinfo                 := texinfo-5.2
+texinfo_url             := http://ftp.gnu.org/gnu/texinfo/$(texinfo).tar.xz
 
 configure-texinfo-rule:
 	cd $(texinfo) && ./$(configure) \

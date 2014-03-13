@@ -10,6 +10,8 @@ Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
+Patch100:       %{gnuxc_name}-%{version}-freetype-update.patch
+
 BuildRequires:  gnuxc-fontconfig-devel
 BuildRequires:  gnuxc-libXrender-devel
 
@@ -42,6 +44,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch100 -p1
 
 %build
 %gnuxc_configure \

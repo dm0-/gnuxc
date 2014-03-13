@@ -2,7 +2,7 @@
 %undefine debug_package
 
 Name:           gnuxc-xextproto
-Version:        7.2.1
+Version:        7.3.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

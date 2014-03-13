@@ -1,3 +1,5 @@
+Correct an old gnulib issue.
+
 --- gnu/stdio.in.h
 +++ gnu/stdio.in.h
 @@ -139,7 +139,9 @@ _GL_WARN_ON_USE (fflush, "fflush is not

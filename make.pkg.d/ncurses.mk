@@ -1,4 +1,4 @@
-ncurses                 := ncurses-5.9-20130921
+ncurses                 := ncurses-5.9-20140308
 ncurses_url             := ftp://invisible-island.net/ncurses/current/$(ncurses).tgz
 
 ifeq ($(host),$(build))

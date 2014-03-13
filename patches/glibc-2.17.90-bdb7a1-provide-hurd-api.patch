@@ -1,3 +1,6 @@
+Link libmachuser and libhurduser automatically with libc, since they are
+considered a standard part of the API in GNU-land.
+
 --- Makerules
 +++ Makerules
 @@ -969,6 +969,9 @@

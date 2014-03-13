@@ -1,4 +1,4 @@
-cairo                   := cairo-1.12.14
+cairo                   := cairo-1.12.16
 cairo_url               := http://cairographics.org/releases/$(cairo).tar.xz
 
 prepare-cairo-rule:
@@ -37,7 +37,6 @@ configure-cairo-rule:
 		--disable-gallium \
 		--disable-qt \
 		--disable-vg
-# Make a shared binutils RPM for symbols.
 
 build-cairo-rule:
 	$(MAKE) -C $(cairo) all

@@ -1,4 +1,4 @@
-%global gnuxc_has_env %(rpm --quiet -q gnuxc-libpthread && echo 1 || echo 0)
+%global gnuxc_has_env %(rpm --quiet -q gnuxc-glibc && echo 1 || echo 0)
 
 # (This value is used in the RPM release number in order to ensure the full
 # packages are always an upgrade over bootstrapping sub-packages.)
@@ -11,7 +11,7 @@
 %endif
 
 Name:           gnuxc-gcc
-Version:        4.8.1
+Version:        4.8.2
 Release:        1.%{gnuxc_has_env}%{?dist}
 Summary:        Cross-compiler for C for pure GNU systems
 
@@ -24,7 +24,7 @@ Patch100:       %{gnuxc_name}-%{version}-no-add-needed.patch
 
 BuildRequires:  gnuxc-binutils
 %if 0%{gnuxc_has_env}
-BuildRequires:  gnuxc-libpthread-devel
+BuildRequires:  gnuxc-glibc-devel
 %endif
 
 BuildRequires:  bison
@@ -53,7 +53,7 @@ Provides:       bundled(libiberty)
 %description
 Cross-compiler for C for pure GNU systems.
 %if 0%{gnuxc_has_env} == 0
-This is only a bootstrap version!  Install libpthread and rebuild this package.
+This is only a bootstrap version!  Install glibc and rebuild this package.
 %endif
 
 %package -n gnuxc-cpp
@@ -68,7 +68,7 @@ Cross-compiler version of a C preprocessor for pure GNU systems.
 Summary:        Cross-compiler for C++ for pure GNU systems
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-libstdc++ = %{version}-%{release}
-Requires:       gnuxc-libpthread-devel
+Requires:       gnuxc-glibc-devel
 Provides:       gnuxc-libstdc++-devel = %{version}-%{release}
 
 %description c++
@@ -258,7 +258,7 @@ run C++ dynamically linked programs for pure GNU systems.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch100 -p0
+%patch100
 
 # Provide non-conflicting internationalized messages.
 sed -i -e 's/"gcc"/"gnuxc-gcc"/' gcc/intl.c

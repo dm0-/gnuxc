@@ -53,8 +53,9 @@ autoreconf -fi
     --with-readline \
     --without-adns \
     --without-libwww \
-    --without-tcl
-%gnuxc_make %{?_smp_mflags} all
+    --without-tcl \
+    CPPFLAGS=-DVFunction=rl_voidfunc_t
+%gnuxc_make all
 
 %install
 %gnuxc_make_install

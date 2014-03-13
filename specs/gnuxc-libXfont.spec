@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXfont
-Version:        1.4.6
+Version:        1.4.7
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

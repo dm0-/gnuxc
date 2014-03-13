@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpipeline
-Version:        1.2.4
+Version:        1.2.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -62,7 +62,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpipeline.so.1
-%{gnuxc_libdir}/libpipeline.so.1.2.4
+%{gnuxc_libdir}/libpipeline.so.1.2.6
 %doc ChangeLog COPYING NEWS README TODO
 
 %files devel

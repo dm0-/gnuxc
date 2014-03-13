@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgcrypt
-Version:        1.5.3
+Version:        1.6.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -9,6 +9,8 @@ License:        LGPLv2+
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/libgcrypt/
 Source0:        ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{gnuxc_name}-%{version}.tar.bz2
+
+Patch100:       %{gnuxc_name}-%{version}-build-fixes.patch
 
 BuildRequires:  gnuxc-libgpg-error-devel
 
@@ -40,6 +42,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch100
 
 %build
 %gnuxc_configure \
@@ -48,6 +51,7 @@ statically, which is highly discouraged.
     --enable-hmac-binary-check \
     --enable-m-guard \
     --enable-static \
+    --enable-threads=posix \
     \
     --disable-asm
 %gnuxc_make %{?_smp_mflags} all
@@ -61,7 +65,7 @@ ln %{buildroot}%{gnuxc_root}/bin/libgcrypt-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-libgcrypt-config
 
 # There is no need to install binary programs in the sysroot.
-rm -f %{buildroot}%{gnuxc_root}/bin/{dumpsexp,hmac256}
+rm -f %{buildroot}%{gnuxc_root}/bin/{dumpsexp,hmac256,mpicalc}
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libgcrypt.la
@@ -70,19 +74,18 @@ rm -f %{buildroot}%{gnuxc_libdir}/libgcrypt.la
 rm -rf %{buildroot}%{gnuxc_datadir}/aclocal
 
 # Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_infodir}
+rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 
 %files
-%{gnuxc_libdir}/libgcrypt.so.11
-%{gnuxc_libdir}/libgcrypt.so.11.8.2
+%{gnuxc_libdir}/libgcrypt.so.20
+%{gnuxc_libdir}/libgcrypt.so.20.0.1
 %doc AUTHORS ChangeLog* COPYING* NEWS README* THANKS TODO
 
 %files devel
 %{_bindir}/%{gnuxc_target}-libgcrypt-config
 %{gnuxc_root}/bin/libgcrypt-config
 %{gnuxc_includedir}/gcrypt.h
-%{gnuxc_includedir}/gcrypt-module.h
 %{gnuxc_libdir}/libgcrypt.so
 
 %files static

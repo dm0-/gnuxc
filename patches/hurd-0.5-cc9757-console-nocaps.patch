@@ -1,3 +1,6 @@
+Use the correct control key behavior by default.  This makes things consistent
+with the keyboard behavior before starting the console client.
+
 --- console-client/xkb/xkb-data/symbols/hurd
 +++ console-client/xkb/xkb-data/symbols/hurd
 @@ -1,6 +1,8 @@

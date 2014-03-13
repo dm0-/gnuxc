@@ -1,8 +1,8 @@
-gnutls                  := gnutls-3.2.4
+gnutls                  := gnutls-3.2.12.1
+gnutls_branch           := gnutls-3.2.12
 gnutls_url              := ftp://ftp.gnutls.org/gcrypt/gnutls/v3.2/$(gnutls).tar.lz
 
 prepare-gnutls-rule:
-	$(PATCH) -d $(gnutls) < $(patchdir)/$(gnutls)-dodge-macro.patch
 # Seriously disable rpaths.
 	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(gnutls)/{,build-aux/}ltmain.sh
 	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(gnutls)/configure

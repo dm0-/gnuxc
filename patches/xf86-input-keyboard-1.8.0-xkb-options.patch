@@ -1,0 +1,14 @@
+Use the correct control key behavior by default.  This makes things consistent
+with the keyboard behavior before starting the X server.  It also enables a
+three-finger salute to terminate, just like the Hurd console.
+
+--- src/kbd.c
++++ src/kbd.c
+@@ -97,6 +97,7 @@ static const char *kbdDefaults[] = {
+     "XkbRules",		"base",
+     "XkbModel",		"pc105",
+     "XkbLayout",	"us",
++    "XkbOptions",	"ctrl:nocaps,terminate:ctrl_alt_bksp",
+     NULL
+ };
+ 

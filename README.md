@@ -34,7 +34,7 @@ The following table lists the minimum and recommended system requirements for
 the build system and the virtual/emulated `qemu` guest.
 
                          Build Min   Build Rec   QEMU Min   QEMU Rec
-    Operating System :   Fedora 18   Fedora 19   GNU        GNU
+    Operating System :   Fedora 18   Fedora 20   GNU        GNU
     Available Storage:    10 GiB      20 GiB       2 GiB     10 GiB
     Installed Memory :     1 GiB       8 GiB     128 MiB      1 GiB
     Logical CPU Cores:     1 core      8 cores     1 core     1 core

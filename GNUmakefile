@@ -1,4 +1,4 @@
-# Copyright (C) 2013 David Michael <fedora.dm0@gmail.com>
+# Copyright (C) 2013,2014 David Michael <fedora.dm0@gmail.com>
 #
 # This file is part of gnuxc.
 #
@@ -45,7 +45,7 @@ CVS      := cvs
 DOWNLOAD := wget --output-document=- # curl --location
 ECHO     := echo
 EDIT     := sed --in-place
-GIT      := git
+GIT      := git -c user.name='GNU Hacker' -c user.email='root@localhost'
 INSTALL  := install
 LINK     := ln --force
 MKDIR    := mkdir --parents
@@ -89,8 +89,10 @@ configure += \
 	gl_cv_func_getopt_gnu=yes \
 	gl_cv_func_{gettimeofday,tzset}_clobber=no \
 	gl_cv_func_lstat_dereferences_slashed_symlink=yes \
+	gl_cv_func_memchr_works=yes \
 	gl_cv_func_mkdir_trailing_{dot,slash}_works=yes \
 	gl_cv_func_mkfifo_works=yes \
+	gl_cv_func_perror_works=yes \
 	gl_cv_func_printf_directive_{a,f,ls}=yes \
 	gl_cv_func_printf_{enomem,infinite,long_double}=yes \
 	gl_cv_func_printf_flag_{grouping,leftadjust,zero}=yes \
@@ -99,8 +101,12 @@ configure += \
 	gl_cv_func_realpath_works=yes \
 	gl_cv_func_rename_{dest,link}_works=yes \
 	gl_cv_func_rmdir_works=yes \
+	gl_cv_func_snprintf_{retval,truncation}_c99=yes \
 	gl_cv_func_stat_{dir,file}_slash=yes \
+	gl_cv_func_strerror_0_works=yes \
 	gl_cv_func_symlink_works=yes \
+	gl_cv_func_unsetenv_works=yes \
+	gl_cv_func_wcwidth_works=yes \
 	gl_cv_func_working_acl_get_file=yes \
 	gl_cv_func_working_mktime=yes \
 	gl_cv_struct_dirent_d_ino=yes \
@@ -152,7 +158,7 @@ define init-package-rules =
 $$($(1)):
 ifeq ($$(firstword $$(subst ://, ,$$($(1)_url))),git)
 	$$(GIT) clone $$($(1)_branch:%=-b %) -n $$($(1)_url) $$@
-	$$(GIT) --git-dir=$$@/.git --work-tree=$$@ reset --hard $$($(1)_snap)
+	$$(GIT) -C $$@ reset --hard $$($(1)_snap)
 else ifeq ($$(firstword $$(subst ://, ,$$($(1)_url))),cvs)
 	$$(CVS) -d:pserver:$$($(1)_url:cvs://%=%) export \
 		-D$$($(1)_snap) -d$$@ -kv $$(firstword $$($(1)_branch) $(1))

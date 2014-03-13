@@ -7,7 +7,6 @@ umask 0022
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
-alias less='less -cQR'
 alias ls='ls --color=auto'
 
 # Command variants
@@ -36,7 +35,7 @@ MOTD=/etc/motd ; test "${LANG##*.}" = UTF-8 && MOTD=$MOTD.UTF8 ; export MOTD
 PATH="$HOME/.local/bin:/usr/bin:/usr/sbin:/bin:/sbin" ; export PATH
 
 # Provide useful information in the shell prompt.
-PS1='[$?:\u@\h \W]\$ ' ; export PS1
+PS1='[$? \u@\h \W]\$ ' ; export PS1
 
 # Color file listings.
 eval $(dircolors --sh)

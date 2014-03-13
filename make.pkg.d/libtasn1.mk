@@ -1,4 +1,4 @@
-libtasn1                := libtasn1-3.3
+libtasn1                := libtasn1-3.4
 libtasn1_url            := http://ftp.gnu.org/gnu/libtasn1/$(libtasn1).tar.gz
 
 configure-libtasn1-rule:

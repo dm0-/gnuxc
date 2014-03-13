@@ -1,4 +1,4 @@
-ed                      := ed-1.9
+ed                      := ed-1.10
 ed_url                  := http://ftp.gnu.org/gnu/ed/$(ed).tar.lz
 
 prepare-ed-rule:

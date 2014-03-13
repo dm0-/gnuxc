@@ -1,14 +1,14 @@
 %global gnuxc_has_env %(rpm --quiet -q gnuxc-gcc-c++ && echo 1 || echo 0)
 
 Name:           gnuxc-binutils
-Version:        2.23.52
+Version:        2.24
 Release:        1%{?dist}
 Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
 Group:          Development/Tools
 URL:            http://www.gnu.org/software/binutils/
-Source0:        ftp://sourceware.org/pub/binutils/snapshots/%{gnuxc_name}-%{version}.tar.bz2
+Source0:        https://ftp.gnu.org/gnu/binutils/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-filesystem
 %if 0%{gnuxc_has_env}
@@ -79,12 +79,16 @@ done
 %global _configure ../configure
 %global _program_prefix %{gnuxc_target}-
 %global binutils_configuration \\\
+    --disable-cloog-version-check \\\
+    --disable-isl-version-check \\\
     --disable-rpath \\\
     --enable-build-warnings --disable-werror \\\
     --enable-gold \\\
     --enable-install-libiberty='%{gnuxc_includedir}' \\\
     --enable-ld=default \\\
     --enable-libada \\\
+    --enable-libquadmath \\\
+    --enable-libstdcxx \\\
     --enable-libssp \\\
     --enable-lto \\\
     --enable-objc-gc \\\
@@ -206,8 +210,8 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %if 0%{gnuxc_has_env}
 %files libs
-%{gnuxc_libdir}/libbfd-2.23.52.20130918.so
-%{gnuxc_libdir}/libopcodes-2.23.52.20130918.so
+%{gnuxc_libdir}/libbfd-2.24.so
+%{gnuxc_libdir}/libopcodes-2.24.so
 
 %files devel
 %{gnuxc_includedir}/ansidecl.h

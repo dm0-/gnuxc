@@ -1,5 +1,5 @@
-librsvg                 := librsvg-2.37.0
-librsvg_url             := http://ftp.gnome.org/pub/gnome/sources/librsvg/2.37/$(librsvg).tar.xz
+librsvg                 := librsvg-2.40.1
+librsvg_url             := http://ftp.gnome.org/pub/gnome/sources/librsvg/2.40/$(librsvg).tar.xz
 
 prepare-librsvg-rule:
 # Seriously disable rpaths.
@@ -11,6 +11,7 @@ configure-librsvg-rule:
 	cd $(librsvg) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-pixbuf-loader \
+		--enable-tools \
 		\
 		--disable-gtk-theme \
 		--disable-vala --disable-introspection

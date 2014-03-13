@@ -1,3 +1,5 @@
+Don't use absolute paths in these symbolic links.
+
 --- Makefile
 +++ Makefile
 @@ -73,8 +73,8 @@ install: bzip2 bzip2recover

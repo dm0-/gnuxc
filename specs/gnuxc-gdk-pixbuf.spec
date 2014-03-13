@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-gdk-pixbuf
-Version:        2.30.0
+Version:        2.30.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -110,9 +110,9 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xbm.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xpm.so
 %{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0
-%{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0.3000.0
+%{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0.3000.6
 %{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0
-%{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0.3000.0
+%{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0.3000.6
 %doc AUTHORS COPYING NEWS README
 
 %files devel

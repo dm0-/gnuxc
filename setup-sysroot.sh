@@ -36,21 +36,18 @@ build_pkg gcc
 build_pkg gnumach       gnumach-headers
 build_pkg mig
 build_pkg hurd          hurd-headers
-build_pkg libpthread    libpthread-headers
 build_pkg glibc                            ; install_pkg glibc
-build_pkg hurd          libihash           ; install_pkg libihash
-build_pkg libpthread                       ; install_pkg libpthread
 build_pkg gcc           gcc-c++
 build_pkg ncurses
 build_pkg readline
+build_pkg zlib
+build_pkg bzip2
 build_pkg hurd          hurd-libs
 build_pkg e2fsprogs     libuuid
 build_pkg parted
-build_pkg zlib
 build_pkg binutils      binutils-libs
 build_pkg attr
 build_pkg acl
-build_pkg bzip2
 build_pkg xz
 build_pkg pcre
 build_pkg gmp
@@ -99,8 +96,8 @@ build_pkg libXmu       ; build_pkg libXpm           ; build_pkg libXaw
 build_pkg fontsproto   ; build_pkg libfontenc       ; build_pkg libXfont
 build_pkg renderproto  ; build_pkg libXrender       ; build_pkg libXft
 build_pkg bigreqsproto ; build_pkg damageproto      ; build_pkg fixesproto
-build_pkg randrproto   ; build_pkg videoproto       ; build_pkg xcmiscproto
-build_pkg xf86dgaproto
+build_pkg presentproto ; build_pkg randrproto       ; build_pkg videoproto
+build_pkg xcmiscproto  ; build_pkg xf86dgaproto
 build_pkg xorg-server
 build_pkg spice-protocol
 # xorg)
@@ -115,4 +112,4 @@ build_pkg librsvg
 sudo yum --disablerepo=* --enablerepo=$repo -y install \
     gnuxc-gcc-{gfortran,objc++} \
     gnuxc-*-devel gnuxc-spice-protocol \
-    gnuxc-{glibc,libihash,libpthread,libuuid,parted}-static
+    gnuxc-{bzip2,glibc,libihash,libpthread,libuuid,parted,zlib}-static

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-flex
-Version:        2.5.37
+Version:        2.5.38
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -46,19 +46,29 @@ applications that use %{gnuxc_name} on GNU systems.
 # There is no need to install binary programs in the sysroot.
 rm -f %{buildroot}%{gnuxc_bindir}/{flex,flex++}
 
+# We don't need libtool's help.
+rm -f %{buildroot}%{gnuxc_libdir}/libfl{,_pic}.la
+
 # Skip the documentation.
 rm -rf \
     %{buildroot}%{gnuxc_docdir} \
     %{buildroot}%{gnuxc_infodir} \
     %{buildroot}%{gnuxc_mandir}
 
+
 %files
+%{gnuxc_libdir}/libfl.so.2
+%{gnuxc_libdir}/libfl.so.2.0.0
+%{gnuxc_libdir}/libfl_pic.so.2
+%{gnuxc_libdir}/libfl_pic.so.2.0.0
 %doc AUTHORS ChangeLog COPYING NEWS ONEWS README THANKS TODO
 
 %files devel
 %{gnuxc_includedir}/FlexLexer.h
 %{gnuxc_libdir}/libfl.a
+%{gnuxc_libdir}/libfl.so
 %{gnuxc_libdir}/libfl_pic.a
+%{gnuxc_libdir}/libfl_pic.so
 
 
 %changelog

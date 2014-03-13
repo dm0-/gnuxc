@@ -1,8 +1,5 @@
-gnuchess                := gnuchess-6.0.92
-gnuchess_url            := http://alpha.gnu.org/gnu/chess/$(gnuchess).tar.gz
-
-prepare-gnuchess-rule:
-	$(PATCH) -d $(gnuchess) < $(patchdir)/$(gnuchess)-include-locale.patch
+gnuchess                := gnuchess-6.1.1
+gnuchess_url            := http://ftp.gnu.org/gnu/chess/$(gnuchess).tar.gz
 
 configure-gnuchess-rule:
 	cd $(gnuchess) && ./$(configure) \

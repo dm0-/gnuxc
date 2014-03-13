@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-isl
-Version:        0.12.1
+Version:        0.12.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -57,15 +57,15 @@ rm -f %{buildroot}%{gnuxc_libdir}/libisl.la
 
 %files
 %{gnuxc_libdir}/libisl.so.10
-%{gnuxc_libdir}/libisl.so.10.2.1
+%{gnuxc_libdir}/libisl.so.10.2.2
 %doc doc/manual.pdf AUTHORS ChangeLog LICENSE README
 
 %files devel
 %{gnuxc_includedir}/isl
 %{gnuxc_libdir}/libisl.so
-%{gnuxc_libdir}/libisl.so.10.2.1-gdb.py
-%{gnuxc_libdir}/libisl.so.10.2.1-gdb.pyc
-%{gnuxc_libdir}/libisl.so.10.2.1-gdb.pyo
+%{gnuxc_libdir}/libisl.so.10.2.2-gdb.py
+%{gnuxc_libdir}/libisl.so.10.2.2-gdb.pyc
+%{gnuxc_libdir}/libisl.so.10.2.2-gdb.pyo
 %{gnuxc_libdir}/pkgconfig/isl.pc
 
 %files static

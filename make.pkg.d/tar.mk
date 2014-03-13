@@ -1,8 +1,5 @@
-tar                     := tar-1.26
+tar                     := tar-1.27
 tar_url                 := http://ftp.gnu.org/gnu/tar/$(tar).tar.xz
-
-prepare-tar-rule:
-	$(PATCH) -d $(tar) < $(patchdir)/$(tar)-gets-decl.patch
 
 configure-tar-rule:
 	cd $(tar) && ./$(configure) \
@@ -11,11 +8,13 @@ configure-tar-rule:
 		\
 		--disable-rpath \
 		--disable-silent-rules \
+		--enable-acl \
 		--enable-backup-scripts \
+		--enable-gcc-warnings gl_cv_warn_c__Werror=no \
 		--without-included-regex
 
 build-tar-rule:
 	$(MAKE) -C $(tar) all
 
-install-tar-rule: $(call installed,glibc)
+install-tar-rule: $(call installed,acl)
 	$(MAKE) -C $(tar) install

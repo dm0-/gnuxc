@@ -5,7 +5,8 @@ prepare-lsh-rule:
 	$(ECHO) "alias ssh='lsh --sloppy-host-authentication --capture-to ~/.lsh/host-acls'" > $(lsh)/lsh.sh
 
 configure-lsh-rule:
-	cd $(lsh) && ./$(configure)
+	cd $(lsh) && ./$(configure) \
+		CPPFLAGS=-DCPPFunction=rl_completion_func_t
 
 build-lsh-rule:
 	$(MAKE) -C $(lsh) all

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gmp
-Version:        5.1.2
+Version:        5.1.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -48,8 +48,10 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
 
 %build
 %gnuxc_configure \
+    --enable-assembly \
     --enable-assert \
-    --enable-cxx
+    --enable-cxx \
+    --enable-fft
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -59,14 +61,14 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
 rm -f %{buildroot}%{gnuxc_libdir}/libgmp{,xx}.la
 
 # Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
+rm -rf %{buildroot}%{gnuxc_infodir}
 
 
 %files
 %{gnuxc_libdir}/libgmp.so.10
-%{gnuxc_libdir}/libgmp.so.10.1.2
+%{gnuxc_libdir}/libgmp.so.10.1.3
 %{gnuxc_libdir}/libgmpxx.so.4
-%{gnuxc_libdir}/libgmpxx.so.4.3.2
+%{gnuxc_libdir}/libgmpxx.so.4.3.3
 %doc AUTHORS ChangeLog COPYING COPYING.LIB NEWS README
 
 %files devel

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-cairo
-Version:        1.12.14
+Version:        1.12.16
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -112,13 +112,13 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 %{gnuxc_libdir}/cairo/libcairo-trace.so.0
 %{gnuxc_libdir}/cairo/libcairo-trace.so.0.0.0
 %{gnuxc_libdir}/libcairo.so.2
-%{gnuxc_libdir}/libcairo.so.2.11200.14
+%{gnuxc_libdir}/libcairo.so.2.11200.16
 %{gnuxc_libdir}/libcairo-gobject.so.2
-%{gnuxc_libdir}/libcairo-gobject.so.2.11200.14
+%{gnuxc_libdir}/libcairo-gobject.so.2.11200.16
 %{gnuxc_libdir}/libcairo-script-interpreter.so.2
-%{gnuxc_libdir}/libcairo-script-interpreter.so.2.11200.14
+%{gnuxc_libdir}/libcairo-script-interpreter.so.2.11200.16
 %doc AUTHORS BIBLIOGRAPHY BUGS ChangeLog* CODING_STYLE COPYING* HACKING INSTALL
-%doc KNOWN_ISSUES NEWS PORTING_GUIDE README RELEASING TODO
+%doc KNOWN_ISSUES NEWS PORTING_GUIDE README RELEASING
 
 %files devel
 %{gnuxc_includedir}/cairo

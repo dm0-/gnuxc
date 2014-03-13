@@ -19,6 +19,8 @@ BuildRequires:  gnuxc-libxcb-devel
 BuildRequires:  gnuxc-xextproto
 BuildRequires:  gnuxc-xtrans
 
+BuildRequires:  xorg-x11-proto-devel
+
 BuildArch:      noarch
 
 %description

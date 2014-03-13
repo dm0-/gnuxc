@@ -1,3 +1,5 @@
+Don't override the environment settings.
+
 --- Makefile.in
 +++ Makefile.in
 @@ -25,7 +25,7 @@ localedir = $(datadir)/locale

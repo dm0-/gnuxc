@@ -1,4 +1,4 @@
-harfbuzz                := harfbuzz-0.9.21
+harfbuzz                := harfbuzz-0.9.26
 harfbuzz_url            := http://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz).tar.bz2
 
 prepare-harfbuzz-rule:

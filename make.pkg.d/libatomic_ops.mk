@@ -1,5 +1,5 @@
-libatomic_ops           := libatomic_ops-7.3alpha2
-libatomic_ops_url       := http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/$(libatomic_ops).tar.gz
+libatomic_ops           := libatomic_ops-7.4.0
+libatomic_ops_url       := http://www.hboehm.info/gc/gc_source/$(libatomic_ops).tar.gz
 
 configure-libatomic_ops-rule:
 	cd $(libatomic_ops) && ./$(configure) \

@@ -1,4 +1,4 @@
-git                     := git-1.8.4
+git                     := git-1.9.0
 git_url                 := http://git-core.googlecode.com/files/$(git).tar.gz
 
 git_configuration = V=1 \
@@ -25,9 +25,9 @@ git_configuration += \
 	NO_PERL=YesPlease \
 	UNAME_M=i686-AT386 \
 	UNAME_O=GNU \
-	UNAME_R=0.3 \
+	UNAME_R=0.5 \
 	UNAME_S=GNU \
-	UNAME_V='GNU-Mach 1.3.99/Hurd-0.3'
+	UNAME_V='GNU-Mach 1.4/Hurd-0.5'
 endif
 
 prepare-git-rule:

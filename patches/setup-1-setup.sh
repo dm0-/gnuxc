@@ -33,7 +33,7 @@ settrans -afgp /proc /hurd/procfs
 
 # Install the bootloader.
 disk=$(grep -o 'hd[0-9]*' /proc/cmdline)
-grub-install --grub-mkrelpath=echo --themes=active /dev/${disk:-hd1}
+grub-install --themes=active /dev/${disk:-hd0}
 ln -s 'en@quot.mo' /boot/grub/locale/en.mo
 
 # Create a default locale definition.

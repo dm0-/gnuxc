@@ -1,6 +1,6 @@
 Name:           gnuxc-mig
-Version:        1.3.1.99
-%global snap    b53836
+Version:        1.4
+%global snap    bb06f6
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        Cross-compiler version of GNU MIG for Hurd systems
 
@@ -36,7 +36,7 @@ make %{?_smp_mflags} all \
 %files
 %{_bindir}/%{gnuxc_target}-mig
 %{_libexecdir}/%{gnuxc_target}-migcom
-%doc AUTHORS ChangeLog COPYING NEWS README
+%doc =announce-* AUTHORS ChangeLog COPYING NEWS README
 
 
 %changelog

@@ -1,7 +1,6 @@
 %global gnuxc_has_env %(
-(rpm --quiet -q gnuxc-parted     && echo 2) || # Change to 3 if packaging Hurd
-(rpm --quiet -q gnuxc-libpthread && echo 2) ||
-(rpm --quiet -q gnuxc-glibc      && echo 1) || echo 0)
+(rpm --quiet -q gnuxc-parted && echo 1) || # Change to 2 if packaging Hurd
+(rpm --quiet -q gnuxc-glibc  && echo 1) || echo 0)
 
 # (This value is used in the RPM release number in order to ensure the full
 # packages are always an upgrade over bootstrapping sub-packages.)
@@ -9,9 +8,9 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-hurd
-Version:        0.3
-%global snap    51a251
-Release:        0.1.%{gnuxc_has_env}.19700101git%{snap}%{?dist}
+Version:        0.5
+%global snap    cc9757
+Release:        1.%{gnuxc_has_env}.19700101git%{snap}%{?dist}
 Summary:        GNU Hurd kernel
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
@@ -28,18 +27,16 @@ BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-gnumach-headers
 BuildRequires:  gnuxc-mig
 %if 0%{gnuxc_has_env} >= 1
-BuildRequires:  gnuxc-glibc-devel
+BuildRequires:  gnuxc-bzip2-devel
+BuildRequires:  gnuxc-zlib-devel
 %endif
 %if 0%{gnuxc_has_env} >= 2
-BuildRequires:  gnuxc-libpthread-devel
-%endif
-%if 0%{gnuxc_has_env} >= 3
+BuildRequires:  gnuxc-bzip2-static
 BuildRequires:  gnuxc-glibc-static
 BuildRequires:  gnuxc-libblkid-devel
-BuildRequires:  gnuxc-libihash-static
-BuildRequires:  gnuxc-libpthread-static
 BuildRequires:  gnuxc-libuuid-static
 BuildRequires:  gnuxc-parted-static
+BuildRequires:  gnuxc-zlib-static
 %endif
 
 BuildArch:      noarch
@@ -58,40 +55,9 @@ This package provides system headers taken from the GNU Hurd kernel source for
 use with cross-compilers.
 
 %if 0%{gnuxc_has_env} >= 1
-%package -n gnuxc-libihash
-Summary:        Cross-compiled version of libihash for the GNU system
-Group:          System Environment/Libraries
-
-%description -n gnuxc-libihash
-Cross-compiled version of libihash for the GNU system.
-
-%package -n gnuxc-libihash-devel
-Summary:        Development files for gnuxc-libihash
-Group:          Development/Libraries
-Requires:       gnuxc-libihash = %{version}-%{release}
-Requires:       %{name}-headers = %{version}-%{release}
-Requires:       gnuxc-glibc-devel
-
-%description -n gnuxc-libihash-devel
-The gnuxc-libihash-devel package contains libraries and header files for
-developing applications that use libihash on GNU systems.
-
-%package -n gnuxc-libihash-static
-Summary:        Static libraries of gnuxc-libihash
-Group:          Development/Libraries
-Requires:       gnuxc-libihash-devel = %{version}-%{release}
-
-%description -n gnuxc-libihash-static
-The gnuxc-libihash-static package contains the libihash static libraries for
--static linking on GNU systems.  You don't need these, unless you link
-statically, which is highly discouraged.
-%endif
-
-%if 0%{gnuxc_has_env} >= 2
 %package libs
 Summary:        Cross-compiled versions of Hurd libraries for the GNU system
 Group:          System Environment/Libraries
-Requires:       gnuxc-libihash = %{version}-%{release}
 
 %description libs
 Cross-compiled versions of Hurd libraries for the GNU system.
@@ -100,7 +66,7 @@ Cross-compiled versions of Hurd libraries for the GNU system.
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name}-libs = %{version}-%{release}
-Requires:       gnuxc-libihash-devel = %{version}-%{release}
+Requires:       %{name}-headers = %{version}-%{release}
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -110,7 +76,6 @@ applications or translators that use Hurd libraries on GNU systems.
 Summary:        Static libraries of %{name}
 Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
-Requires:       gnuxc-libihash-static = %{version}-%{release}
 
 %description static
 The %{name}-static package contains the static Hurd libraries for -static
@@ -124,7 +89,7 @@ which is highly discouraged.
 
 %build
 %gnuxc_configure \
-%if 0%{gnuxc_has_env} < 3
+%if 0%{gnuxc_has_env} < 2
 %if 0%{gnuxc_has_env} == 0
     CC='%{gnuxc_cc} -nostdlib' \
 %endif
@@ -134,10 +99,7 @@ which is highly discouraged.
 
 %if 0%{gnuxc_has_env} >= 1
 %gnuxc_make %{?_smp_mflags} \
-    libihash \
-%if 0%{gnuxc_has_env} >= 2
-    lib{fshelp,iohelp,netfs,ports,ps,shouldbeinlibc,store}
-%endif
+    lib{fshelp,ihash,iohelp,netfs,ports,ps,shouldbeinlibc,store}
 %endif
 
 %install
@@ -147,10 +109,7 @@ which is highly discouraged.
 
 %if 0%{gnuxc_has_env} >= 1
 %gnuxc_make \
-    libihash-install \
-%if 0%{gnuxc_has_env} >= 2
-    lib{fshelp,iohelp,netfs,ports,ps,shouldbeinlibc,store}-install \
-%endif
+    lib{fshelp,ihash,iohelp,netfs,ports,ps,shouldbeinlibc,store}-install \
     includedir=%{buildroot}%{gnuxc_includedir} \
     libdir=%{buildroot}%{gnuxc_libdir}
 
@@ -166,37 +125,33 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 %doc BUGS ChangeLog COPYING INSTALL* NEWS README* tasks TODO
 
 %if 0%{gnuxc_has_env} >= 1
-%files -n gnuxc-libihash
-%{gnuxc_libdir}/libihash.so.0.3
-%files -n gnuxc-libihash-devel
-%{gnuxc_libdir}/libihash.so
-%files -n gnuxc-libihash-static
-%{gnuxc_libdir}/libihash.a
-%{gnuxc_libdir}/libihash_p.a
-%{gnuxc_libdir}/libihash_pic.a
-%endif
-
-%if 0%{gnuxc_has_env} >= 2
 %files libs
 %{gnuxc_libdir}/libfshelp.so.0.3
+%{gnuxc_libdir}/libihash.so.0.3
 %{gnuxc_libdir}/libiohelp.so.0.3
 %{gnuxc_libdir}/libnetfs.so.0.3
 %{gnuxc_libdir}/libports.so.0.3
 %{gnuxc_libdir}/libps.so.0.3
 %{gnuxc_libdir}/libshouldbeinlibc.so.0.3
 %{gnuxc_libdir}/libstore.so.0.3
+
 %files devel
 %{gnuxc_libdir}/libfshelp.so
+%{gnuxc_libdir}/libihash.so
 %{gnuxc_libdir}/libiohelp.so
 %{gnuxc_libdir}/libnetfs.so
 %{gnuxc_libdir}/libports.so
 %{gnuxc_libdir}/libps.so
 %{gnuxc_libdir}/libshouldbeinlibc.so
 %{gnuxc_libdir}/libstore.so
+
 %files static
 %{gnuxc_libdir}/libfshelp.a
 %{gnuxc_libdir}/libfshelp_p.a
 %{gnuxc_libdir}/libfshelp_pic.a
+%{gnuxc_libdir}/libihash.a
+%{gnuxc_libdir}/libihash_p.a
+%{gnuxc_libdir}/libihash_pic.a
 %{gnuxc_libdir}/libiohelp.a
 %{gnuxc_libdir}/libiohelp_p.a
 %{gnuxc_libdir}/libiohelp_pic.a

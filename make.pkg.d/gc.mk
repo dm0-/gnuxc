@@ -1,5 +1,5 @@
-gc                      := gc-7.3alpha2
-gc_url                  := http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/$(gc).tar.gz
+gc                      := gc-7.4.0
+gc_url                  := http://www.hboehm.info/gc/gc_source/$(gc).tar.gz
 
 prepare-gc-rule:
 # Seriously disable rpaths.

@@ -4,14 +4,14 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-librsvg
-Version:        2.37.0
+Version:        2.40.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 Group:          System Environment/Libraries
 URL:            http://developer.gnome.org/rsvg/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.37/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.40/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-gdk-pixbuf-devel
 BuildRequires:  gnuxc-libcroco-devel
@@ -59,6 +59,7 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
 %gnuxc_configure \
     --disable-silent-rules \
     --enable-pixbuf-loader \
+    --enable-tools \
     \
     --disable-gtk-theme \
     --disable-vala --disable-introspection
@@ -81,7 +82,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.so
 %{gnuxc_libdir}/librsvg-2.so.2
-%{gnuxc_libdir}/librsvg-2.so.2.37.0
+%{gnuxc_libdir}/librsvg-2.so.2.40.1
 %doc AUTHORS ChangeLog COPYING* NEWS README TODO
 
 %files devel

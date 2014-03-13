@@ -1,4 +1,4 @@
-pciutils                := pciutils-3.2.0
+pciutils                := pciutils-3.2.1
 pciutils_url            := ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/$(pciutils).tar.gz
 
 prepare-pciutils-rule:

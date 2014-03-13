@@ -39,7 +39,7 @@
  #undef LINK_GCC_C_SEQUENCE_SPEC
 --- gcc/config/rs6000/sysv4.h.jj	2011-01-03 13:02:18.255994215 +0100
 +++ gcc/config/rs6000/sysv4.h	2011-01-04 18:14:10.933888871 +0100
-@@ -804,7 +804,7 @@ extern int fixuplabelno;
+@@ -793,7 +793,7 @@ extern int fixuplabelno;
    -dynamic-linker " GNU_USER_DYNAMIC_LINKER "}}"
  
  #if defined(HAVE_LD_EH_FRAME_HDR)

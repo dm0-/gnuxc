@@ -1,4 +1,4 @@
-xcb-proto               := xcb-proto-1.8
+xcb-proto               := xcb-proto-1.10
 xcb-proto_url           := http://xcb.freedesktop.org/dist/$(xcb-proto).tar.bz2
 
 configure-xcb-proto-rule:

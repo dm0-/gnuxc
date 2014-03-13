@@ -12,7 +12,8 @@ configure-parted-rule:
 		--enable-gcc-warnings gl_cv_warn__Werror=no \
 		--enable-threads=posix \
 		--with-readline \
-		--without-included-regex
+		--without-included-regex \
+		CPPFLAGS=-DCPPFunction=rl_completion_func_t
 
 build-parted-rule:
 	$(MAKE) -C $(parted) all

@@ -1,6 +1,8 @@
+Don't override the environment settings.
+
 --- Makefile.in
 +++ Makefile.in
-@@ -64,9 +64,6 @@ infodir = @infodir@
+@@ -68,9 +68,6 @@ infodir = @infodir@
  
  man3dir = $(mandir)/man3
  

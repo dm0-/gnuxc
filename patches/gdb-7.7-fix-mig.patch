@@ -1,3 +1,5 @@
+Update gdb to be able to work with modern mig output.
+
 --- gdb/reply_mig_hack.awk
 +++ gdb/reply_mig_hack.awk
 @@ -85,13 +85,20 @@ parse_phase == 5 && /^[ \t]*(auto|static
@@ -24,7 +26,7 @@
    # which we're done until we get to the next function.  Handily, the size
 --- gdb/gnu-nat.c
 +++ gdb/gnu-nat.c
-@@ -1902,6 +1902,142 @@ S_proc_getmsgport_reply (mach_port_t rep
+@@ -1900,6 +1900,142 @@ S_proc_getmsgport_reply (mach_port_t rep
    return ill_rpc ("S_proc_getmsgport_reply");
  }
  

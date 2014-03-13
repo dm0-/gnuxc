@@ -1,3 +1,5 @@
+Allow pretty colors on the Hurd consoles.
+
 --- src/dircolors.hin
 +++ src/dircolors.hin
 @@ -29,12 +29,14 @@ TERM dtterm
@@ -14,4 +16,4 @@
 +TERM mach-gnu-color
  TERM mlterm
  TERM putty
- TERM rxvt
+ TERM putty-256color

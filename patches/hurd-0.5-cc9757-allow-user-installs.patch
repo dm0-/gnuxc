@@ -1,3 +1,6 @@
+Remove attempts to install files with a different owner so the installation can
+complete by a non-root user.
+
 --- daemons/Makefile
 +++ daemons/Makefile
 @@ -29,7 +29,7 @@ HURDLIBS = fshelp ports shouldbeinlibc

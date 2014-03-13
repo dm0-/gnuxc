@@ -6,25 +6,31 @@
 
 Name:           gnuxc-glibc
 Version:        2.17.90
-%global snap    b8b176
+%global snap    bdb7a1
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
+
+%global lpvers  0.3
+%global lpsnap  3b391d
 
 License:        LGPLv2+ and LGPLv2+ with exceptions and GPLv2+
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/glibc/
 Source0:        %{gnuxc_name}-%{version}-%{snap}.tar.xz
+Source1:        libpthread-%{lpvers}-%{lpsnap}.tar.xz
 
 # Ship customizations in the SRPM, but they are already applied in the archive.
 Patch101:       %{gnuxc_name}-%{version}-%{snap}-fix-documentation.patch
 Patch102:       %{gnuxc_name}-%{version}-%{snap}-provide-hurd-api.patch
 Patch103:       %{gnuxc_name}-%{version}-%{snap}-create-gnumach-header.patch
+Patch104:       %{gnuxc_name}-%{version}-%{snap}-pthread-posix.patch
+Patch201:       libpthread-%{lpvers}-%{lpsnap}-steal-libihash.patch
+Patch202:       libpthread-%{lpvers}-%{lpsnap}-glibc-preparation.patch
 
 Requires:       gnuxc-filesystem
 
 BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-hurd-headers
-BuildRequires:  gnuxc-libpthread-headers
 BuildRequires:  gnuxc-mig
 
 BuildArch:      noarch
@@ -38,7 +44,6 @@ Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-gcc
 Requires:       gnuxc-hurd-headers
-Requires:       gnuxc-libpthread-headers
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -57,6 +62,11 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}-%{snap}
+tar --transform='s,^libpthread-%{lpvers}-%{lpsnap},libpthread,' -xf %{SOURCE1}
+
+# Work around an earlier gnuxc-libpthread-headers requirement.
+mkdir -p libpthread/include_hack/bits && cd libpthread/include_hack/bits
+ln -s ../../sysdeps/{i386/bits/spin-lock,generic/bits/}*.h .
 
 %build
 %global _configure ../configure
@@ -70,9 +80,12 @@ mkdir -p build && pushd build
     --enable-all-warnings \
     --enable-obsolete-rpc \
     --enable-stackguard-randomization \
-    BASH_SHELL=/bin/bash
+    BASH_SHELL=/bin/bash \
+    \
+    --disable-nscd
 popd
 %gnuxc_make -C build %{?_smp_mflags} all \
+    CC="%{gnuxc_gcc} -I$PWD/libpthread/include_hack" \
     install_root=.
 
 %install
@@ -86,11 +99,8 @@ popd
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_infodir}
 
-# This file is garbage and conflicts with libpthread.
-rm -f %{buildroot}%{gnuxc_includedir}/bits/pthreadtypes.h
-
 # Provide a default ld.so link.
-ln -fs ld.so.1 %{buildroot}%{gnuxc_libdir}/ld.so
+ln -s ld.so.1 %{buildroot}%{gnuxc_libdir}/ld.so
 
 %find_lang libc
 while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
@@ -123,6 +133,8 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libSegFault.so
 %{gnuxc_libdir}/ld.so.1
 %{gnuxc_libdir}/ld-%{version}.so
+%{gnuxc_libdir}/libanl.so.1
+%{gnuxc_libdir}/libanl-%{version}.so
 %{gnuxc_libdir}/libBrokenLocale.so.1
 %{gnuxc_libdir}/libBrokenLocale-%{version}.so
 %{gnuxc_libdir}/libc.so.0.3
@@ -155,6 +167,8 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libnss_nis-%{version}.so
 %{gnuxc_libdir}/libnss_nisplus.so.2
 %{gnuxc_libdir}/libnss_nisplus-%{version}.so
+%{gnuxc_libdir}/libpthread.so.0.3
+%{gnuxc_libdir}/libpthread-%{version}.so
 %{gnuxc_libdir}/libresolv.so.2
 %{gnuxc_libdir}/libresolv-%{version}.so
 %{gnuxc_libdir}/librt.so.1
@@ -173,8 +187,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 
 %files devel
 %{gnuxc_includedir}/arpa
-%{gnuxc_includedir}/bits/*.h
-%{gnuxc_includedir}/bits/stab.def
+%{gnuxc_includedir}/bits
 %{gnuxc_includedir}/device/device.h
 %{gnuxc_includedir}/device/device_request.h
 %{gnuxc_includedir}/gnu
@@ -231,6 +244,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_includedir}/netinet
 %{gnuxc_includedir}/nfs
 %{gnuxc_includedir}/protocols
+%{gnuxc_includedir}/pthread
 %{gnuxc_includedir}/rpc
 %{gnuxc_includedir}/rpcsvc
 %{gnuxc_includedir}/sys/*.h
@@ -239,6 +253,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/gcrt[01].o
 %{gnuxc_libdir}/[MS]crt1.o
 %{gnuxc_libdir}/ld.so
+%{gnuxc_libdir}/libanl.so
 %{gnuxc_libdir}/libBrokenLocale.so
 %{gnuxc_libdir}/libbsd-compat.a
 %{gnuxc_libdir}/libc.so
@@ -261,12 +276,14 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libnss_hesiod.so
 %{gnuxc_libdir}/libnss_nis.so
 %{gnuxc_libdir}/libnss_nisplus.so
+%{gnuxc_libdir}/libpthread.so
 %{gnuxc_libdir}/libresolv.so
 %{gnuxc_libdir}/librpcsvc.a
 %{gnuxc_libdir}/librt.so
 %{gnuxc_libdir}/libutil.so
 
 %files static
+%{gnuxc_libdir}/libanl.a
 %{gnuxc_libdir}/libBrokenLocale.a
 %{gnuxc_libdir}/libc.a
 %{gnuxc_libdir}/libcrypt.a
@@ -275,6 +292,8 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libm.a
 %{gnuxc_libdir}/libmachuser.a
 %{gnuxc_libdir}/libnsl.a
+%{gnuxc_libdir}/libpthread.a
+%{gnuxc_libdir}/libpthread2.a
 %{gnuxc_libdir}/libresolv.a
 %{gnuxc_libdir}/librt.a
 %{gnuxc_libdir}/libutil.a

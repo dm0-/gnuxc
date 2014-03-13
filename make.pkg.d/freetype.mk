@@ -1,4 +1,4 @@
-freetype                := freetype-2.5.0.1
+freetype                := freetype-2.5.3
 freetype_url            := http://download.savannah.gnu.org/releases/freetype/$(freetype).tar.bz2
 
 configure-freetype-rule:
@@ -13,5 +13,5 @@ configure-freetype-rule:
 build-freetype-rule:
 	$(MAKE) -C $(freetype) all
 
-install-freetype-rule: $(call installed,bzip2 libpng)
+install-freetype-rule: $(call installed,bzip2 libpng) # harfbuzz
 	$(MAKE) -C $(freetype) install

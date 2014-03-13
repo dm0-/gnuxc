@@ -1,4 +1,4 @@
-grep                    := grep-2.14
+grep                    := grep-2.18
 grep_url                := http://ftp.gnu.org/gnu/grep/$(grep).tar.xz
 
 configure-grep-rule:
@@ -7,7 +7,9 @@ configure-grep-rule:
 		\
 		--disable-silent-rules \
 		--disable-rpath \
-		--enable-threads=posix
+		--enable-gcc-warnings \
+		--enable-threads=posix \
+		--without-included-regex
 
 build-grep-rule:
 	$(MAKE) -C $(grep) all

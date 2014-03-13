@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-xz
-Version:        5.1.2
+Version:        5.1.3
 %global snap    alpha
 Release:        0.1.%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
@@ -11,7 +11,7 @@ Group:          System Environment/Libraries
 URL:            http://tukaani.org/xz/
 Source0:        http://tukaani.org/xz/%{gnuxc_name}-%{version}%{snap}.tar.xz
 
-BuildRequires:  gnuxc-libpthread-devel
+BuildRequires:  gnuxc-glibc-devel
 
 BuildArch:      noarch
 

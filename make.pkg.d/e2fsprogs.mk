@@ -1,8 +1,8 @@
-e2fsprogs               := e2fsprogs-1.42.8
+e2fsprogs               := e2fsprogs-1.42.9
 e2fsprogs_url           := http://prdownloads.sourceforge.net/e2fsprogs/$(e2fsprogs).tar.gz
 
 prepare-e2fsprogs-rule:
-	$(PATCH) -d $(e2fsprogs) -p1 < $(patchdir)/$(e2fsprogs)-add-pkgconfigdir.patch
+	$(PATCH) -d $(e2fsprogs) < $(patchdir)/$(e2fsprogs)-add-pkgconfigdir.patch
 
 configure-e2fsprogs-rule:
 	cd $(e2fsprogs) && ./$(configure) \

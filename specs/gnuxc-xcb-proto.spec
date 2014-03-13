@@ -2,7 +2,7 @@
 %undefine debug_package
 
 Name:           gnuxc-xcb-proto
-Version:        1.8
+Version:        1.10
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

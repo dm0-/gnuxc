@@ -1,4 +1,4 @@
-gcc                     := gcc-4.8.1
+gcc                     := gcc-4.8.2
 gcc_url                 := http://ftp.gnu.org/gnu/gcc/$(gcc)/$(gcc).tar.bz2
 
 ifeq ($(host),$(build))

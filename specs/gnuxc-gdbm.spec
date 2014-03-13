@@ -1,14 +1,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gdbm
-Version:        1.10.90
+Version:        1.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/gdbm/
-Source0:        http://alpha.gnu.org/gnu/gdbm/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://ftp.gnu.org/gnu/gdbm/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
 
@@ -65,7 +65,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libgdbm.so.4
 %{gnuxc_libdir}/libgdbm.so.4.0.0
-%doc AUTHORS ChangeLog COPYING NEWS NOTE-WARNING README* THANKS TODO
+%doc AUTHORS ChangeLog COPYING NEWS NOTE-WARNING README THANKS
 
 %files devel
 %{gnuxc_includedir}/gdbm.h

@@ -1,9 +1,9 @@
-libxcb                  := libxcb-1.9.1
+libxcb                  := libxcb-1.10
 libxcb_url              := http://xcb.freedesktop.org/dist/$(libxcb).tar.bz2
 
 prepare-libxcb-rule:
 # Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(libxcb)/ltmain.sh
+	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(libxcb){,/build-aux}/ltmain.sh
 	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(libxcb)/configure
 	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(libxcb)/configure
 
@@ -14,7 +14,9 @@ configure-libxcb-rule:
 		--enable-damage \
 		--enable-dpms \
 		--enable-dri2 \
+		--enable-dri3 \
 		--enable-glx \
+		--enable-present \
 		--enable-randr \
 		--enable-record \
 		--enable-render \

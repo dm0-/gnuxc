@@ -1,5 +1,5 @@
-inetutils               := inetutils-1.9.1.100
-inetutils_url           := http://alpha.gnu.org/gnu/inetutils/$(inetutils).tar.xz
+inetutils               := inetutils-1.9.2
+inetutils_url           := http://ftp.gnu.org/gnu/inetutils/$(inetutils).tar.xz
 
 prepare-inetutils-rule:
 	$(EDIT) "s,\(LIBNCURSES=\)[^ ]*,\1'`$(NCURSES_CONFIG) --libs`'," $(inetutils)/configure
@@ -16,6 +16,7 @@ configure-inetutils-rule:
 		--enable-servers \
 		--enable-threads=posix \
 		--with-idn \
+		--with-ncurses-include-dir="`$(NCURSES_CONFIG) --includedir`" \
 		--without-included-regex \
 		\
 		--without-pam \

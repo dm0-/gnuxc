@@ -1,20 +1,21 @@
-libpthread              := libpthread-0.3-b9eb71
-libpthread_snap         := b9eb71a78f15f5f889114fb1f5393be74789039d
+libpthread              := libpthread-0.3-3b391d
+libpthread_branch       := master
+libpthread_snap         := 3b391db91f70b2166951413ee1eccc78cd398a44
 libpthread_url          := git://git.sv.gnu.org/hurd/libpthread.git
 
 prepare-libpthread-rule:
-	cd $(libpthread) && $(GIT) revert --no-edit 536420a581f9f822cdef0fc460b5176a840f49e5
-	cd $(libpthread) && $(GIT) merge --no-edit b1a5dd9b39835776796cdee3bd8f08adf6c9e46d
-	$(PATCH) -d $(libpthread) < $(patchdir)/$(libpthread)-new-files.patch
-	$(PATCH) -d $(libpthread) < $(patchdir)/$(libpthread)-fix-new-automake.patch
-	$(RM) $(libpthread)/configure $(libpthread)/configure.in
+# Drop the librt dependency.
+	$(GIT) -C $(libpthread) checkout 69e89a859882e4f675dd5491edc969159d8a4002 Makefile.am
+	$(GIT) -C $(libpthread) commit -m 'Shut up the whiny revert'
+	$(GIT) -C $(libpthread) revert --no-edit 581b822ea36002817f4c22b9ea715b72a0647166 69e89a859882e4f675dd5491edc969159d8a4002
+# Drop the libihash dependency.
+	$(PATCH) -d $(libpthread) < $(patchdir)/$(libpthread)-steal-libihash.patch
+# Port to be built as a glibc module.
+	$(PATCH) -d $(libpthread) < $(patchdir)/$(libpthread)-glibc-preparation.patch
+	$(RM) --recursive $(libpthread)/signal
+	$(RM) $(libpthread)/include/{libc-symbols,set-hooks}.h $(libpthread)/Makefile.am
 
-configure-libpthread-rule:
-	cd $(libpthread) && ./$(configure) \
-		--exec-prefix=
-
-build-libpthread-rule:
-	$(MAKE) -C $(libpthread) all
-
+# This project's build and install phases are handled by glibc.
+configure-libpthread-rule: $(call configured,glibc)
+build-libpthread-rule: $(call built,glibc)
 install-libpthread-rule: $(call installed,glibc)
-	$(MAKE) -C $(libpthread) install

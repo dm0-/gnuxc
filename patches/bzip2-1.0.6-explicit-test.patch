@@ -1,3 +1,5 @@
+Don't try to run test suites during a cross-compilation.
+
 --- Makefile
 +++ Makefile
 @@ -32,7 +32,7 @@ OBJS= blocksort.o  \

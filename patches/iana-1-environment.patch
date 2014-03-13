@@ -1,6 +1,9 @@
+Don't override the environment settings.  Also, don't try to set the local time
+zone on the build system, and don't run ranlib twice.
+
 --- Makefile
 +++ Makefile
-@@ -231,12 +231,12 @@ GCC_DEBUG_FLAGS = -Dlint -g3 -O3 -fno-co
+@@ -223,12 +223,12 @@ GCC_DEBUG_FLAGS = -Dlint -g3 -O3 -fno-co
  # before the first Monday in January when a "%V" format is used and January 1
  # falls on a Friday, Saturday, or Sunday.
  
@@ -15,7 +18,7 @@
  
  zic=		./zic
  ZIC=		$(zic) $(ZFLAGS)
-@@ -294,7 +294,7 @@ GZIPFLAGS=	-9n
+@@ -289,13 +289,13 @@ GZIPFLAGS=	-9n
  
  ###############################################################################
  
@@ -23,37 +26,25 @@
 +cc :=		$(CC)
  CC=		$(cc) -DTZDIR=\"$(TZDIR)\"
  
- TZCSRCS=	zic.c localtime.c asctime.c scheck.c ialloc.c
-@@ -334,13 +334,13 @@ ENCHILADA=	$(COMMON) $(DOCS) $(SOURCES)
+-AR=		ar
++AR ?=		ar
  
- SHELL=		/bin/sh
+ # ':' on typical hosts; 'ranlib' on the ancient hosts that still need ranlib.
+-RANLIB=		:
++RANLIB ?=	:
  
--all:		tzselect zic zdump $(LIBOBJS) $(TABDATA)
-+all:		tzselect zic zdump libtz.a $(TABDATA)
- 
- ALL:		all date
- 
- install:	all $(DATA) $(REDO) $(DESTDIR)$(TZLIB) $(MANS)
+ TZCOBJS=	zic.o localtime.o asctime.o scheck.o ialloc.o
+ TZDOBJS=	zdump.o localtime.o ialloc.o asctime.o
+@@ -345,11 +345,10 @@ install:	all $(DATA) $(REDO) $(MANS)
+ 			$(DESTDIR)$(MANDIR)/man3 $(DESTDIR)$(MANDIR)/man5 \
+ 			$(DESTDIR)$(MANDIR)/man8
  		$(ZIC) -y $(YEARISTYPE) \
 -			-d $(DESTDIR)$(TZDIR) -l $(LOCALTIME) -p $(POSIXRULES)
 +			-d $(DESTDIR)$(TZDIR) -p $(POSIXRULES)
- 		-rm -f $(DESTDIR)$(TZDIR)/iso3166.tab \
- 			$(DESTDIR)$(TZDIR)/zone.tab
- 		cp iso3166.tab zone.tab $(DESTDIR)$(TZDIR)/.
-@@ -420,11 +420,11 @@ posix_right:	posix_only leapseconds
- 
- zones:		$(REDO)
- 
--$(DESTDIR)$(TZLIB): $(LIBOBJS)
--		-mkdir -p $(DESTDIR)$(TOPDIR) $(DESTDIR)$(LIBDIR)
--		ar ru $@ $(LIBOBJS)
--		if [ -x /usr/ucb/ranlib ] || [ -x /usr/bin/ranlib ]; \
--			then ranlib $@ ; fi
-+libtz.a:	$(LIBOBJS)
-+		$(AR) ru $@ $^
-+		$(RANLIB) $@
-+$(DESTDIR)$(TZLIB): libtz.a
-+		install -Dpm 644 $< $@
- 
- date:		$(DATEOBJS)
- 		$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $(DATEOBJS) $(LDLIBS)
+ 		cp -f iso3166.tab zone.tab $(DESTDIR)$(TZDIR)/.
+ 		cp tzselect zic zdump $(DESTDIR)$(ETCDIR)/.
+ 		cp libtz.a $(DESTDIR)$(LIBDIR)/.
+-		$(RANLIB) $(DESTDIR)$(LIBDIR)/libtz.a
+ 		cp -f newctime.3 newtzset.3 $(DESTDIR)$(MANDIR)/man3/.
+ 		cp -f tzfile.5 $(DESTDIR)$(MANDIR)/man5/.
+ 		cp -f tzselect.8 zdump.8 zic.8 $(DESTDIR)$(MANDIR)/man8/.

@@ -29,8 +29,8 @@ installed by the sysroot RPM build dependencies.
 
     sudo yum -y install \
         gnu-free-{mono,sans,serif}-fonts ImageMagick \
-        help2man perl-gettext \
-        gperf groff intltool nasm
+        help2man perl-gettext perl-podlators \
+        freetype-devel gperf groff intltool nasm ncurses-devel
 
 **Install RPM development tools.**  These packages are going to be necessary to
 build and maintain the cross-compiler tools and sysroot.
@@ -46,7 +46,7 @@ KVM, if it's available and running on `x86`.
 
     alias qemu-hurd="$(test -e /dev/kvm -a "$(uname -m)" = x86_64 &&
         echo -n qemu-kvm -enable-kvm -cpu host || echo -n qemu-system-i386
-        echo '' -ctrl-grab -no-reboot -no-quit -nodefaults \
+        echo '' -display sdl -ctrl-grab -no-reboot -no-quit -nodefaults \
             -smp cores=1 -m 1G -vga std \
             -net nic,model=rtl8139 -net user \
             -device virtio-rng-pci )"

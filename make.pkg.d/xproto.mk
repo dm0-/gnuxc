@@ -1,4 +1,4 @@
-xproto                  := xproto-7.0.24
+xproto                  := xproto-7.0.25
 xproto_url              := http://xorg.freedesktop.org/releases/individual/proto/$(xproto).tar.bz2
 
 configure-xproto-rule:

@@ -1,14 +1,9 @@
-bash                    := bash-4.2.45
-bash_branch             := bash-4.2
-bash_url                := http://ftp.gnu.org/gnu/bash/$(bash_branch).tar.gz
+bash                    := bash-4.3
+bash_url                := http://ftp.gnu.org/gnu/bash/$(bash).tar.gz
 
 export BASH = /bin/bash
 
 prepare-bash-rule:
-	for n in {001..045} ; do \
-		$(DOWNLOAD) http://ftp.gnu.org/gnu/bash/$(bash_branch)-patches/bash42-$$n | \
-		$(PATCH) -d $(bash) ; \
-	done
 	$(PATCH) -d $(bash) < $(patchdir)/$(bash)-environment.patch
 
 configure-bash-rule:

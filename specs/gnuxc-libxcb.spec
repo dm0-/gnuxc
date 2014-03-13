@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libxcb
-Version:        1.9.1
+Version:        1.10
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -44,7 +44,7 @@ statically, which is highly discouraged.
 %setup -q -n %{gnuxc_name}-%{version}
 
 # Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
+sed -i -e 's/\(need_relink\)=yes/\1=no/' {,build-aux/}ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
 sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
 
@@ -57,7 +57,9 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
     --enable-damage \
     --enable-dpms \
     --enable-dri2 \
+    --enable-dri3 \
     --enable-glx \
+    --enable-present \
     --enable-randr \
     --enable-record \
     --enable-render \
@@ -100,8 +102,12 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libxcb-dpms.so.0.0.0
 %{gnuxc_libdir}/libxcb-dri2.so.0
 %{gnuxc_libdir}/libxcb-dri2.so.0.0.0
+%{gnuxc_libdir}/libxcb-dri3.so.0
+%{gnuxc_libdir}/libxcb-dri3.so.0.0.0
 %{gnuxc_libdir}/libxcb-glx.so.0
 %{gnuxc_libdir}/libxcb-glx.so.0.0.0
+%{gnuxc_libdir}/libxcb-present.so.0
+%{gnuxc_libdir}/libxcb-present.so.0.0.0
 %{gnuxc_libdir}/libxcb-randr.so.0
 %{gnuxc_libdir}/libxcb-randr.so.0.1.0
 %{gnuxc_libdir}/libxcb-record.so.0
@@ -116,8 +122,8 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libxcb-shape.so.0.0.0
 %{gnuxc_libdir}/libxcb-shm.so.0
 %{gnuxc_libdir}/libxcb-shm.so.0.0.0
-%{gnuxc_libdir}/libxcb-sync.so.0
-%{gnuxc_libdir}/libxcb-sync.so.0.0.0
+%{gnuxc_libdir}/libxcb-sync.so.1
+%{gnuxc_libdir}/libxcb-sync.so.1.0.0
 %{gnuxc_libdir}/libxcb-xevie.so.0
 %{gnuxc_libdir}/libxcb-xevie.so.0.0.0
 %{gnuxc_libdir}/libxcb-xf86dri.so.0
@@ -127,9 +133,9 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libxcb-xinerama.so.0
 %{gnuxc_libdir}/libxcb-xinerama.so.0.0.0
 %{gnuxc_libdir}/libxcb-xinput.so.0
-%{gnuxc_libdir}/libxcb-xinput.so.0.0.0
-%{gnuxc_libdir}/libxcb-xkb.so.0
-%{gnuxc_libdir}/libxcb-xkb.so.0.0.0
+%{gnuxc_libdir}/libxcb-xinput.so.0.1.0
+%{gnuxc_libdir}/libxcb-xkb.so.1
+%{gnuxc_libdir}/libxcb-xkb.so.1.0.0
 %{gnuxc_libdir}/libxcb-xprint.so.0
 %{gnuxc_libdir}/libxcb-xprint.so.0.0.0
 %{gnuxc_libdir}/libxcb-xselinux.so.0
@@ -149,7 +155,9 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libxcb-damage.so
 %{gnuxc_libdir}/libxcb-dpms.so
 %{gnuxc_libdir}/libxcb-dri2.so
+%{gnuxc_libdir}/libxcb-dri3.so
 %{gnuxc_libdir}/libxcb-glx.so
+%{gnuxc_libdir}/libxcb-present.so
 %{gnuxc_libdir}/libxcb-randr.so
 %{gnuxc_libdir}/libxcb-record.so
 %{gnuxc_libdir}/libxcb-render.so
@@ -174,7 +182,9 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/pkgconfig/xcb-damage.pc
 %{gnuxc_libdir}/pkgconfig/xcb-dpms.pc
 %{gnuxc_libdir}/pkgconfig/xcb-dri2.pc
+%{gnuxc_libdir}/pkgconfig/xcb-dri3.pc
 %{gnuxc_libdir}/pkgconfig/xcb-glx.pc
+%{gnuxc_libdir}/pkgconfig/xcb-present.pc
 %{gnuxc_libdir}/pkgconfig/xcb-randr.pc
 %{gnuxc_libdir}/pkgconfig/xcb-record.pc
 %{gnuxc_libdir}/pkgconfig/xcb-render.pc
@@ -201,7 +211,9 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libxcb-damage.a
 %{gnuxc_libdir}/libxcb-dpms.a
 %{gnuxc_libdir}/libxcb-dri2.a
+%{gnuxc_libdir}/libxcb-dri3.a
 %{gnuxc_libdir}/libxcb-glx.a
+%{gnuxc_libdir}/libxcb-present.a
 %{gnuxc_libdir}/libxcb-randr.a
 %{gnuxc_libdir}/libxcb-record.a
 %{gnuxc_libdir}/libxcb-render.a

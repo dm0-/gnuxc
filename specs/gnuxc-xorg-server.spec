@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/xorg/modules/
 
 Name:           gnuxc-xorg-server
-Version:        1.14.3
+Version:        1.15.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,6 +12,8 @@ License:        MIT
 Group:          User Interface/X
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/xserver/%{gnuxc_name}-%{version}.tar.bz2
+
+Patch100:       %{gnuxc_name}-%{version}-optional-xinerama.patch
 
 BuildRequires:  gnuxc-bigreqsproto
 BuildRequires:  gnuxc-damageproto
@@ -25,6 +27,7 @@ BuildRequires:  gnuxc-libXfont-devel
 BuildRequires:  gnuxc-libxkbfile-devel
 BuildRequires:  gnuxc-nettle-devel
 BuildRequires:  gnuxc-pixman-devel
+BuildRequires:  gnuxc-presentproto
 BuildRequires:  gnuxc-randrproto
 BuildRequires:  gnuxc-renderproto
 BuildRequires:  gnuxc-videoproto
@@ -60,11 +63,12 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch100
 echo 'install-sdkHEADERS:' >> Makefile.in
 
 %build
 %gnuxc_configure \
-    --disable-docs \
+    --disable-docs --disable-devel-docs \
     \
     --disable-silent-rules \
     --enable-debug \
@@ -75,6 +79,7 @@ echo 'install-sdkHEADERS:' >> Makefile.in
     --enable-local-transport \
     --enable-mitshm \
     --enable-pciaccess \
+    --enable-present \
     --enable-secure-rpc \
     --enable-static \
     --enable-tcp-transport \
@@ -97,6 +102,7 @@ echo 'install-sdkHEADERS:' >> Makefile.in
     --disable-composite \
     --disable-dri \
     --disable-dri2 \
+    --disable-dri3 \
     --disable-glx \
     --disable-record \
     --disable-screensaver \

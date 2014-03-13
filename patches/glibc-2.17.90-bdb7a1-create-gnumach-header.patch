@@ -1,3 +1,6 @@
+This generates <mach/gnumach.h> and some object files that are required to
+succesfully build libpthread.
+
 --- mach/Makefile
 +++ mach/Makefile
 @@ -111,7 +111,7 @@ ifndef mach-shortcuts

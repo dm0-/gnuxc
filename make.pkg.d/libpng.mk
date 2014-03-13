@@ -1,4 +1,4 @@
-libpng                  := libpng-1.6.6
+libpng                  := libpng-1.6.9
 libpng_url              := http://prdownloads.sourceforge.net/libpng/$(libpng).tar.xz
 
 ifeq ($(host),$(build))

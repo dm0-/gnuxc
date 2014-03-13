@@ -1,11 +1,16 @@
-zile                    := zile-2.4.9
+zile                    := zile-2.4.11
 zile_url                := http://ftp.gnu.org/gnu/zile/$(zile).tar.gz
 
+ifneq ($(host),$(build))
+configure-zile-rule: export HELP2MAN = /bin/true
+endif
 configure-zile-rule:
 	cd $(zile) && ./$(configure) \
+		--disable-rpath \
 		--disable-silent-rules \
 		--enable-acl \
-		--enable-gcc-warnings gl_cv_warn_c__fmudflap=no \
+		--enable-gcc-warnings \
+		--enable-threads=posix \
 		--with-ncursesw \
 		--with-perl='$(PERL)' \
 		--without-included-regex \
@@ -13,11 +18,8 @@ configure-zile-rule:
 
 build-zile-rule:
 	$(MAKE) -C $(zile) all \
-		CPPFLAGS="`$(NCURSESW_CONFIG) --cflags`" \
-		CURSES_LIB="`$(NCURSESW_CONFIG) --libs`" \
-		man_MANS=
+		CPPFLAGS="`$(NCURSESW_CONFIG) --cflags`"
 
 install-zile-rule: $(call installed,acl gc ncurses)
-	$(MAKE) -C $(zile) install \
-		man_MANS=
+	$(MAKE) -C $(zile) install
 	test -e $(DESTDIR)/usr/bin/emacs || $(SYMLINK) zile $(DESTDIR)/usr/bin/emacs

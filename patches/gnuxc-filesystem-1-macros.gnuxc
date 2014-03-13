@@ -26,7 +26,7 @@
 # Build settings
 %gnuxc_name             %(echo -n %{name} | sed s/^gnuxc-//)
 %gnuxc_ldflags          %{__global_ldflags}
-%gnuxc_optflags         %{__global_cflags}
+%gnuxc_optflags         -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -grecord-gcc-switches
 
 %gnuxc_env              \
         CC="%{gnuxc_cc} -march=%{gnuxc_arch} -mtune=generic" ; \
@@ -69,8 +69,10 @@
         gl_cv_func_getopt_gnu=yes \\\
         gl_cv_func_{gettimeofday,tzset}_clobber=no \\\
         gl_cv_func_lstat_dereferences_slashed_symlink=yes \\\
+        gl_cv_func_memchr_works=yes \\\
         gl_cv_func_mkdir_trailing_{dot,slash}_works=yes \\\
         gl_cv_func_mkfifo_works=yes \\\
+        gl_cv_func_perror_works=yes \\\
         gl_cv_func_printf_directive_{a,f,ls}=yes \\\
         gl_cv_func_printf_{enomem,infinite,long_double}=yes \\\
         gl_cv_func_printf_flag_{grouping,leftadjust,zero}=yes \\\
@@ -79,8 +81,12 @@
         gl_cv_func_realpath_works=yes \\\
         gl_cv_func_rename_{dest,link}_works=yes \\\
         gl_cv_func_rmdir_works=yes \\\
+        gl_cv_func_snprintf_{retval,truncation}_c99=yes \\\
         gl_cv_func_stat_{dir,file}_slash=yes \\\
+        gl_cv_func_strerror_0_works=yes \\\
         gl_cv_func_symlink_works=yes \\\
+        gl_cv_func_unsetenv_works=yes \\\
+        gl_cv_func_wcwidth_works=yes \\\
         gl_cv_func_working_acl_get_file=yes \\\
         gl_cv_func_working_mktime=yes \\\
         gl_cv_struct_dirent_d_ino=yes \\\

@@ -1,4 +1,4 @@
-xterm                   := xterm-297
+xterm                   := xterm-303
 xterm_url               := ftp://invisible-island.net/xterm/$(xterm).tgz
 
 configure-xterm-rule: configure := $(configure:--docdir%=)
@@ -6,7 +6,7 @@ configure-xterm-rule: configure := $(configure:--localedir%=)
 configure-xterm-rule:
 	cd $(xterm) && ./$(configure) \
 		--disable-rpath-hack \
-		--enable-{16,88,256}-color \
+		--enable-{16,88,256,ansi}-color \
 		--enable-double-buffer \
 		--enable-exec-xterm \
 		--enable-freetype \

@@ -13,8 +13,8 @@ iana_configuration += zic=zic
 endif
 
 prepare-iana-rule:
-	$(DOWNLOAD) 'http://www.iana.org/time-zones/repository/releases/tzdata2013f.tar.gz' | $(TAR) -zC $(iana) -x
-	$(DOWNLOAD) 'http://www.iana.org/time-zones/repository/releases/tzcode2013f.tar.gz' | $(TAR) -zC $(iana) -x
+	$(DOWNLOAD) 'http://www.iana.org/time-zones/repository/releases/tzdata2014a.tar.gz' | $(TAR) -zC $(iana) -x
+	$(DOWNLOAD) 'http://www.iana.org/time-zones/repository/releases/tzcode2014a.tar.gz' | $(TAR) -zC $(iana) -x
 	$(PATCH) -d $(iana) < $(patchdir)/$(iana)-environment.patch
 
 	$(DOWNLOAD) 'http://www.iana.org/assignments/protocol-numbers/protocol-numbers-1.csv' > $(iana)/protocols.csv

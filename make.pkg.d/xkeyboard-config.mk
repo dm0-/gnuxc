@@ -1,4 +1,4 @@
-xkeyboard-config        := xkeyboard-config-2.9
+xkeyboard-config        := xkeyboard-config-2.11
 xkeyboard-config_url    := http://xorg.freedesktop.org/releases/individual/data/xkeyboard-config/$(xkeyboard-config).tar.bz2
 
 configure-xkeyboard-config-rule:

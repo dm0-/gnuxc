@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gnutls
-Version:        3.2.4
+Version:        3.2.12.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,15 +10,13 @@ Group:          System Environment/Libraries
 URL:            http://www.gnutls.org/
 Source0:        ftp://ftp.gnutls.org/gcrypt/gnutls/v3.2/%{gnuxc_name}-%{version}.tar.xz
 
-Patch100:       %{gnuxc_name}-%{version}-dodge-macro.patch
-
 BuildRequires:  gnuxc-guile-devel
 BuildRequires:  gnuxc-libidn-devel
 BuildRequires:  gnuxc-libtasn1-devel
 BuildRequires:  gnuxc-nettle-devel
 BuildRequires:  gnuxc-zlib-devel
 
-BuildRequires:  guile
+BuildRequires:  guile-devel
 
 BuildArch:      noarch
 
@@ -46,8 +44,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-%patch100 -p0
+%setup -q -n %{gnuxc_name}-3.2.12
 sed -i -e 's/^all:/all: CFLAGS := $(CFLAGS:-m%=)\n&/' guile/src/Makefile.in
 
 # Seriously disable rpaths.
@@ -96,7 +93,7 @@ rm -f \
 %{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so.0
 %{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so.0.0.0
 %{gnuxc_libdir}/libgnutls.so.28
-%{gnuxc_libdir}/libgnutls.so.28.25.0
+%{gnuxc_libdir}/libgnutls.so.28.30.3
 %{gnuxc_libdir}/libgnutls-xssl.so.0
 %{gnuxc_libdir}/libgnutls-xssl.so.0.0.0
 %{gnuxc_libdir}/libgnutlsxx.so.28

@@ -1,6 +1,6 @@
-mig                     := mig-1.3.1.99-b53836
+mig                     := mig-1.4-bb06f6
 mig_branch              := master
-mig_snap                := b53836447df7230cd5665a7ccabd2a6e1a6607e5
+mig_snap                := bb06f65290c2526d214302ba43bb6bc363cd4868
 mig_url                 := git://git.sv.gnu.org/hurd/mig.git
 
 configure-mig-rule:

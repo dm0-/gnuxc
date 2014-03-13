@@ -1,12 +1,14 @@
-gmp                     := gmp-5.1.2
+gmp                     := gmp-5.1.3
 gmp_url                 := http://ftp.gnu.org/gnu/gmp/$(gmp).tar.lz
 
 configure-gmp-rule:
 	cd $(gmp) && ./$(configure) \
 		--exec-prefix= \
 		\
+		--enable-assembly \
 		--enable-assert \
-		--enable-cxx
+		--enable-cxx \
+		--enable-fft
 
 $(gmp)/fac_table.h $(gmp)/fib_table.h $(gmp)/mp_bases.h: $(call configured,gmp)
 	$(MAKE) -C $(@D) $(@F)

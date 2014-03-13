@@ -11,9 +11,9 @@ Group:          Development/Libraries
 URL:            http://xcb.freedesktop.org/
 Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
 
-BuildRequires:  gnuxc-libpthread-devel
+BuildRequires:  gnuxc-glibc-devel
 
-Requires:       gnuxc-libpthread-devel
+Requires:       gnuxc-glibc-devel
 
 BuildArch:      noarch
 

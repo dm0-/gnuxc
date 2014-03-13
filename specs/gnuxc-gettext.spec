@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gettext
-Version:        0.18.3.1
+Version:        0.18.3.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

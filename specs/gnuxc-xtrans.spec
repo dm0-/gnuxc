@@ -2,7 +2,7 @@
 %undefine debug_package
 
 Name:           gnuxc-xtrans
-Version:        1.2.7
+Version:        1.3.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

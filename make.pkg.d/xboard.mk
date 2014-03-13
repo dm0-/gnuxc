@@ -1,4 +1,4 @@
-xboard                  := xboard-4.7.2
+xboard                  := xboard-4.7.3
 xboard_url              := http://ftp.gnu.org/gnu/xboard/$(xboard).tar.gz
 
 prepare-xboard-rule:

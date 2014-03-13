@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-fontconfig
-Version:        2.10.95
+Version:        2.11.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -67,7 +67,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/libfontconfig.la
 %{gnuxc_datadir}/fontconfig
 %{gnuxc_datadir}/xml/fontconfig
 %{gnuxc_libdir}/libfontconfig.so.1
-%{gnuxc_libdir}/libfontconfig.so.1.7.0
+%{gnuxc_libdir}/libfontconfig.so.1.8.0
 %{gnuxc_sysconfdir}/fonts
 %doc AUTHORS ChangeLog COPYING NEWS README
 

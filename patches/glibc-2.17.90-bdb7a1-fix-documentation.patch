@@ -1,3 +1,5 @@
+Correct a documentation syntax error.
+
 --- manual/platform.texi
 +++ manual/platform.texi
 @@ -57,6 +57,7 @@ Provide a hint that performance will pro

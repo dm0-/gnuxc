@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-freetype
-Version:        2.5.0.1
+Version:        2.5.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -45,6 +45,7 @@ statically, which is highly discouraged.
 %build
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
+    --without-harfbuzz \
     \
     --with-bzip2 \
     --with-old-mac-fonts \
@@ -68,17 +69,19 @@ rm -f %{buildroot}%{gnuxc_libdir}/libfreetype.la
 # This functionality should be used from the system package.
 rm -rf %{buildroot}%{gnuxc_datadir}/aclocal
 
+# Skip the documentation.
+rm -rf %{buildroot}%{gnuxc_mandir}
+
 
 %files
 %{gnuxc_libdir}/libfreetype.so.6
-%{gnuxc_libdir}/libfreetype.so.6.10.2
+%{gnuxc_libdir}/libfreetype.so.6.11.2
 %doc ChangeLog* docs README*
 
 %files devel
 %{_bindir}/%{gnuxc_target}-freetype-config
 %{gnuxc_root}/bin/freetype-config
 %{gnuxc_includedir}/freetype2
-%{gnuxc_includedir}/ft2build.h
 %{gnuxc_libdir}/libfreetype.so
 %{gnuxc_libdir}/pkgconfig/freetype2.pc
 

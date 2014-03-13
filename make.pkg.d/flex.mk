@@ -1,4 +1,4 @@
-flex                    := flex-2.5.37
+flex                    := flex-2.5.38
 flex_url                := http://prdownloads.sourceforge.net/flex/$(flex).tar.bz2
 
 configure-flex-rule:

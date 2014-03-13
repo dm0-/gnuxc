@@ -1,7 +1,8 @@
-xorg-server             := xorg-server-1.14.3
+xorg-server             := xorg-server-1.15.0
 xorg-server_url         := http://xorg.freedesktop.org/releases/individual/xserver/$(xorg-server).tar.bz2
 
 prepare-xorg-server-rule:
+	$(PATCH) -d $(xorg-server) < $(patchdir)/$(xorg-server)-optional-xinerama.patch
 	$(ECHO) 'install-sdkHEADERS:' >> $(xorg-server)/Makefile.in
 
 configure-xorg-server-rule:
@@ -15,6 +16,7 @@ configure-xorg-server-rule:
 		--enable-local-transport \
 		--enable-mitshm \
 		--enable-pciaccess \
+		--enable-present \
 		--enable-secure-rpc \
 		--enable-static \
 		--enable-tcp-transport \
@@ -37,6 +39,7 @@ configure-xorg-server-rule:
 		--disable-composite \
 		--disable-dri \
 		--disable-dri2 \
+		--disable-dri3 \
 		--disable-glx \
 		--disable-record \
 		--disable-screensaver \
@@ -47,7 +50,7 @@ configure-xorg-server-rule:
 build-xorg-server-rule:
 	$(MAKE) -C $(xorg-server) all
 
-install-xorg-server-rule: $(call installed,bigreqsproto damageproto fixesproto libpciaccess libxcb libXdmcp libXext libXfont libxkbfile nettle pixman randrproto renderproto videoproto xcmiscproto xf86dgaproto)
+install-xorg-server-rule: $(call installed,bigreqsproto damageproto fixesproto libpciaccess libxcb libXdmcp libXext libXfont libxkbfile nettle pixman presentproto randrproto renderproto videoproto xcmiscproto xf86dgaproto)
 	$(MAKE) -C $(xorg-server) install install-headers
 # lazy work-around for install-setuid requiring root
 	chmod u+s $(DESTDIR)/usr/bin/Xorg

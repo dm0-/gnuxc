@@ -1,3 +1,7 @@
+Rewrite the bzip2 installation directories.  The libraries are used by Hurd, so
+the exec-prefix needs to be the root of the filesystem, but the data still has
+to go under /usr.
+
 --- Makefile
 +++ Makefile
 @@ -67,43 +67,43 @@ test: bzip2

@@ -2,7 +2,7 @@
 %undefine debug_package
 
 Name:           gnuxc-xproto
-Version:        7.0.24
+Version:        7.0.25
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

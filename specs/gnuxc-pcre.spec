@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-pcre
-Version:        8.33
+Version:        8.34
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -83,11 +83,11 @@ rm -rf %{buildroot}%{gnuxc_docdir}/%{gnuxc_name} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpcre.so.1
-%{gnuxc_libdir}/libpcre.so.1.2.1
+%{gnuxc_libdir}/libpcre.so.1.2.2
 %{gnuxc_libdir}/libpcre16.so.0
-%{gnuxc_libdir}/libpcre16.so.0.2.1
+%{gnuxc_libdir}/libpcre16.so.0.2.2
 %{gnuxc_libdir}/libpcre32.so.0
-%{gnuxc_libdir}/libpcre32.so.0.0.1
+%{gnuxc_libdir}/libpcre32.so.0.0.2
 %{gnuxc_libdir}/libpcrecpp.so.0
 %{gnuxc_libdir}/libpcrecpp.so.0.0.0
 %{gnuxc_libdir}/libpcreposix.so.0

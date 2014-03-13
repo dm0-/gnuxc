@@ -1,4 +1,4 @@
-glib                    := glib-2.38.0
+glib                    := glib-2.38.2
 glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.38/$(glib).tar.xz
 
 prepare-glib-rule:

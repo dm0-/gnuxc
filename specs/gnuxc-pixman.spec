@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-pixman
-Version:        0.30.2
+Version:        0.32.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -56,7 +56,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/libpixman-1.la
 
 %files
 %{gnuxc_libdir}/libpixman-1.so.0
-%{gnuxc_libdir}/libpixman-1.so.0.30.2
+%{gnuxc_libdir}/libpixman-1.so.0.32.4
 %doc AUTHORS ChangeLog COPYING NEWS README
 
 %files devel

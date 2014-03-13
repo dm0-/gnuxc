@@ -1,5 +1,5 @@
-binutils                := binutils-2.23.52
-binutils_url            := ftp://sourceware.org/pub/binutils/snapshots/$(binutils).tar.bz2
+binutils                := binutils-2.24
+binutils_url            := http://ftp.gnu.org/gnu/binutils/$(binutils).tar.bz2
 
 ifeq ($(host),$(build))
 export AR      = ar
@@ -20,12 +20,16 @@ prepare-binutils-rule:
 
 configure-binutils-rule:
 	cd $(binutils) && ./$(configure) \
+		--disable-cloog-version-check \
+		--disable-isl-version-check \
 		--disable-rpath \
 		--enable-build-warnings --disable-werror \
 		--enable-gold \
 		--enable-install-libiberty='/usr/include' \
 		--enable-ld=default \
 		--enable-libada \
+		--enable-libquadmath \
+		--enable-libstdcxx \
 		--enable-libssp \
 		--enable-lto \
 		--enable-objc-gc \

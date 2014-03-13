@@ -1,4 +1,4 @@
-automake                := automake-1.14
+automake                := automake-1.14.1
 automake_url            := http://ftp.gnu.org/gnu/automake/$(automake).tar.xz
 
 configure-automake-rule:

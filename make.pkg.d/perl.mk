@@ -1,4 +1,4 @@
-perl                    := perl-5.18.1
+perl                    := perl-5.18.2
 perl_url                := http://www.cpan.org/src/5.0/$(perl).tar.bz2
 
 export PERL = /usr/bin/perl

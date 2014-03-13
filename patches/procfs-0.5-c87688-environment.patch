@@ -1,3 +1,5 @@
+Don't override the environment settings.
+
 --- Makefile
 +++ Makefile
 @@ -3,11 +3,6 @@ OBJS = procfs.o netfs.o procfs_dir.o \

@@ -1,5 +1,5 @@
 pptop                   := pptop-0.1.1
-pptop_snap              := 2013-07-01
+pptop_snap              := 2014-01-01
 pptop_url               := cvs://anonymous@cvs.sv.gnu.org/sources/hurdextras
 
 prepare-pptop-rule:

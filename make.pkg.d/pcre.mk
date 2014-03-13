@@ -1,4 +1,4 @@
-pcre                    := pcre-8.33
+pcre                    := pcre-8.34
 pcre_url                := ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/$(pcre).tar.bz2
 
 configure-pcre-rule:

@@ -1,4 +1,4 @@
-isl                     := isl-0.12.1
+isl                     := isl-0.12.2
 isl_url                 := http://isl.gforge.inria.fr/$(isl).tar.lzma
 
 configure-isl-rule:

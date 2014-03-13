@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-mpc
-Version:        1.0.1
+Version:        1.0.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

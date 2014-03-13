@@ -1,4 +1,4 @@
-cloog                   := cloog-0.18.0
+cloog                   := cloog-0.18.1
 cloog_url               := http://www.bastoul.net/cloog/pages/download/$(cloog).tar.gz
 
 configure-cloog-rule:

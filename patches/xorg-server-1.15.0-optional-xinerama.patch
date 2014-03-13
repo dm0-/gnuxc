@@ -1,0 +1,45 @@
+The xinerama extension hasn't been added to the package collection yet.  It is
+supposed to be optional, but a bit of the xorg-server build process requires it
+anyway.  The following makes it optional again.
+
+--- Makefile.in
++++ Makefile.in
+@@ -567,6 +567,7 @@ ACLOCAL_AMFLAGS = -I m4
+ @RECORD_TRUE@RECORD_DIR = record
+ @DRI3_TRUE@DRI3_DIR = dri3
+ @PRESENT_TRUE@PRESENT_DIR = present
++@XINERAMA_TRUE@XINERAMA_DIR = pseudoramiX
+ SUBDIRS = \
+ 	doc \
+ 	man \
+@@ -577,7 +578,7 @@ SUBDIRS = \
+ 	Xext \
+ 	miext \
+ 	os \
+-	pseudoramiX \
++	$(XINERAMA_DIR) \
+ 	randr \
+ 	render  \
+ 	Xi \
+--- Makefile.am
++++ Makefile.am
+@@ -25,6 +25,10 @@ if PRESENT
+ PRESENT_DIR=present
+ endif
+ 
++if XINERAMA
++XINERAMA_DIR=pseudoramiX
++endif
++
+ SUBDIRS = \
+ 	doc \
+ 	man \
+@@ -35,7 +39,7 @@ SUBDIRS = \
+ 	Xext \
+ 	miext \
+ 	os \
+-	pseudoramiX \
++	$(XINERAMA_DIR) \
+ 	randr \
+ 	render  \
+ 	Xi \

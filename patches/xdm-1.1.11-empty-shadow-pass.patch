@@ -1,3 +1,7 @@
+The following allows empty password authentication in xdm by default.  (We're
+not the pinnacle of security.)  Moreover, it allows the empty password field to
+be located in /etc/shadow instead of just /etc/passwd.
+
 --- greeter/verify.c
 +++ greeter/verify.c
 @@ -468,7 +468,7 @@ Verify (struct display *d, struct greet_

@@ -1,10 +1,13 @@
-coreutils               := coreutils-8.21
+coreutils               := coreutils-8.22
 coreutils_url           := http://ftp.gnu.org/gnu/coreutils/$(coreutils).tar.xz
 
 prepare-coreutils-rule:
 	$(PATCH) -d $(coreutils) < $(patchdir)/$(coreutils)-add-hurd-term.patch
 ifneq ($(host),$(build))
-	$(EDIT) '/run_help2man/{/SHELL/s/^@[^@]*@//;/PERL/s/^@[^@]*@/#/;}' $(coreutils)/Makefile.in
+	$(EDIT) \
+		-e '/run_help2man/{/SHELL/s/^@[^@]*@//;/PERL/s/^@[^@]*@/#/;}' \
+		-e '/^[ \t]*--output=/{h;d};/^[ \t]*--info-page=/G' \
+		$(coreutils)/Makefile.in
 endif
 
 configure-coreutils-rule:
@@ -24,6 +27,7 @@ configure-coreutils-rule:
 		--without-included-regex \
 		\
 		--disable-libcap \
+		--disable-libsmack \
 		--without-selinux
 
 build-coreutils-rule:

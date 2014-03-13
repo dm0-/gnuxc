@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-cloog
-Version:        0.18.0
+Version:        0.18.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -59,6 +59,9 @@ rm -f %{buildroot}%{gnuxc_bindir}/cloog
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libcloog-isl.la
+
+# This functionality should be used from the system package.
+rm -f %{buildroot}%{gnuxc_libdir}/{cloog-isl/cloog-isl,isl/isl}-config.cmake
 
 
 %files

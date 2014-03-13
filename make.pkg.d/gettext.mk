@@ -1,4 +1,4 @@
-gettext                 := gettext-0.18.3.1
+gettext                 := gettext-0.18.3.2
 gettext_url             := http://ftp.gnu.org/gnu/gettext/$(gettext).tar.gz
 
 prepare-gettext-rule:

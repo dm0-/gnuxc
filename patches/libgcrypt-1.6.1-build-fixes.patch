@@ -1,0 +1,37 @@
+Internal libgcrypt function calls are supposed to use underscore-prefixed
+variants of the public symbol names.  This corrects a malloc call.  Also,
+mpicalc was missing a library during linking.
+
+--- src/fips.c
++++ src/fips.c
+@@ -602,7 +602,7 @@ check_binary_integrity (void)
+         err = gpg_error (GPG_ERR_INTERNAL);
+       else
+         {
+-          fname = gcry_malloc (strlen (info.dli_fname) + 1 + 5 + 1 );
++          fname = _gcry_malloc (strlen (info.dli_fname) + 1 + 5 + 1 );
+           if (!fname)
+             err = gpg_error_from_syserror ();
+           else
+--- src/Makefile.am
++++ src/Makefile.am
+@@ -130,7 +130,7 @@ dumpsexp_LDADD = $(arch_gpg_error_libs)
+ 
+ mpicalc_SOURCES = mpicalc.c
+ mpicalc_CFLAGS = $(GPG_ERROR_CFLAGS)
+-mpicalc_LDADD = libgcrypt.la $(GPG_ERROR_LIBS) $(LIBTHREAD)
++mpicalc_LDADD = libgcrypt.la $(GPG_ERROR_LIBS) $(LIBTHREAD) -ldl
+ 
+ hmac256_SOURCES = hmac256.c
+ hmac256_CFLAGS = -DSTANDALONE $(arch_gpg_error_cflags)
+--- src/Makefile.in
++++ src/Makefile.in
+@@ -456,7 +456,7 @@ dumpsexp_CFLAGS = $(arch_gpg_error_cflag
+ dumpsexp_LDADD = $(arch_gpg_error_libs) $(LIBTHREAD)
+ mpicalc_SOURCES = mpicalc.c
+ mpicalc_CFLAGS = $(GPG_ERROR_CFLAGS)
+-mpicalc_LDADD = libgcrypt.la $(GPG_ERROR_LIBS) $(LIBTHREAD)
++mpicalc_LDADD = libgcrypt.la $(GPG_ERROR_LIBS) $(LIBTHREAD) -ldl
+ hmac256_SOURCES = hmac256.c
+ hmac256_CFLAGS = -DSTANDALONE $(arch_gpg_error_cflags)
+ hmac256_LDADD = $(arch_gpg_error_libs) $(LIBTHREAD)

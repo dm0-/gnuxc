@@ -1,15 +1,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gc
-Version:        7.3
-%global snap    alpha2
-Release:        0.1.%{snap}%{?dist}
+Version:        7.4.0
+Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
 Group:          System Environment/Libraries
-URL:            http://www.hpl.hp.com/personal/Hans_Boehm/gc/
-Source0:        http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/%{gnuxc_name}-%{version}%{snap}.tar.gz
+URL:            http://www.hboehm.info/gc/
+Source0:        http://www.hboehm.info/gc/gc_source/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-libatomic_ops-devel
@@ -42,7 +41,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}%{snap}
+%setup -q -n %{gnuxc_name}-%{version}
 
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh

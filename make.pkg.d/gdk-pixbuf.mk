@@ -1,4 +1,4 @@
-gdk-pixbuf              := gdk-pixbuf-2.30.0
+gdk-pixbuf              := gdk-pixbuf-2.30.6
 gdk-pixbuf_url          := http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.30/$(gdk-pixbuf).tar.xz
 
 prepare-gdk-pixbuf-rule:

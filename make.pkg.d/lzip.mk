@@ -1,4 +1,4 @@
-lzip                    := lzip-1.14
+lzip                    := lzip-1.15
 lzip_url                := http://download.savannah.gnu.org/releases/lzip/$(lzip).tar.lz
 
 prepare-lzip-rule:

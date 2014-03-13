@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-glib
-Version:        2.38.0
+Version:        2.38.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,7 +11,6 @@ URL:            http://developer.gnome.org/glib/
 Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.38/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-libffi-devel
-BuildRequires:  gnuxc-libpthread-devel
 BuildRequires:  gnuxc-pcre-devel
 BuildRequires:  gnuxc-zlib-devel
 
@@ -25,7 +24,6 @@ Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-libffi-devel
-Requires:       gnuxc-libpthread-devel
 Requires:       gnuxc-pcre-devel
 Requires:       gnuxc-zlib-devel
 
@@ -99,15 +97,15 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < %{gnuxc_name}20.lang
 %dir %{gnuxc_datadir}/glib-2.0/schemas
 %{gnuxc_libdir}/gio
 %{gnuxc_libdir}/libgio-2.0.so.0
-%{gnuxc_libdir}/libgio-2.0.so.0.3800.0
+%{gnuxc_libdir}/libgio-2.0.so.0.3800.2
 %{gnuxc_libdir}/libglib-2.0.so.0
-%{gnuxc_libdir}/libglib-2.0.so.0.3800.0
+%{gnuxc_libdir}/libglib-2.0.so.0.3800.2
 %{gnuxc_libdir}/libgmodule-2.0.so.0
-%{gnuxc_libdir}/libgmodule-2.0.so.0.3800.0
+%{gnuxc_libdir}/libgmodule-2.0.so.0.3800.2
 %{gnuxc_libdir}/libgobject-2.0.so.0
-%{gnuxc_libdir}/libgobject-2.0.so.0.3800.0
+%{gnuxc_libdir}/libgobject-2.0.so.0.3800.2
 %{gnuxc_libdir}/libgthread-2.0.so.0
-%{gnuxc_libdir}/libgthread-2.0.so.0.3800.0
+%{gnuxc_libdir}/libgthread-2.0.so.0.3800.2
 %doc AUTHORS* ChangeLog* COPYING* NEWS* README
 
 %files devel

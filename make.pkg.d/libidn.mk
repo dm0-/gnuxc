@@ -3,6 +3,9 @@ libidn_url              := http://ftp.gnu.org/gnu/libidn/$(libidn).tar.gz
 
 prepare-libidn-rule:
 # It needs to rebuild doc/Makefile with system aclocal etc.
+	$(TOUCH) -r $(libidn)/configure.ac $(libidn)/configure
+	$(EDIT) /AM_GNU_GETTEXT_VERSION/d $(libidn)/configure.ac
+	$(TOUCH) -r $(libidn)/configure $(libidn)/configure.ac
 	$(RM) $(libidn)/configure
 
 configure-libidn-rule:

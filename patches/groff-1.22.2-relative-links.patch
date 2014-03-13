@@ -1,3 +1,5 @@
+Don't use absolute paths in these symbolic links.
+
 --- contrib/mom/Makefile.sub
 +++ contrib/mom/Makefile.sub
 @@ -162,7 +162,7 @@ install_data: stamp-strip $(NORMALFILES)

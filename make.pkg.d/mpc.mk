@@ -1,4 +1,4 @@
-mpc                     := mpc-1.0.1
+mpc                     := mpc-1.0.2
 mpc_url                 := http://ftp.gnu.org/gnu/mpc/$(mpc).tar.gz
 
 configure-mpc-rule:

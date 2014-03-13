@@ -1,4 +1,4 @@
-xz                      := xz-5.1.2alpha
+xz                      := xz-5.1.3alpha
 xz_url                  := http://tukaani.org/xz/$(xz).tar.xz
 
 configure-xz-rule:

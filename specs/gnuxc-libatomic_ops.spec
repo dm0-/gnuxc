@@ -1,15 +1,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libatomic_ops
-Version:        7.3
-%global snap    alpha2
-Release:        0.1.%{snap}%{?dist}
+Version:        7.4.0
+Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD and MIT and GPLv2+
 Group:          System Environment/Libraries
-URL:            http://www.hpl.hp.com/personal/Hans_Boehm/gc/
-Source0:        http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/%{gnuxc_name}-%{version}%{snap}.tar.gz
+URL:            http://www.hboehm.info/gc/
+Source0:        http://www.hboehm.info/gc/gc_source/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
 
@@ -40,7 +39,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}%{snap}
+%setup -q -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -63,7 +62,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/libatomic_ops
 %{gnuxc_libdir}/libatomic_ops.so.1.0.3
 %{gnuxc_libdir}/libatomic_ops_gpl.so.1
 %{gnuxc_libdir}/libatomic_ops_gpl.so.1.0.3
-%doc AUTHORS ChangeLog COPYING doc/*.txt README TODO
+%doc AUTHORS ChangeLog COPYING doc/*.txt README.md TODO
 
 %files devel
 %{gnuxc_includedir}/atomic_ops

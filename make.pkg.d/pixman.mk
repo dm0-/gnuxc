@@ -1,4 +1,4 @@
-pixman                  := pixman-0.30.2
+pixman                  := pixman-0.32.4
 pixman_url              := http://xorg.freedesktop.org/releases/individual/lib/$(pixman).tar.bz2
 
 configure-pixman-rule:

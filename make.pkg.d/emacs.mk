@@ -18,6 +18,7 @@ configure-emacs-rule:
 		--with-makeinfo \
 		--with-pkg-config-prog=$(firstword $(PKG_CONFIG)) \
 		--with-png \
+		--with-rsvg \
 		--with-wide-int \
 		--with-x \
 		--with-x-toolkit=athena --with-toolkit-scroll-bars \
@@ -32,7 +33,6 @@ configure-emacs-rule:
 		--without-selinux \
 		--without-sound
 #		--enable-link-time-optimization # lto-wrapper dies on native
-#		--with-rsvg # locks up, need to debug
 
 build-emacs-rule:
 	$(MAKE) -C $(emacs) all

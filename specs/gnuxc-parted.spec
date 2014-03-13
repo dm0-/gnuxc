@@ -54,7 +54,8 @@ statically, which is highly discouraged.
     --enable-gcc-warnings gl_cv_warn__Werror=no \
     --enable-threads=posix \
     --with-readline \
-    --without-included-regex
+    --without-included-regex \
+    CPPFLAGS=-DCPPFunction=rl_completion_func_t
 %gnuxc_make %{?_smp_mflags} all
 
 %install

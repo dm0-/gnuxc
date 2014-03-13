@@ -1,8 +1,8 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gnumach
-Version:        1.3.99
-%global snap    2166b4
+Version:        1.4
+%global snap    7b2451
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        GNU Mach kernel
 
@@ -48,6 +48,7 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 
 %files headers
 %{gnuxc_includedir}/mach
+%{gnuxc_includedir}/mach_debug
 %{gnuxc_includedir}/device
 %doc =announce-* AUTHORS ChangeLog COPYING DEVELOPMENT NEWS README
 

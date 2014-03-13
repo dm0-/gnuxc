@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-e2fsprogs
-Version:        1.42.8
+Version:        1.42.9
 Release:        1%{?dist}
 Summary:        Utilities for managing ext2, ext3, and ext4 filesystems
 
@@ -10,7 +10,7 @@ Group:          System Environment/Base
 URL:            http://e2fsprogs.sourceforge.net/
 Source0:        http://prdownloads.sourceforge.net/e2fsprogs/%{gnuxc_name}-%{version}.tar.gz
 
-BuildRequires:  gnuxc-libpthread-devel
+BuildRequires:  gnuxc-glibc-devel
 
 BuildArch:      noarch
 

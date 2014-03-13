@@ -1,4 +1,4 @@
-gdb                     := gdb-7.6.1
+gdb                     := gdb-7.7
 gdb_url                 := http://ftp.gnu.org/gnu/gdb/$(gdb).tar.bz2
 
 prepare-gdb-rule:
@@ -6,6 +6,8 @@ prepare-gdb-rule:
 
 configure-gdb-rule:
 	cd $(gdb) && ./$(configure) \
+		--disable-cloog-version-check \
+		--disable-isl-version-check \
 		--disable-rpath \
 		--disable-sim \
 		--enable-{,gdb-}build-warnings --disable-werror \

@@ -1,3 +1,5 @@
+These redefine standard functions, which makes the compiler angry.
+
 --- src/filetypes.h
 +++ src/filetypes.h
 @@ -81,5 +81,3 @@

@@ -1,6 +1,8 @@
+Don't override the environment settings.
+
 --- configure
 +++ configure
-@@ -22,10 +22,6 @@ bindir='$(exec_prefix)/bin'
+@@ -20,10 +20,6 @@ bindir='$(exec_prefix)/bin'
  datarootdir='$(prefix)/share'
  infodir='$(datarootdir)/info'
  mandir='$(datarootdir)/man'
@@ -10,4 +12,4 @@
 -LDFLAGS=
  
  # checking whether we are using GNU C++.
- if [ ! -x /bin/g++ ] &&
+ ${CXX} --version > /dev/null 2>&1
