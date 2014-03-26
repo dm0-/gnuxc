@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-guile
-Version:        2.0.9
+Version:        2.0.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -93,7 +93,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_datadir}/guile
 %{gnuxc_libdir}/guile
 %{gnuxc_libdir}/libguile-2.0.so.22
-%{gnuxc_libdir}/libguile-2.0.so.22.7.0
+%{gnuxc_libdir}/libguile-2.0.so.22.7.2
 %{gnuxc_libdir}/libguilereadline-v-18.so.18
 %{gnuxc_libdir}/libguilereadline-v-18.so.18.0.0
 %doc AUTHORS ChangeLog* COPYING* HACKING LICENSE NEWS README THANKS
@@ -103,6 +103,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_root}/bin/guile-config
 %{gnuxc_includedir}/guile
 %{gnuxc_libdir}/libguile-2.0.so
+%{gnuxc_libdir}/libguile-2.0.so.22.7.2-gdb.scm
 %{gnuxc_libdir}/libguilereadline-v-18.so
 %{gnuxc_libdir}/pkgconfig/guile-2.0.pc
 

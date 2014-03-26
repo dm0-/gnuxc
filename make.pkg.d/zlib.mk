@@ -2,6 +2,7 @@ zlib                    := zlib-1.2.8
 zlib_url                := http://zlib.net/$(zlib).tar.gz
 
 prepare-zlib-rule:
+	$(PATCH) -d $(zlib) < $(patchdir)/$(zlib)-add-soname.patch
 	$(EDIT) 's/ -L.{sharedlibdir}//g' $(zlib)/zlib.pc.in
 
 ifneq ($(host),$(build))

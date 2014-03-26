@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/pango/
 
 Name:           gnuxc-pango
-Version:        1.36.2
+Version:        1.36.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -82,13 +82,13 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpango-1.0.so.0
-%{gnuxc_libdir}/libpango-1.0.so.0.3600.2
+%{gnuxc_libdir}/libpango-1.0.so.0.3600.3
 %{gnuxc_libdir}/libpangocairo-1.0.so.0
-%{gnuxc_libdir}/libpangocairo-1.0.so.0.3600.2
+%{gnuxc_libdir}/libpangocairo-1.0.so.0.3600.3
 %{gnuxc_libdir}/libpangoft2-1.0.so.0
-%{gnuxc_libdir}/libpangoft2-1.0.so.0.3600.2
+%{gnuxc_libdir}/libpangoft2-1.0.so.0.3600.3
 %{gnuxc_libdir}/libpangoxft-1.0.so.0
-%{gnuxc_libdir}/libpangoxft-1.0.so.0.3600.2
+%{gnuxc_libdir}/libpangoxft-1.0.so.0.3600.3
 %dir %{gnuxc_libdir}/pango
 %dir %{gnuxc_libdir}/pango/1.8.0
 %dir %{gnuxc_libdir}/pango/1.8.0/modules

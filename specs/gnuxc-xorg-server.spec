@@ -13,7 +13,7 @@ Group:          User Interface/X
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/xserver/%{gnuxc_name}-%{version}.tar.bz2
 
-Patch100:       %{gnuxc_name}-%{version}-optional-xinerama.patch
+Patch101:       %{gnuxc_name}-%{version}-optional-xinerama.patch
 
 BuildRequires:  gnuxc-bigreqsproto
 BuildRequires:  gnuxc-damageproto
@@ -63,7 +63,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch100
+%patch101
 echo 'install-sdkHEADERS:' >> Makefile.in
 
 %build

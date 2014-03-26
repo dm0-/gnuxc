@@ -1,4 +1,4 @@
-guile                   := guile-2.0.9
+guile                   := guile-2.0.11
 guile_url               := http://ftp.gnu.org/gnu/guile/$(guile).tar.xz
 
 ifeq ($(host),$(build))

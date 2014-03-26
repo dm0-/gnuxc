@@ -1,4 +1,4 @@
-librsvg                 := librsvg-2.40.1
+librsvg                 := librsvg-2.40.2
 librsvg_url             := http://ftp.gnome.org/pub/gnome/sources/librsvg/2.40/$(librsvg).tar.xz
 
 prepare-librsvg-rule:

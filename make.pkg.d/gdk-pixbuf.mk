@@ -1,4 +1,4 @@
-gdk-pixbuf              := gdk-pixbuf-2.30.6
+gdk-pixbuf              := gdk-pixbuf-2.30.7
 gdk-pixbuf_url          := http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.30/$(gdk-pixbuf).tar.xz
 
 prepare-gdk-pixbuf-rule:
@@ -18,15 +18,15 @@ configure-gdk-pixbuf-rule:
 		--enable-static \
 		--with-libjpeg \
 		--with-libpng \
+		--with-libtiff \
 		--with-x11 \
 		\
 		--disable-glibtest \
 		--disable-introspection \
-		--without-libjasper \
-		--without-libtiff
+		--without-libjasper
 
 build-gdk-pixbuf-rule:
 	$(MAKE) -C $(gdk-pixbuf) all
 
-install-gdk-pixbuf-rule: $(call installed,glib libjpeg-turbo libpng libX11)
+install-gdk-pixbuf-rule: $(call installed,glib libjpeg-turbo libpng libX11 tiff)
 	$(MAKE) -C $(gdk-pixbuf) install

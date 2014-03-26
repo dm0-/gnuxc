@@ -1,4 +1,4 @@
-help2man                := help2man-1.44.1
+help2man                := help2man-1.45.1
 help2man_url            := http://ftp.gnu.org/gnu/help2man/$(help2man).tar.xz
 
 prepare-help2man-rule:

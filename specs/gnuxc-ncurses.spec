@@ -2,7 +2,7 @@
 
 Name:           gnuxc-ncurses
 Version:        5.9
-%global snap    20140308
+%global snap    20140322
 Release:        1.19700101snap%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

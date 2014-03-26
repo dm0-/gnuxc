@@ -20,7 +20,7 @@ Group:          Development/Languages
 URL:            http://www.gnu.org/software/gcc/
 Source0:        http://ftp.gnu.org/gnu/gcc/gcc-%{version}/%{gnuxc_name}-%{version}.tar.bz2
 
-Patch100:       %{gnuxc_name}-%{version}-no-add-needed.patch
+Patch101:       %{gnuxc_name}-%{version}-no-add-needed.patch
 
 BuildRequires:  gnuxc-binutils
 %if 0%{gnuxc_has_env}
@@ -258,7 +258,7 @@ run C++ dynamically linked programs for pure GNU systems.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch100
+%patch101
 
 # Provide non-conflicting internationalized messages.
 sed -i -e 's/"gcc"/"gnuxc-gcc"/' gcc/intl.c

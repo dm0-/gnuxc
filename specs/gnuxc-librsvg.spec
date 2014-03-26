@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-librsvg
-Version:        2.40.1
+Version:        2.40.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -82,7 +82,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.so
 %{gnuxc_libdir}/librsvg-2.so.2
-%{gnuxc_libdir}/librsvg-2.so.2.40.1
+%{gnuxc_libdir}/librsvg-2.so.2.40.2
 %doc AUTHORS ChangeLog COPYING* NEWS README TODO
 
 %files devel

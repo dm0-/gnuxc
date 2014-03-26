@@ -1,5 +1,5 @@
-git                     := git-1.9.0
-git_url                 := http://git-core.googlecode.com/files/$(git).tar.gz
+git                     := git-1.9.1
+git_url                 := http://www.kernel.org/pub/software/scm/git/$(git).tar.xz
 
 git_configuration = V=1 \
 	prefix=/usr \
@@ -32,15 +32,14 @@ endif
 
 prepare-git-rule:
 # Bypass asciidoc requirement for man pages.
-	$(DOWNLOAD) $(git_url:$(git).tar.gz=$(git:git-%=git-manpages-%).tar.gz) | $(TAR) -zC $(git)/Documentation -x
+	$(DOWNLOAD) $(git_url:$(git).tar.xz=$(git:git-%=git-manpages-%).tar.xz) | $(TAR) -JC $(git)/Documentation -x
 
 build-git-rule:
 	$(MAKE) -C $(git) all $(git_configuration)
 
-install-git-rule: $(call installed,less pcre zlib)
+install-git-rule: $(call installed,less pcre zlib) # perl-Error perl-TermReadKey
 	$(MAKE) -C $(git) install $(git_configuration)
 # Bypass asciidoc requirement for man pages.
 	$(INSTALL) -Dpm 644 $(git)/Documentation/man1/* $(DESTDIR)/usr/share/man/man1/
 	$(INSTALL) -Dpm 644 $(git)/Documentation/man5/* $(DESTDIR)/usr/share/man/man5/
 	$(INSTALL) -Dpm 644 $(git)/Documentation/man7/* $(DESTDIR)/usr/share/man/man7/
-# perl-Error perl-TermReadKey

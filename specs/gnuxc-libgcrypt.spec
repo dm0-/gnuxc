@@ -10,7 +10,7 @@ Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/libgcrypt/
 Source0:        ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{gnuxc_name}-%{version}.tar.bz2
 
-Patch100:       %{gnuxc_name}-%{version}-build-fixes.patch
+Patch101:       %{gnuxc_name}-%{version}-build-fixes.patch
 
 BuildRequires:  gnuxc-libgpg-error-devel
 
@@ -42,7 +42,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch100
+%patch101
 
 %build
 %gnuxc_configure \

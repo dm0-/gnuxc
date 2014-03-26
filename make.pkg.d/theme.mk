@@ -34,18 +34,16 @@ install-theme-rule: $(call installed,grub)
 	$(INSTALL) -Dpm 644 $(theme)/theme.cfg $(DESTDIR)/usr/share/grub/themes/gnu/theme.cfg
 	$(INSTALL) -Dpm 644 $(theme)/banner.png24 $(DESTDIR)/usr/share/grub/themes/gnu/banner.png
 
-	$(INSTALL) -Dpm 644 $(theme)/1bp.png24 $(DESTDIR)/usr/share/grub/themes/gnu/1bp.png
-	$(SYMLINK) 1bp.png $(DESTDIR)/usr/share/grub/themes/gnu/1bp_e.png
-	$(SYMLINK) 1bp.png $(DESTDIR)/usr/share/grub/themes/gnu/1bp_ne.png
-	$(SYMLINK) 1bp.png $(DESTDIR)/usr/share/grub/themes/gnu/1bp_n.png
-	$(SYMLINK) 1bp.png $(DESTDIR)/usr/share/grub/themes/gnu/1bp_nw.png
-	$(SYMLINK) 1bp.png $(DESTDIR)/usr/share/grub/themes/gnu/1bp_se.png
-	$(SYMLINK) 1bp.png $(DESTDIR)/usr/share/grub/themes/gnu/1bp_s.png
-	$(SYMLINK) 1bp.png $(DESTDIR)/usr/share/grub/themes/gnu/1bp_sw.png
-	$(SYMLINK) 1bp.png $(DESTDIR)/usr/share/grub/themes/gnu/1bp_w.png
+	$(INSTALL) -Dpm 644 $(theme)/1bp.png24 $(DESTDIR)/usr/share/grub/themes/gnu/1bp_e.png
+	$(LINK) $(DESTDIR)/usr/share/grub/themes/gnu/1bp_{e,ne}.png
+	$(LINK) $(DESTDIR)/usr/share/grub/themes/gnu/1bp_{e,n}.png
+	$(LINK) $(DESTDIR)/usr/share/grub/themes/gnu/1bp_{e,nw}.png
+	$(LINK) $(DESTDIR)/usr/share/grub/themes/gnu/1bp_{e,se}.png
+	$(LINK) $(DESTDIR)/usr/share/grub/themes/gnu/1bp_{e,s}.png
+	$(LINK) $(DESTDIR)/usr/share/grub/themes/gnu/1bp_{e,sw}.png
+	$(LINK) $(DESTDIR)/usr/share/grub/themes/gnu/1bp_{e,w}.png
 
-	$(INSTALL) -Dpm 644 $(theme)/1mp.png24 $(DESTDIR)/usr/share/grub/themes/gnu/1mp.png
-	$(SYMLINK) 1mp.png $(DESTDIR)/usr/share/grub/themes/gnu/1mp_c.png
+	$(INSTALL) -Dpm 644 $(theme)/1mp.png24 $(DESTDIR)/usr/share/grub/themes/gnu/1mp_c.png
 
 	$(INSTALL) -Dpm 644 $(theme)/FreeMono-14.pf2 $(DESTDIR)/usr/share/grub/themes/gnu/FreeMono-14.pf2
 	$(INSTALL) -Dpm 644 $(theme)/FreeSans-12.pf2 $(DESTDIR)/usr/share/grub/themes/gnu/FreeSans-12.pf2

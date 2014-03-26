@@ -9,7 +9,7 @@
 
 Name:           gnuxc-hurd
 Version:        0.5
-%global snap    cc9757
+%global snap    7b0541
 Release:        1.%{gnuxc_has_env}.19700101git%{snap}%{?dist}
 Summary:        GNU Hurd kernel
 
@@ -92,6 +92,9 @@ which is highly discouraged.
 %if 0%{gnuxc_has_env} < 2
 %if 0%{gnuxc_has_env} == 0
     CC='%{gnuxc_cc} -nostdlib' \
+%else
+    --with-libbz2 \
+    --with-libz \
 %endif
     --without-libdaemon \
     --without-parted

@@ -72,7 +72,7 @@ hierarchy and place links to the cross-compiler files in their standard paths.
     ln -fs "${SOURCE_DIR:-$PWD}"/patches/* "$(rpm -E %_sourcedir)/"
 
 **Create source archives for Hurd projects.**  The RPMs are built from project
-tar files, but Hurd hasn't had a release in the last decade.  This will prepare
+tar files, but the Hurd projects are taken from a git clone.  This will prepare
 distribution-ready archives from a specific commit for each Hurd project.
 
     gmake {clean,dist}-{glibc,gnumach,hurd,libpthread,mig}

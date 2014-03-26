@@ -2,7 +2,7 @@
 
 Name:           gnuxc-gnumach
 Version:        1.4
-%global snap    7b2451
+%global snap    e33a07
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        GNU Mach kernel
 
@@ -10,6 +10,9 @@ License:        CMU and GPLv2
 Group:          System Environment/Kernel
 URL:            http://www.gnu.org/software/gnumach/
 Source0:        %{gnuxc_name}-%{version}-%{snap}.tar.xz
+
+# Ship customizations in the SRPM, but they are already applied in the archive.
+Patch101:       %{gnuxc_name}-%{version}-%{snap}-install-debug-headers.patch
 
 BuildRequires:  gnuxc-gcc
 

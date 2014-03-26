@@ -1,13 +1,12 @@
-hurd                    := hurd-0.5-cc9757
+hurd                    := hurd-0.5-7b0541
 hurd_branch             := master
-hurd_snap               := cc9757407fa124998613329ce73c5bba98d5cf21
+hurd_snap               := 7b054153eccbf0843fbbfb131855f56ea5c695e0
 hurd_url                := git://git.sv.gnu.org/hurd/hurd.git
 
 prepare-hurd-rule:
 	$(PATCH) -d $(hurd) < $(patchdir)/$(hurd)-allow-user-installs.patch
 	$(PATCH) -d $(hurd) < $(patchdir)/$(hurd)-console-nocaps.patch
 	$(PATCH) -d $(hurd) < $(patchdir)/$(hurd)-disable-services.patch
-	$(EDIT) '/^AC_CHECK_LIB/s/AC_MSG_ERROR/AC_MSG_WARN/g' $(hurd)/configure.ac
 
 configure-hurd-rule:
 	cd $(hurd) && ./$(configure) \
@@ -17,6 +16,8 @@ configure-hurd-rule:
 		--libexecdir='$${prefix}/usr/libexec' \
 		--localstatedir='$${prefix}/var' \
 		--sysconfdir='$${prefix}/etc' \
+		--with-libbz2 \
+		--with-libz \
 		\
 		--without-libdaemon
 

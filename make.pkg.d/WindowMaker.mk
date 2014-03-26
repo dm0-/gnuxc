@@ -26,13 +26,13 @@ configure-WindowMaker-rule:
 		--enable-png \
 		--enable-shape \
 		--enable-shm \
+		--enable-tiff \
 		--enable-usermenu \
 		--enable-xpm \
 		--with-x \
 		\
 		--disable-boehm-gc \
 		--disable-gif \
-		--disable-tiff \
 		--disable-xinerama \
 		--disable-xrandr
 # GC assertion error in specific.c
@@ -43,5 +43,5 @@ build-WindowMaker-rule:
 		CFLAGS='$(CFLAGS)' \
 		LDFLAGS='$(LDFLAGS)'
 
-install-WindowMaker-rule: $(call installed,gc libjpeg-turbo libXft libXmu libXpm xorg-server)
+install-WindowMaker-rule: $(call installed,gc libjpeg-turbo libXft libXmu libXpm tiff xorg-server)
 	$(MAKE) -C $(WindowMaker) install

@@ -19,6 +19,7 @@ configure-emacs-rule:
 		--with-pkg-config-prog=$(firstword $(PKG_CONFIG)) \
 		--with-png \
 		--with-rsvg \
+		--with-tiff \
 		--with-wide-int \
 		--with-x \
 		--with-x-toolkit=athena --with-toolkit-scroll-bars \
@@ -37,6 +38,6 @@ configure-emacs-rule:
 build-emacs-rule:
 	$(MAKE) -C $(emacs) all
 
-install-emacs-rule: $(call installed,gnutls libjpeg-turbo libpng librsvg libXaw)
+install-emacs-rule: $(call installed,gnutls libjpeg-turbo libpng librsvg libXaw tiff)
 	$(MAKE) -C $(emacs) install
 endif

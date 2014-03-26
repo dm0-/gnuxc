@@ -10,6 +10,8 @@ Group:          System Environment/Libraries
 URL:            http://zlib.net/
 Source0:        http://zlib.net/%{gnuxc_name}-%{version}.tar.gz
 
+Patch101:       %{gnuxc_name}-%{version}-add-soname.patch
+
 BuildRequires:  gnuxc-glibc-devel
 
 BuildArch:      noarch
@@ -40,6 +42,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch101
 
 # This variable is redundant and problematic in the sysroot.
 sed -i -e 's/ -L.{sharedlibdir}//g' zlib.pc.in

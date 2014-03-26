@@ -105,6 +105,8 @@ build_pkg cairo
 build_pkg harfbuzz
 build_pkg pango
 build_pkg libjpeg-turbo
+build_pkg jbigkit
+build_pkg tiff
 build_pkg gdk-pixbuf
 build_pkg librsvg
 

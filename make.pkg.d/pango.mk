@@ -1,4 +1,4 @@
-pango                   := pango-1.36.2
+pango                   := pango-1.36.3
 pango_url               := http://ftp.gnome.org/pub/gnome/sources/pango/1.36/$(pango).tar.xz
 
 prepare-pango-rule:

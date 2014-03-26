@@ -1,4 +1,4 @@
-parallel                := parallel-20140222
+parallel                := parallel-20140322
 parallel_url            := http://ftp.gnu.org/gnu/parallel/$(parallel).tar.bz2
 
 configure-parallel-rule:

@@ -1,0 +1,80 @@
+Don't override the environment settings.
+
+--- Makefile
++++ Makefile
+@@ -1,25 +1,16 @@
+ # Unix makefile for JBIG-KIT
+ # $Id: Makefile 1303 2008-08-30 20:16:20Z mgk25 $
+ 
+-# Select an ANSI/ISO C compiler here, GNU gcc is recommended
+-CC = gcc
+-
+-# Options for the compiler: A high optimization level is suggested
+-CCFLAGS = -O2 -W
+-#CCFLAGS = -O -g -W -Wall -ansi -pedantic #-DDEBUG  # developer only
+-
+-CFLAGS = $(CCFLAGS) -I../libjbig
+-
+ VERSION=2.0
+ 
+ all: lib pbm
+ 	@echo "Enter 'make test' in order to start some automatic tests."
+ 
+ lib:
+-	(cd libjbig;  make "CC=$(CC)" "CFLAGS=$(CFLAGS)")
++	make -C libjbig "VERSION=$(VERSION)"
+ 
+ pbm: lib
+-	(cd pbmtools; make "CC=$(CC)" "CFLAGS=$(CFLAGS)")
++	make -C pbmtools
+ 
+ test: lib pbm
+ 	(cd libjbig;  make "CC=$(CC)" "CFLAGS=$(CFLAGS)" test)
+--- libjbig/Makefile
++++ libjbig/Makefile
+@@ -1,12 +1,6 @@
+ # Unix makefile for the JBIG-KIT library
+ # $Id: Makefile 1285 2008-08-18 13:36:45Z mgk25 $
+ 
+-# Select an ANSI/ISO C compiler here, GNU gcc is recommended
+-CC = gcc
+-
+-# Options for the compiler: A high optimization level is suggested
+-CFLAGS = -g -O -Wall -ansi -pedantic # --coverage
+-
+ all: libjbig.a tstcodec tstcodec85
+ 
+ tstcodec: tstcodec.o jbig.o jbig_ar.o
+@@ -17,13 +11,13 @@ tstcodec85: tstcodec85.o jbig85.o jbig_a
+ 
+ libjbig.a: jbig.o jbig_ar.o
+ 	rm -f libjbig.a
+-	ar rc libjbig.a jbig.o jbig_ar.o
+-	-ranlib libjbig.a
++	$(AR) rc libjbig.a jbig.o jbig_ar.o
++	$(RANLIB) libjbig.a
+ 
+ libjbig85.a: jbig85.o jbig_ar.o
+ 	rm -f libjbig85.a
+-	ar rc libjbig85.a jbig85.o jbig_ar.o
+-	-ranlib libjbig85.a
++	$(AR) rc libjbig85.a jbig85.o jbig_ar.o
++	$(RANLIB) libjbig85.a
+ 
+ jbig.o: jbig.c jbig.h jbig_ar.h
+ jbig85.o: jbig85.c jbig85.h jbig_ar.h
+--- pbmtools/Makefile
++++ pbmtools/Makefile
+@@ -1,11 +1,7 @@
+ # Unix makefile for the JBIG-KIT PBM tools
+ # $Id: Makefile 1293 2008-08-25 22:26:39Z mgk25 $
+ 
+-# Select an ANSI/ISO C compiler here, e.g. GNU gcc is recommended
+-CC = gcc
+-
+-# Options for the compiler
+-CFLAGS = -g -Wall -ansi -pedantic -I../libjbig # --coverage
++CPPFLAGS = -I../libjbig
+ 
+ .SUFFIXES: .1 .5 .txt $(SUFFIXES)
+ 

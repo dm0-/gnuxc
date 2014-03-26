@@ -10,7 +10,7 @@ Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/readline/
 Source0:        http://ftp.gnu.org/gnu/readline/%{gnuxc_name}-%{version}.tar.gz
 
-Patch100:       %{gnuxc_name}-%{version}-shlib.patch
+Patch101:       %{gnuxc_name}-%{version}-shlib.patch
 
 BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-ncurses-devel
@@ -42,7 +42,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch100
+%patch101
 
 %build
 %gnuxc_configure \
