@@ -1,18 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-isl
-Version:        0.12.2
+Version:        0.14
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
 Group:          Development/Libraries
 URL:            http://isl.gforge.inria.fr/
-Source0:        http://isl.gforge.inria.fr/%{gnuxc_name}-%{version}.tar.lzma
+Source0:        http://isl.gforge.inria.fr/%{gnuxc_name}-%{version}.tar.xz
 
-BuildRequires:  gnuxc-piplib-devel
-
-BuildArch:      noarch
+BuildRequires:  gnuxc-gmp-devel
 
 %description
 %{summary}.
@@ -20,7 +18,7 @@ BuildArch:      noarch
 %package devel
 Summary:        Development files for %{name}
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-piplib-devel
+Requires:       gnuxc-gmp-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -45,7 +43,7 @@ statically, which is highly discouraged.
     --enable-portable-binary \
     --with-gcc-arch=%{gnuxc_arch} \
     --with-gmp=system \
-    --with-piplib=system
+    --with-int=gmp
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -56,16 +54,16 @@ rm -f %{buildroot}%{gnuxc_libdir}/libisl.la
 
 
 %files
-%{gnuxc_libdir}/libisl.so.10
-%{gnuxc_libdir}/libisl.so.10.2.2
+%{gnuxc_libdir}/libisl.so.13
+%{gnuxc_libdir}/libisl.so.13.1.0
 %doc doc/manual.pdf AUTHORS ChangeLog LICENSE README
 
 %files devel
 %{gnuxc_includedir}/isl
 %{gnuxc_libdir}/libisl.so
-%{gnuxc_libdir}/libisl.so.10.2.2-gdb.py
-%{gnuxc_libdir}/libisl.so.10.2.2-gdb.pyc
-%{gnuxc_libdir}/libisl.so.10.2.2-gdb.pyo
+%{gnuxc_libdir}/libisl.so.13.1.0-gdb.py
+%{gnuxc_libdir}/libisl.so.13.1.0-gdb.pyc
+%{gnuxc_libdir}/libisl.so.13.1.0-gdb.pyo
 %{gnuxc_libdir}/pkgconfig/isl.pc
 
 %files static

@@ -1,4 +1,4 @@
-libICE                  := libICE-1.0.8
+libICE                  := libICE-1.0.9
 libICE_url              := http://xorg.freedesktop.org/releases/individual/lib/$(libICE).tar.bz2
 
 configure-libICE-rule:

@@ -1,0 +1,68 @@
+For our Hurd install, assume the GRUB directory is always on the root device.
+Also, provide both simple and advanced menus in auto-generated configurations.
+
+--- grub-core/osdep/unix/relpath.c
++++ grub-core/osdep/unix/relpath.c
+@@ -93,6 +93,7 @@
+       if (stat (buf, &st) < 0)
+ 	grub_util_error (_("cannot stat `%s': %s"), buf, strerror (errno));
+ 
++#ifndef __GNU__
+       /* buf is another filesystem; we found it.  */
+       if (st.st_dev != num)
+ 	{
+@@ -112,6 +113,7 @@
+ 	  else
+ 	    break;
+ 	}
++#endif
+ 
+       offset = p - buf;
+       /* offset == 1 means root directory.  */
+--- util/grub.d/10_hurd.in
++++ util/grub.d/10_hurd.in
+@@ -88,11 +88,11 @@
+ 
+   if [ x$type != xsimple ] ; then
+       if [ x$type = xrecovery ] ; then
+-	  title="$(gettext_printf "%s, with Hurd %s (recovery mode)" "${OS}" "${kernel_base}")"
++	  title="$(gettext_printf "%s (recovery mode)" "${OS}")"
+ 	  oldtitle="$OS using $kernel_base (recovery mode)"
+-      else
+-	  title="$(gettext_printf "%s, with Hurd %s" "${OS}" "${kernel_base}")"
+-	  oldtitle="$OS using $kernel_base"
++      elif [ x$type = xreadonly ] ; then
++	  title="$(gettext_printf "%s (read-only mode)" "${OS}")"
++	  oldtitle="$OS using $kernel_base (read-only mode)"
+       fi
+       if [ x"$oldtitle" = x"$GRUB_ACTUAL_DEFAULT" ]; then
+ 	  quoted="$(echo "$GRUB_ACTUAL_DEFAULT" | grub_quote)"
+@@ -111,7 +111,7 @@
+   prepare_grub_to_access_device "${GRUB_DEVICE_BOOT}" | grub_add_tab|sed "s/^/$submenu_indentation/"
+   message="$(gettext_printf "Loading GNU Mach ...")"
+ 
+-  if [ x$type = xrecovery ] ; then
++  if [ x$type != xsimple ] ; then
+       opts="-s"
+   else
+       opts=
+@@ -156,8 +156,8 @@
+ while [ "x$kernels" != "x" ] ; do
+   kernel=`version_find_latest $kernels`
+ 
++  hurd_entry "$kernel" simple
+   if [ "x$is_top_level" = xtrue ] && [ "x${GRUB_DISABLE_SUBMENU}" != xy ]; then
+-      hurd_entry "$kernel" simple
+       submenu_indentation="$grub_tab"
+     
+       # TRANSLATORS: %s is replaced with an OS name
+@@ -165,8 +165,8 @@
+       is_top_level=false
+   fi
+ 
+-  hurd_entry "$kernel" advanced
+   hurd_entry "$kernel" recovery
++  hurd_entry "$kernel" readonly
+ 
+   kernels=`echo $kernels | tr ' ' '\n' | grep -vx $kernel | tr '\n' ' '`
+ done

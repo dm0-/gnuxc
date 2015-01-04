@@ -1,18 +1,17 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gmp
-Version:        5.1.3
+Version:        6.0.0a
+%global basever 6.0.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv3+
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/gmp/
-Source0:        http://ftp.gnu.org/gnu/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftpmirror.gnu.org/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.lz
 
 BuildRequires:  gnuxc-gcc-c++
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -39,7 +38,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%setup -q -n %{gnuxc_name}-%{basever}
 
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
@@ -66,10 +65,10 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 
 %files
 %{gnuxc_libdir}/libgmp.so.10
-%{gnuxc_libdir}/libgmp.so.10.1.3
+%{gnuxc_libdir}/libgmp.so.10.2.0
 %{gnuxc_libdir}/libgmpxx.so.4
-%{gnuxc_libdir}/libgmpxx.so.4.3.3
-%doc AUTHORS ChangeLog COPYING COPYING.LIB NEWS README
+%{gnuxc_libdir}/libgmpxx.so.4.4.0
+%doc AUTHORS ChangeLog COPYING* NEWS README
 
 %files devel
 %{gnuxc_includedir}/gmp.h

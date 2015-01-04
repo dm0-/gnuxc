@@ -10,10 +10,10 @@ Group:          Development/Libraries
 URL:            http://www.cloog.org/
 Source0:        http://www.bastoul.net/cloog/pages/download/%{gnuxc_name}-%{version}.tar.gz
 
+Patch101:       %{gnuxc_name}-%{version}-update-isl.patch
+
 BuildRequires:  gnuxc-isl-devel
 BuildRequires:  gnuxc-osl-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -40,6 +40,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch101
 
 %build
 %gnuxc_configure \

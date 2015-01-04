@@ -1,5 +1,5 @@
-grep                    := grep-2.18
-grep_url                := http://ftp.gnu.org/gnu/grep/$(grep).tar.xz
+grep                    := grep-2.21
+grep_url                := http://ftpmirror.gnu.org/grep/$(grep).tar.xz
 
 configure-grep-rule:
 	cd $(grep) && ./$(configure) \
@@ -7,7 +7,7 @@ configure-grep-rule:
 		\
 		--disable-silent-rules \
 		--disable-rpath \
-		--enable-gcc-warnings \
+		--enable-gcc-warnings gl_cv_warn_c__Werror=no \
 		--enable-threads=posix \
 		--without-included-regex
 
@@ -16,3 +16,11 @@ build-grep-rule:
 
 install-grep-rule: $(call installed,pcre)
 	$(MAKE) -C $(grep) install
+	$(INSTALL) -Dpm 644 $(grep)/bashrc.sh $(DESTDIR)/etc/bashrc.d/grep.sh
+
+# Provide bash aliases to choose the default command-line options.
+$(grep)/bashrc.sh: | $(grep)
+	$(ECHO) "alias grep='grep --color=auto'" > $@
+	$(ECHO) "alias egrep='egrep --color=auto'" >> $@
+	$(ECHO) "alias fgrep='fgrep --color=auto'" >> $@
+$(call prepared,grep): $(grep)/bashrc.sh

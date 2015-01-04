@@ -16,8 +16,6 @@ BuildRequires:  gnuxc-libjpeg-turbo-devel
 BuildRequires:  gnuxc-xz-devel
 BuildRequires:  gnuxc-zlib-devel
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 

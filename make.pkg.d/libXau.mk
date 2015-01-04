@@ -4,7 +4,7 @@ libXau_url              := http://xorg.freedesktop.org/releases/individual/lib/$
 configure-libXau-rule:
 	cd $(libXau) && ./$(configure) \
 		--disable-silent-rules \
-		--enable-strict-compilation \
+		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
 		--enable-xthreads
 
 build-libXau-rule:

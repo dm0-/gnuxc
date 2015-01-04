@@ -1,5 +1,5 @@
 automake                := automake-1.14.1
-automake_url            := http://ftp.gnu.org/gnu/automake/$(automake).tar.xz
+automake_url            := http://ftpmirror.gnu.org/automake/$(automake).tar.xz
 
 configure-automake-rule:
 	cd $(automake) && ./$(configure) \

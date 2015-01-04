@@ -4,7 +4,7 @@ three-finger salute to terminate, just like the Hurd console.
 
 --- src/kbd.c
 +++ src/kbd.c
-@@ -97,6 +97,7 @@ static const char *kbdDefaults[] = {
+@@ -97,6 +97,7 @@
      "XkbRules",		"base",
      "XkbModel",		"pc105",
      "XkbLayout",	"us",

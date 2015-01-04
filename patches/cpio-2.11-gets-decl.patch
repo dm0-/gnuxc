@@ -2,7 +2,7 @@ Correct an old gnulib issue.
 
 --- gnu/stdio.in.h
 +++ gnu/stdio.in.h
-@@ -139,7 +139,9 @@ _GL_WARN_ON_USE (fflush, "fflush is not
+@@ -139,7 +139,9 @@
     so any use of gets warrants an unconditional warning.  Assume it is
     always declared, since it is required by C89.  */
  #undef gets

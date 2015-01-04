@@ -12,8 +12,6 @@ Source0:        http://download.savannah.gnu.org/releases/attr/%{gnuxc_name}-%{v
 
 BuildRequires:  gnuxc-glibc-devel
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 

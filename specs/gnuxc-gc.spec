@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gc
-Version:        7.4.0
+Version:        7.4.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,8 +12,6 @@ Source0:        http://www.hboehm.info/gc/gc_source/%{gnuxc_name}-%{version}.tar
 
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-libatomic_ops-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -59,7 +57,8 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
     --with-libatomic_ops \
     \
     --disable-gcj-support \
-    --disable-handle-fork
+    --disable-handle-fork \
+    --disable-sigrt-signals
 %gnuxc_make %{?_smp_mflags} all
 
 %install

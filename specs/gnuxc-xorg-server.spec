@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/xorg/modules/
 
 Name:           gnuxc-xorg-server
-Version:        1.15.0
+Version:        1.16.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,8 +12,6 @@ License:        MIT
 Group:          User Interface/X
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/xserver/%{gnuxc_name}-%{version}.tar.bz2
-
-Patch101:       %{gnuxc_name}-%{version}-optional-xinerama.patch
 
 BuildRequires:  gnuxc-bigreqsproto
 BuildRequires:  gnuxc-damageproto
@@ -24,19 +22,19 @@ BuildRequires:  gnuxc-libxcb-devel
 BuildRequires:  gnuxc-libXdmcp-devel
 BuildRequires:  gnuxc-libXext-devel
 BuildRequires:  gnuxc-libXfont-devel
+BuildRequires:  gnuxc-libXinerama-devel
 BuildRequires:  gnuxc-libxkbfile-devel
 BuildRequires:  gnuxc-nettle-devel
 BuildRequires:  gnuxc-pixman-devel
 BuildRequires:  gnuxc-presentproto
 BuildRequires:  gnuxc-randrproto
 BuildRequires:  gnuxc-renderproto
+BuildRequires:  gnuxc-resourceproto
 BuildRequires:  gnuxc-videoproto
 BuildRequires:  gnuxc-xcmiscproto
 BuildRequires:  gnuxc-xf86dgaproto
 
 Requires:       gnuxc-libX11
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -63,7 +61,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch101
 echo 'install-sdkHEADERS:' >> Makefile.in
 
 %build
@@ -91,8 +88,10 @@ echo 'install-sdkHEADERS:' >> Makefile.in
     --enable-xdm-auth-1 \
     --enable-xdmcp \
     --enable-xfree86-utils \
+    --enable-xinerama \
     --enable-xnest \
     --enable-xorg \
+    --enable-xres \
     --enable-xv \
     --enable-xvfb \
     --with-sha1=libnettle \
@@ -106,9 +105,7 @@ echo 'install-sdkHEADERS:' >> Makefile.in
     --disable-glx \
     --disable-record \
     --disable-screensaver \
-    --disable-selective-werror \
-    --disable-xinerama \
-    --disable-xres
+    --disable-selective-werror
 %gnuxc_make %{?_smp_mflags} all
 
 %install

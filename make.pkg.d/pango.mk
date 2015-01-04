@@ -1,4 +1,4 @@
-pango                   := pango-1.36.3
+pango                   := pango-1.36.8
 pango_url               := http://ftp.gnome.org/pub/gnome/sources/pango/1.36/$(pango).tar.xz
 
 prepare-pango-rule:
@@ -23,3 +23,4 @@ build-pango-rule:
 
 install-pango-rule: $(call installed,harfbuzz libXft)
 	$(MAKE) -C $(pango) install
+	$(INSTALL) -dm 755 $(DESTDIR)/etc/pango

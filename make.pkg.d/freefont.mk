@@ -1,5 +1,5 @@
 freefont                := freefont-20120503
-freefont_url            := http://ftp.gnu.org/gnu/freefont/$(subst -,-otf-,$(freefont)).tar.gz
+freefont_url            := http://ftpmirror.gnu.org/freefont/$(subst -,-otf-,$(freefont)).tar.gz
 
 ifeq ($(host),$(build))
 FREEFONTDIR = /usr/share/fonts/freefont

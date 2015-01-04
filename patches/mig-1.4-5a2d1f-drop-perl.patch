@@ -1,0 +1,13 @@
+Drop the Perl dependency.
+
+--- mig.in
++++ mig.in
+@@ -29,7 +29,7 @@
+ exec_prefix=@exec_prefix@
+ bindir=@bindir@
+ libexecdir=@libexecdir@
+-libexecdir_rel=$(perl -MFile::Spec -e 'print File::Spec->abs2rel("'"$libexecdir"'","'"$bindir"'")')
++libexecdir_rel=$(realpath --relative-to="$bindir" "$libexecdir")
+ bindir_real=$(dirname "$0")
+ bindir_real=$(cd "$bindir_real"/ && pwd)
+ libexecdir=$bindir_real/$libexecdir_rel

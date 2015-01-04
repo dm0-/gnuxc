@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-gdk-pixbuf
-Version:        2.30.7
+Version:        2.30.8
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -14,12 +14,10 @@ URL:            http://developer.gnome.org/gdk-pixbuf/
 Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.30/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glib-devel
-BuildRequires:  gnuxc-libjpeg-turbo-devel
+BuildRequires:  gnuxc-jasper-devel
 BuildRequires:  gnuxc-libpng-devel
 BuildRequires:  gnuxc-libX11-devel
 BuildRequires:  gnuxc-tiff-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -29,7 +27,7 @@ Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glib-devel
-Requires:       gnuxc-libjpeg-turbo-devel
+Requires:       gnuxc-jasper-devel
 Requires:       gnuxc-libpng-devel
 Requires:       gnuxc-libX11-devel
 Requires:       gnuxc-tiff-devel
@@ -68,14 +66,14 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
     --enable-gio-sniffing \
     --enable-modules \
     --enable-static \
+    --with-libjasper \
     --with-libjpeg \
     --with-libpng \
     --with-libtiff \
     --with-x11 \
     \
     --disable-glibtest \
-    --disable-introspection \
-    --without-libjasper
+    --disable-introspection
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -101,6 +99,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-gif.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-icns.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-ico.so
+%{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-jasper.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-jpeg.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-pcx.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so
@@ -113,9 +112,9 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xbm.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xpm.so
 %{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0
-%{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0.3000.7
+%{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0.3000.8
 %{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0
-%{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0.3000.7
+%{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0.3000.8
 %doc AUTHORS COPYING NEWS README
 
 %files devel
@@ -131,6 +130,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-gif.a
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-icns.a
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-ico.a
+%{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-jasper.a
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-jpeg.a
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-pcx.a
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.a

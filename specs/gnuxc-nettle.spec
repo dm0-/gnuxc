@@ -8,11 +8,9 @@ Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 License:        LGPLv2+
 Group:          Development/Libraries
 URL:            http://www.gnu.org/software/nettle/
-Source0:        http://ftp.gnu.org/gnu/nettle/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://ftpmirror.gnu.org/nettle/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-gmp-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.

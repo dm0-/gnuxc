@@ -1,0 +1,27 @@
+Make the EFI stub also use the kernel's builtin command line.
+
+--- drivers/firmware/efi/libstub/efi-stub-helper.c
++++ drivers/firmware/efi/libstub/efi-stub-helper.c
+@@ -675,6 +675,10 @@
+ 
+ 	options_bytes++;	/* NUL termination */
+ 
++#ifdef CONFIG_CMDLINE
++	options_bytes += sizeof(CONFIG_CMDLINE);
++#endif
++
+ 	status = efi_low_alloc(sys_table_arg, options_bytes, 0, &cmdline_addr);
+ 	if (status != EFI_SUCCESS)
+ 		return NULL;
+@@ -682,6 +686,11 @@
+ 	s1 = (u8 *)cmdline_addr;
+ 	s2 = (const u16 *)options;
+ 
++#ifdef CONFIG_CMDLINE
++	memcpy((void *)s1, CONFIG_CMDLINE " ", sizeof(CONFIG_CMDLINE));
++	s1 += sizeof(CONFIG_CMDLINE);
++#endif
++
+ 	s1 = efi_utf16_to_utf8(s1, s2, options_chars);
+ 	*s1 = '\0';
+ 

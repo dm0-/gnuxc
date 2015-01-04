@@ -1,5 +1,5 @@
 xshogi                  := xshogi-1.4.2
-xshogi_url              := http://ftp.gnu.org/gnu/gnushogi/$(xshogi).tar.gz
+xshogi_url              := http://ftpmirror.gnu.org/gnushogi/$(xshogi).tar.gz
 
 configure-xshogi-rule:
 	cd $(xshogi) && ./$(configure) \

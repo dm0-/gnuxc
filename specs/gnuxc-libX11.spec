@@ -21,8 +21,6 @@ BuildRequires:  gnuxc-xtrans
 
 BuildRequires:  xorg-x11-proto-devel
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 
@@ -77,7 +75,6 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
 
 %install
 %gnuxc_make_install
-install -dm 755 %{buildroot}%{gnuxc_datadir}/X11/fonts
 
 # We don't need libtool's help.
 rm -f \
@@ -89,7 +86,9 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 
 %files
-%{gnuxc_datadir}/X11
+%{gnuxc_datadir}/X11/locale
+%{gnuxc_datadir}/X11/Xcms.txt
+%{gnuxc_datadir}/X11/XErrorDB
 %{gnuxc_libdir}/libX11.so.6
 %{gnuxc_libdir}/libX11.so.6.3.0
 %{gnuxc_libdir}/libX11-xcb.so.1

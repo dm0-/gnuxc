@@ -1,22 +1,20 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gettext
-Version:        0.18.3.2
+Version:        0.19.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+ and LGPLv2+
 Group:          Development/Tools
 URL:            http://www.gnu.org/software/gettext/
-Source0:        http://ftp.gnu.org/gnu/gettext/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://ftpmirror.gnu.org/gettext/%{gnuxc_name}-%{version}.tar.lz
 
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-acl-devel
 BuildRequires:  gnuxc-libcroco-devel
 BuildRequires:  gnuxc-libunistring-devel
 BuildRequires:  gnuxc-ncurses-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -75,7 +73,7 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
 %gnuxc_make %{?_smp_mflags} all
 
 %install
-%gnuxc_make_install
+%gnuxc_make_install -j1
 
 # Set up sub-package licenses etc. for included documentation.
 for doc in */AUTHORS */BUGS */ChangeLog */COPYING */NEWS */README
@@ -110,10 +108,10 @@ rm -rf %{buildroot}{%{gnuxc_docdir},%{gnuxc_infodir},%{gnuxc_mandir}}
 %files
 %{gnuxc_libdir}/libasprintf.so.0
 %{gnuxc_libdir}/libasprintf.so.0.0.0
-%{gnuxc_libdir}/libgettextlib-0.18.3.so
+%{gnuxc_libdir}/libgettextlib-%{version}.so
 %{gnuxc_libdir}/libgettextpo.so.0
-%{gnuxc_libdir}/libgettextpo.so.0.5.2
-%{gnuxc_libdir}/libgettextsrc-0.18.3.so
+%{gnuxc_libdir}/libgettextpo.so.0.5.3
+%{gnuxc_libdir}/libgettextsrc-%{version}.so
 %doc *.gettext-runtime *.gettext-tools COPYING
 %doc AUTHORS ChangeLog* DEPENDENCIES HACKING NEWS PACKAGING README THANKS
 

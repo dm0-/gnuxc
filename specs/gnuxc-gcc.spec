@@ -1,9 +1,12 @@
-%global gnuxc_has_env %(rpm --quiet -q gnuxc-glibc && echo 1 || echo 0)
+# Determine whether this package will build a complete GCC.
+%if 0%{!?gnuxc_bootstrapped:1}
+%global gnuxc_bootstrapped %(test -n "$gnuxc_bootstrapped" && echo $gnuxc_bootstrapped || (rpm --quiet -q gnuxc-glibc && echo 1 || echo 0))
+%endif
 
 # (This value is used in the RPM release number in order to ensure the full
 # packages are always an upgrade over bootstrapping sub-packages.)
 
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 %undefine _binaries_in_noarch_packages_terminate_build
 %global __gnuxc_path ^%{gnuxc_root}/
 %global __elf_exclude_path ^(%{?__elf_exclude_path}|%{gnuxc_root}/.*)$
@@ -11,19 +14,21 @@
 %endif
 
 Name:           gnuxc-gcc
-Version:        4.8.2
-Release:        1.%{gnuxc_has_env}%{?dist}
+Version:        4.9.2
+Release:        1.%{gnuxc_bootstrapped}%{?dist}
 Summary:        Cross-compiler for C for pure GNU systems
 
 License:        GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions
 Group:          Development/Languages
 URL:            http://www.gnu.org/software/gcc/
-Source0:        http://ftp.gnu.org/gnu/gcc/gcc-%{version}/%{gnuxc_name}-%{version}.tar.bz2
+Source0:        http://ftpmirror.gnu.org/gcc/gcc-%{version}/%{gnuxc_name}-%{version}.tar.bz2
 
 Patch101:       %{gnuxc_name}-%{version}-no-add-needed.patch
+Patch102:       %{gnuxc_name}-%{version}-color-auto.patch
+Patch103:       %{gnuxc_name}-%{version}-update-isl.patch
 
 BuildRequires:  gnuxc-binutils
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 BuildRequires:  gnuxc-glibc-devel
 %endif
 
@@ -38,7 +43,7 @@ BuildRequires:  cloog-ppl cloog-ppl-devel
 
 Requires:       gnuxc-binutils
 Requires:       gnuxc-cpp = %{version}-%{release}
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 Requires:       gnuxc-libatomic = %{version}-%{release}
 Requires:       gnuxc-libgcc = %{version}-%{release}
 Requires:       gnuxc-libgomp = %{version}-%{release}
@@ -47,13 +52,14 @@ Provides:       gnuxc-libatomic-devel = %{version}-%{release}
 Provides:       gnuxc-libgcc-devel = %{version}-%{release}
 Provides:       gnuxc-libgomp-devel = %{version}-%{release}
 Provides:       gnuxc-libssp-devel = %{version}-%{release}
+Provides:       gnuxc(bootstrapped)
 %endif
 Provides:       bundled(libiberty)
 
 %description
 Cross-compiler for C for pure GNU systems.
-%if 0%{gnuxc_has_env} == 0
-This is only a bootstrap version!  Install glibc and rebuild this package.
+%if 0%{gnuxc_bootstrapped} == 0
+This is only a bootstrapping version!  Install glibc and rebuild this package.
 %endif
 
 %package -n gnuxc-cpp
@@ -63,7 +69,7 @@ Requires:       gnuxc-filesystem
 %description -n gnuxc-cpp
 Cross-compiler version of a C preprocessor for pure GNU systems.
 
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 %package c++
 Summary:        Cross-compiler for C++ for pure GNU systems
 Requires:       %{name} = %{version}-%{release}
@@ -161,27 +167,6 @@ BuildArch:      noarch
 This package contains headers and support files for the GNU Transactional
 Memory library for pure GNU systems.
 
-%package -n gnuxc-libmudflap
-Summary:        GCC mudflap shared support library for pure GNU systems
-Group:          System Environment/Libraries
-Requires:       gnuxc-filesystem
-BuildArch:      noarch
-
-%description -n gnuxc-libmudflap
-This package contains GCC shared support library which is needed for mudflap
-support for pure GNU systems.
-
-%package -n gnuxc-libmudflap-devel
-Summary:        GCC mudflap support for pure GNU systems
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-libmudflap = %{version}-%{release}
-BuildArch:      noarch
-
-%description -n gnuxc-libmudflap-devel
-This package contains headers for building mudflap-instrumented programs for
-pure GNU systems.
-
 %package -n gnuxc-libobjc
 Summary:        Objective-C runtime for pure GNU systems
 Group:          System Environment/Libraries
@@ -259,6 +244,8 @@ run C++ dynamically linked programs for pure GNU systems.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 %patch101
+%patch102
+%patch103
 
 # Provide non-conflicting internationalized messages.
 sed -i -e 's/"gcc"/"gnuxc-gcc"/' gcc/intl.c
@@ -269,11 +256,13 @@ sed -i -e 's,/\$(PACKAGE).mo,/gnuxc-$(PACKAGE).mo,' libcpp/Makefile.in
 %build
 %global _configure ../configure
 %global _program_prefix %{gnuxc_target}-
+export C{,XX}FLAGS_FOR_TARGET='%{gnuxc_optflags}'
 mkdir -p build && pushd build
 %configure \
     --target=%{gnuxc_target} \
     --with-sysroot=%{gnuxc_sysroot} \
     \
+    --disable-libcilkrts \
     --disable-multilib \
     --disable-plugin \
     --enable-__cxa_atexit \
@@ -295,7 +284,7 @@ mkdir -p build && pushd build
     --without-included-gettext \
     --without-newlib \
     \
-%if 0%{gnuxc_has_env} == 0
+%if 0%{gnuxc_bootstrapped} == 0
     --enable-languages=c \
     --disable-decimal-float \
     --disable-libgomp \
@@ -308,16 +297,16 @@ mkdir -p build && pushd build
     --enable-dependency-tracking
 popd
 unset CFLAGS CXXFLAGS FFLAGS FCFLAGS LDFLAGS
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 make -C build %{?_smp_mflags} all \
 %else
 make -C build %{?_smp_mflags} all-gcc all-target-libgcc \
 %endif
-    CFLAGS_FOR_TARGET='%{gnuxc_optflags}' \
-    CXXFLAGS_FOR_TARGET='%{gnuxc_optflags}'
+    CFLAGS_FOR_TARGET="${CFLAGS_FOR_TARGET/ -Wp,-D_FORTIFY_SOURCE=? / }" \
+    CXXFLAGS_FOR_TARGET="${CXXFLAGS_FOR_TARGET/ -Wp,-D_FORTIFY_SOURCE=? / }"
 
 %install
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 %make_install -C build
 
 # We don't need libtool's help.
@@ -325,6 +314,10 @@ find %{buildroot} -type f -name 'lib*.la' -delete
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
 chmod -c 755 %{buildroot}%{gnuxc_root}/lib/libgcc_s.so.1
+
+# Link the C++ library where the linker can find it while building a C library.
+mkdir -p %{buildroot}%{gnuxc_libdir}
+ln -s ../../../lib/libstdc++.so.6 %{buildroot}%{gnuxc_libdir}/
 
 # These files conflict with existing installed files.
 rm -rf %{buildroot}%{_datadir}/gcc-%{version}
@@ -337,7 +330,7 @@ rm -rf %{buildroot}%{_infodir} %{buildroot}%{_mandir}/man7
 rm -f %{buildroot}%{_libdir}/libiberty.a
 
 %find_lang %{name}
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 %find_lang gnuxc-cpplib
 rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %else
@@ -371,6 +364,7 @@ touch gnuxc-cpplib.lang
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/mm_malloc.h
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/stdalign.h
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/stdarg.h
+%{_libdir}/gcc/%{gnuxc_target}/%{version}/include/stdatomic.h
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/stdbool.h
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/stddef.h
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/stdfix.h
@@ -388,7 +382,7 @@ touch gnuxc-cpplib.lang
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/lto-wrapper
 %{_mandir}/man1/%{gnuxc_target}-gcc.1.gz
 %{_mandir}/man1/%{gnuxc_target}-gcov.1.gz
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/libgcc_eh.a
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/lto1
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/liblto_plugin.so
@@ -421,7 +415,7 @@ touch gnuxc-cpplib.lang
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/cc1
 %{_mandir}/man1/%{gnuxc_target}-cpp.1.gz
 
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 %files c++
 %{_bindir}/%{gnuxc_target}-g++
 %{_bindir}/%{gnuxc_target}-c++
@@ -461,7 +455,7 @@ touch gnuxc-cpplib.lang
 
 %files -n gnuxc-libatomic
 %{gnuxc_root}/lib/libatomic.so.1
-%{gnuxc_root}/lib/libatomic.so.1.0.0
+%{gnuxc_root}/lib/libatomic.so.1.1.0
 %doc libatomic/ChangeLog
 
 %files -n gnuxc-libgcc
@@ -486,20 +480,6 @@ touch gnuxc-cpplib.lang
 %files -n gnuxc-libitm-devel
 %{gnuxc_root}/lib/libitm.a
 %{gnuxc_root}/lib/libitm.so
-
-%files -n gnuxc-libmudflap
-%{gnuxc_root}/lib/libmudflap.so.0
-%{gnuxc_root}/lib/libmudflap.so.0.0.0
-%{gnuxc_root}/lib/libmudflapth.so.0
-%{gnuxc_root}/lib/libmudflapth.so.0.0.0
-%doc libmudflap/ChangeLog
-
-%files -n gnuxc-libmudflap-devel
-%{_libdir}/gcc/%{gnuxc_target}/%{version}/include/mf-runtime.h
-%{gnuxc_root}/lib/libmudflap.a
-%{gnuxc_root}/lib/libmudflap.so
-%{gnuxc_root}/lib/libmudflapth.a
-%{gnuxc_root}/lib/libmudflapth.so
 
 %files -n gnuxc-libobjc
 %{gnuxc_root}/lib/libobjc.so.4
@@ -533,9 +513,10 @@ touch gnuxc-cpplib.lang
 
 %files -n gnuxc-libstdc++
 %{gnuxc_root}/lib/libstdc++.so.6
-%{gnuxc_root}/lib/libstdc++.so.6.0.18
-%{gnuxc_root}/lib/libstdc++.so.6.0.18-gdb.py
-%{gnuxc_root}/lib/libstdc++.so.6.0.18-gdb.pyc
-%{gnuxc_root}/lib/libstdc++.so.6.0.18-gdb.pyo
+%{gnuxc_root}/lib/libstdc++.so.6.0.20
+%{gnuxc_root}/lib/libstdc++.so.6.0.20-gdb.py
+%{gnuxc_root}/lib/libstdc++.so.6.0.20-gdb.pyc
+%{gnuxc_root}/lib/libstdc++.so.6.0.20-gdb.pyo
+%{gnuxc_libdir}/libstdc++.so.6
 %doc libstdc++-v3/ChangeLog* libstdc++-v3/README
 %endif

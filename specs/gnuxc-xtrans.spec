@@ -1,8 +1,8 @@
 %?gnuxc_package_header
-%undefine debug_package
+%global debug_package %{nil}
 
 Name:           gnuxc-xtrans
-Version:        1.3.3
+Version:        1.3.5
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,9 +11,9 @@ Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
-Requires:       gnuxc-xproto
+BuildRequires:  gnuxc-filesystem
 
-BuildArch:      noarch
+Requires:       gnuxc-xproto
 
 %description
 %{summary}.

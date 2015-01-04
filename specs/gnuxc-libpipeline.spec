@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpipeline
-Version:        1.2.6
+Version:        1.4.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,8 +11,6 @@ URL:            http://libpipeline.nongnu.org/
 Source0:        http://download.savannah.gnu.org/releases/libpipeline/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -62,7 +60,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpipeline.so.1
-%{gnuxc_libdir}/libpipeline.so.1.2.6
+%{gnuxc_libdir}/libpipeline.so.%{version}
 %doc ChangeLog COPYING NEWS README TODO
 
 %files devel

@@ -1,4 +1,4 @@
-xkbcomp                 := xkbcomp-1.2.4
+xkbcomp                 := xkbcomp-1.3.0
 xkbcomp_url             := http://xorg.freedesktop.org/releases/individual/app/$(xkbcomp).tar.bz2
 
 configure-xkbcomp-rule:

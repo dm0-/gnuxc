@@ -1,4 +1,4 @@
-findutils               := findutils-4.5.12
+findutils               := findutils-4.5.14
 findutils_url           := http://alpha.gnu.org/gnu/findutils/$(findutils).tar.gz
 
 configure-findutils-rule:
@@ -15,7 +15,14 @@ configure-findutils-rule:
 		--without-selinux
 
 build-findutils-rule:
-	$(MAKE) -C $(findutils) all
+	$(MAKE) -C $(findutils) all \
+		LOCATE_DB='/var/lib/misc/locatedb'
 
 install-findutils-rule: $(call installed,glibc)
 	$(MAKE) -C $(findutils) install
+	$(INSTALL) -Dpm 644 $(findutils)/updatedb.cron $(DESTDIR)/etc/cron.d/updatedb
+
+# Provide a cron configuration to update the "locate" database daily.
+$(findutils)/updatedb.cron: | $(findutils)
+	$(ECHO) $$(( RANDOM % 60 )) $$(( RANDOM % 24 )) '* * * root /usr/bin/updatedb' > $@
+$(call built,findutils): $(findutils)/updatedb.cron

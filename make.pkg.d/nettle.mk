@@ -1,5 +1,5 @@
 nettle                  := nettle-2.7.1
-nettle_url              := http://ftp.gnu.org/gnu/nettle/$(nettle).tar.gz
+nettle_url              := http://ftpmirror.gnu.org/nettle/$(nettle).tar.gz
 
 configure-nettle-rule:
 	cd $(nettle) && ./$(configure) \

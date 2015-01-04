@@ -1,5 +1,5 @@
-libatomic_ops           := libatomic_ops-7.4.0
-libatomic_ops_url       := http://www.hboehm.info/gc/gc_source/$(libatomic_ops).tar.gz
+libatomic_ops           := libatomic_ops-7.4.2
+libatomic_ops_url       := http://www.ivmaisoft.com/_bin/atomic_ops/$(libatomic_ops).tar.gz
 
 configure-libatomic_ops-rule:
 	cd $(libatomic_ops) && ./$(configure) \

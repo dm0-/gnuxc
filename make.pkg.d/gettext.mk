@@ -1,5 +1,5 @@
-gettext                 := gettext-0.18.3.2
-gettext_url             := http://ftp.gnu.org/gnu/gettext/$(gettext).tar.gz
+gettext                 := gettext-0.19.4
+gettext_url             := http://ftpmirror.gnu.org/gettext/$(gettext).tar.lz
 
 prepare-gettext-rule:
 # Seriously disable rpaths.
@@ -32,4 +32,4 @@ build-gettext-rule:
 	$(MAKE) -C $(gettext) all
 
 install-gettext-rule: $(call installed,acl bzip2 gcc git gzip libcroco libunistring ncurses tar)
-	$(MAKE) -C $(gettext) install
+	$(MAKE) -C $(gettext) -j1 install

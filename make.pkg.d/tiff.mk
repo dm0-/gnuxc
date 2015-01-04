@@ -30,6 +30,7 @@ configure-tiff-rule:
 		--enable-strip-chopping \
 		--enable-thunder \
 		--enable-zlib \
+		--with-docdir='$${datarootdir}/doc/tiff' \
 		--with-x
 
 build-tiff-rule:

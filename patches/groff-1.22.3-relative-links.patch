@@ -1,0 +1,13 @@
+Don't use absolute paths in these symbolic links.
+
+--- contrib/mom/Makefile.sub
++++ contrib/mom/Makefile.sub
+@@ -182,7 +182,7 @@
+ 	  || $(mkinstalldirs) $(DESTDIR)$(pdfdocdir)
+ 	for f in $(PDFDOCFILE); do \
+ 	  $(RM) $(DESTDIR)$(pdfdocdir)/$$f; \
+-	  ln -s $(exampledir)/mom/$$f $(DESTDIR)$(pdfdocdir)/$$f; \
++	  ln -s ../examples/mom/$$f $(DESTDIR)$(pdfdocdir)/$$f; \
+ 	done
+ 
+ stamp-strip: $(STRIPFILES)

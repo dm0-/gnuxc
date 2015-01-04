@@ -14,8 +14,6 @@ Patch101:       %{gnuxc_name}-%{version}-add-soname.patch
 
 BuildRequires:  gnuxc-glibc-devel
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 

@@ -1,0 +1,15 @@
+Link libmachuser and libhurduser automatically with libc, since they are
+considered a standard part of the API in GNU-land.
+
+--- Makerules
++++ Makerules
+@@ -978,6 +978,9 @@
+ 	      '$(libdir)/$(patsubst %,$(libtype.oS),$(libprefix)$(libc-name))'\
+	      ' AS_NEEDED (' $(rtlddir)/$(rtld-installed-name) ') )' \
+ 	) > $@.new
++ifeq ($(patsubst gnu%,,$(config-os)),)
++	echo 'INPUT ( AS_NEEDED ( -lmachuser -lhurduser ) )' >> $@.new
++endif
+ 	mv -f $@.new $@
+ 
+ endif

@@ -1,0 +1,64 @@
+Include compatibility headers to support the newer isl.
+
+--- gcc/graphite-clast-to-gimple.c
++++ gcc/graphite-clast-to-gimple.c
+@@ -30,6 +30,7 @@
+ #include <isl/aff.h>
+ #include <cloog/cloog.h>
+ #include <cloog/isl/domain.h>
++#include <isl/deprecated/ilp_int.h>
+ #endif
+ 
+ #include "system.h"
+--- gcc/graphite-interchange.c
++++ gcc/graphite-interchange.c
+@@ -31,6 +31,8 @@
+ #include <isl/ilp.h>
+ #include <cloog/cloog.h>
+ #include <cloog/isl/domain.h>
++#include <isl/deprecated/constraint_int.h>
++#include <isl/deprecated/ilp_int.h>
+ #endif
+ 
+ #include "system.h"
+--- gcc/graphite-optimize-isl.c
++++ gcc/graphite-optimize-isl.c
+@@ -27,6 +27,7 @@
+ #include <isl/schedule.h>
+ #include <isl/band.h>
+ #include <isl/aff.h>
++#include <isl/deprecated/aff_int.h>
+ #include <isl/options.h>
+ #endif
+ 
+@@ -373,7 +374,7 @@
+ 	{
+ 	  for (i = ScheduleDimensions - 1 ;  i >= 0 ; i--)
+ 	    {
+-	      if (isl_band_member_is_zero_distance (Band, i))
++	      if (isl_band_member_is_coincident (Band, i))
+ 		{
+ 		  isl_map *TileMap;
+ 		  isl_union_map *TileUMap;
+--- gcc/graphite-poly.c
++++ gcc/graphite-poly.c
+@@ -30,6 +30,7 @@
+ #include <isl/aff.h>
+ #include <cloog/cloog.h>
+ #include <cloog/isl/domain.h>
++#include <isl/deprecated/ilp_int.h>
+ #endif
+ 
+ #include "system.h"
+--- gcc/graphite-sese-to-poly.c
++++ gcc/graphite-sese-to-poly.c
+@@ -29,6 +29,9 @@
+ #include <cloog/cloog.h>
+ #include <cloog/cloog.h>
+ #include <cloog/isl/domain.h>
++#include <isl/deprecated/aff_int.h>
++#include <isl/deprecated/constraint_int.h>
++#include <isl/deprecated/ilp_int.h>
+ #endif
+ 
+ #include "system.h"

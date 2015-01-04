@@ -1,7 +1,8 @@
 gnugo                   := gnugo-3.8
-gnugo_url               := http://ftp.gnu.org/gnu/gnugo/$(gnugo).tar.gz
+gnugo_url               := http://ftpmirror.gnu.org/gnugo/$(gnugo).tar.gz
 
 ifneq ($(host),$(build))
+configure-gnugo-native-rule: CFLAGS := $(CFLAGS) -Wno-error=format-security
 configure-gnugo-native-rule: $(gnugo)/configure
 	$(MKDIR) $(gnugo)/native && cd $(gnugo)/native && ../configure \
 		AR=ar CC=gcc RANLIB=ranlib
@@ -24,6 +25,7 @@ clean-gnugo-native:
 .PHONY clean-gnugo: clean-gnugo-native
 endif
 
+configure-gnugo-rule: CFLAGS := $(CFLAGS) -Wno-error=format-security
 configure-gnugo-rule:
 	cd $(gnugo) && ./$(configure) \
 		--enable-color \

@@ -1,5 +1,5 @@
 gnushogi                := gnushogi-1.4.2
-gnushogi_url            := http://ftp.gnu.org/gnu/gnushogi/$(gnushogi).tar.gz
+gnushogi_url            := http://ftpmirror.gnu.org/gnushogi/$(gnushogi).tar.gz
 
 ifneq ($(host),$(build))
 configure-gnushogi-native-rule: $(gnushogi)/configure

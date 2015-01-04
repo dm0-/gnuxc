@@ -1,5 +1,5 @@
-units                   := units-2.02
-units_url               := http://ftp.gnu.org/gnu/units/$(units).tar.gz
+units                   := units-2.11a
+units_url               := http://alpha.gnu.org/gnu/units/$(units).tar.gz
 
 configure-units-rule:
 	cd $(units) && ./$(configure)

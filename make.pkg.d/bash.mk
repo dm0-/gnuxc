@@ -1,10 +1,14 @@
-bash                    := bash-4.3
-bash_url                := http://ftp.gnu.org/gnu/bash/$(bash).tar.gz
+bash                    := bash-4.3.33
+bash_branch             := bash-4.3.30
+bash_url                := http://ftpmirror.gnu.org/bash/$(bash_branch).tar.gz
 
 export BASH = /bin/bash
 
 prepare-bash-rule:
-	$(PATCH) -d $(bash) < $(patchdir)/$(bash)-environment.patch
+	for n in {031..0$(lastword $(subst ., ,$(bash)))} ; do \
+		$(DOWNLOAD) "http://ftpmirror.gnu.org/bash/bash-4.3-patches/bash43-$$n" | \
+		$(PATCH) -d $(bash) ; \
+	done
 
 configure-bash-rule:
 	cd $(bash) && ./$(configure) \
@@ -29,7 +33,7 @@ configure-bash-rule:
 		--enable-extended-glob-default \
 		--enable-help-builtin \
 		--enable-history \
-		--enable-job-control bash_cv_job_control_missing=no \
+		--enable-job-control \
 		--enable-mem-scramble \
 		--enable-multibyte \
 		--enable-net-redirections \
@@ -46,6 +50,7 @@ build-bash-rule:
 		CPPFLAGS=-DRECYCLES_PIDS
 
 install-bash-rule: $(call installed,readline)
-	$(MAKE) -C $(bash) install
+	$(MAKE) -C $(bash) install \
+		DESTDIR='$(DESTDIR)'
 	$(SYMLINK) bash $(DESTDIR)/bin/rbash
 	$(SYMLINK) bash $(DESTDIR)/bin/sh

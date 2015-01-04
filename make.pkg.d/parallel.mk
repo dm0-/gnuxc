@@ -1,5 +1,5 @@
-parallel                := parallel-20140322
-parallel_url            := http://ftp.gnu.org/gnu/parallel/$(parallel).tar.bz2
+parallel                := parallel-20141122
+parallel_url            := http://ftpmirror.gnu.org/parallel/$(parallel).tar.bz2
 
 configure-parallel-rule:
 	cd $(parallel) && ./$(configure)

@@ -1,4 +1,4 @@
-fontsproto              := fontsproto-2.1.2
+fontsproto              := fontsproto-2.1.3
 fontsproto_url          := http://xorg.freedesktop.org/releases/individual/proto/$(fontsproto).tar.bz2
 
 configure-fontsproto-rule:

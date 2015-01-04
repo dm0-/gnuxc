@@ -1,4 +1,4 @@
-libffi                  := libffi-3.0.13
+libffi                  := libffi-3.2.1
 libffi_url              := ftp://sourceware.org/pub/libffi/$(libffi).tar.gz
 
 configure-libffi-rule:

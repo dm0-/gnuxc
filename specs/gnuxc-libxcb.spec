@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libxcb
-Version:        1.10
+Version:        1.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -13,8 +13,6 @@ Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
 BuildRequires:  gnuxc-libpthread-stubs
 BuildRequires:  gnuxc-libXau-devel
 BuildRequires:  gnuxc-xcb-proto
-
-BuildArch:      noarch
 
 %description
 %{summary}.

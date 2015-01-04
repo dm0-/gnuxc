@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-pixman
-Version:        0.32.4
+Version:        0.32.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,8 +11,6 @@ URL:            http://pixman.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-libpng-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -56,7 +54,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/libpixman-1.la
 
 %files
 %{gnuxc_libdir}/libpixman-1.so.0
-%{gnuxc_libdir}/libpixman-1.so.0.32.4
+%{gnuxc_libdir}/libpixman-1.so.%{version}
 %doc AUTHORS ChangeLog COPYING NEWS README
 
 %files devel

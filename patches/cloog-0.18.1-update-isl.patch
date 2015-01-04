@@ -1,0 +1,23 @@
+Include compatibility headers to support the newer isl.
+
+--- source/isl/constraints.c
++++ source/isl/constraints.c
+@@ -5,6 +5,7 @@
+ #include <cloog/isl/backend.h>
+ #include <isl/aff.h>
+ #include <isl/set.h>
++#include <isl/deprecated/int.h>
+ 
+ 
+ #define ALLOC(type) (type*)malloc(sizeof(type))
+--- source/isl/domain.c
++++ source/isl/domain.c
+@@ -8,6 +8,8 @@
+ #include <isl/constraint.h>
+ #include <isl/ilp.h>
+ #include <isl/aff.h>
++#include <isl/deprecated/int.h>
++#include <isl/lp.h>
+ 
+ #ifdef OSL_SUPPORT
+ #include <osl/macros.h>

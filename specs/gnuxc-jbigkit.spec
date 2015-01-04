@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-jbigkit
-Version:        2.0
+Version:        2.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -14,8 +14,6 @@ Patch101:       %{gnuxc_name}-%{version}-environment.patch
 Patch102:       %{gnuxc_name}-%{version}-shlib.patch
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -42,7 +40,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}
+%setup -q -n %{gnuxc_name}-%{version}
 %patch101
 %patch102
 
@@ -53,12 +51,12 @@ statically, which is highly discouraged.
     RANLIB='%{gnuxc_ranlib}'
 
 %install
-install -Dpm 755 libjbig/libjbig.so.2.0 \
-    %{buildroot}%{gnuxc_libdir}/libjbig.so.2.0
-ln -s libjbig.so.2.0 %{buildroot}%{gnuxc_libdir}/libjbig.so
-install -Dpm 755 libjbig/libjbig85.so.2.0 \
-    %{buildroot}%{gnuxc_libdir}/libjbig85.so.2.0
-ln -s libjbig85.so.2.0 %{buildroot}%{gnuxc_libdir}/libjbig85.so
+install -Dpm 755 libjbig/libjbig.so.%{version} \
+    %{buildroot}%{gnuxc_libdir}/libjbig.so.%{version}
+ln -s libjbig.so.%{version} %{buildroot}%{gnuxc_libdir}/libjbig.so
+install -Dpm 755 libjbig/libjbig85.so.%{version} \
+    %{buildroot}%{gnuxc_libdir}/libjbig85.so.%{version}
+ln -s libjbig85.so.%{version} %{buildroot}%{gnuxc_libdir}/libjbig85.so
 
 install -Dpm 644 libjbig/libjbig.a   %{buildroot}%{gnuxc_libdir}/libjbig.a
 install -Dpm 644 libjbig/libjbig85.a %{buildroot}%{gnuxc_libdir}/libjbig85.a
@@ -69,8 +67,8 @@ install -Dpm 644 libjbig/jbig_ar.h %{buildroot}%{gnuxc_includedir}/jbig_ar.h
 
 
 %files
-%{gnuxc_libdir}/libjbig.so.2.0
-%{gnuxc_libdir}/libjbig85.so.2.0
+%{gnuxc_libdir}/libjbig.so.%{version}
+%{gnuxc_libdir}/libjbig85.so.%{version}
 %doc ANNOUNCE CHANGES COPYING INSTALL libjbig/jbig*.txt TODO
 
 %files devel

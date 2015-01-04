@@ -1,18 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libtool
-Version:        2.4.2
+Version:        2.4.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+ and LGPLv2+ and GFDL
 Group:          Development/Tools
 URL:            http://www.gnu.org/software/libtool/
-Source0:        http://ftp.gnu.org/gnu/libtool/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftpmirror.gnu.org/libtool/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -40,7 +38,7 @@ applications that use libltdl on GNU systems.
 Summary:        Static libraries of gnuxc-ltdl
 License:        LGPLv2+
 Group:          Development/Libraries
-Requires:       gnucx-ltdl-devel = %{version}-%{release}
+Requires:       gnuxc-ltdl-devel = %{version}-%{release}
 
 %description -n gnuxc-ltdl-static
 The gnuxc-ltdl-static package contains the libltdl static libraries for -static
@@ -53,6 +51,7 @@ which is highly discouraged.
 
 %build
 %gnuxc_configure \
+    --disable-silent-rules \
     --enable-ltdl-install
 %gnuxc_make %{?_smp_mflags} all
 
@@ -73,7 +72,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files -n gnuxc-ltdl
 %{gnuxc_libdir}/libltdl.so.7
-%{gnuxc_libdir}/libltdl.so.7.3.0
+%{gnuxc_libdir}/libltdl.so.7.3.1
 %doc AUTHORS ChangeLog* COPYING NEWS README THANKS TODO
 
 %files -n gnuxc-ltdl-devel

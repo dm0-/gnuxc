@@ -1,4 +1,4 @@
-xz                      := xz-5.1.3alpha
+xz                      := xz-5.2.0
 xz_url                  := http://tukaani.org/xz/$(xz).tar.xz
 
 configure-xz-rule:
@@ -10,5 +10,5 @@ configure-xz-rule:
 build-xz-rule:
 	$(MAKE) -C $(xz) all
 
-install-xz-rule: $(call installed,coreutils libpthread)
+install-xz-rule: $(call installed,coreutils)
 	$(MAKE) -C $(xz) install

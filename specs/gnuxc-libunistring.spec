@@ -1,18 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libunistring
-Version:        0.9.3
+Version:        0.9.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv3+
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/libunistring/
-Source0:        http://ftp.gnu.org/gnu/libunistring/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://ftpmirror.gnu.org/libunistring/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -44,8 +42,9 @@ statically, which is highly discouraged.
 %build
 %gnuxc_configure \
     --disable-rpath \
-    --enable-relocatable \
-    --enable-threads=posix
+    --enable-threads=posix \
+    \
+    --disable-relocatable # This results in undefined symbols when linking.
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -59,14 +58,15 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_infodir}
 
 
 %files
-%{gnuxc_libdir}/libunistring.so.0
-%{gnuxc_libdir}/libunistring.so.0.1.2
+%{gnuxc_libdir}/libunistring.so.2
+%{gnuxc_libdir}/libunistring.so.2.0.0
 %doc AUTHORS BUGS ChangeLog COPYING* DEPENDENCIES HACKING NEWS README THANKS
 
 %files devel
 %{gnuxc_includedir}/unicase.h
 %{gnuxc_includedir}/uniconv.h
 %{gnuxc_includedir}/unictype.h
+%{gnuxc_includedir}/unigbrk.h
 %{gnuxc_includedir}/unilbrk.h
 %{gnuxc_includedir}/uniname.h
 %{gnuxc_includedir}/uninorm.h

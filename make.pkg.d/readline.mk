@@ -1,18 +1,23 @@
-readline                := readline-6.3
-readline_url            := http://ftp.gnu.org/gnu/readline/$(readline).tar.gz
+readline                := readline-6.3.8
+readline_branch         := readline-6.3
+readline_url            := http://ftpmirror.gnu.org/readline/$(readline_branch).tar.gz
 
 prepare-readline-rule:
-	$(PATCH) -d $(readline) < $(patchdir)/$(readline)-environment.patch
+	for n in {001..008} ; do \
+		$(DOWNLOAD) "http://ftpmirror.gnu.org/readline/$(readline_branch)-patches/readline63-$$n" | \
+		$(PATCH) -d $(readline) ; \
+	done
 	$(PATCH) -d $(readline) < $(patchdir)/$(readline)-shlib.patch
 
 configure-readline-rule:
 	cd $(readline) && ./$(configure) \
 		--exec-prefix= \
 		\
-		--enable-multibyte bash_cv_wcwidth_broken=no
+		--enable-multibyte
 
 build-readline-rule:
 	$(MAKE) -C $(readline) all
 
 install-readline-rule: $(call installed,ncurses)
-	$(MAKE) -C $(readline) install
+	$(MAKE) -C $(readline) install \
+		DESTDIR='$(DESTDIR)'

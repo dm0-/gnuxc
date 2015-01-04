@@ -1,4 +1,4 @@
-libXfont                := libXfont-1.4.7
+libXfont                := libXfont-1.5.0
 libXfont_url            := http://xorg.freedesktop.org/releases/individual/lib/$(libXfont).tar.bz2
 
 configure-libXfont-rule:

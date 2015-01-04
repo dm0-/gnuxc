@@ -1,13 +1,7 @@
-xauth                   := xauth-1.0.8
+xauth                   := xauth-1.0.9
 xauth_url               := http://xorg.freedesktop.org/releases/individual/app/$(xauth).tar.bz2
 
 export MCOOKIE = /usr/bin/mcookie
-
-prepare-xauth-rule:
-	$(ECHO) '#!/bin/bash' > $(xauth)/mcookie.sh
-	$(ECHO) -e 'for i in {1..16}\ndo' >> $(xauth)/mcookie.sh
-	$(ECHO) "        printf '%02x' "'$$(( RANDOM % 256 ))' >> $(xauth)/mcookie.sh
-	$(ECHO) -e 'done\necho' >> $(xauth)/mcookie.sh
 
 configure-xauth-rule:
 	cd $(xauth) && ./$(configure) \
@@ -24,3 +18,11 @@ build-xauth-rule:
 install-xauth-rule: $(call installed,libXmu)
 	$(MAKE) -C $(xauth) install
 	$(INSTALL) -Dpm 755 $(xauth)/mcookie.sh $(DESTDIR)/usr/bin/mcookie
+
+# Provide a dumb placeholder for util-linux's "mcookie" command.
+$(xauth)/mcookie.sh: | $(xauth)
+	$(ECHO) '#!$(BASH) -e' > $@
+	$(ECHO) -e 'for i in {1..16}\ndo' >> $@
+	$(ECHO) "        printf '%02x' "'$$(( RANDOM % 256 ))' >> $@
+	$(ECHO) -e 'done\necho' >> $@
+$(call prepared,xauth): $(xauth)/mcookie.sh

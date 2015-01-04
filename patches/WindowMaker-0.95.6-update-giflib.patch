@@ -1,0 +1,28 @@
+The "close" function has another argument since the giflib 5.1.0 update.
+
+--- wrlib/load_gif.c
++++ wrlib/load_gif.c
+@@ -81,7 +81,11 @@
+ 	}
+ 
+ 	if (gif->SWidth < 1 || gif->SHeight < 1) {
++#if USE_GIF == 4
+ 		DGifCloseFile(gif);
++#else /* USE_GIF == 5 */
++		DGifCloseFile(gif, &gif_error);
++#endif
+ 		RErrorCode = RERR_BADIMAGEFILE;
+ 		return NULL;
+ 	}
+@@ -216,7 +220,11 @@
+ 		free(buffer);
+ 
+ 	if (gif)
++#if USE_GIF == 4
+ 		DGifCloseFile(gif);
++#else /* USE_GIF == 5 */
++		DGifCloseFile(gif, &gif_error);
++#endif
+ 
+ 	return image;
+ }

@@ -10,10 +10,10 @@ Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
+Patch001:       http://cgit.freedesktop.org/xorg/lib/libXaw/patch?id=ec7d7c303385a6bdb0833a5aaae96be697cca7ab&/%{gnuxc_name}-%{version}-fix-format-security.patch
+
 BuildRequires:  gnuxc-libXmu-devel
 BuildRequires:  gnuxc-libXpm-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -42,6 +42,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch001 -p1
 
 %build
 %gnuxc_configure \

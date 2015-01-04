@@ -1,5 +1,5 @@
-gnuchess                := gnuchess-6.1.1
-gnuchess_url            := http://ftp.gnu.org/gnu/chess/$(gnuchess).tar.gz
+gnuchess                := gnuchess-6.2.0
+gnuchess_url            := http://ftpmirror.gnu.org/chess/$(gnuchess).tar.gz
 
 configure-gnuchess-rule:
 	cd $(gnuchess) && ./$(configure) \

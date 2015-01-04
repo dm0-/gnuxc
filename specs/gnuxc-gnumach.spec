@@ -1,24 +1,23 @@
+# Declare that this package does not require a complete GCC.
+%global gnuxc_bootstrapped 0
+
 %?gnuxc_package_header
+%global debug_package %{nil}
 
 Name:           gnuxc-gnumach
 Version:        1.4
-%global snap    e33a07
+%global snap    87b7d8
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        GNU Mach kernel
 
 License:        CMU and GPLv2
 Group:          System Environment/Kernel
 URL:            http://www.gnu.org/software/gnumach/
-Source0:        %{gnuxc_name}-%{version}-%{snap}.tar.xz
-
-# Ship customizations in the SRPM, but they are already applied in the archive.
-Patch101:       %{gnuxc_name}-%{version}-%{snap}-install-debug-headers.patch
+Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
 
 BuildRequires:  gnuxc-gcc
 
 BuildRequires:  texinfo
-
-BuildArch:      noarch
 
 %description
 This source package holds the GNU Mach kernel, but (at the moment) only a small
@@ -35,7 +34,8 @@ use with cross-compilers.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}-%{snap}
+%setup -q -n %{gnuxc_name}-%{snap}
+autoreconf -fi
 
 %build
 # We don't need (and might not have) glibc at this point.

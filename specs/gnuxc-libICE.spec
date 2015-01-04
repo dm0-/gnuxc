@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libICE
-Version:        1.0.8
+Version:        1.0.9
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,8 +11,6 @@ URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-xtrans
-
-BuildArch:      noarch
 
 %description
 %{summary}.

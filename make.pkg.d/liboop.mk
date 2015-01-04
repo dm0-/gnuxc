@@ -10,11 +10,10 @@ configure-liboop-rule:
 		--with-readline \
 		--without-adns \
 		--without-libwww \
-		--without-tcl \
-		CPPFLAGS=-DVFunction=rl_voidfunc_t
+		--without-tcl
 
 build-liboop-rule:
-	$(MAKE) -C $(liboop) all
+	$(MAKE) -C $(liboop) -j1 all
 
 install-liboop-rule: $(call installed,glib)
 	$(MAKE) -C $(liboop) install

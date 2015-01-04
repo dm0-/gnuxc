@@ -15,8 +15,6 @@ BuildRequires:  gnuxc-readline-devel
 
 BuildRequires:  libtool
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 
@@ -53,9 +51,8 @@ autoreconf -fi
     --with-readline \
     --without-adns \
     --without-libwww \
-    --without-tcl \
-    CPPFLAGS=-DVFunction=rl_voidfunc_t
-%gnuxc_make all
+    --without-tcl
+%gnuxc_make -j1 all
 
 %install
 %gnuxc_make_install

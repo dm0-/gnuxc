@@ -1,4 +1,4 @@
-ncurses                 := ncurses-5.9-20140322
+ncurses                 := ncurses-5.9-20141227
 ncurses_url             := ftp://invisible-island.net/ncurses/current/$(ncurses).tgz
 
 ifeq ($(host),$(build))
@@ -65,7 +65,7 @@ build-ncurses-widec+pthread-rule: $(call configured,ncurses)
 
 build-ncurses-rule: $(call built,ncurses-classic ncurses-pthread ncurses-widec ncurses-widec+pthread)
 
-install-ncurses-rule: $(call installed,libpthread)
+install-ncurses-rule: $(call installed,glibc)
 	$(MAKE) -C $(ncurses)/classic       install.libs
 	$(MAKE) -C $(ncurses)/pthread       install.libs
 	$(MAKE) -C $(ncurses)/widec         install.libs

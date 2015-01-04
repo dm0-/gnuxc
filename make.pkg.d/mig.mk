@@ -1,7 +1,16 @@
-mig                     := mig-1.4-bb06f6
+mig                     := mig-1.4-5a2d1f
 mig_branch              := master
-mig_snap                := bb06f65290c2526d214302ba43bb6bc363cd4868
+mig_snap                := 5a2d1fb4db65d847d5bc9ea1cf5192bd81d8c7e5
 mig_url                 := git://git.sv.gnu.org/hurd/mig.git
+
+ifeq ($(host),$(build))
+export MIG = mig
+else
+export MIG = $(host)-mig
+endif
+
+prepare-mig-rule:
+	$(PATCH) -d $(mig) < $(patchdir)/$(mig)-drop-perl.patch
 
 configure-mig-rule:
 	cd $(mig) && ./$(configure)

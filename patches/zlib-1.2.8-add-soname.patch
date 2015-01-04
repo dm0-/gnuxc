@@ -2,7 +2,7 @@ Set a soname on libz when cross-compiling for Hurd.
 
 --- configure
 +++ configure
-@@ -183,7 +183,7 @@ if test "$gcc" -eq 1 && ($cc -c $test.c)
+@@ -183,7 +183,7 @@
      uname=`(uname -s || echo unknown) 2>/dev/null`
    fi
    case "$uname" in

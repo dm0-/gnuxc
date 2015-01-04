@@ -1,8 +1,5 @@
-libXft                  := libXft-2.3.1
+libXft                  := libXft-2.3.2
 libXft_url              := http://xorg.freedesktop.org/releases/individual/lib/$(libXft).tar.bz2
-
-prepare-libXft-rule:
-	$(PATCH) -d $(libXft) -p1 < $(patchdir)/$(libXft)-freetype-update.patch
 
 configure-libXft-rule:
 	cd $(libXft) && ./$(configure) \

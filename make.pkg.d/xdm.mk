@@ -32,5 +32,5 @@ configure-xdm-rule:
 build-xdm-rule:
 	$(MAKE) -C $(xdm) all
 
-install-xdm-rule: $(call installed,libXaw libXft sessreg xinit xrdb)
+install-xdm-rule: $(call installed,libXaw libXft libXinerama sessreg xinit xrdb)
 	$(MAKE) -C $(xdm) install

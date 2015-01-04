@@ -1,18 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-osl
-Version:        0.8.4
+Version:        0.9.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
 Group:          Development/Libraries
-URL:            http://www.lri.fr/~bastoul/development/openscop/
-Source0:        http://www.lri.fr/~bastoul/development/openscop/docs/%{gnuxc_name}-%{version}.tar.gz
+URL:            http://icps.u-strasbg.fr/people/bastoul/public_html/development/openscop/
+Source0:        http://icps.u-strasbg.fr/people/bastoul/public_html/development/openscop/docs/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-gmp-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -53,14 +51,11 @@ statically, which is highly discouraged.
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libosl.la
 
-# Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_infodir}
-
 
 %files
 %{gnuxc_libdir}/libosl.so.0
 %{gnuxc_libdir}/libosl.so.0.0.0
-%doc doc/openscop.pdf AUTHORS ChangeLog NEWS README THANKS
+%doc doc/openscop.pdf AUTHORS ChangeLog COPYING NEWS README THANKS
 
 %files devel
 %{gnuxc_includedir}/osl

@@ -1,4 +1,4 @@
-xproto                  := xproto-7.0.25
+xproto                  := xproto-7.0.27
 xproto_url              := http://xorg.freedesktop.org/releases/individual/proto/$(xproto).tar.bz2
 
 configure-xproto-rule:
@@ -13,5 +13,5 @@ configure-xproto-rule:
 build-xproto-rule:
 	$(MAKE) -C $(xproto) all
 
-install-xproto-rule: $(call installed,libpthread)
+install-xproto-rule: $(call installed,glibc)
 	$(MAKE) -C $(xproto) install

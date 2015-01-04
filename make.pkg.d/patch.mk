@@ -1,5 +1,5 @@
 patch                   := patch-2.7.1
-patch_url               := http://ftp.gnu.org/gnu/patch/$(patch).tar.xz
+patch_url               := http://ftpmirror.gnu.org/patch/$(patch).tar.xz
 
 configure-patch-rule:
 	cd $(patch) && ./$(configure) \

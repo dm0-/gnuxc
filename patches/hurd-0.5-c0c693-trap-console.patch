@@ -1,0 +1,37 @@
+Support stopping the console client with a SIGTERM.
+
+--- console-client/console.c
++++ console-client/console.c
+@@ -18,6 +18,7 @@
+ 
+ #include <argp.h>
+ #include <errno.h>
++#include <signal.h>
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <string.h>
+@@ -290,6 +291,14 @@
+   exit (0);
+ }
+ 
++/* Exit the console client on SIGTERM. */
++static void
++signal_handler (int signum)
++{
++  if (signum == SIGTERM)
++    console_exit ();
++}
++
+ /* Signal an error to the user.  */
+ void console_error (const wchar_t *const err_msg)
+ {
+@@ -744,6 +753,9 @@
+   if (console_node)
+     console_setup_node (console_node);
+ 
++  if (signal (SIGTERM, signal_handler) == SIG_ERR)
++    daemon_error (1, errno, "Could not register a SIGTERM handler");
++
+ #if HAVE_DAEMON
+   if (daemonize)
+     /* Signal parent that all went well.  */

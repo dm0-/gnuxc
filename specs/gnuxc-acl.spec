@@ -12,8 +12,6 @@ Source0:        http://download.savannah.gnu.org/releases/acl/%{gnuxc_name}-%{ve
 
 BuildRequires:  gnuxc-attr-devel
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 

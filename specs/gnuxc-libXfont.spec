@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXfont
-Version:        1.4.7
+Version:        1.5.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -13,8 +13,6 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 BuildRequires:  gnuxc-freetype-devel
 BuildRequires:  gnuxc-libfontenc-devel
 BuildRequires:  gnuxc-xtrans
-
-BuildArch:      noarch
 
 %description
 %{summary}.

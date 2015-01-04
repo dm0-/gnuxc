@@ -8,11 +8,9 @@ Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 License:        LGPLv3+ and GFDL
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/mpc/
-Source0:        http://ftp.gnu.org/gnu/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://ftpmirror.gnu.org/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-mpfr-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.

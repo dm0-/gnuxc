@@ -1,5 +1,5 @@
 %?gnuxc_package_header
-%undefine debug_package
+%global debug_package %{nil}
 
 Name:           gnuxc-xextproto
 Version:        7.3.0
@@ -11,9 +11,10 @@ Group:          Development/System
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/proto/%{gnuxc_name}-%{version}.tar.bz2
 
-Requires:       gnuxc-xproto
+BuildRequires:  gnuxc-filesystem
 
-BuildArch:      noarch
+Requires:       gnuxc-xproto
+Provides:       %{name}-devel = %{version}-%{release}
 
 %description
 %{summary}.

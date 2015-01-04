@@ -1,4 +1,4 @@
-libXext                 := libXext-1.3.2
+libXext                 := libXext-1.3.3
 libXext_url             := http://xorg.freedesktop.org/releases/individual/lib/$(libXext).tar.bz2
 
 configure-libXext-rule:

@@ -1,18 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libidn
-Version:        1.28
+Version:        1.29
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+ and GPLv3+ and GFDL
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/libidn/
-Source0:        http://ftp.gnu.org/gnu/libidn/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://ftpmirror.gnu.org/libidn/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -42,6 +40,7 @@ statically, which is highly discouraged.
 %setup -q -n %{gnuxc_name}-%{version}
 
 %build
+%gnuxc_env ; CFLAGS=${CFLAGS/-Werror=format-security /}
 %gnuxc_configure \
     --disable-nls \
     \
@@ -69,7 +68,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libidn.so.11
-%{gnuxc_libdir}/libidn.so.11.6.11
+%{gnuxc_libdir}/libidn.so.11.6.12
 %doc AUTHORS ChangeLog COPYING* FAQ HACKING NEWS README THANKS TODO
 
 %files devel

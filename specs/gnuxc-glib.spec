@@ -1,20 +1,18 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-glib
-Version:        2.38.2
+Version:        2.42.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 Group:          System Environment/Libraries
 URL:            http://developer.gnome.org/glib/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.38/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.42/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-libffi-devel
 BuildRequires:  gnuxc-pcre-devel
 BuildRequires:  gnuxc-zlib-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -75,6 +73,14 @@ do
         ln "$doc" "${doc##*/}.${doc%/*}"
 done
 
+# There is no need to install binary programs in the sysroot.
+rm -f \
+    %{buildroot}%{gnuxc_bindir}/{gapplication,gio-querymodules,gsettings} \
+    %{buildroot}%{gnuxc_bindir}/gdbus{,-codegen} \
+    %{buildroot}%{gnuxc_bindir}/glib-{compile-schemas,compile-resources} \
+    %{buildroot}%{gnuxc_bindir}/glib-{genmarshal,gettextize,mkenums} \
+    %{buildroot}%{gnuxc_bindir}/{gobject-query,gresource,gtester{,-report}}
+
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libg{io,lib,module,object,thread}-2.0.la
 
@@ -89,35 +95,22 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < %{gnuxc_name}20.lang
 
 
 %files
-%{gnuxc_bindir}/gdbus
-%{gnuxc_bindir}/gio-querymodules
-%{gnuxc_bindir}/glib-compile-schemas
-%{gnuxc_bindir}/gsettings
 %dir %{gnuxc_datadir}/glib-2.0
 %dir %{gnuxc_datadir}/glib-2.0/schemas
 %{gnuxc_libdir}/gio
 %{gnuxc_libdir}/libgio-2.0.so.0
-%{gnuxc_libdir}/libgio-2.0.so.0.3800.2
+%{gnuxc_libdir}/libgio-2.0.so.0.4200.1
 %{gnuxc_libdir}/libglib-2.0.so.0
-%{gnuxc_libdir}/libglib-2.0.so.0.3800.2
+%{gnuxc_libdir}/libglib-2.0.so.0.4200.1
 %{gnuxc_libdir}/libgmodule-2.0.so.0
-%{gnuxc_libdir}/libgmodule-2.0.so.0.3800.2
+%{gnuxc_libdir}/libgmodule-2.0.so.0.4200.1
 %{gnuxc_libdir}/libgobject-2.0.so.0
-%{gnuxc_libdir}/libgobject-2.0.so.0.3800.2
+%{gnuxc_libdir}/libgobject-2.0.so.0.4200.1
 %{gnuxc_libdir}/libgthread-2.0.so.0
-%{gnuxc_libdir}/libgthread-2.0.so.0.3800.2
+%{gnuxc_libdir}/libgthread-2.0.so.0.4200.1
 %doc AUTHORS* ChangeLog* COPYING* NEWS* README
 
 %files devel
-%{gnuxc_bindir}/gdbus-codegen
-%{gnuxc_bindir}/glib-compile-resources
-%{gnuxc_bindir}/glib-genmarshal
-%{gnuxc_bindir}/glib-gettextize
-%{gnuxc_bindir}/glib-mkenums
-%{gnuxc_bindir}/gobject-query
-%{gnuxc_bindir}/gresource
-%{gnuxc_bindir}/gtester
-%{gnuxc_bindir}/gtester-report
 %{gnuxc_datadir}/glib-2.0/codegen
 %{gnuxc_datadir}/glib-2.0/gdb
 %{gnuxc_datadir}/glib-2.0/gettext

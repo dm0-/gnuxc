@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgpg-error
-Version:        1.12
+Version:        1.17
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,8 +11,6 @@ URL:            http://www.gnu.org/software/gpg/
 Source0:        ftp://ftp.gnupg.org/gcrypt/libgpg-error/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -41,13 +39,20 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
+# Create a host-dependent header when cross-compiling.
+sed 's/i486-pc-gnu/%{gnuxc_target}/g' \
+    < src/syscfg/lock-obj-pub.i486-pc-gnu.h \
+    > src/syscfg/lock-obj-pub.%{gnuxc_target}.h
+
 %build
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
     --disable-nls \
     \
     --disable-rpath \
-    --enable-static
+    --enable-languages \
+    --enable-static \
+    --enable-threads=posix
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -67,11 +72,14 @@ rm -f %{buildroot}%{gnuxc_libdir}/libgpg-error.la
 # This functionality should be used from the system package.
 rm -rf %{buildroot}%{gnuxc_datadir}/{aclocal,common-lisp}
 
+# Skip the documentation.
+rm -rf %{buildroot}%{gnuxc_mandir} %{buildroot}%{gnuxc_infodir}
+
 
 %files
 %{gnuxc_libdir}/libgpg-error.so.0
-%{gnuxc_libdir}/libgpg-error.so.0.10.0
-%doc AUTHORS ChangeLog COPYING* NEWS README THANKS
+%{gnuxc_libdir}/libgpg-error.so.0.13.0
+%doc AUTHORS ChangeLog* COPYING* NEWS README THANKS
 
 %files devel
 %{_bindir}/%{gnuxc_target}-gpg-error-config

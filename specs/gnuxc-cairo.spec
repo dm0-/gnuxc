@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-cairo
-Version:        1.12.16
+Version:        1.14.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -16,8 +16,6 @@ BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-libXext-devel
 BuildRequires:  gnuxc-libXrender-devel
 BuildRequires:  gnuxc-pixman-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -112,11 +110,11 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 %{gnuxc_libdir}/cairo/libcairo-trace.so.0
 %{gnuxc_libdir}/cairo/libcairo-trace.so.0.0.0
 %{gnuxc_libdir}/libcairo.so.2
-%{gnuxc_libdir}/libcairo.so.2.11200.16
+%{gnuxc_libdir}/libcairo.so.2.11400.0
 %{gnuxc_libdir}/libcairo-gobject.so.2
-%{gnuxc_libdir}/libcairo-gobject.so.2.11200.16
+%{gnuxc_libdir}/libcairo-gobject.so.2.11400.0
 %{gnuxc_libdir}/libcairo-script-interpreter.so.2
-%{gnuxc_libdir}/libcairo-script-interpreter.so.2.11200.16
+%{gnuxc_libdir}/libcairo-script-interpreter.so.2.11400.0
 %doc AUTHORS BIBLIOGRAPHY BUGS ChangeLog* CODING_STYLE COPYING* HACKING INSTALL
 %doc KNOWN_ISSUES NEWS PORTING_GUIDE README RELEASING
 

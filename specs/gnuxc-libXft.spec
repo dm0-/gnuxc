@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXft
-Version:        2.3.1
+Version:        2.3.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,12 +10,8 @@ Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
-Patch101:       %{gnuxc_name}-%{version}-freetype-update.patch
-
 BuildRequires:  gnuxc-fontconfig-devel
 BuildRequires:  gnuxc-libXrender-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -44,7 +40,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch101 -p1
 
 %build
 %gnuxc_configure \
@@ -64,7 +59,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libXft.so.2
-%{gnuxc_libdir}/libXft.so.2.3.1
+%{gnuxc_libdir}/libXft.so.%{version}
 %doc AUTHORS ChangeLog COPYING NEWS README
 
 %files devel

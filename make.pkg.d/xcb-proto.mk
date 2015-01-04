@@ -1,4 +1,4 @@
-xcb-proto               := xcb-proto-1.10
+xcb-proto               := xcb-proto-1.11
 xcb-proto_url           := http://xcb.freedesktop.org/dist/$(xcb-proto).tar.bz2
 
 configure-xcb-proto-rule:
@@ -7,5 +7,5 @@ configure-xcb-proto-rule:
 build-xcb-proto-rule:
 	$(MAKE) -C $(xcb-proto) all
 
-install-xcb-proto-rule: # $(call installed,python)
+install-xcb-proto-rule: $(call installed,python)
 	$(MAKE) -C $(xcb-proto) install

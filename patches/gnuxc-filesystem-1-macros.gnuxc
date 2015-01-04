@@ -24,22 +24,22 @@
 %gnuxc_sysconfdir       %{gnuxc_sysroot}/etc
 
 # Build settings
-%gnuxc_name             %(echo -n %{name} | sed s/^gnuxc-//)
+%gnuxc_name             %(name='%{name}' ; echo -n "${name#gnuxc-}")
 %gnuxc_ldflags          %{__global_ldflags}
-%gnuxc_optflags         -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -grecord-gcc-switches
+%gnuxc_optflags         %{__global_cflags}
 
 %gnuxc_env              \
-        CC="%{gnuxc_cc} -march=%{gnuxc_arch} -mtune=generic" ; \
-        CFLAGS="${CFLAGS:-%{gnuxc_optflags}}" ; \
-        export CC ; export CFLAGS ; \
-        CXX="%{gnuxc_cxx} -march=%{gnuxc_arch} -mtune=generic" ; \
-        CXXFLAGS="${CXXFLAGS:-%{gnuxc_optflags}}" ; \
-        export CXX ; export CXXFLAGS ; \
+	AR="%{gnuxc_ar}" ; export AR ; \
+	NM="%{gnuxc_nm}" ; export NM ; \
+	RANLIB="%{gnuxc_ranlib}" ; export RANLIB ; \
+        CC="%{gnuxc_cc} -march=%{gnuxc_arch} -mtune=generic" ; export CC ; \
+        CFLAGS="${CFLAGS:-%{gnuxc_optflags}}" ; export CFLAGS ; \
+        CXX="%{gnuxc_cxx} -march=%{gnuxc_arch} -mtune=generic" ; export CXX ; \
+        CXXFLAGS="${CXXFLAGS:-%{gnuxc_optflags}}" ; export CXXFLAGS ; \
         FFLAGS="${FFLAGS:-%{gnuxc_optflags} -I%{_fmoddir}}" ; export FFLAGS ; \
         LDFLAGS="${LDFLAGS:-%{gnuxc_ldflags}}" ; export LDFLAGS ; \
-        PKG_CONFIG_LIBDIR="${PKG_CONFIG_LIBDIR:-%{gnuxc_libdir}/pkgconfig}" ; \
-        PKG_CONFIG_PATH="$PKG_CONFIG_LIBDIR:%{gnuxc_datadir}/pkgconfig" ; \
-        export PKG_CONFIG_LIBDIR ; export PKG_CONFIG_PATH
+        CONFIG_SITE="%{gnuxc_datadir}/config.site" ; export CONFIG_SITE ; \
+        unset PKG_CONFIG_PATH ; unset PKG_CONFIG_LIBDIR
 
 %gnuxc_configure        %{gnuxc_env} ; \
         %{_configure} \\\
@@ -59,58 +59,27 @@
         --oldincludedir='${includedir}' \\\
         --sbindir='${exec_prefix}/sbin' \\\
         --sharedstatedir='${localstatedir}/lib' \\\
-        --sysconfdir='%{gnuxc_sysconfdir}' \\\
-        ac_cv_func_{c,m,re}alloc_0_nonnull=yes \\\
-        ac_cv_func_memcmp_working=yes \\\
-        ac_cv_func_posix_get{grg,pwu}id_r=yes \\\
-        gl_cv_func_chown_{ctime,slash}_works=yes \\\
-        gl_cv_func_fnmatch_{gnu,posix}=yes \\\
-        gl_cv_func_getcwd_null=yes \\\
-        gl_cv_func_getopt_gnu=yes \\\
-        gl_cv_func_{gettimeofday,tzset}_clobber=no \\\
-        gl_cv_func_lstat_dereferences_slashed_symlink=yes \\\
-        gl_cv_func_memchr_works=yes \\\
-        gl_cv_func_mkdir_trailing_{dot,slash}_works=yes \\\
-        gl_cv_func_mkfifo_works=yes \\\
-        gl_cv_func_perror_works=yes \\\
-        gl_cv_func_printf_directive_{a,f,ls}=yes \\\
-        gl_cv_func_printf_{enomem,infinite,long_double}=yes \\\
-        gl_cv_func_printf_flag_{grouping,leftadjust,zero}=yes \\\
-        gl_cv_func_printf_{positions,precision,sizes_c99}=yes \\\
-        gl_cv_func_readlink_works=yes \\\
-        gl_cv_func_realpath_works=yes \\\
-        gl_cv_func_rename_{dest,link}_works=yes \\\
-        gl_cv_func_rmdir_works=yes \\\
-        gl_cv_func_snprintf_{retval,truncation}_c99=yes \\\
-        gl_cv_func_stat_{dir,file}_slash=yes \\\
-        gl_cv_func_strerror_0_works=yes \\\
-        gl_cv_func_symlink_works=yes \\\
-        gl_cv_func_unsetenv_works=yes \\\
-        gl_cv_func_wcwidth_works=yes \\\
-        gl_cv_func_working_acl_get_file=yes \\\
-        gl_cv_func_working_mktime=yes \\\
-        gl_cv_struct_dirent_d_ino=yes \\\
-        glib_cv_stack_grows=yes \\\
-        glib_cv_uscore=no
+        --sysconfdir='%{gnuxc_sysconfdir}'
 
 %gnuxc_make             %{__make} \\\
         .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
 
-%gnuxc_make_install     %{__make} install DESTDIR=%{buildroot} \\\
+%gnuxc_make_install     %{__make} install DESTDIR='%{buildroot}' \\\
         .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
 
 # Cross commands
-%gnuxc_ar               %{gnuxc_target}-ar
+%gnuxc_ar               %{gnuxc_target}-gcc-ar
 %gnuxc_cc               %{gnuxc_gcc}
 %gnuxc_cpp              %{gnuxc_target}-cpp
 %gnuxc_cxx              %{gnuxc_target}-g++
 %gnuxc_gcc              %{gnuxc_target}-gcc
 %gnuxc_ld               %{gnuxc_target}-ld
-%gnuxc_nm               %{gnuxc_target}-nm
+%gnuxc_mig              %{gnuxc_target}-mig
+%gnuxc_nm               %{gnuxc_target}-gcc-nm
 %gnuxc_objcopy          %{gnuxc_target}-objcopy
 %gnuxc_objdump          %{gnuxc_target}-objdump
 %gnuxc_pkgconfig        %{gnuxc_target}-pkg-config
-%gnuxc_ranlib           %{gnuxc_target}-ranlib
+%gnuxc_ranlib           %{gnuxc_target}-gcc-ranlib
 %gnuxc_readelf          %{gnuxc_target}-readelf
 %gnuxc_strip            %{gnuxc_target}-strip
 
@@ -121,10 +90,17 @@
 %global __debug_install_post %%{gnuxc_debug_install_post} \
 %global debug_package %%{gnuxc_debug_package} \
 %undefine _binaries_in_noarch_packages_terminate_build \
+%undefine _python_bytecompile_errors_terminate_build \
+%global _docdir_fmt gnuxc/%%{gnuxc_name} \
+%global _pkgdocdir %{_docdir}/gnuxc/%%{gnuxc_name} \
 %global __elf_exclude_path ^(%{?__elf_exclude_path}|%{gnuxc_sysroot}/.*)$ \
 %global __libsymlink_exclude_path ^(%{?__libsymlink_exclude_path}|%{gnuxc_sysroot}/.*)$ \
 %global __arch_install_post %{__arch_install_post} \\\
 %{_rpmconfigdir}/gnuxc-expand-pc-flags.sh \
+%if 0%{!?gnuxc_bootstrapped:1}%{?gnuxc_bootstrapped} \
+BuildRequires:  gnuxc(bootstrapped) \
+%endif \
+BuildArch:      noarch \
 %{nil}
 
 # (same as debug_package without the ifnarch)

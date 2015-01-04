@@ -1,4 +1,5 @@
 %?gnuxc_package_header
+%global debug_package %{nil}
 
 Name:           gnuxc-font-util
 Version:        1.3.0
@@ -12,9 +13,7 @@ Source0:        http://xorg.freedesktop.org/releases/individual/font/%{gnuxc_nam
 
 BuildRequires:  gnuxc-glibc-devel
 
-Requires:       gnuxc-libX11
-
-BuildArch:      noarch
+Requires:       gnuxc-filesystem
 
 %description
 %{summary}.
@@ -53,7 +52,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 
 %files
-%{gnuxc_datadir}/X11/fonts/util
+%{gnuxc_datadir}/X11/fonts
 %doc ChangeLog COPYING README
 
 %files devel

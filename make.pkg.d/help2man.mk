@@ -1,8 +1,5 @@
-help2man                := help2man-1.45.1
-help2man_url            := http://ftp.gnu.org/gnu/help2man/$(help2man).tar.xz
-
-prepare-help2man-rule:
-	$(PATCH) -d $(help2man) < $(patchdir)/$(help2man)-environment.patch
+help2man                := help2man-1.46.4
+help2man_url            := http://ftpmirror.gnu.org/help2man/$(help2man).tar.xz
 
 configure-help2man-rule:
 	cd $(help2man) && ./$(configure) \
@@ -12,4 +9,5 @@ build-help2man-rule:
 	$(MAKE) -C $(help2man) all
 
 install-help2man-rule: $(call installed,perl-gettext)
-	$(MAKE) -C $(help2man) install
+	$(MAKE) -C $(help2man) install \
+		DESTDIR='$(DESTDIR)'

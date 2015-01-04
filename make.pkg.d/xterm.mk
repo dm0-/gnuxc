@@ -1,4 +1,4 @@
-xterm                   := xterm-303
+xterm                   := xterm-314
 xterm_url               := ftp://invisible-island.net/xterm/$(xterm).tgz
 
 configure-xterm-rule: configure := $(configure:--docdir%=)

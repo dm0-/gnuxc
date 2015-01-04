@@ -1,20 +1,18 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-parted
-Version:        3.1
+Version:        3.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+
 Group:          Applications/System
 URL:            http://www.gnu.org/software/parted/
-Source0:        http://ftp.gnu.org/gnu/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftpmirror.gnu.org/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-hurd-devel
 BuildRequires:  gnuxc-libuuid-devel
 BuildRequires:  gnuxc-readline-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -50,12 +48,12 @@ statically, which is highly discouraged.
     --disable-device-mapper \
     --disable-rpath \
     --disable-silent-rules \
+    --enable-assert \
     --enable-debug \
-    --enable-gcc-warnings gl_cv_warn__Werror=no \
+    --enable-gcc-warnings gl_cv_warn_c__Werror=no \
     --enable-threads=posix \
     --with-readline \
-    --without-included-regex \
-    CPPFLAGS=-DCPPFunction=rl_completion_func_t
+    --without-included-regex
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -73,9 +71,9 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libparted.so.2
-%{gnuxc_libdir}/libparted.so.2.0.0
+%{gnuxc_libdir}/libparted.so.2.0.1
 %{gnuxc_libdir}/libparted-fs-resize.so.0
-%{gnuxc_libdir}/libparted-fs-resize.so.0.0.0
+%{gnuxc_libdir}/libparted-fs-resize.so.0.0.1
 %doc AUTHORS BUGS ChangeLog COPYING NEWS README THANKS TODO
 
 %files devel

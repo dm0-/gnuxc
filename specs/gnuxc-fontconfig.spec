@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-fontconfig
-Version:        2.11.0
+Version:        2.11.91
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,8 +12,6 @@ Source0:        http://www.freedesktop.org/software/%{gnuxc_name}/release/%{gnux
 
 BuildRequires:  gnuxc-freetype-devel
 BuildRequires:  gnuxc-libxml2-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -49,9 +47,10 @@ statically, which is highly discouraged.
     \
     --disable-silent-rules \
     --enable-iconv \
-    --enable-libxml2
-%gnuxc_make %{?_smp_mflags} all \
+    --enable-libxml2 \
+    --enable-static \
     CPPFLAGS=-DPATH_MAX=4096
+%gnuxc_make %{?_smp_mflags} all
 
 %install
 %gnuxc_make_install

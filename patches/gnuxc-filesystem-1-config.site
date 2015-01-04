@@ -1,0 +1,136 @@
+# This file provides the results of configure tests as if they were run on the
+# GNU system.  It is meant to aid feature-detection during cross-compilation.
+# This file should not be installed or used on the produced GNU OS image.
+
+# Define general operating system behavior.
+
+ac_cv_file__dev_ptc=no
+ac_cv_file__dev_ptmx=no
+ac_cv_func_calloc_0_nonnull=yes
+ac_cv_func_getgroups_works=yes
+ac_cv_func_gettimeofday=yes
+ac_cv_func_malloc_0_nonnull=yes
+ac_cv_func_memcmp_working=yes
+ac_cv_func_realloc_0_nonnull=yes
+ac_cv_func_posix_getgrgid_r=yes
+ac_cv_func_posix_getpwuid_r=yes
+ac_cv_have_long_long_format=yes
+ac_cv_have_working_snprintf=yes
+ac_cv_have_working_vsnprintf=yes
+ac_cv_sqlite_enable_fts3=yes
+ac_cv_sqlite_enable_unlock_notify=yes
+ac_cv_sqlite_secure_delete=yes
+ac_cv_sqlite_threadsafe=yes
+ac_sys_system=GNU
+am_cv_func_iconv_works=yes
+am_cv_func_working_getline=yes
+am_cv_python_platform=gnu
+bash_cv_dup2_broken=no
+bash_cv_func_ctype_nonascii=no
+bash_cv_func_sigsetjmp=present
+bash_cv_func_strcoll_broken=no
+bash_cv_job_control_missing=present
+bash_cv_must_reinstall_sighandlers=no
+bash_cv_opendir_not_robust=no
+bash_cv_pgrp_pipe=no
+bash_cv_sys_siglist=yes
+bash_cv_ulimit_maxfds=yes
+bash_cv_under_sys_siglist=yes
+bash_cv_unusable_rtsigs=no
+bash_cv_wcwidth_broken=no
+bash_cv_wexitstatus_offset=8
+gl_cv_func_btowc_nul=yes
+gl_cv_func_chown_ctime_works=yes
+gl_cv_func_chown_slash_works=yes
+gl_cv_func_dup2_works=yes
+gl_cv_func_duplocale_works=yes
+gl_cv_func_fcntl_f_dupfd_works=yes
+gl_cv_func_fnmatch_gnu=yes
+gl_cv_func_fnmatch_posix=yes
+gl_cv_func_fork_works=yes
+gl_cv_func_fstatat_zero_flag=yes
+gl_cv_func_ftello_works=yes
+gl_cv_func_getcwd_null=yes
+gl_cv_func_getopt_gnu=yes
+gl_cv_func_getopt_long_gnu=yes
+gl_cv_func_getopt_posix=yes
+gl_cv_func_gettimeofday_clobber=no
+gl_cv_func_isfinitel_works=no
+gl_cv_func_itold_works=yes
+gl_cv_func_log10_works=yes
+gl_cv_func_lstat_dereferences_slashed_symlink=yes
+gl_cv_func_memchr_works=yes
+gl_cv_func_mkdir_trailing_dot_works=yes
+gl_cv_func_mkdir_trailing_slash_works=yes
+gl_cv_func_mkfifo_works=yes
+gl_cv_func_nanosleep='no (mishandles large arguments)'
+gl_cv_func_open_slash=yes
+gl_cv_func_perror_works=yes
+gl_cv_func_printf_directive_a=yes
+gl_cv_func_printf_directive_f=yes
+gl_cv_func_printf_directive_ls=yes
+gl_cv_func_printf_enomem=yes
+gl_cv_func_printf_flag_grouping=yes
+gl_cv_func_printf_flag_leftadjust=yes
+gl_cv_func_printf_flag_zero=yes
+gl_cv_func_printf_infinite=yes
+gl_cv_func_printf_long_double=yes
+gl_cv_func_printf_positions=yes
+gl_cv_func_printf_precision=yes
+gl_cv_func_printf_sizes_c99=yes
+gl_cv_func_ptsname_sets_errno=yes
+gl_cv_func_readlink_works=yes
+gl_cv_func_realpath_works=yes
+gl_cv_func_rename_dest_works=yes
+gl_cv_func_rename_link_works=yes
+gl_cv_func_rmdir_works=yes
+gl_cv_func_round_works=yes
+gl_cv_func_setenv_works=yes
+gl_cv_func_sleep_works=yes
+gl_cv_func_snprintf_directive_n=no
+gl_cv_func_snprintf_retval_c99=yes
+gl_cv_func_snprintf_truncation_c99=yes
+gl_cv_func_stat_dir_slash=yes
+gl_cv_func_stat_file_slash=yes
+gl_cv_func_stpncpy=yes
+gl_cv_func_strerror_0_works=yes
+gl_cv_func_svid_putenv=yes
+gl_cv_func_symlink_works=yes
+gl_cv_func_ttyname_r_works=yes
+gl_cv_func_tzset_clobber=no
+gl_cv_func_ungetc_works=yes
+gl_cv_func_unlink_honors_slashes=no
+gl_cv_func_unsetenv_works=yes
+gl_cv_func_vsnprintf_zerosize_c99=yes
+gl_cv_func_wcwidth_works=yes
+gl_cv_func_working_acl_get_file=yes
+gl_cv_func_working_getdelim=yes
+gl_cv_func_working_mktime=yes
+gl_cv_have_weak=yes
+gl_cv_header_working_fcntl_h='no (bad O_NOFOLLOW)'
+gl_cv_struct_dirent_d_ino=yes
+glib_cv_stack_grows=yes
+glib_cv_uscore=no
+gmp_cv_func_vsnprintf=yes
+gt_cv_func_printf_posix=yes
+gt_cv_int_divbyzero_sigfpe=yes
+lt_cv_dlopen_self=yes
+lt_cv_dlopen_self_static=no
+M4_cv_func_rename_open_file_works=yes
+xorg_cv_malloc0_returns_null=yes
+
+# Read version-dependent settings based on installed packages.
+
+if _gnuxc=$(rpm -q gnuxc-python)
+then _gnuxc=${_gnuxc:13:4} _gnuxc=${_gnuxc%[.-]} # Version: MAJOR.MINOR
+    am_cv_python_pyexecdir="\${exec_prefix}/lib/python$_gnuxc/site-packages"
+    am_cv_python_pythondir="\${prefix}/lib/python$_gnuxc/site-packages"
+    am_cv_python_version=$_gnuxc
+fi
+
+if _gnuxc=$(rpm -q gnuxc-readline)
+then _gnuxc=${_gnuxc:15:4} _gnuxc=${_gnuxc%[.-]} # Version: MAJOR.MINOR
+    ac_cv_rl_version=$_gnuxc
+fi
+
+unset _gnuxc

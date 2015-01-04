@@ -13,8 +13,6 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 BuildRequires:  gnuxc-glibc-devel
 BuildRequires:  gnuxc-xproto
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 

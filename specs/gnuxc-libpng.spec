@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpng
-Version:        1.6.9
+Version:        1.6.16
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,9 +10,9 @@ Group:          System Environment/Libraries
 URL:            http://www.libpng.org/pub/png/libpng.html
 Source0:        http://prdownloads.sourceforge.net/libpng/%{gnuxc_name}-%{version}.tar.xz
 
-BuildRequires:  gnuxc-zlib-devel
+Patch001:       http://prdownloads.sourceforge.net/libpng-apng/%{gnuxc_name}-%{version}-apng.patch.gz
 
-BuildArch:      noarch
+BuildRequires:  gnuxc-zlib-devel
 
 %description
 %{summary}.
@@ -40,6 +40,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch001 -p1
 
 %build
 %gnuxc_configure \
@@ -70,7 +71,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpng16.so.16
-%{gnuxc_libdir}/libpng16.so.16.9.0
+%{gnuxc_libdir}/libpng16.so.16.16.0
 %doc ANNOUNCE CHANGES INSTALL LICENSE README TODO
 
 %files devel

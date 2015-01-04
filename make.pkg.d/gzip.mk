@@ -1,5 +1,5 @@
 gzip                    := gzip-1.6
-gzip_url                := http://ftp.gnu.org/gnu/gzip/$(gzip).tar.xz
+gzip_url                := http://ftpmirror.gnu.org/gzip/$(gzip).tar.xz
 
 configure-gzip-rule:
 	cd $(gzip) && ./$(configure) \

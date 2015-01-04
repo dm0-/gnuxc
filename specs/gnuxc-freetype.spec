@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-freetype
-Version:        2.5.3
+Version:        2.5.5
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,8 +12,6 @@ Source0:        http://download.savannah.gnu.org/releases/freetype/%{gnuxc_name}
 
 BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-libpng-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -50,9 +48,7 @@ statically, which is highly discouraged.
     --with-bzip2 \
     --with-old-mac-fonts \
     --with-png \
-    --with-zlib \
-    LIBPNG_CFLAGS="`%{gnuxc_target}-libpng-config --cflags`" \
-    LIBPNG_LDFLAGS="`%{gnuxc_target}-libpng-config --ldflags`"
+    --with-zlib
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -75,7 +71,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libfreetype.so.6
-%{gnuxc_libdir}/libfreetype.so.6.11.2
+%{gnuxc_libdir}/libfreetype.so.6.11.4
 %doc ChangeLog* docs README*
 
 %files devel

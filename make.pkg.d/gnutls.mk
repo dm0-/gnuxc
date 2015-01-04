@@ -1,6 +1,5 @@
-gnutls                  := gnutls-3.2.12.1
-gnutls_branch           := gnutls-3.2.12
-gnutls_url              := ftp://ftp.gnutls.org/gcrypt/gnutls/v3.2/$(gnutls).tar.lz
+gnutls                  := gnutls-3.3.11
+gnutls_url              := ftp://ftp.gnutls.org/gcrypt/gnutls/v3.3/$(gnutls).tar.lz
 
 prepare-gnutls-rule:
 # Seriously disable rpaths.
@@ -15,18 +14,19 @@ configure-gnutls-rule:
 		--disable-silent-rules \
 		--enable-gcc-warnings \
 		--enable-guile \
-		--enable-threads=posix \
+		--enable-static \
 		--with-default-trust-store-file=/etc/ssl/ca-bundle.pem \
+		--with-p11-kit \
 		--with-zlib \
 		--without-included-libtasn1 \
+		GUILE_CONFIG='/usr/bin/$(GUILE_CONFIG)' \
 		\
 		--disable-libdane \
-		--without-p11-kit \
 		--without-tpm
 
 build-gnutls-rule:
 	$(MAKE) -C $(gnutls) all
 
-install-gnutls-rule: $(call installed,guile libidn libtasn1 nettle zlib)
+install-gnutls-rule: $(call installed,guile libidn nettle p11-kit zlib)
 	$(MAKE) -C $(gnutls) install
 	$(INSTALL) -dm 755 $(DESTDIR)/etc/ssl

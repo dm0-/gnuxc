@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgcrypt
-Version:        1.6.1
+Version:        1.6.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -13,8 +13,6 @@ Source0:        ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{gnuxc_name}-%{version}.ta
 Patch101:       %{gnuxc_name}-%{version}-build-fixes.patch
 
 BuildRequires:  gnuxc-libgpg-error-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -79,8 +77,8 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libgcrypt.so.20
-%{gnuxc_libdir}/libgcrypt.so.20.0.1
-%doc AUTHORS ChangeLog* COPYING* NEWS README* THANKS TODO
+%{gnuxc_libdir}/libgcrypt.so.20.0.2
+%doc AUTHORS ChangeLog* COPYING* LICENSES NEWS README* THANKS TODO
 
 %files devel
 %{_bindir}/%{gnuxc_target}-libgcrypt-config

@@ -1,4 +1,4 @@
-gc                      := gc-7.4.0
+gc                      := gc-7.4.2
 gc_url                  := http://www.hboehm.info/gc/gc_source/$(gc).tar.gz
 
 prepare-gc-rule:
@@ -18,7 +18,8 @@ configure-gc-rule:
 		--with-libatomic-ops \
 		\
 		--disable-gcj-support \
-		--disable-handle-fork
+		--disable-handle-fork \
+		--disable-sigrt-signals
 
 build-gc-rule:
 	$(MAKE) -C $(gc) all

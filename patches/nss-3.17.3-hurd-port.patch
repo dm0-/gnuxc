@@ -1,0 +1,224 @@
+Support cross-compiling for Hurd by piggy-backing on the Linux configuration.
+This also adds the configuration scripts, because they are required by other
+projects but mysteriously missing from sources.
+
+--- coreconf/command.mk
++++ coreconf/command.mk
+@@ -16,7 +16,7 @@
+ CFLAGS        = $(OPTIMIZER) $(OS_CFLAGS) $(XP_DEFINE) $(DEFINES) $(INCLUDES) \
+ 		$(XCFLAGS)
+ PERL          = perl
+-RANLIB        = echo
++RANLIB        ?= ranlib
+ TAR           = /bin/tar
+ #
+ # For purify
+--- coreconf/Linux.mk
++++ coreconf/Linux.mk
+@@ -16,9 +16,9 @@
+ 	IMPL_STRATEGY = _PTH
+ endif
+ 
+-CC			= gcc
+-CCC			= g++
+-RANLIB			= ranlib
++CC			?= gcc
++CCC			?= g++
++DEFINES += -DPATH_MAX=4096 -DNO_SYSINFO
+ 
+ DEFAULT_COMPILER = gcc
+ 
+--- coreconf/rules.mk
++++ coreconf/rules.mk
+@@ -259,9 +259,9 @@
+ 	@$(MAKE_OBJDIR)
+ 	rm -f $@
+ ifeq (,$(filter-out _WIN%,$(NS_USE_GCC)_$(OS_TARGET)))
+-	$(AR) $(subst /,\\,$(OBJS))
++	$(AR) cr $@ $(subst /,\\,$(OBJS))
+ else
+-	$(AR) $(OBJS)
++	$(AR) cr $@ $(OBJS)
+ endif
+ 	$(RANLIB) $@
+ 
+--- coreconf/UNIX.mk
++++ coreconf/UNIX.mk
+@@ -6,7 +6,7 @@
+ XP_DEFINE  += -DXP_UNIX
+ LIB_SUFFIX  = a
+ DLL_SUFFIX  = so
+-AR          = ar cr $@
++AR         ?= ar
+ LDOPTS     += -L$(SOURCE_LIB_DIR)
+ 
+ ifdef BUILD_OPT
+--- nss.pc
++++ nss.pc
+@@ -0,0 +1,11 @@
++prefix=@prefix@
++exec_prefix=${prefix}
++libdir=${exec_prefix}/lib
++includedir=${prefix}/include/nss
++
++Name: NSS
++Description: Network Security Services
++Version: @NSS_MAJOR_VERSION@.@NSS_MINOR_VERSION@.@NSS_PATCH_VERSION@
++Requires: nspr
++Libs: -lnss@NSS_MAJOR_VERSION@ -lnssutil@NSS_MAJOR_VERSION@ -lsmime@NSS_MAJOR_VERSION@ -lssl@NSS_MAJOR_VERSION@ -lsoftokn@NSS_MAJOR_VERSION@
++Cflags: -I${includedir}
+--- nss-config
++++ nss-config
+@@ -0,0 +1,152 @@
++#!/bin/sh
++
++prefix=@prefix@
++
++major_version=@NSS_MAJOR_VERSION@
++minor_version=@NSS_MINOR_VERSION@
++patch_version=@NSS_PATCH_VERSION@
++
++usage()
++{
++	cat <<EOF
++Usage: nss-config [OPTIONS] [LIBRARIES]
++Options:
++	[--prefix[=DIR]]
++	[--exec-prefix[=DIR]]
++	[--includedir[=DIR]]
++	[--libdir[=DIR]]
++	[--version]
++	[--libs]
++	[--cflags]
++Dynamic Libraries:
++	 nss
++	 nssutil
++	 smime
++	 ssl
++	 softokn
++EOF
++	exit $1
++}
++
++if test $# -eq 0; then
++   usage 1 1>&2
++fi
++
++lib_nss=yes
++lib_nssutil=yes
++lib_smime=yes
++lib_ssl=yes
++lib_softokn=yes
++
++while test $# -gt 0; do
++  case "$1" in
++  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
++  *) optarg= ;;
++  esac
++
++  case $1 in
++    --prefix=*)
++      prefix=$optarg
++      ;;
++    --prefix)
++      echo_prefix=yes
++      ;;
++    --exec-prefix=*)
++      exec_prefix=$optarg
++      ;;
++    --exec-prefix)
++      echo_exec_prefix=yes
++      ;;
++    --includedir=*)
++      includedir=$optarg
++      ;;
++    --includedir)
++      echo_includedir=yes
++      ;;
++    --libdir=*)
++      libdir=$optarg
++      ;;
++    --libdir)
++      echo_libdir=yes
++      ;;
++    --version)
++      echo ${major_version}.${minor_version}.${patch_version}
++      ;;
++    --cflags)
++      echo_cflags=yes
++      ;;
++    --libs)
++      echo_libs=yes
++      ;;
++    nss)
++      lib_nss=yes
++      ;;
++    nssutil)
++      lib_nssutil=yes
++      ;;
++    smime)
++      lib_smime=yes
++      ;;
++    ssl)
++      lib_ssl=yes
++      ;;
++    softokn)
++      lib_softokn=yes
++      ;;
++    *)
++      usage 1 1>&2
++      ;;
++  esac
++  shift
++done
++
++# Set variables that may be dependent upon other variables
++if test -z "$exec_prefix"; then
++    exec_prefix=`@PKG_CONFIG@ --variable=exec_prefix nss`
++fi
++if test -z "$includedir"; then
++    includedir=`@PKG_CONFIG@ --variable=includedir nss`
++fi
++if test -z "$libdir"; then
++    libdir=`@PKG_CONFIG@ --variable=libdir nss`
++fi
++
++if test "$echo_prefix" = "yes"; then
++    echo $prefix
++fi
++
++if test "$echo_exec_prefix" = "yes"; then
++    echo $exec_prefix
++fi
++
++if test "$echo_includedir" = "yes"; then
++    echo $includedir
++fi
++
++if test "$echo_libdir" = "yes"; then
++    echo $libdir
++fi
++
++if test "$echo_cflags" = "yes"; then
++    echo -I$includedir
++fi
++
++if test "$echo_libs" = "yes"; then
++      libdirs="-L$libdir"
++      if test -n "$lib_nss"; then
++      libdirs="$libdirs -lnss${major_version}"
++      fi
++      if test -n "$lib_nssutil"; then
++        libdirs="$libdirs -lnssutil${major_version}"
++      fi
++      if test -n "$lib_smime"; then
++      libdirs="$libdirs -lsmime${major_version}"
++      fi
++      if test -n "$lib_ssl"; then
++      libdirs="$libdirs -lssl${major_version}"
++      fi
++      if test -n "$lib_softokn"; then
++        libdirs="$libdirs -lsoftokn${major_version}"
++      fi
++      echo $libdirs
++fi

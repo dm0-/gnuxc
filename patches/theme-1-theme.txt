@@ -1,23 +1,79 @@
 # GNU Theme
-desktop-color: "#FFFFFF"
-message-bg-color: "#FFFF66"
-message-color: "#000000"
-message-font: "FreeSans Regular 14"
+desktop-color: "#E7E9EB"
 terminal-font: "FreeMono Regular 14"
 title-text: ""
 
-+ image {
-	file = "banner.png"
+# Banner major label
++ label {
+	text = "GNU"
 
-	height = 100
-	left = 50%-275
-	top = 0
-	width = 550
+	align = "right"
+	color = "#971611"
+	font = "FreeSans Bold 40"
+
+	height = 50
+	left = 0
+	top = 23
+	width = 50%-88
 }
 
+# Banner minor label
++ label {
+	text = "Operating System"
+
+	align = "left"
+	color = "#334683"
+	font = "FreeSans Bold 30"
+
+	height = 50
+	left = 50%-80
+	top = 34
+	width = 50%
+}
+
+# Banner logo
++ image {
+	file = "logo.png"
+	height = 80
+	left = 10%+10
+	top = 10
+	width = 80
+}
+
+# VM logo
+#VM#+ image {
+#VM#	file = "logovm.png"
+#VM#	height = 80
+#VM#	left = 90%-90
+#VM#	top = 10
+#VM#	width = 80
+#VM#}
+
+# Build label
++ label {
+	text = "This image was built on @BUILD_DATE@."
+
+	align = "center"
+	color = "#000000"
+	font = "FreeSans Regular 14"
+
+	height = 20
+	left = 10%
+	top = 105
+	width = 80%
+}
+
+# Filler behind the build label
++ image {
+	file = "label.png"
+	height = 30
+	left = 10%
+	top = 100
+	width = 80%
+}
+
+# Menu
 + boot_menu {
-	border_color = "#000000"
-	menu_pixmap_style = "1bp_*.png"
 	scrollbar = true
 	scrollbar_width = 20
 
@@ -31,38 +87,68 @@ title-text: ""
 	item_spacing = 0
 	selected_item_color= "#FFFF00"
 	selected_item_font = "FreeSans Bold 16"
-	selected_item_pixmap_style = "1mp_*.png"
+	selected_item_pixmap_style = "selected_*.png"
 
-	height = 100%-195
+	height = 100%-225
 	left = 10%
-	top = 100
+	top = 130
 	width = 80%
 }
 
+# Timer
 + progress_bar {
 	id = "__timeout__"
 
-	bg_color = "#FFFFFF"
-	border_color = "#000000"
+	bg_color = "#F0F2F4"
+	border_color = "#C9CCCF"
 	fg_color = "#3465A4"
 	font = "FreeSans Regular 14"
 	text = "@TIMEOUT_NOTIFICATION_LONG@"
 	text_color = "#000000"
 
 	height = 20
-	left = 10%
+	left = 10%+10
 	top = 100%-70
-	width = 80%
+	width = 80%-20
 }
 
+# Hotkey label
 + label {
+	text = "@KEYMAP_SHORT@"
+
 	align = "center"
 	color = "#000000"
 	font = "FreeSans Regular 12"
-	text = "@KEYMAP_SHORT@"
 
 	height = 20
 	left = 0
 	top = 100%-25
 	width = 100%
+}
+
+# Filler behind the content
++ image {
+	file = "content.png"
+	height = 100%
+	left = 10%
+	top = 0
+	width = 80%
+}
+
+# Content left-side shadow
++ image {
+	file = "shadow_left.png"
+	height = 100%
+	left = 10%-20
+	top = 0
+	width = 20
+}
+
+# Content right-side shadow
++ image {
+	file = "shadow_right.png"
+	height = 100%
+	left = 90%
+	top = 0
+	width = 20
 }

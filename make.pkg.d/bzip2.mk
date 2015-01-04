@@ -1,23 +1,37 @@
 bzip2                   := bzip2-1.0.6
 bzip2_url               := http://www.bzip.org/$(bzip2:bzip2-%=%)/$(bzip2).tar.gz
 
-prepare-bzip2-rule:
-	$(PATCH) -d $(bzip2) < $(patchdir)/$(bzip2)-environment.patch
-	$(PATCH) -d $(bzip2) < $(patchdir)/$(bzip2)-explicit-test.patch
-	$(PATCH) -d $(bzip2) < $(patchdir)/$(bzip2)-standard-paths.patch
-	$(PATCH) -d $(bzip2) < $(patchdir)/$(bzip2)-relative-links.patch
-
 build-bzip2-rule:
-	$(MAKE) -C $(bzip2) all \
-		PREFIX=/usr \
-		EPREFIX=
-	$(MAKE) -C $(bzip2) -f Makefile-libbz2_so all
+	$(MAKE) -C $(bzip2) libbz2.a bzip2recover \
+		AR='$(AR)' CC='$(CC)' RANLIB='$(RANLIB)' \
+		CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' \
+		PREFIX=/usr
+	$(MAKE) -C $(bzip2) -f Makefile-libbz2_so all \
+		CC='$(CC)' \
+		CFLAGS='$(CFLAGS)'
 
 install-bzip2-rule: $(call installed,coreutils)
-	$(MAKE) -C $(bzip2) install \
-		PREFIX=$(DESTDIR)/usr \
-		EPREFIX=$(DESTDIR)
-	$(INSTALL) -Dpm 755 $(bzip2)/bzip2-shared $(DESTDIR)/bin/bzip2
-	$(INSTALL) -Dpm 755 $(bzip2)/libbz2.so.1.0.6 $(DESTDIR)/lib/libbz2.so.1.0.6
-	$(SYMLINK) libbz2.so.1.0.6 $(DESTDIR)/lib/libbz2.so.1.0
-	$(SYMLINK) libbz2.so.1.0 $(DESTDIR)/lib/libbz2.so
+# The shared library's Makefile has no install section.
+	$(INSTALL) -Dpm 755 $(bzip2)/bzip2-shared $(DESTDIR)/usr/bin/bzip2
+	$(INSTALL) -Dpm 644 $(bzip2)/bzip2.1 $(DESTDIR)/usr/share/man/man1/bzip2.1
+	$(INSTALL) -Dpm 755 $(bzip2)/libbz2.so.$(bzip2:bzip2-%=%) $(DESTDIR)/lib/libbz2.so.$(bzip2:bzip2-%=%)
+	$(SYMLINK) libbz2.so.$(bzip2:bzip2-%=%) $(DESTDIR)/lib/libbz2.so.1.0
+# The main Makefile's install section shouldn't be used.
+	$(INSTALL) -pm 755 -t $(DESTDIR)/usr/bin            $(bzip2)/bz{grep,more,diff,ip2recover}
+	$(INSTALL) -pm 644 -t $(DESTDIR)/usr/share/man/man1 $(bzip2)/bz{grep,more,diff}.1
+	$(INSTALL) -Dpm 644 $(bzip2)/libbz2.a $(DESTDIR)/usr/lib/libbz2.a
+	$(SYMLINK) ../../lib/libbz2.so.1.0    $(DESTDIR)/usr/lib/libbz2.so
+	$(INSTALL) -Dpm 644 $(bzip2)/bzlib.h  $(DESTDIR)/usr/include/bzlib.h
+	$(SYMLINK) bzip2  $(DESTDIR)/usr/bin/bunzip2
+	$(SYMLINK) bzip2  $(DESTDIR)/usr/bin/bzcat
+	$(SYMLINK) bzgrep $(DESTDIR)/usr/bin/bzegrep
+	$(SYMLINK) bzgrep $(DESTDIR)/usr/bin/bzfgrep
+	$(SYMLINK) bzmore $(DESTDIR)/usr/bin/bzless
+	$(SYMLINK) bzdiff $(DESTDIR)/usr/bin/bzcmp
+	$(SYMLINK) bzip2.1  $(DESTDIR)/usr/share/man/man1/bzip2recover.1
+	$(SYMLINK) bzip2.1  $(DESTDIR)/usr/share/man/man1/bunzip2.1
+	$(SYMLINK) bzip2.1  $(DESTDIR)/usr/share/man/man1/bzcat.1
+	$(SYMLINK) bzgrep.1 $(DESTDIR)/usr/share/man/man1/bzegrep.1
+	$(SYMLINK) bzgrep.1 $(DESTDIR)/usr/share/man/man1/bzfgrep.1
+	$(SYMLINK) bzmore.1 $(DESTDIR)/usr/share/man/man1/bzless.1
+	$(SYMLINK) bzdiff.1 $(DESTDIR)/usr/share/man/man1/bzcmp.1

@@ -13,8 +13,6 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 BuildRequires:  gnuxc-libICE-devel
 BuildRequires:  gnuxc-libuuid-devel
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 

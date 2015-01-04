@@ -1,5 +1,4 @@
-jbigkit                 := jbigkit-2.0
-jbigkit_branch          := jbigkit
+jbigkit                 := jbigkit-2.1
 jbigkit_url             := http://www.cl.cam.ac.uk/~mgk25/download/$(jbigkit).tar.gz
 
 prepare-jbigkit-rule:
@@ -19,10 +18,10 @@ install-jbigkit-rule: $(call installed,glibc)
 	$(INSTALL) -Dpm 644 $(jbigkit)/libjbig/jbig85.h  $(DESTDIR)/usr/include/jbig85.h
 	$(INSTALL) -Dpm 644 $(jbigkit)/libjbig/jbig_ar.h $(DESTDIR)/usr/include/jbig_ar.h
 
-	$(INSTALL) -Dpm 755 $(jbigkit)/libjbig/libjbig.so.2.0   $(DESTDIR)/usr/lib/libjbig.so.2.0
-	$(INSTALL) -Dpm 755 $(jbigkit)/libjbig/libjbig85.so.2.0 $(DESTDIR)/usr/lib/libjbig85.so.2.0
-	$(SYMLINK) libjbig.so.2.0   $(DESTDIR)/usr/lib/libjbig.so
-	$(SYMLINK) libjbig85.so.2.0 $(DESTDIR)/usr/lib/libjbig85.so
+	$(INSTALL) -Dpm 755 $(jbigkit)/libjbig/libjbig.so.2.1   $(DESTDIR)/usr/lib/libjbig.so.2.1
+	$(INSTALL) -Dpm 755 $(jbigkit)/libjbig/libjbig85.so.2.1 $(DESTDIR)/usr/lib/libjbig85.so.2.1
+	$(SYMLINK) libjbig.so.2.1   $(DESTDIR)/usr/lib/libjbig.so
+	$(SYMLINK) libjbig85.so.2.1 $(DESTDIR)/usr/lib/libjbig85.so
 	$(INSTALL) -Dpm 644 $(jbigkit)/libjbig/libjbig.a   $(DESTDIR)/usr/lib/libjbig.a
 	$(INSTALL) -Dpm 644 $(jbigkit)/libjbig/libjbig85.a $(DESTDIR)/usr/lib/libjbig85.a
 

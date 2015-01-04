@@ -1,0 +1,82 @@
+Allow writing logs to a string port until start-logging is called, and make
+this the default behavior for root.  This also sneaks in closing stdout and
+stderr for dmd, since it seems to break console interaction and crash stuff.
+
+--- modules/dmd.scm
++++ modules/dmd.scm
+@@ -17,6 +17,9 @@
+ ;; You should have received a copy of the GNU General Public License
+ ;; along with GNU dmd.  If not, see <http://www.gnu.org/licenses/>.
+ 
++(set-current-output-port (%make-void-port "w"))
++(set-current-error-port (current-output-port))
++
+ (define-module (dmd)
+   #:use-module (ice-9 match)
+   #:use-module (ice-9 rdelim)   ;; Line-based I/O.
+@@ -97,7 +100,8 @@
+ 		  (make <option>
+ 		    #:long "logfile" #:short #\l
+ 		    #:takes-arg? #t #:optional-arg? #f #:arg-name "FILE"
+-		    #:description "log actions in FILE"
++		    #:description
++		    "log actions in FILE or to a buffer if FILE is \"delayed\""
+ 		    #:action (lambda (file)
+ 			       (set! logfile file)))
+ 		  (make <option>
+@@ -137,7 +141,9 @@
+     (and socket-file
+ 	 (verify-dir (dirname socket-file) insecure))
+     ;; Enable logging as first action.
+-    (start-logging logfile)
++    (if (string-ci=? logfile "delayed")
++      (start-logging-to-buffer)
++      (start-logging logfile))
+ 
+     ;; Send output to log and clients.
+     (set-current-output-port dmd-output-port)
+--- modules/dmd/comm.scm
++++ modules/dmd/comm.scm
+@@ -37,6 +37,7 @@
+             read-command
+ 
+             start-logging
++            start-logging-to-buffer
+             stop-logging
+             %current-client-socket
+             dmd-output-port))
+@@ -103,10 +104,20 @@
+ ;; Port for logging.  This must always be a valid port, never `#f'.
+ (define log-output-port (%make-void-port "w"))
+ (define (start-logging file)
+-  (let ((directory (dirname file)))
++  (let ((directory (dirname file)) (oldport log-output-port))
+     (unless (file-exists? directory)
+-      (mkdir directory)))
+-  (set! log-output-port (open-file file "al")))   ; line-buffered port
++      (mkdir directory))
++    (set! log-output-port (open-file file "al"))  ; line-buffered port
++    ;; Attempt to dump any buffered log data to the given log file.  This only
++    ;; succeeds if log-output-port was an open output string port, as verified
++    ;; by get-output-string.  Otherwise, logging to a file is started normally.
++    (catch #t
++      (lambda ()
++        (display (get-output-string oldport) log-output-port)
++        (close-output-port oldport))
++      noop)))
++(define (start-logging-to-buffer)
++  (set! log-output-port (open-output-string)))
+ (define (stop-logging)
+   (close-port log-output-port)
+   (set! log-output-port (%make-void-port "w")))
+--- modules/dmd/support.scm
++++ modules/dmd/support.scm
+@@ -208,7 +208,7 @@
+ ;; Logfile.
+ (define default-logfile
+   (if (zero? (getuid))
+-      (string-append %localstatedir "/log/dmd.log")
++      (string-append "delayed")
+       (string-append user-dmddir "/dmd.log")))
+ 
+ ;; Configuration file.

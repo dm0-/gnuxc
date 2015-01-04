@@ -1,5 +1,5 @@
 %?gnuxc_package_header
-%undefine debug_package
+%global debug_package %{nil}
 
 Name:           gnuxc-libpthread-stubs
 Version:        0.3
@@ -14,8 +14,7 @@ Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
 BuildRequires:  gnuxc-glibc-devel
 
 Requires:       gnuxc-glibc-devel
-
-BuildArch:      noarch
+Provides:       %{name}-devel = %{version}-%{release}
 
 %description
 %{summary}.

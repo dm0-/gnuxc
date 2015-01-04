@@ -1,5 +1,5 @@
-libtasn1                := libtasn1-3.4
-libtasn1_url            := http://ftp.gnu.org/gnu/libtasn1/$(libtasn1).tar.gz
+libtasn1                := libtasn1-4.2
+libtasn1_url            := http://ftpmirror.gnu.org/libtasn1/$(libtasn1).tar.gz
 
 configure-libtasn1-rule:
 	cd $(libtasn1) && ./$(configure) \

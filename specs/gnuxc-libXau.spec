@@ -13,8 +13,6 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 BuildRequires:  gnuxc-glibc-devel
 BuildRequires:  gnuxc-xproto
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 
@@ -45,7 +43,7 @@ statically, which is highly discouraged.
 %build
 %gnuxc_configure \
     --disable-silent-rules \
-    --enable-strict-compilation \
+    --enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
     --enable-xthreads
 %gnuxc_make %{?_smp_mflags} all
 

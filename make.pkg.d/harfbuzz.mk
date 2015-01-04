@@ -1,4 +1,4 @@
-harfbuzz                := harfbuzz-0.9.27
+harfbuzz                := harfbuzz-0.9.37
 harfbuzz_url            := http://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz).tar.bz2
 
 prepare-harfbuzz-rule:
@@ -15,14 +15,14 @@ configure-harfbuzz-rule:
 		--with-freetype \
 		--with-glib \
 		--with-gobject \
+		--with-icu \
 		\
 		--without-coretext \
 		--without-graphite2 \
-		--without-icu \
 		--without-uniscribe
 
 build-harfbuzz-rule:
 	$(MAKE) -C $(harfbuzz) all
 
-install-harfbuzz-rule: $(call installed,cairo freetype glib)
+install-harfbuzz-rule: $(call installed,cairo freetype glib icu4c)
 	$(MAKE) -C $(harfbuzz) install

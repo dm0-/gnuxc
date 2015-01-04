@@ -1,0 +1,17 @@
+Don't try to set the time zone on the build system, and don't run ranlib twice.
+
+--- Makefile
++++ Makefile
+@@ -378,11 +378,10 @@
+ 			$(DESTDIR)$(MANDIR)/man3 $(DESTDIR)$(MANDIR)/man5 \
+ 			$(DESTDIR)$(MANDIR)/man8
+ 		$(ZIC) -y $(YEARISTYPE) \
+-			-d $(DESTDIR)$(TZDIR) -l $(LOCALTIME) -p $(POSIXRULES)
++			-d $(DESTDIR)$(TZDIR) -p $(POSIXRULES)
+ 		cp -f iso3166.tab $(ZONETABLES) $(DESTDIR)$(TZDIR)/.
+ 		cp tzselect zic zdump $(DESTDIR)$(ETCDIR)/.
+ 		cp libtz.a $(DESTDIR)$(LIBDIR)/.
+-		$(RANLIB) $(DESTDIR)$(LIBDIR)/libtz.a
+ 		cp -f newctime.3 newtzset.3 $(DESTDIR)$(MANDIR)/man3/.
+ 		cp -f tzfile.5 $(DESTDIR)$(MANDIR)/man5/.
+ 		cp -f tzselect.8 zdump.8 zic.8 $(DESTDIR)$(MANDIR)/man8/.

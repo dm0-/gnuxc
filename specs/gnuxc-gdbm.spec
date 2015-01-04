@@ -8,11 +8,9 @@ Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 License:        GPLv3+
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/gdbm/
-Source0:        http://ftp.gnu.org/gnu/gdbm/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://ftpmirror.gnu.org/gdbm/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.

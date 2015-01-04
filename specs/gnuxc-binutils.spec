@@ -1,17 +1,23 @@
-%global gnuxc_has_env %(rpm --quiet -q gnuxc-gcc-c++ && echo 1 || echo 0)
+# Determine whether this package requires a complete GCC.
+%if 0%{!?gnuxc_bootstrapped:1}
+%global gnuxc_bootstrapped %(test -n "$gnuxc_bootstrapped" && echo $gnuxc_bootstrapped || (rpm --quiet -q gnuxc-glibc && echo 1 || echo 0))
+%endif
+
+# (This value is used in the RPM release number in order to ensure the full
+# packages are always an upgrade over bootstrapping sub-packages.)
 
 Name:           gnuxc-binutils
-Version:        2.24
-Release:        1%{?dist}
+Version:        2.25
+Release:        1.%{gnuxc_bootstrapped}%{?dist}
 Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
 Group:          Development/Tools
 URL:            http://www.gnu.org/software/binutils/
-Source0:        https://ftp.gnu.org/gnu/binutils/%{gnuxc_name}-%{version}.tar.bz2
+Source0:        http://ftpmirror.gnu.org/binutils/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-filesystem
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-zlib-devel
 %endif
@@ -28,7 +34,7 @@ Provides:       bundled(libiberty)
 Cross-compiler binutils (utilities like "strip", "as", "ld") which understand
 GNU Hurd executables and libraries.
 
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 %global __elf_magic ELF.*for GNU/Linux
 %undefine _binaries_in_noarch_packages_terminate_build
 
@@ -66,8 +72,6 @@ which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
-sed -i -e '/^target_header_dir=$/d' libiberty/configure{,.ac}
-
 # Provide non-conflicting internationalized messages.
 for po in bfd binutils gas gold gprof ld opcodes
 do
@@ -83,6 +87,7 @@ done
     --disable-isl-version-check \\\
     --disable-rpath \\\
     --enable-build-warnings --disable-werror \\\
+    --enable-deterministic-archives \\\
     --enable-gold \\\
     --enable-install-libiberty='%{gnuxc_includedir}' \\\
     --enable-ld=default \\\
@@ -107,7 +112,7 @@ mkdir -p cross && (pushd cross
     --with-sysroot=%{gnuxc_sysroot}
 popd)
 
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 mkdir -p host && (pushd host
 %gnuxc_configure %{binutils_configuration} \
     --disable-nls
@@ -115,8 +120,8 @@ popd)
 %endif
 
 make -C cross %{?_smp_mflags} all
-%if 0%{gnuxc_has_env}
-%gnuxc_make -C host %{?_smp_mflags} all
+%if 0%{gnuxc_bootstrapped}
+%gnuxc_make -C host %{?_smp_mflags} all-{bfd,libiberty,opcodes}
 %endif
 
 %install
@@ -139,25 +144,14 @@ do
         cat gnuxc-$mo.lang >> %{name}.lang
 done
 
-%if 0%{gnuxc_has_env}
-%gnuxc_make_install -C host
-
-# There is no need to install binary programs in the sysroot.
-set ar as ranlib ld ld.bfd ld.gold nm objcopy objdump strip ; for prog
-do
-        rm -f %{buildroot}%{gnuxc_prefix}/%{gnuxc_host}/bin/$prog
-done
-for prog in "$@" addr2line c++filt dwp elfedit gprof readelf size strings
-do
-        rm -f %{buildroot}%{gnuxc_bindir}/%{gnuxc_target}-$prog
-done
-rm -rf %{buildroot}%{gnuxc_prefix}/%{gnuxc_host}/lib/ldscripts
+%if 0%{gnuxc_bootstrapped}
+%gnuxc_make -C host install-{bfd,libiberty,opcodes} DESTDIR=%{buildroot}
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/lib{bfd,opcodes}.la
 
 # Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
+rm -rf %{buildroot}%{gnuxc_infodir}
 %endif
 
 
@@ -208,10 +202,10 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_root}/lib/ldscripts
 %doc ChangeLog COPYING* MAINTAINERS README*
 
-%if 0%{gnuxc_has_env}
+%if 0%{gnuxc_bootstrapped}
 %files libs
-%{gnuxc_libdir}/libbfd-2.24.so
-%{gnuxc_libdir}/libopcodes-2.24.so
+%{gnuxc_libdir}/libbfd-%{version}.so
+%{gnuxc_libdir}/libopcodes-%{version}.so
 
 %files devel
 %{gnuxc_includedir}/ansidecl.h

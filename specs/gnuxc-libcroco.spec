@@ -13,8 +13,6 @@ Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/0.6/%{gnuxc
 BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-libxml2-devel
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 

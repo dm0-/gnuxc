@@ -1,3 +1,6 @@
+# Declare that this package does not require a complete GCC.
+%global gnuxc_bootstrapped 0
+
 %?gnuxc_package_header
 
 %global __filter_GLIBC_PRIVATE 1
@@ -6,34 +9,30 @@
 
 Name:           gnuxc-glibc
 Version:        2.17.90
-%global snap    bdb7a1
+%global snap    7a3271
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
+%global lpname  libpthread
 %global lpvers  0.3
-%global lpsnap  3b391d
+%global lpsnap  ed9f86
 
 License:        LGPLv2+ and LGPLv2+ with exceptions and GPLv2+
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/glibc/
-Source0:        %{gnuxc_name}-%{version}-%{snap}.tar.xz
-Source1:        libpthread-%{lpvers}-%{lpsnap}.tar.xz
+Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
+Source1:        http://git.savannah.gnu.org/cgit/hurd/%{lpname}.git/snapshot/%{lpname}-%{lpsnap}.tar.xz
 
-# Ship customizations in the SRPM, but they are already applied in the archive.
-Patch101:       %{gnuxc_name}-%{version}-%{snap}-fix-documentation.patch
-Patch102:       %{gnuxc_name}-%{version}-%{snap}-provide-hurd-api.patch
-Patch103:       %{gnuxc_name}-%{version}-%{snap}-create-gnumach-header.patch
-Patch104:       %{gnuxc_name}-%{version}-%{snap}-pthread-posix.patch
-Patch201:       libpthread-%{lpvers}-%{lpsnap}-steal-libihash.patch
-Patch202:       libpthread-%{lpvers}-%{lpsnap}-glibc-preparation.patch
+Patch101:       %{gnuxc_name}-%{version}-%{snap}-provide-hurd-api.patch
+Patch102:       %{gnuxc_name}-%{version}-%{snap}-create-gnumach-header.patch
+Patch201:       %{gnuxc_name}-%{version}-%{snap}-%{lpname}-%{lpvers}-%{lpsnap}-steal-libihash.patch
+Patch202:       %{gnuxc_name}-%{version}-%{snap}-%{lpname}-%{lpvers}-%{lpsnap}-glibc-preparation.patch
 
 Requires:       gnuxc-filesystem
 
 BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-hurd-headers
 BuildRequires:  gnuxc-mig
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -61,11 +60,19 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}-%{snap}
-tar --transform='s,^libpthread-%{lpvers}-%{lpsnap},libpthread,' -xf %{SOURCE1}
+%setup -q -n %{gnuxc_name}-%{snap}
+%patch101
+%patch102
+sed -i -e '/ | 3/s/)/ | 4.*)/' -e 's/nss-config /%{gnuxc_target}-&/' configure
+sed -i -e '59a@end deftypefun' manual/platform.texi
+
+%setup -q -D -T -a 1 -n %{gnuxc_name}-%{snap}
+mv %{lpname}-%{lpsnap} %{lpname} && cd %{lpname}
+%patch201
+%patch202
 
 # Work around an earlier gnuxc-libpthread-headers requirement.
-mkdir -p libpthread/include_hack/bits && cd libpthread/include_hack/bits
+mkdir -p include_hack/bits && cd include_hack/bits
 ln -s ../../sysdeps/{i386/bits/spin-lock,generic/bits/}*.h .
 
 %build
@@ -82,11 +89,13 @@ mkdir -p build && pushd build
     --enable-stackguard-randomization \
     BASH_SHELL=/bin/bash \
     \
-    --disable-nscd
+    -disable-nscd
 popd
 %gnuxc_make -C build %{?_smp_mflags} all \
-    CC="%{gnuxc_gcc} -I$PWD/libpthread/include_hack" \
+    CC="%{gnuxc_gcc} -I$PWD/%{lpname}/include_hack" \
     install_root=.
+# This target seems to break parallel builds when given in the above command.
+%gnuxc_make -C build %{?_smp_mflags} info
 
 %install
 # These dirs are needed because ld scripts are dumb when it comes to sysroots.
@@ -95,6 +104,13 @@ popd
     inst_{lib,rtld,slib}dir=%{buildroot}%{gnuxc_libdir} \
     auditdir=%{gnuxc_libdir}/audit \
     gconvdir=%{gnuxc_libdir}/gconv
+
+# There is no need to install binary programs in the sysroot.
+rm -f \
+    %{buildroot}%{gnuxc_bindir}/{catchsegv,gencat,getconf,getent,iconv,ldd} \
+    %{buildroot}%{gnuxc_bindir}/{locale{,def},makedb,mtrace,pcprofiledump} \
+    %{buildroot}%{gnuxc_bindir}/{pldd,rpcgen,sotruss,sprof,tzselect,xtrace} \
+    %{buildroot}%{gnuxc_sbindir}/{iconvconfig,sln,zdump,zic}
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_infodir}
@@ -107,23 +123,6 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 
 
 %files
-%{gnuxc_bindir}/catchsegv
-%{gnuxc_bindir}/gencat
-%{gnuxc_bindir}/getconf
-%{gnuxc_bindir}/getent
-%{gnuxc_bindir}/iconv
-%{gnuxc_bindir}/ldd
-%{gnuxc_bindir}/locale
-%{gnuxc_bindir}/localedef
-%{gnuxc_bindir}/makedb
-%{gnuxc_bindir}/mtrace
-%{gnuxc_bindir}/pcprofiledump
-%{gnuxc_bindir}/pldd
-%{gnuxc_bindir}/rpcgen
-%{gnuxc_bindir}/sotruss
-%{gnuxc_bindir}/sprof
-%{gnuxc_bindir}/tzselect
-%{gnuxc_bindir}/xtrace
 %{gnuxc_datadir}/i18n
 %{gnuxc_datadir}/locale/locale.alias
 %{gnuxc_libdir}/audit
@@ -178,10 +177,6 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libexecdir}/getconf
 %{gnuxc_libexecdir}/pt_chown
 %{gnuxc_localstatedir}/db/Makefile
-%{gnuxc_sbindir}/iconvconfig
-%{gnuxc_sbindir}/sln
-%{gnuxc_sbindir}/zdump
-%{gnuxc_sbindir}/zic
 %{gnuxc_sysconfdir}/rpc
 %doc BUGS ChangeLog* CONFORMANCE COPYING* LICENSES NEWS PROJECTS README
 

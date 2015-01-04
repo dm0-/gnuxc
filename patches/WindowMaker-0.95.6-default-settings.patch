@@ -1,0 +1,160 @@
+Standardize on some default settings.  This will make a lot of keyboard
+shortcuts consistent with those found in other Hurd contexts and major desktop
+environments.  It also adds a few definitions that make some of our installed
+packages more discoverable and uses their icons by default when provided.
+
+--- WPrefs.app/Paths.c
++++ WPrefs.app/Paths.c
+@@ -82,6 +82,19 @@
+ 		addPathToList(panel->icoL, -1, "/usr/local/share/WindowMaker/Icons");
+ 		addPathToList(panel->icoL, -1, "/usr/local/share/WindowMaker/Pixmaps");
+ 		addPathToList(panel->icoL, -1, "/usr/share/WindowMaker/Icons");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/scalable/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/256x256/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/192x192/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/128x128/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/96x96/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/72x72/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/64x64/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/48x48/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/36x36/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/32x32/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/24x24/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/22x22/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/16x16/apps");
+ 	} else {
+ 		for (i = 0; i < WMGetPropListItemCount(array); i++) {
+ 			val = WMGetFromPLArray(array, i);
+--- WindowMaker/Defaults/WindowMaker.in
++++ WindowMaker/Defaults/WindowMaker.in
+@@ -16,6 +16,19 @@
+     "~/GNUstep/Library/WindowMaker/Pixmaps",
+     "~/GNUstep/Library/WindowMaker/CachedPixmaps",
+     "/usr/share/icons",
++    "/usr/share/icons/hicolor/scalable/apps",
++    "/usr/share/icons/hicolor/256x256/apps",
++    "/usr/share/icons/hicolor/192x192/apps",
++    "/usr/share/icons/hicolor/128x128/apps",
++    "/usr/share/icons/hicolor/96x96/apps",
++    "/usr/share/icons/hicolor/72x72/apps",
++    "/usr/share/icons/hicolor/64x64/apps",
++    "/usr/share/icons/hicolor/48x48/apps",
++    "/usr/share/icons/hicolor/36x36/apps",
++    "/usr/share/icons/hicolor/32x32/apps",
++    "/usr/share/icons/hicolor/24x24/apps",
++    "/usr/share/icons/hicolor/22x22/apps",
++    "/usr/share/icons/hicolor/16x16/apps",
+     "/usr/local/share/pixmaps",
+     "/usr/share/pixmaps"
+   );
+@@ -31,7 +44,7 @@
+   );
+   WindowTitleBalloons = YES;
+   IconSize = 64;
+-  FocusMode = manual;
++  FocusMode = sloppy;
+   DisableWSMouseActions = NO;
+   MouseLeftButtonAction = SelectWindows;
+   MouseMiddleButtonAction = OpenWindowListMenu;
+@@ -55,31 +68,34 @@
+   UseSaveUnders = NO;
+   DisableSound = NO;
+   DisableAnimations = NO;
+-  DontLinkWorkspaces = YES;
++  DontLinkWorkspaces = NO;
+   AutoArrangeIcons = NO;
+   AdvanceToNewWorkspace = NO;
+-  CycleWorkspaces = NO;
++  CycleWorkspaces = YES;
+   ResizeDisplay = center;
+   MoveDisplay = floating;
+   OpaqueMove = YES;
+-  IconPosition = "blh";
+-  WrapMenus = NO;
++  OpaqueResize = YES;
++  OpaqueMoveResizeKeyboard = YES;
++  IconPosition = "blv";
++  WrapMenus = YES;
+   ScrollableMenus = YES;
+   MenuScrollSpeed = fast;
+   IconSlideSpeed = fast;
+   ShadeSpeed = fast;
+   DoubleClickTime = 250;
+   AlignSubmenus = NO;
+-  NoWindowOverIcons = NO;
++  NoWindowOverDock = YES;
++  NoWindowOverIcons = YES;
+   IgnoreFocusClick = NO;
+-  CloseKey = None;
++  CloseKey = "Mod1+F4";
+   MaximizeKey = None;
+   VMaximizeKey = None;
+   RaiseLowerKey = None;
+   DontConfirmKill = NO;
+   ShadeKey = None;
+-  NextWorkspaceKey = "Mod1+Control+Right";
+-  PrevWorkspaceKey = "Mod1+Control+Left";
++  NextWorkspaceKey = "Mod1+Right";
++  PrevWorkspaceKey = "Mod1+Left";
+   RootMenuKey = F12;
+   WindowListKey = F11;
+   WindowMenuKey = "Control+Escape";
+--- util/wmgenmenu.c
++++ util/wmgenmenu.c
+@@ -145,6 +145,8 @@
+ 	/* Root -> `Run' dialog */
+ 	L1Menu = WMCreatePLArray(
+ 		WMCreatePLString(_("Run...")),
++		WMCreatePLString("SHORTCUT"),
++		WMCreatePLString("Mod1+F2"),
+ 		WMCreatePLString("SHEXEC"),
+ 		WMCreatePLString(_("%A(Run, Type command:)")),
+ 		NULL
+--- util/wmgenmenu.h
++++ util/wmgenmenu.h
+@@ -51,6 +51,7 @@
+ 	{ N_("Maple"), "maple" },
+ 	{ N_("Scilab"), "scilab" },
+ 	{ N_("bc"), "bc !" },
++	{ N_("units"), "units !" },
+ 	{ N_("KCalc"), "kcalc" },
+ 	{ N_("XCalc"), "xcalc" },
+ 	{ N_("Mathematica"), "mathematica" },
+@@ -135,6 +136,7 @@
+ 	{ N_("Chromium"), "chromium-browser" },
+ 	{ N_("Google Chrome"), "google-chrome" },
+ 	{ N_("Mozilla Firefox"), "firefox" },
++	{ N_("IceCat"), "icecat" },
+ 	{ N_("Galeon"), "galeon" },
+ 	{ N_("SkipStone"), "skipstone" },
+ 	{ N_("Konqueror"), "konqueror" },
+@@ -197,6 +199,7 @@
+ 	{ N_("Pico"), "pico !" },
+ 	{ N_("Nano"), "nano !" },
+ 	{ N_("Joe"), "joe !" },
++	{ N_("Zile"), "zile !" },
+ 	{ NULL, NULL }
+ };
+ 
+@@ -314,7 +317,9 @@
+ char *Games[MAX_NR_APPS][2] = {
+ 	{ N_("FlightGear Flight Simulator"), "fgfs" },
+ 	{ N_("Tremulous"), "tremulous" },
++	{ N_("XBill"), "xbill" },
+ 	{ N_("XBoard"), "xboard" },
++	{ N_("XShogi"), "xshogi" },
+ 	{ N_("GNOME Chess"), "gnome-chess" },
+ 	{ N_("Darkplaces (Quake 1)"), "darkplaces" },
+ 	{ N_("QuakeSpasm (Quake 1)"), "quakespasm" },
+--- WindowMaker/Defaults/WMWindowAttributes.in
++++ WindowMaker/Defaults/WMWindowAttributes.in
+@@ -1,4 +1,9 @@
+ {
++  Emacs = {Icon = emacs.png;};
++  Icecat = {Icon = icecat.png;};
++  XBill = {Icon = xbill.xpm;};
++  Xboard = {Icon = xboard.png;};
++  XTerm = {Icon = "xterm-color_48x48.xpm";};
+   Logo.WMDock = {Icon = GNUstepGlow.#extension#;};
+   Logo.WMPanel = {Icon = GNUstep.#extension#;};
+   Logo.WMClip = {Icon = clip.#extension#;};

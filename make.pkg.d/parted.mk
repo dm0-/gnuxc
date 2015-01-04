@@ -1,5 +1,5 @@
-parted                  := parted-3.1
-parted_url              := http://ftp.gnu.org/gnu/parted/$(parted).tar.xz
+parted                  := parted-3.2
+parted_url              := http://ftpmirror.gnu.org/parted/$(parted).tar.xz
 
 configure-parted-rule:
 	cd $(parted) && ./$(configure) \
@@ -8,12 +8,12 @@ configure-parted-rule:
 		--disable-device-mapper \
 		--disable-rpath \
 		--disable-silent-rules \
+		--enable-assert \
 		--enable-debug \
-		--enable-gcc-warnings gl_cv_warn__Werror=no \
+		--enable-gcc-warnings gl_cv_warn_c__Werror=no \
 		--enable-threads=posix \
 		--with-readline \
-		--without-included-regex \
-		CPPFLAGS=-DCPPFunction=rl_completion_func_t
+		--without-included-regex
 
 build-parted-rule:
 	$(MAKE) -C $(parted) all

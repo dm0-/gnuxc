@@ -1,5 +1,5 @@
 diffutils               := diffutils-3.3
-diffutils_url           := http://ftp.gnu.org/gnu/diffutils/$(diffutils).tar.xz
+diffutils_url           := http://ftpmirror.gnu.org/diffutils/$(diffutils).tar.xz
 
 configure-diffutils-rule:
 	cd $(diffutils) && ./$(configure) \

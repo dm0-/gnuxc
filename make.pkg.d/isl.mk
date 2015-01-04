@@ -1,5 +1,5 @@
-isl                     := isl-0.12.2
-isl_url                 := http://isl.gforge.inria.fr/$(isl).tar.lzma
+isl                     := isl-0.14
+isl_url                 := http://isl.gforge.inria.fr/$(isl).tar.xz
 
 configure-isl-rule:
 	cd $(isl) && ./$(configure) \
@@ -7,10 +7,10 @@ configure-isl-rule:
 		--enable-portable-binary \
 		--with-gcc-arch=$(arch) \
 		--with-gmp=system \
-		--with-piplib=system
+		--with-int=gmp
 
 build-isl-rule:
 	$(MAKE) -C $(isl) all
 
-install-isl-rule: $(call installed,piplib)
+install-isl-rule: $(call installed,gmp)
 	$(MAKE) -C $(isl) install

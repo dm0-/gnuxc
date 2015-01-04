@@ -1,10 +1,7 @@
-gnumach                 := gnumach-1.4-e33a07
+gnumach                 := gnumach-1.4-87b7d8
 gnumach_branch          := master
-gnumach_snap            := e33a07f421a84e54360628354e4faa0cf4a5d36f
+gnumach_snap            := 87b7d8226c4219fdf7b6f607a437e9c93c9211d7
 gnumach_url             := git://git.sv.gnu.org/hurd/gnumach.git
-
-prepare-gnumach-rule:
-	$(PATCH) -d $(gnumach) < $(patchdir)/$(gnumach)-install-debug-headers.patch
 
 configure-gnumach-rule:
 	cd $(gnumach) && ./$(configure) \
@@ -15,7 +12,7 @@ configure-gnumach-rule:
 		--enable-pae
 
 build-gnumach-rule:
-	$(MAKE) -C $(gnumach) all gnumach gnumach.msgids
+	$(MAKE) -C $(gnumach) -j1 all gnumach gnumach.msgids
 
 install-gnumach-rule:
 	$(MAKE) -C $(gnumach) install

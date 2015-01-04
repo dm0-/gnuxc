@@ -1,8 +1,8 @@
-xboard                  := xboard-4.7.3
-xboard_url              := http://ftp.gnu.org/gnu/xboard/$(xboard).tar.gz
+xboard                  := xboard-4.8.0
+xboard_url              := http://ftpmirror.gnu.org/xboard/$(xboard).tar.gz
 
 prepare-xboard-rule:
-	$(EDIT) 's/ChessProgram fairymax/ChessProgram gnuchess/' $(xboard)/xboard.conf.in
+	$(EDIT) 's/ChessProgram fairymax/ChessProgram gnuchess/' $(xboard)/xboard.conf
 
 configure-xboard-rule:
 # Hurd needs to support /dev/ptmx before grantpt can do anything.
@@ -14,9 +14,8 @@ configure-xboard-rule:
 		--enable-xpm \
 		--enable-zippy \
 		--with-x \
-		--with-Xaw
-#		--without-gtk
-#		--without-Xaw3d
+		--with-Xaw \
+		--with-gtk
 
 build-xboard-rule:
 	$(MAKE) -C $(xboard) all

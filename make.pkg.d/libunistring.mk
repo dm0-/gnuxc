@@ -1,11 +1,13 @@
-libunistring            := libunistring-0.9.3
-libunistring_url        := http://ftp.gnu.org/gnu/libunistring/$(libunistring).tar.gz
+libunistring            := libunistring-0.9.4
+libunistring_url        := http://ftpmirror.gnu.org/libunistring/$(libunistring).tar.xz
 
 configure-libunistring-rule:
 	cd $(libunistring) && ./$(configure) \
 		--disable-rpath \
-		--enable-relocatable \
-		--enable-threads=posix
+		--enable-threads=posix \
+		PACKAGE_TARNAME=libunistring \
+		\
+		--disable-relocatable # This results in undefined symbols when linking.
 
 build-libunistring-rule:
 	$(MAKE) -C $(libunistring) all

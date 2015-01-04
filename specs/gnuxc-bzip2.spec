@@ -13,8 +13,6 @@ Source0:        http://www.bzip.org/%{version}/%{gnuxc_name}-%{version}.tar.gz
 BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-glibc-devel
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 
@@ -42,25 +40,26 @@ statically, which is highly discouraged.
 %setup -q -n %{gnuxc_name}-%{version}
 
 %build
+%gnuxc_env
 %gnuxc_make %{?_smp_mflags} libbz2.a \
-    AR=%{gnuxc_ar} CC=%{gnuxc_cc} RANLIB=%{gnuxc_ranlib} \
+    AR='%{gnuxc_ar}' CC='%{gnuxc_cc}' RANLIB='%{gnuxc_ranlib}' \
     CFLAGS='%{gnuxc_optflags}' LDFLAGS='%{gnuxc_ldflags}' \
-    PREFIX=%{gnuxc_prefix}
+    PREFIX='%{gnuxc_prefix}'
 %gnuxc_make %{?_smp_mflags} -f Makefile-libbz2_so all \
-    CC=%{gnuxc_cc} \
+    CC='%{gnuxc_cc}' \
     CFLAGS='%{gnuxc_optflags}'
 
 %install
-install -Dpm 644 bzlib.h         %{buildroot}%{gnuxc_includedir}/bzlib.h
-install -Dpm 644 libbz2.a        %{buildroot}%{gnuxc_libdir}/libbz2.a
-install -Dpm 755 libbz2.so.1.0.6 %{buildroot}%{gnuxc_libdir}/libbz2.so.1.0.6
-ln -fs libbz2.so.1.0.6 %{buildroot}%{gnuxc_libdir}/libbz2.so.1.0
-ln -fs libbz2.so.1.0   %{buildroot}%{gnuxc_libdir}/libbz2.so
+install -Dpm 644 bzlib.h %{buildroot}%{gnuxc_includedir}/bzlib.h
+install -Dpm 644 libbz2.a %{buildroot}%{gnuxc_libdir}/libbz2.a
+install -Dpm 755 -t %{buildroot}%{gnuxc_libdir} libbz2.so.%{version}
+ln -fs libbz2.so.%{version} %{buildroot}%{gnuxc_libdir}/libbz2.so.1.0
+ln -fs libbz2.so.1.0 %{buildroot}%{gnuxc_libdir}/libbz2.so
 
 
 %files
 %{gnuxc_libdir}/libbz2.so.1.0
-%{gnuxc_libdir}/libbz2.so.1.0.6
+%{gnuxc_libdir}/libbz2.so.%{version}
 %doc CHANGES LICENSE README*
 
 %files devel

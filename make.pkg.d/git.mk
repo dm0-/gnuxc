@@ -1,4 +1,4 @@
-git                     := git-1.9.1
+git                     := git-2.2.1
 git_url                 := http://www.kernel.org/pub/software/scm/git/$(git).tar.xz
 
 git_configuration = V=1 \
@@ -8,15 +8,17 @@ git_configuration = V=1 \
 	CC='$(CC)' \
 	CFLAGS='$(CFLAGS)' \
 	LDFLAGS='$(LDFLAGS)' \
+	PERL_PATH='$(PERL)' \
+	PYTHON_PATH='$(PYTHON)' \
 	STRIP= \
 	\
 	DEFAULT_EDITOR=emacs \
 	DEFAULT_PAGER=less \
 	GNU_ROFF=YesPlease \
+	HAVE_CLOCK_GETTIME=YesPlease \
 	HAVE_DEV_TTY=YesPlease \
 	NO_CURL=YesPlease \
 	NO_OPENSSL=YesPlease \
-	NO_PYTHON=YesPlease \
 	NO_TCLTK=YesPlease \
 	USE_LIBPCRE=YesPlease
 
@@ -37,9 +39,10 @@ prepare-git-rule:
 build-git-rule:
 	$(MAKE) -C $(git) all $(git_configuration)
 
-install-git-rule: $(call installed,less pcre zlib) # perl-Error perl-TermReadKey
+install-git-rule: $(call installed,less pcre python zlib) # perl-Error perl-TermReadKey
 	$(MAKE) -C $(git) install $(git_configuration)
 # Bypass asciidoc requirement for man pages.
-	$(INSTALL) -Dpm 644 $(git)/Documentation/man1/* $(DESTDIR)/usr/share/man/man1/
-	$(INSTALL) -Dpm 644 $(git)/Documentation/man5/* $(DESTDIR)/usr/share/man/man5/
-	$(INSTALL) -Dpm 644 $(git)/Documentation/man7/* $(DESTDIR)/usr/share/man/man7/
+	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/man/man{1,5,7}
+	$(INSTALL) -pm 644 $(git)/Documentation/man1/* $(DESTDIR)/usr/share/man/man1/
+	$(INSTALL) -pm 644 $(git)/Documentation/man5/* $(DESTDIR)/usr/share/man/man5/
+	$(INSTALL) -pm 644 $(git)/Documentation/man7/* $(DESTDIR)/usr/share/man/man7/

@@ -1,5 +1,5 @@
 gdbm                    := gdbm-1.11
-gdbm_url                := http://ftp.gnu.org/gnu/gdbm/$(gdbm).tar.gz
+gdbm_url                := http://ftpmirror.gnu.org/gdbm/$(gdbm).tar.gz
 
 configure-gdbm-rule:
 	cd $(gdbm) && ./$(configure) \

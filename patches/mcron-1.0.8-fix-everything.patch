@@ -1,0 +1,137 @@
+This removes the installation's root requirement, fixes guile paths, adds
+support for a drop-in system cron directory, and allows the cron daemon to run
+in the foreground by default for dmd.
+
+--- makefile.am
++++ makefile.am
+@@ -54,16 +54,17 @@
+ fpp = $(DESTDIR)$(bindir)/@real_program_prefix@
+ 
+ 
++install-exec-hook: GUILE_SITE := $(shell $(PKG_CONFIG) --variable=sitedir guile-2.0)
+ install-exec-hook:
+-	@if [ "x@NO_VIXIE_CLOBBER@" != "xyes"   -a   "`id -u`" -eq "0" ]; then \
++	@if [ "x@NO_VIXIE_CLOBBER@" != "xyes"   -a   "0" -eq "0" ]; then \
+        rm -f $(fpp)cron$(EXEEXT) > /dev/null 2>&1; \
+        $(INSTALL) --mode='u=rwx' mcron$(EXEEXT) $(fpp)cron$(EXEEXT); \
+        rm -f $(fpp)crontab$(EXEEXT) > /dev/null 2>&1; \
+        $(INSTALL) --mode='u=rwxs,og=rx' mcron$(EXEEXT) $(fpp)crontab$(EXEEXT); \
+-       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)/var/cron; \
++       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)$(CONFIG_SPOOL_DIR); \
+        $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)/var/run; \
+-       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)@GUILE_SITE@; \
+-       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)@GUILE_SITE@/mcron; \
++       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)$(GUILE_SITE); \
++       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)$(GUILE_SITE)/mcron; \
+     elif [ "x@NO_VIXIE_CLOBBER@" = "xyes" ]; then \
+        echo "Not installing Vixie-style programs"; \
+     else \
+@@ -72,7 +73,7 @@
+ 
+ 
+ uninstall-hook:
+-	if [ "`id -u`" -eq "0" ]; then \
++	if [ "0" -eq "0" ]; then \
+         rm -f $(fpp){cron,crontab}$(EXEEXT); \
+     fi
+ 
+--- makefile.in
++++ makefile.in
+@@ -1212,16 +1212,17 @@
+ 	@$(ED) < makefile.ed > /dev/null 2>&1
+ 	@rm -f mcron.escaped.scm > /dev/null 2>&1
+ 
++install-exec-hook: GUILE_SITE := $(shell $(PKG_CONFIG) --variable=sitedir guile-2.0)
+ install-exec-hook:
+-	@if [ "x@NO_VIXIE_CLOBBER@" != "xyes"   -a   "`id -u`" -eq "0" ]; then \
++	@if [ "x@NO_VIXIE_CLOBBER@" != "xyes"   -a   "0" -eq "0" ]; then \
+        rm -f $(fpp)cron$(EXEEXT) > /dev/null 2>&1; \
+        $(INSTALL) --mode='u=rwx' mcron$(EXEEXT) $(fpp)cron$(EXEEXT); \
+        rm -f $(fpp)crontab$(EXEEXT) > /dev/null 2>&1; \
+        $(INSTALL) --mode='u=rwxs,og=rx' mcron$(EXEEXT) $(fpp)crontab$(EXEEXT); \
+-       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)/var/cron; \
++       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)$(CONFIG_SPOOL_DIR); \
+        $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)/var/run; \
+-       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)@GUILE_SITE@; \
+-       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)@GUILE_SITE@/mcron; \
++       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)$(GUILE_SITE); \
++       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)$(GUILE_SITE)/mcron; \
+     elif [ "x@NO_VIXIE_CLOBBER@" = "xyes" ]; then \
+        echo "Not installing Vixie-style programs"; \
+     else \
+@@ -1229,7 +1230,7 @@
+     fi
+ 
+ uninstall-hook:
+-	if [ "`id -u`" -eq "0" ]; then \
++	if [ "0" -eq "0" ]; then \
+         rm -f $(fpp){cron,crontab}$(EXEEXT); \
+     fi
+ 
+--- scm/mcron/main.scm
++++ scm/mcron/main.scm
+@@ -368,6 +368,26 @@
+ 
+ 
+ 
++;; This basically makes files in /etc/cron.d behave like /etc/crontab files.
++
++(define* (process-files-in-drop-in-directory #:optional (confd "/etc/cron.d"))
++  (catch #t
++         (lambda ()
++           (let ((directory (opendir confd)))
++             (do ((file-name (readdir directory) (readdir directory)))
++                 ((eof-object? file-name))
++               (and-let* ((full-path (string-append confd "/" file-name))
++                          ((eq? (stat:type (stat full-path)) 'regular)))
++                         (catch-mcron-error
++                          (read-vixie-file full-path
++                                           parse-system-vixie-line))))))
++         (lambda (key . args)
++           (mcron-error
++            4
++            "You do not have permission to access /etc/cron.d files."))))
++
++
++
+ ;; Having defined all the necessary procedures for scanning various sets of
+ ;; files, we perform the actual configuration of the program depending on the
+ ;; personality we are running as. If it is mcron, we either scan the files
+@@ -383,6 +404,7 @@
+                           (option-ref options '() '()))))
+   
+   ((cron) (process-files-in-system-directory)
++   (process-files-in-drop-in-directory)
+    (use-system-job-list)
+    (catch-mcron-error
+     (read-vixie-file "/etc/crontab" parse-system-vixie-line))
+@@ -416,18 +440,18 @@
+     
+ 
+ 
+-;; If we are supposed to run as a daemon process (either a --daemon option has
+-;; been explicitly used, or we are running as cron or crond), detach from the
+-;; terminal now. If we are running as cron, we can now write the PID file.
++;; If we are supposed to run as a daemon process (a --daemon option has been
++;; explicitly used), detach from the terminal now. If we are running as cron,
++;; we can now write the PID file.
+ 
+-(if (option-ref options 'daemon (eq? command-type 'cron))
+-    (begin
+-      (if (not (eqv? (primitive-fork) 0))
+-          (quit))
+-      (setsid)
+-      (if (eq? command-type 'cron)
+-          (with-output-to-file config-pid-file
+-            (lambda () (display (getpid)) (newline))))))
++(if (option-ref options 'daemon #f)
++    (if (eqv? (primitive-fork) 0)
++        (setsid)
++        (quit)))
++
++(if (eq? command-type 'cron)
++    (with-output-to-file config-pid-file
++      (lambda () (display (getpid)) (newline))))
+ 
+ 
+ 

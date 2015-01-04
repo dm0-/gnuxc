@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-pcre
-Version:        8.34
+Version:        8.36
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -14,8 +14,6 @@ BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-readline-devel
 BuildRequires:  gnuxc-zlib-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -83,15 +81,15 @@ rm -rf %{buildroot}%{gnuxc_docdir}/%{gnuxc_name} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpcre.so.1
-%{gnuxc_libdir}/libpcre.so.1.2.2
+%{gnuxc_libdir}/libpcre.so.1.2.4
 %{gnuxc_libdir}/libpcre16.so.0
-%{gnuxc_libdir}/libpcre16.so.0.2.2
+%{gnuxc_libdir}/libpcre16.so.0.2.4
 %{gnuxc_libdir}/libpcre32.so.0
-%{gnuxc_libdir}/libpcre32.so.0.0.2
+%{gnuxc_libdir}/libpcre32.so.0.0.4
 %{gnuxc_libdir}/libpcrecpp.so.0
-%{gnuxc_libdir}/libpcrecpp.so.0.0.0
+%{gnuxc_libdir}/libpcrecpp.so.0.0.1
 %{gnuxc_libdir}/libpcreposix.so.0
-%{gnuxc_libdir}/libpcreposix.so.0.0.2
+%{gnuxc_libdir}/libpcreposix.so.0.0.3
 %doc AUTHORS ChangeLog COPYING LICENCE NEWS README
 
 %files devel

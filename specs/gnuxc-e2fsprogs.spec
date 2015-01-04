@@ -1,18 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-e2fsprogs
-Version:        1.42.9
+Version:        1.42.12
 Release:        1%{?dist}
 Summary:        Utilities for managing ext2, ext3, and ext4 filesystems
 
 License:        GPLv2 and LGPLv2 and BSD and MIT
 Group:          System Environment/Base
 URL:            http://e2fsprogs.sourceforge.net/
-Source0:        http://prdownloads.sourceforge.net/e2fsprogs/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://prdownloads.sourceforge.net/e2fsprogs/%{gnuxc_name}-libs-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 Linux programs and libraries for interacting with ext2-based file systems.
@@ -79,17 +77,20 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%setup -q -n %{gnuxc_name}-libs-%{version}
+ln lib/uuid/COPYING COPYING.uuid
 
 %build
 %gnuxc_configure \
+    --disable-fsck \
     --disable-rpath \
     --enable-blkid-debug \
     --enable-compression \
     --enable-elf-shlibs \
-    --enable-fsck \
     --enable-htree \
+    --enable-jbd-debug \
     --enable-quota \
+    --enable-threads=posix \
     --enable-verbose-makecmds \
     --without-included-gettext
 %gnuxc_make lib/dirpaths.h
@@ -110,7 +111,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files -n gnuxc-libblkid
 %{gnuxc_libdir}/libblkid.so.1
 %{gnuxc_libdir}/libblkid.so.1.0
-%doc COPYING README RELEASE-NOTES
+%doc COPYING doc/libblkid.txt
 
 %files -n gnuxc-libblkid-devel
 %{gnuxc_includedir}/blkid
@@ -123,7 +124,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files -n gnuxc-libuuid
 %{gnuxc_libdir}/libuuid.so.1
 %{gnuxc_libdir}/libuuid.so.1.2
-%doc lib/uuid/COPYING README RELEASE-NOTES
+%doc COPYING.uuid README*
 
 %files -n gnuxc-libuuid-devel
 %{gnuxc_includedir}/uuid

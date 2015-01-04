@@ -13,8 +13,6 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 BuildRequires:  gnuxc-libX11-devel
 BuildRequires:  gnuxc-renderproto
 
-BuildArch:      noarch
-
 %description
 %{summary}.
 

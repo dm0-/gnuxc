@@ -1,4 +1,4 @@
-xtrans                  := xtrans-1.3.3
+xtrans                  := xtrans-1.3.5
 xtrans_url              := http://xorg.freedesktop.org/releases/individual/lib/$(xtrans).tar.bz2
 
 configure-xtrans-rule:

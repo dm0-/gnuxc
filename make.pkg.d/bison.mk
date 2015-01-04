@@ -1,5 +1,5 @@
 bison                   := bison-3.0.2
-bison_url               := http://ftp.gnu.org/gnu/bison/$(bison).tar.xz
+bison_url               := http://ftpmirror.gnu.org/bison/$(bison).tar.xz
 
 configure-bison-rule:
 	cd $(bison) && ./$(configure) \

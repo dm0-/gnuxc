@@ -1,4 +1,4 @@
-cairo                   := cairo-1.12.16
+cairo                   := cairo-1.14.0
 cairo_url               := http://cairographics.org/releases/$(cairo).tar.xz
 
 prepare-cairo-rule:

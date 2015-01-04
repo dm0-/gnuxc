@@ -1,5 +1,5 @@
-groff                   := groff-1.22.2
-groff_url               := http://ftp.gnu.org/gnu/groff/$(groff).tar.gz
+groff                   := groff-1.22.3
+groff_url               := http://ftpmirror.gnu.org/groff/$(groff).tar.gz
 
 prepare-groff-rule:
 	$(PATCH) -d $(groff) < $(patchdir)/$(groff)-relative-links.patch
@@ -13,10 +13,11 @@ configure-groff-rule:
 		--with-x
 
 build-groff-rule:
-	$(MAKE) -C $(groff) all \
+	$(MAKE) -C $(groff) -j1 all \
 		GROFFBIN=/usr/bin/groff \
 		TROFFBIN=/usr/bin/troff
 
 install-groff-rule: $(call installed,libXaw readline)
-	$(MAKE) -C $(groff) install
+	$(MAKE) -C $(groff) install \
+		docdir='$$(datarootdir)/doc/groff'
 	test -e $(DESTDIR)/usr/bin/gtbl || $(SYMLINK) tbl $(DESTDIR)/usr/bin/gtbl

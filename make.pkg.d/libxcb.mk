@@ -1,4 +1,4 @@
-libxcb                  := libxcb-1.10
+libxcb                  := libxcb-1.11
 libxcb_url              := http://xcb.freedesktop.org/dist/$(libxcb).tar.bz2
 
 prepare-libxcb-rule:

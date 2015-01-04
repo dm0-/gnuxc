@@ -1,3 +1,4 @@
+#!/usr/bin/make -f
 # Copyright (C) 2013,2014 David Michael <fedora.dm0@gmail.com>
 #
 # This file is part of gnuxc.
@@ -22,18 +23,19 @@ timedir  := $(CURDIR)/timestamps
 
 # Determine the cross-compilation system types.
 arch  := i686
+build := $(MAKE_HOST)
 host  := $(arch)-pc-gnu
-build := $(shell rpm -E %_build)
 ifneq ($(host),$(build))
 sysroot = /usr/$(host)/sys-root
+export CONFIG_SITE = $(sysroot)/usr/share/config.site
 export .LIBPATTERNS = $(sysroot)/usr/lib/lib%.so $(sysroot)/usr/lib/lib%.a
 endif
 
 # Customize these settings on the command-line, if desired.
 export DESTDIR := $(CURDIR)/gnu-root
-export CFLAGS   = -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 \
-	-fexceptions -fstack-protector --param=ssp-buffer-size=4 \
-	-grecord-gcc-switches
+export CFLAGS   = -O2 -g -pipe -Wall -Werror=format-security \
+	-Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong \
+	--param=ssp-buffer-size=4 -grecord-gcc-switches
 export CXXFLAGS = $(CFLAGS)
 export LDFLAGS  = -Wl,-z,relro
 
@@ -50,7 +52,7 @@ INSTALL  := install
 LINK     := ln --force
 MKDIR    := mkdir --parents
 MOVE     := mv --force
-PATCH    := patch --force --strip=0
+PATCH    := patch --force --fuzz=0 --strip=0
 SYMLINK  := ln --force --no-dereference --symbolic
 RM       := rm --force
 RMDIR    := rmdir
@@ -78,41 +80,6 @@ configure = configure \
 	--sbindir='$${exec_prefix}/sbin' \
 	--sharedstatedir='$${localstatedir}/lib' \
 	--sysconfdir=/etc
-ifneq ($(host),$(build))
-configure += \
-	ac_cv_func_{c,m,re}alloc_0_nonnull=yes \
-	ac_cv_func_memcmp_working=yes \
-	ac_cv_func_posix_get{grg,pwu}id_r=yes \
-	gl_cv_func_chown_{ctime,slash}_works=yes \
-	gl_cv_func_fnmatch_{gnu,posix}=yes \
-	gl_cv_func_getcwd_null=yes \
-	gl_cv_func_getopt_gnu=yes \
-	gl_cv_func_{gettimeofday,tzset}_clobber=no \
-	gl_cv_func_lstat_dereferences_slashed_symlink=yes \
-	gl_cv_func_memchr_works=yes \
-	gl_cv_func_mkdir_trailing_{dot,slash}_works=yes \
-	gl_cv_func_mkfifo_works=yes \
-	gl_cv_func_perror_works=yes \
-	gl_cv_func_printf_directive_{a,f,ls}=yes \
-	gl_cv_func_printf_{enomem,infinite,long_double}=yes \
-	gl_cv_func_printf_flag_{grouping,leftadjust,zero}=yes \
-	gl_cv_func_printf_{positions,precision,sizes_c99}=yes \
-	gl_cv_func_readlink_works=yes \
-	gl_cv_func_realpath_works=yes \
-	gl_cv_func_rename_{dest,link}_works=yes \
-	gl_cv_func_rmdir_works=yes \
-	gl_cv_func_snprintf_{retval,truncation}_c99=yes \
-	gl_cv_func_stat_{dir,file}_slash=yes \
-	gl_cv_func_strerror_0_works=yes \
-	gl_cv_func_symlink_works=yes \
-	gl_cv_func_unsetenv_works=yes \
-	gl_cv_func_wcwidth_works=yes \
-	gl_cv_func_working_acl_get_file=yes \
-	gl_cv_func_working_mktime=yes \
-	gl_cv_struct_dirent_d_ino=yes \
-	glib_cv_stack_grows=yes \
-	glib_cv_uscore=no
-endif
 
 # Manually decompress source archives on the fly to save disk space.
 targ_bz2  := --bzip2
@@ -124,6 +91,7 @@ targ_xz   := --xz
 
 # Declare generic targets for the user interface.
 packages := $(patsubst $(pkgdir)/%.mk,%,$(wildcard $(pkgdir)/*.mk))
+packages-requested := $(filter-out $(subst *,%,$(exclude)),$(packages))
 
 .PHONY:   all $(packages) \
   prepare-all $(packages:%=prepare-%)   prepare \
@@ -133,13 +101,13 @@ configure-all $(packages:%=configure-%) configure \
      dist-all $(packages:%=dist-%)      dist \
     clean-all $(packages:%=clean-%)     clean
 
-all: $(packages)
-prepare-all prepare: $(packages:%=prepare-%)
-configure-all configure: $(packages:%=configure-%)
-build-all build: $(packages:%=build-%)
-install-all install: $(packages:%=install-%)
-dist-all dist: $(packages:%=dist-%)
-clean-all clean: $(packages:%=clean-%)
+all: $(packages-requested)
+prepare-all prepare: $(packages-requested:%=prepare-%)
+configure-all configure: $(packages-requested:%=configure-%)
+build-all build: $(packages-requested:%=build-%)
+install-all install: $(packages-requested:%=install-%)
+dist-all dist: $(packages-requested:%=dist-%)
+clean-all clean: $(packages-requested:%=clean-%)
 	test '!' -d $(timedir) || $(RMDIR) $(timedir)
 
 # Log when each step successfully completes, so it isn't needlessly repeated.
@@ -157,13 +125,13 @@ installed  = $(1:%=$(timedir)/install-%-stamp)
 define init-package-rules =
 $$($(1)):
 ifeq ($$(firstword $$(subst ://, ,$$($(1)_url))),git)
-	$$(GIT) clone $$($(1)_branch:%=-b %) -n $$($(1)_url) $$@
+	$$(GIT) clone $$($(1)_branch:%=-b %) -n '$$($(1)_url)' $$@
 	$$(GIT) -C $$@ reset --hard $$($(1)_snap)
 else ifeq ($$(firstword $$(subst ://, ,$$($(1)_url))),cvs)
-	$$(CVS) -d:pserver:$$($(1)_url:cvs://%=%) export \
+	$$(CVS) -d'$$($(1)_url:cvs://%=:pserver:%)' export \
 		-D$$($(1)_snap) -d$$@ -kv $$(firstword $$($(1)_branch) $(1))
-else ifneq ($$($(1)_url),)
-	$$(DOWNLOAD) $$($(1)_url) | \
+else ifneq ($$(filter tar tgz,$$(subst ., ,$$($(1)_url))),)
+	$$(DOWNLOAD) '$$($(1)_url)' | \
 	$$(TAR) $$($(1)_branch:%=--transform='s,^/*%/*,$$@/,') \
 		$$(targ_$$(lastword $$(subst ., ,$$($(1)_url)))) -x
 else

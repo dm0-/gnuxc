@@ -1,5 +1,5 @@
-glib                    := glib-2.38.2
-glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.38/$(glib).tar.xz
+glib                    := glib-2.42.1
+glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.42/$(glib).tar.xz
 
 prepare-glib-rule:
 # Seriously disable rpaths.
@@ -25,5 +25,5 @@ configure-glib-rule:
 build-glib-rule:
 	$(MAKE) -C $(glib) all
 
-install-glib-rule: $(call installed,libffi libpthread pcre)
+install-glib-rule: $(call installed,libffi pcre)
 	$(MAKE) -C $(glib) install

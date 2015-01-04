@@ -1,4 +1,4 @@
-libgcrypt               := libgcrypt-1.6.1
+libgcrypt               := libgcrypt-1.6.2
 libgcrypt_url           := ftp://ftp.gnupg.org/gcrypt/libgcrypt/$(libgcrypt).tar.bz2
 
 ifeq ($(host),$(build))

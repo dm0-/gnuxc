@@ -1,19 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-xz
-Version:        5.1.3
-%global snap    alpha
-Release:        0.1.%{snap}%{?dist}
+Version:        5.2.0
+Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        Public Domain and GPLv2+
 Group:          System Environment/Libraries
 URL:            http://tukaani.org/xz/
-Source0:        http://tukaani.org/xz/%{gnuxc_name}-%{version}%{snap}.tar.xz
+Source0:        http://tukaani.org/xz/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -39,7 +36,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}%{snap}
+%setup -q -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -68,7 +65,7 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 
 %files
 %{gnuxc_libdir}/liblzma.so.5
-%{gnuxc_libdir}/liblzma.so.5.0.99
+%{gnuxc_libdir}/liblzma.so.%{version}
 %doc AUTHORS ChangeLog COPYING* INSTALL NEWS PACKAGERS README THANKS TODO
 
 %files devel

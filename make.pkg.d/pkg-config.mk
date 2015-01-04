@@ -2,11 +2,9 @@ pkg-config              := pkg-config-0.28
 pkg-config_url          := http://pkg-config.freedesktop.org/releases/$(pkg-config).tar.gz
 
 ifeq ($(host),$(build))
-export PKG_CONFIG        = /usr/bin/pkg-config
+export PKG_CONFIG = /usr/bin/pkg-config
 else
-export PKG_CONFIG        = /usr/bin/$(host)-pkg-config --define-variable=prefix=/usr
-export PKG_CONFIG_LIBDIR = $(sysroot)/usr/lib/pkgconfig
-export PKG_CONFIG_PATH   = $(PKG_CONFIG_LIBDIR):$(sysroot)/usr/share/pkgconfig
+export PKG_CONFIG = /usr/bin/$(host)-pkg-config --define-variable=prefix=/usr
 endif
 
 configure-pkg-config-rule:

@@ -1,45 +1,39 @@
-%global gnuxc_has_env %(
-(rpm --quiet -q gnuxc-parted && echo 1) || # Change to 2 if packaging Hurd
-(rpm --quiet -q gnuxc-glibc  && echo 1) || echo 0)
+# Determine whether this package requires a complete GCC.
+%if 0%{!?gnuxc_bootstrapped:1}
+%global gnuxc_bootstrapped %(test -n "$gnuxc_bootstrapped" && echo $gnuxc_bootstrapped || (rpm --quiet -q gnuxc-glibc && echo 1 || echo 0))
+%endif
 
 # (This value is used in the RPM release number in order to ensure the full
 # packages are always an upgrade over bootstrapping sub-packages.)
 
 %?gnuxc_package_header
+%if ! 0%{gnuxc_bootstrapped}
+%global debug_package %{nil}
+%endif
 
 Name:           gnuxc-hurd
 Version:        0.5
-%global snap    7b0541
-Release:        1.%{gnuxc_has_env}.19700101git%{snap}%{?dist}
+%global snap    c0c693
+Release:        1.%{gnuxc_bootstrapped}.19700101git%{snap}%{?dist}
 Summary:        GNU Hurd kernel
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
 Group:          System Environment/Kernel
 URL:            http://www.gnu.org/software/hurd/
-Source0:        %{gnuxc_name}-%{version}-%{snap}.tar.xz
+Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
 
-# Ship customizations in the SRPM, but they are already applied in the archive.
-Patch101:       %{gnuxc_name}-%{version}-%{snap}-allow-user-installs.patch
-Patch102:       %{gnuxc_name}-%{version}-%{snap}-console-nocaps.patch
-Patch103:       %{gnuxc_name}-%{version}-%{snap}-disable-services.patch
+Patch101:       %{gnuxc_name}-%{version}-%{snap}-console-nocaps.patch
+Patch102:       %{gnuxc_name}-%{version}-%{snap}-trap-console.patch
+Patch103:       %{gnuxc_name}-%{version}-%{snap}-drop-libexec.patch
 
 BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-gnumach-headers
 BuildRequires:  gnuxc-mig
-%if 0%{gnuxc_has_env} >= 1
+BuildRequires:  gnuxc-pkg-config
+%if 0%{gnuxc_bootstrapped}
 BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-zlib-devel
 %endif
-%if 0%{gnuxc_has_env} >= 2
-BuildRequires:  gnuxc-bzip2-static
-BuildRequires:  gnuxc-glibc-static
-BuildRequires:  gnuxc-libblkid-devel
-BuildRequires:  gnuxc-libuuid-static
-BuildRequires:  gnuxc-parted-static
-BuildRequires:  gnuxc-zlib-static
-%endif
-
-BuildArch:      noarch
 
 %description
 This source package holds the GNU Hurd kernel, but (at the moment) only a few
@@ -54,7 +48,7 @@ Requires:       gnuxc-gnumach-headers
 This package provides system headers taken from the GNU Hurd kernel source for
 use with cross-compilers.
 
-%if 0%{gnuxc_has_env} >= 1
+%if 0%{gnuxc_bootstrapped}
 %package libs
 Summary:        Cross-compiled versions of Hurd libraries for the GNU system
 Group:          System Environment/Libraries
@@ -85,22 +79,24 @@ which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}-%{snap}
+%setup -q -n %{gnuxc_name}-%{snap}
+%patch101
+%patch102
+%patch103
+autoreconf -fi
 
 %build
 %gnuxc_configure \
-%if 0%{gnuxc_has_env} < 2
-%if 0%{gnuxc_has_env} == 0
-    CC='%{gnuxc_cc} -nostdlib' \
-%else
+%if 0%{gnuxc_bootstrapped}
     --with-libbz2 \
     --with-libz \
+%else
+    CC='%{gnuxc_cc} -nostdlib' \
 %endif
     --without-libdaemon \
     --without-parted
-%endif
 
-%if 0%{gnuxc_has_env} >= 1
+%if 0%{gnuxc_bootstrapped}
 %gnuxc_make %{?_smp_mflags} \
     lib{fshelp,ihash,iohelp,netfs,ports,ps,shouldbeinlibc,store}
 %endif
@@ -110,7 +106,7 @@ which is highly discouraged.
     includedir=%{buildroot}%{gnuxc_includedir} \
     no_deps=t
 
-%if 0%{gnuxc_has_env} >= 1
+%if 0%{gnuxc_bootstrapped}
 %gnuxc_make \
     lib{fshelp,ihash,iohelp,netfs,ports,ps,shouldbeinlibc,store}-install \
     includedir=%{buildroot}%{gnuxc_includedir} \
@@ -127,7 +123,7 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 %{gnuxc_includedir}/*.h
 %doc BUGS ChangeLog COPYING INSTALL* NEWS README* tasks TODO
 
-%if 0%{gnuxc_has_env} >= 1
+%if 0%{gnuxc_bootstrapped}
 %files libs
 %{gnuxc_libdir}/libfshelp.so.0.3
 %{gnuxc_libdir}/libihash.so.0.3

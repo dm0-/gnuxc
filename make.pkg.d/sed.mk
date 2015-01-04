@@ -1,5 +1,5 @@
 sed                     := sed-4.2.2
-sed_url                 := http://ftp.gnu.org/gnu/sed/$(sed).tar.bz2
+sed_url                 := http://ftpmirror.gnu.org/sed/$(sed).tar.bz2
 
 export SED = /bin/sed
 

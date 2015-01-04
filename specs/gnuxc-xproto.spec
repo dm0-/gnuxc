@@ -1,8 +1,8 @@
 %?gnuxc_package_header
-%undefine debug_package
+%global debug_package %{nil}
 
 Name:           gnuxc-xproto
-Version:        7.0.25
+Version:        7.0.27
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,9 +11,10 @@ Group:          Development/System
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/proto/%{gnuxc_name}-%{version}.tar.bz2
 
-Requires:       gnuxc-filesystem
+BuildRequires:  gnuxc-filesystem
 
-BuildArch:      noarch
+Requires:       gnuxc-filesystem
+Provides:       %{name}-devel = %{version}-%{release}
 
 %description
 %{summary}.

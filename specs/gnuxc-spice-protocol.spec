@@ -1,8 +1,8 @@
 %?gnuxc_package_header
-%undefine debug_package
+%global debug_package %{nil}
 
 Name:           gnuxc-spice-protocol
-Version:        0.12.6
+Version:        0.12.7
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,9 +11,10 @@ Group:          Development/System
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{gnuxc_name}-%{version}.tar.bz2
 
-Requires:       gnuxc-filesystem
+BuildRequires:  gnuxc-filesystem
 
-BuildArch:      noarch
+Requires:       gnuxc-filesystem
+Provides:       %{name}-devel = %{version}-%{release}
 
 %description
 %{summary}.

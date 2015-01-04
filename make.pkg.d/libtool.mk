@@ -1,8 +1,9 @@
-libtool                 := libtool-2.4.2
-libtool_url             := http://ftp.gnu.org/gnu/libtool/$(libtool).tar.xz
+libtool                 := libtool-2.4.4
+libtool_url             := http://ftpmirror.gnu.org/libtool/$(libtool).tar.xz
 
 configure-libtool-rule:
 	cd $(libtool) && ./$(configure) \
+		--disable-silent-rules \
 		--enable-ltdl-install \
 		ac_cv_path_SED='$(SED)'
 

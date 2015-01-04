@@ -8,7 +8,7 @@ configure-xf86-input-keyboard-rule:
 	cd $(xf86-input-keyboard) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-static \
-		--enable-strict-compilation
+		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no
 
 build-xf86-input-keyboard-rule:
 	$(MAKE) -C $(xf86-input-keyboard) all

@@ -1,8 +1,8 @@
 autoconf                := autoconf-2.69
-autoconf_url            := http://ftp.gnu.org/gnu/autoconf/$(autoconf).tar.xz
+autoconf_url            := http://ftpmirror.gnu.org/autoconf/$(autoconf).tar.xz
 
 prepare-autoconf-rule:
-	$(PATCH) -d $(autoconf) -p1 < $(patchdir)/$(autoconf)-fix-documentation.patch
+	$(DOWNLOAD) 'http://git.savannah.gnu.org/cgit/autoconf.git/patch?id=a357718b081f1678748ead5d7cb67c766c930441' | $(PATCH) -d $(autoconf) -p1
 
 configure-autoconf-rule:
 	cd $(autoconf) && ./$(configure)

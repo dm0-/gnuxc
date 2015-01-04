@@ -1,4 +1,4 @@
-inputproto              := inputproto-2.3
+inputproto              := inputproto-2.3.1
 inputproto_url          := http://xorg.freedesktop.org/releases/individual/proto/$(inputproto).tar.bz2
 
 configure-inputproto-rule:

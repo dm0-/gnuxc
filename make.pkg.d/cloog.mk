@@ -1,6 +1,9 @@
 cloog                   := cloog-0.18.1
 cloog_url               := http://www.bastoul.net/cloog/pages/download/$(cloog).tar.gz
 
+prepare-cloog-rule:
+	$(PATCH) -d $(cloog) < $(patchdir)/$(cloog)-update-isl.patch
+
 configure-cloog-rule:
 	cd $(cloog) && ./$(configure) \
 		--disable-silent-rules \

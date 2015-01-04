@@ -1,4 +1,4 @@
-bdftopcf                := bdftopcf-1.0.4
+bdftopcf                := bdftopcf-1.0.5
 bdftopcf_url            := http://xorg.freedesktop.org/releases/individual/app/$(bdftopcf).tar.bz2
 
 configure-bdftopcf-rule:

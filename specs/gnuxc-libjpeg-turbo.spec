@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libjpeg-turbo
-Version:        1.3.0
+Version:        1.3.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -13,8 +13,6 @@ Source0:        http://prdownloads.sourceforge.net/libjpeg-turbo/%{gnuxc_name}-%
 BuildRequires:  gnuxc-glibc-devel
 
 BuildRequires:  nasm
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -48,6 +46,7 @@ autoreconf -fi
 
 %build
 %gnuxc_configure \
+    --disable-silent-rules \
     --with-arith-{enc,dec} \
     --with-simd \
     --with-turbojpeg \

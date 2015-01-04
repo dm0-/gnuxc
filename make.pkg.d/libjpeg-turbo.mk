@@ -1,4 +1,4 @@
-libjpeg-turbo           := libjpeg-turbo-1.3.0
+libjpeg-turbo           := libjpeg-turbo-1.3.1
 libjpeg-turbo_url       := http://prdownloads.sourceforge.net/libjpeg-turbo/$(libjpeg-turbo).tar.gz
 
 prepare-libjpeg-turbo-rule:
@@ -6,6 +6,7 @@ prepare-libjpeg-turbo-rule:
 
 configure-libjpeg-turbo-rule:
 	cd $(libjpeg-turbo) && ./$(configure) \
+		--disable-silent-rules \
 		--with-arith-{enc,dec} \
 		--with-simd \
 		--with-turbojpeg \

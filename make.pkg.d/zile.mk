@@ -1,5 +1,5 @@
 zile                    := zile-2.4.11
-zile_url                := http://ftp.gnu.org/gnu/zile/$(zile).tar.gz
+zile_url                := http://ftpmirror.gnu.org/zile/$(zile).tar.gz
 
 ifneq ($(host),$(build))
 configure-zile-rule: export HELP2MAN = /bin/true
@@ -22,4 +22,11 @@ build-zile-rule:
 
 install-zile-rule: $(call installed,acl gc ncurses)
 	$(MAKE) -C $(zile) install
+	$(INSTALL) -Dpm 644 $(zile)/zile-user $(DESTDIR)/etc/skel/.zile
+	$(INSTALL) -dm 755 $(DESTDIR)/etc/skel/.local/share/zile/backups
 	test -e $(DESTDIR)/usr/bin/emacs || $(SYMLINK) zile $(DESTDIR)/usr/bin/emacs
+
+# Provide default user settings for Zile.
+$(zile)/zile-user: | $(zile)
+	$(ECHO) '(setq backup-directory "~/.local/share/zile/backups")' > $@
+$(call prepared,zile): $(zile)/zile-user

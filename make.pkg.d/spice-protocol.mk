@@ -1,4 +1,4 @@
-spice-protocol          := spice-protocol-0.12.6
+spice-protocol          := spice-protocol-0.12.7
 spice-protocol_url      := http://www.spice-space.org/download/releases/$(spice-protocol).tar.bz2
 
 configure-spice-protocol-rule:

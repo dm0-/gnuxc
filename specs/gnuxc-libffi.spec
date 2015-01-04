@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libffi
-Version:        3.0.13
+Version:        3.2.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,8 +11,6 @@ URL:            http://sourceware.org/libffi/
 Source0:        ftp://sourceware.org/pub/libffi/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -58,7 +56,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libffi.so.6
-%{gnuxc_libdir}/libffi.so.6.0.1
+%{gnuxc_libdir}/libffi.so.6.0.4
 %doc ChangeLog* LICENSE README
 
 %files devel

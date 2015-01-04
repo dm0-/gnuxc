@@ -8,5 +8,5 @@ configure-libpthread-stubs-rule:
 build-libpthread-stubs-rule:
 	$(MAKE) -C $(libpthread-stubs) all
 
-install-libpthread-stubs-rule: $(call installed,libpthread)
+install-libpthread-stubs-rule: $(call installed,glibc)
 	$(MAKE) -C $(libpthread-stubs) install

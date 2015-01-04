@@ -1,24 +1,34 @@
-gcc                     := gcc-4.8.2
-gcc_url                 := http://ftp.gnu.org/gnu/gcc/$(gcc)/$(gcc).tar.bz2
+gcc                     := gcc-4.9.2
+gcc_url                 := http://ftpmirror.gnu.org/gcc/$(gcc)/$(gcc).tar.bz2
 
 ifeq ($(host),$(build))
-export CC  = gcc -march=$(arch) -mtune=generic
-export CXX = g++ -march=$(arch) -mtune=generic
+export AR     = gcc-ar
+export CC     = gcc -march=$(arch) -mtune=generic
+export CXX    = g++ -march=$(arch) -mtune=generic
+export NM     = gcc-nm
+export RANLIB = gcc-ranlib
 else
-export CC  = $(host)-gcc -march=$(arch) -mtune=generic
-export CXX = $(host)-g++ -march=$(arch) -mtune=generic
+export AR     = $(host)-gcc-ar
+export CC     = $(host)-gcc -march=$(arch) -mtune=generic
+export CXX    = $(host)-g++ -march=$(arch) -mtune=generic
+export NM     = $(host)-gcc-nm
+export RANLIB = $(host)-gcc-ranlib
 endif
 
 prepare-gcc-rule:
 	$(PATCH) -d $(gcc) < $(patchdir)/$(gcc)-no-add-needed.patch
-	$(EDIT) 's,[^ ]*/sys/sdt.h,$(sysroot)/usr/include/sys/sdt.h,' $(gcc)/gcc/configure
+	$(PATCH) -d $(gcc) < $(patchdir)/$(gcc)-color-auto.patch
+	$(PATCH) -d $(gcc) < $(patchdir)/$(gcc)-update-isl.patch
+	$(EDIT) '/^ *target_header_dir=/s,=.*,=$(sysroot)/usr/include,' $(gcc)/gcc/configure
 # Seriously disable rpaths.
 	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(gcc)/ltmain.sh
 	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(gcc)/libgfortran/configure
 	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(gcc)/libgfortran/configure
 
+configure-gcc-rule: CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=)
 configure-gcc-rule:
 	$(MKDIR) $(gcc)/build && cd $(gcc)/build && ../$(configure) \
+		--disable-libcilkrts \
 		--disable-multilib \
 		--disable-plugin \
 		--enable-__cxa_atexit \
@@ -43,6 +53,6 @@ configure-gcc-rule:
 build-gcc-rule:
 	$(MAKE) -C $(gcc)/build all
 
-install-gcc-rule: $(call installed,cloog libpthread mpc zlib)
+install-gcc-rule: $(call installed,cloog mpc zlib)
 	$(MAKE) -C $(gcc)/build install
 	$(SYMLINK) gcc $(DESTDIR)/usr/bin/cc

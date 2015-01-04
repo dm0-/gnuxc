@@ -1,18 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libatomic_ops
-Version:        7.4.0
+Version:        7.4.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD and MIT and GPLv2+
 Group:          System Environment/Libraries
 URL:            http://www.hboehm.info/gc/
-Source0:        http://www.hboehm.info/gc/gc_source/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://www.ivmaisoft.com/_bin/atomic_ops/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
-
-BuildArch:      noarch
 
 %description
 %{summary}.

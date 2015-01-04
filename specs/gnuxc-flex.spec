@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-flex
-Version:        2.5.38
+Version:        2.5.39
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -13,8 +13,6 @@ Source0:        http://prdownloads.sourceforge.net/flex/%{gnuxc_name}-%{version}
 BuildRequires:  gnuxc-glibc-devel
 
 Requires:       gnuxc-gcc-c++
-
-BuildArch:      noarch
 
 %description
 %{summary}.

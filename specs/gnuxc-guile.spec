@@ -8,7 +8,9 @@ Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 License:        LGPLv3+
 Group:          Development/Languages
 URL:            http://www.gnu.org/software/guile/
-Source0:        http://ftp.gnu.org/gnu/guile/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftpmirror.gnu.org/guile/%{gnuxc_name}-%{version}.tar.xz
+
+Patch001:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=3a3316e200ac49f0e8e9004c233747efd9f54a04&/%{gnuxc_name}-%{version}-fix-readline-startup.patch
 
 BuildRequires:  gnuxc-gc-devel
 BuildRequires:  gnuxc-libffi-devel
@@ -17,8 +19,6 @@ BuildRequires:  gnuxc-libunistring-devel
 BuildRequires:  gnuxc-readline-devel
 
 BuildRequires:  guile
-
-BuildArch:      noarch
 
 %description
 %{summary}.
@@ -46,6 +46,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch001 -p1
 
 # Call the native guile for guile-config.
 sed -i -e 's,@bindir@/,%{_bindir}/,' meta/Makefile.in
@@ -64,7 +65,8 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
     --enable-debug-malloc \
     --enable-guile-debug \
     --with-threads \
-    --without-included-regex
+    --without-included-regex \
+    ac_cv_libunistring=yes # Our libunistring is too new for configure.
 %gnuxc_make %{?_smp_mflags} all
 
 %install

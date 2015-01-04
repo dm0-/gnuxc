@@ -2,7 +2,7 @@
 
 Name:           gnuxc-ncurses
 Version:        5.9
-%global snap    20140322
+%global snap    20141227
 Release:        1.19700101snap%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,8 +12,6 @@ URL:            http://www.gnu.org/software/ncurses/
 Source0:        ftp://invisible-island.net/ncurses/current/%{gnuxc_name}-%{version}-%{snap}.tgz
 
 BuildRequires:  gnuxc-gcc-c++
-
-BuildArch:      noarch
 
 %description
 %{summary}.

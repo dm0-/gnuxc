@@ -1,4 +1,4 @@
-libpipeline             := libpipeline-1.2.6
+libpipeline             := libpipeline-1.4.0
 libpipeline_url         := http://download.savannah.gnu.org/releases/libpipeline/$(libpipeline).tar.gz
 
 configure-libpipeline-rule:
