@@ -19,6 +19,7 @@
 
 #include <grub/dl.h>
 #include <grub/extcmd.h>
+#include <grub/env.h>
 #include <grub/i18n.h>
 #include <grub/misc.h>
 #include <grub/mm.h>
@@ -67,7 +68,7 @@ static struct grub_smbios_eps *eps = NULL;
  * structure.  This returns a pointer to a struct that identifies the fields of
  * the EPS, or NULL if it cannot be located.
  */
-static const struct grub_smbios_eps *
+static struct grub_smbios_eps *
 grub_smbios_locate_eps (void)
 {
 #ifdef GRUB_MACHINE_EFI
@@ -88,12 +89,12 @@ grub_smbios_locate_eps (void)
 #else
   grub_uint8_t *ptr;
 
-  for (ptr = 0x000F0000; ptr < 0x00100000; ptr += 16)
+  for (ptr = (grub_uint8_t *)0x000F0000; ptr < (grub_uint8_t *)0x00100000; ptr += 16)
     if (grub_memcmp (ptr, "_SM_", 4) == 0
         && grub_byte_checksum (ptr, ptr[5]) == 0)
       {
         grub_dprintf ("smbios", "Found entry point structure at %p\n", ptr);
-        return ptr;
+        return (struct grub_smbios_eps *)ptr;
       }
 #endif
 
@@ -111,7 +112,7 @@ grub_smbios_locate_eps (void)
 static grub_uint16_t
 grub_smbios_dump_entry (const grub_uint8_t *entry)
 {
-  grub_uint8_t *ptr = entry;
+  grub_uint8_t *ptr = (grub_uint8_t *)entry;
   grub_uint8_t newstr = 1;
   grub_uint8_t length;
 
@@ -154,14 +155,13 @@ grub_smbios_dump_entry (const grub_uint8_t *entry)
  * The parameter "print" was added for verbose debugging.  When non-zero, the
  * matched entries are printed to the console instead of returned.
  */
-static const grub_uint8_t *
-grub_smbios_match_entry (const struct grub_smbios_eps *eps,
-                         const grub_int16_t type,
+static grub_uint8_t *
+grub_smbios_match_entry (const grub_int16_t type,
                          const grub_int32_t handle,
                          const grub_uint16_t match,
                          const grub_uint8_t print)
 {
-  grub_uint8_t *table_address = eps->intermediate.table_address;
+  grub_uint8_t *table_address = (grub_uint8_t *)(grub_addr_t)eps->intermediate.table_address;
   grub_uint16_t table_length = eps->intermediate.table_length;
   grub_uint16_t structures = eps->intermediate.structures;
   grub_uint8_t *ptr = table_address;
@@ -203,10 +203,10 @@ grub_smbios_match_entry (const struct grub_smbios_eps *eps,
  * strings until the desired item is reached.  (The value of 1 indicates the
  * first string, etc.)
  */
-static const char *
+static char *
 grub_smbios_get_string (const grub_uint8_t *strings, const grub_uint8_t number)
 {
-  grub_uint8_t *ptr = strings;
+  grub_uint8_t *ptr = (grub_uint8_t *)strings;
   grub_uint8_t newstr = 1;
   grub_uint8_t index = 1;
 
@@ -218,7 +218,7 @@ grub_smbios_get_string (const grub_uint8_t *strings, const grub_uint8_t number)
   while (ptr[0] != 0 || ptr[1] != 0)
     {
       if (newstr && number == index++)
-        return ptr;
+        return (char *)ptr;
       newstr = *ptr++ == 0;
     }
 
@@ -237,7 +237,7 @@ grub_cmd_smbios (grub_extcmd_context_t ctxt,
   grub_int16_t type = -1;
   grub_int32_t handle = -1;
   grub_uint16_t match = 0;
-  grub_uint8_t offset;
+  grub_uint8_t offset = 0;
 
   grub_uint8_t *entry;
   grub_uint8_t accessors;
@@ -269,12 +269,12 @@ grub_cmd_smbios (grub_extcmd_context_t ctxt,
   /* When not selecting a value, print all matching entries and quit. */
   if (accessors == 0)
     {
-      grub_smbios_match_entry (eps, type, handle, match, 1);
+      grub_smbios_match_entry (type, handle, match, 1);
       return GRUB_ERR_NONE;
     }
 
   /* Select a single entry from the matching parameters. */
-  entry = grub_smbios_match_entry (eps, type, handle, match, 0);
+  entry = grub_smbios_match_entry (type, handle, match, 0);
   if (entry == NULL)
     return grub_error (GRUB_ERR_FILE_NOT_FOUND, N_("no such entry"));
 
