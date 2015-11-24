@@ -37,7 +37,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %files
 %{gnuxc_includedir}/X11/fonts
 %{gnuxc_libdir}/pkgconfig/fontsproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

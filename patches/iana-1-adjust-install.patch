@@ -2,7 +2,7 @@ Don't try to set the time zone on the build system, and don't run ranlib twice.
 
 --- Makefile
 +++ Makefile
-@@ -378,11 +378,10 @@
+@@ -376,11 +376,10 @@
  			$(DESTDIR)$(MANDIR)/man3 $(DESTDIR)$(MANDIR)/man5 \
  			$(DESTDIR)$(MANDIR)/man8
  		$(ZIC) -y $(YEARISTYPE) \

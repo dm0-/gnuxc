@@ -12,6 +12,7 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 
 BuildRequires:  gnuxc-libXext-devel
 BuildRequires:  gnuxc-libXt-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -65,7 +66,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/lib{Xmu,Xmuu}.la
 %{gnuxc_libdir}/libXmu.so.6.2.0
 %{gnuxc_libdir}/libXmuu.so.1
 %{gnuxc_libdir}/libXmuu.so.1.0.0
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/Xmu

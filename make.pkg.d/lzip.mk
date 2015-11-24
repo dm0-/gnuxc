@@ -1,15 +1,15 @@
-lzip                    := lzip-1.16
+lzip                    := lzip-1.17
 lzip_url                := http://download.savannah.gnu.org/releases/lzip/$(lzip).tar.lz
 
-configure-lzip-rule:
-	cd $(lzip) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		CXX='$(CXX)' \
 		CPPFLAGS='$(CPPFLAGS)' \
 		CXXFLAGS='$(CXXFLAGS)' \
 		LDFLAGS='$(LDFLAGS)'
 
-build-lzip-rule:
-	$(MAKE) -C $(lzip) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-lzip-rule: $(call installed,gcc)
-	$(MAKE) -C $(lzip) install
+$(install-rule): $$(call installed,gcc)
+	$(MAKE) -C $(builddir) install

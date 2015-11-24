@@ -38,7 +38,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %files
 %{gnuxc_includedir}/X11/extensions/XResproto.h
 %{gnuxc_libdir}/pkgconfig/resourceproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

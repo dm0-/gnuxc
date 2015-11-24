@@ -12,6 +12,7 @@ Source0:        http://www.hboehm.info/gc/gc_source/%{gnuxc_name}-%{version}.tar
 
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-libatomic_ops-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -44,17 +45,18 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
     --enable-cplusplus \
-    --enable-gc-assertions \
-    --enable-gc-debug \
     --enable-large-config \
     --enable-parallel-mark \
     --enable-threads=posix \
     --with-libatomic_ops \
+    \
+    --enable-gc-assertions \
+    --enable-gc-debug \
     \
     --disable-gcj-support \
     --disable-handle-fork \

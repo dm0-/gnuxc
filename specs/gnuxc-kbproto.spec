@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-kbproto
-Version:        1.0.6
+Version:        1.0.7
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -41,7 +41,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %{gnuxc_includedir}/X11/extensions/XKBstr.h
 %{gnuxc_includedir}/X11/extensions/XKBsrv.h
 %{gnuxc_libdir}/pkgconfig/kbproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

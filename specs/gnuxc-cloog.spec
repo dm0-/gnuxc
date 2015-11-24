@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-cloog
-Version:        0.18.1
+Version:        0.18.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -9,8 +9,7 @@ License:        LGPLv2.1+
 Group:          Development/Libraries
 URL:            http://www.cloog.org/
 Source0:        http://www.bastoul.net/cloog/pages/download/%{gnuxc_name}-%{version}.tar.gz
-
-Patch101:       %{gnuxc_name}-%{version}-update-isl.patch
+Source1:        http://repo.or.cz/w/cloog.git/blob_plain/%{gnuxc_name}-%{version}:/LICENSE#/%{gnuxc_name}-%{version}-LICENSE
 
 BuildRequires:  gnuxc-isl-devel
 BuildRequires:  gnuxc-osl-devel
@@ -40,7 +39,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch101
+cp -a %{SOURCE1} LICENSE
 
 %build
 %gnuxc_configure \
@@ -68,7 +67,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/{cloog-isl/cloog-isl,isl/isl}-config.cmake
 %files
 %{gnuxc_libdir}/libcloog-isl.so.4
 %{gnuxc_libdir}/libcloog-isl.so.4.0.0
-%doc doc/ROADMAP doc/TODO ChangeLog LICENSE README
+%doc doc/TODO ChangeLog README
+%license LICENSE
 
 %files devel
 %{gnuxc_includedir}/cloog

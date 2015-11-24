@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXt
-Version:        1.1.4
+Version:        1.1.5
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,8 +10,10 @@ Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
+BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-libSM-devel
 BuildRequires:  gnuxc-libX11-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -67,7 +69,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libXt.so.6
 %{gnuxc_libdir}/libXt.so.6.0.0
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/CallbackI.h

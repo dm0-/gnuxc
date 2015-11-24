@@ -1,14 +1,11 @@
-harfbuzz                := harfbuzz-0.9.37
+harfbuzz                := harfbuzz-1.1.1
 harfbuzz_url            := http://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz).tar.bz2
 
-prepare-harfbuzz-rule:
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(harfbuzz)/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(harfbuzz)/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(harfbuzz)/configure
+$(prepare-rule):
+	$(call drop-rpath,configure,ltmain.sh)
 
-configure-harfbuzz-rule:
-	cd $(harfbuzz) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-static \
 		--with-cairo \
@@ -21,8 +18,8 @@ configure-harfbuzz-rule:
 		--without-graphite2 \
 		--without-uniscribe
 
-build-harfbuzz-rule:
-	$(MAKE) -C $(harfbuzz) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-harfbuzz-rule: $(call installed,cairo freetype glib icu4c)
-	$(MAKE) -C $(harfbuzz) install
+$(install-rule): $$(call installed,cairo freetype glib icu4c)
+	$(MAKE) -C $(builddir) install

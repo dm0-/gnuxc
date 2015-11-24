@@ -14,13 +14,16 @@ settrans -acfgp /servers/socket/1 /hurd/pflocal
 # Make the Hurd console store a lot more scrollback lines.
 settrans -acfgp /dev/vcs /hurd/console --lines=10000
 
+# Write core files on crashes for debugging.
+settrans -acfgp /servers/crash /hurd/crash --dump-core
+
 # Use only pseudo-random devices for now, until there is entropy gathering.
-ln -s urandom /dev/random
+ln -ns urandom /dev/random
 
 # Prepare default input devices for running X.
 ln -st /dev cons/kbd cons/mouse
 
-# Support IPv4 sockets.
+# Support IPv4 sockets, statically assigned for a QEMU guest by default.
 settrans -acfgp /servers/socket/2 /hurd/pfinet --interface=eth0 \
     --address=10.0.2.129 --gateway=10.0.2.2 --netmask=255.255.255.0
 
@@ -30,10 +33,10 @@ settrans -acfgp /proc /hurd/procfs
 # Make some memory-backed filesystems that get cleared on reboots.
 settrans -acfgp /tmp \
     /hurd/tmpfs --mode=1777 --no-{exec,inherit-dir-group,suid} --writable 50%
-cp -a /var/run /tmp/run.setup
-settrans -acfgp /var/run \
+cp -a /run /tmp/run.setup
+settrans -acfgp /run \
     /hurd/tmpfs --mode=0755 --no-{exec,inherit-dir-group,suid} --writable 1M
-cp -a /tmp/run.setup/* /var/run/
+cp -a /tmp/run.setup/* /run/
 
 # Create a default locale definition.
 localedef -f UTF-8 -i en_US en_US.UTF-8
@@ -43,10 +46,10 @@ disk=$(grep -o 'hd[0-9]*' /proc/cmdline)
 grub-install --themes=gnu /dev/${disk:-hd0}
 LANG=en_US.UTF-8 grub-mkconfig -o /boot/grub/grub.cfg
 
-# Cache some graphical module stuff.
+# Initialize some caches.
 gdk-pixbuf-query-loaders > \
     $(pkg-config --variable=gdk_pixbuf_binarydir gdk-pixbuf-2.0)/loaders.cache
-pango-querymodules > /etc/pango/pango.modules
+update-mime-database /usr/share/mime
 
 # Create a non-root user (with sudo for convenience).
 echo 'gnu:x:1000:1000:GNU Hacker:/home/gnu:/bin/bash' >> /etc/passwd
@@ -61,7 +64,9 @@ chmod 750 /home/gnu
 cp -an /etc/skel/.[!.]* /root/
 
 # Initialization is complete, so pick dmd as the future init system.
-ln -fs ../usr/bin/dmd /sbin/init
+test -e /usr/bin/dmd && ln -fns ../usr/bin/dmd /sbin/init ||
+# Or, in case something weird is going on and dmd doesn't exist, use bash.
+ln -fns ../bin/bash /sbin/init
 
-# Change over to dmd to pretend this was a normal system boot.
+# Change over to the new init system to pretend this was a normal system boot.
 exec /sbin/init

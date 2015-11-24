@@ -1,12 +1,12 @@
 xshogi                  := xshogi-1.4.2
 xshogi_url              := http://ftpmirror.gnu.org/gnushogi/$(xshogi).tar.gz
 
-configure-xshogi-rule:
-	cd $(xshogi) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--with-x
 
-build-xshogi-rule:
-	$(MAKE) -C $(xshogi) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-xshogi-rule: $(call installed,font-adobe-100dpi gnushogi libXaw)
-	$(MAKE) -C $(xshogi) install
+$(install-rule): $$(call installed,font-adobe-100dpi gnushogi libXaw)
+	$(MAKE) -C $(builddir) install

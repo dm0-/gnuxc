@@ -1,9 +1,82 @@
 # GNU OS Cross-Compiler - News
 
-The following are some of the bigger changes since the last time I remembered
-to push an update.
+## 2015-11-24
 
-## Daemon management
+This snapshot from around the Fedora 23 release is mostly about upgrades and
+bug fixes.  Some notable upgrades are GCC 5, Python 3.5, IceCat 38, and all of
+the core GNU components (gnumach, hurd, libpthread, glibc).
+
+The following details highlight some of the bigger features that were added to
+the build system and OS.
+
+
+### GTK+ version 3 migration
+
+The latest version of the GTK+ widget toolkit is now available.  Its default
+icon theme Adwaita and the shared MIME info database have also been installed
+to support it.
+
+An installation of the latest GTK+ 2 libraries will still be included while
+there are projects in the process of being ported to GTK+ 3.
+
+
+### OpenGL support
+
+The Mesa project is now included to support OpenGL applications via software
+rendering.  Other packages will build their OpenGL functionality as well, such
+as the `GtkGlArea` widget in GTK+ and WebGL in IceCat.
+
+
+### TCL/TK language support
+
+The TCL/TK libraries and their script interpreters (`tclsh` and `wish`) are now
+installed.  Existing packages' TCL extensions are also enabled, including Git's
+`git gui` and `gitk`, Python's `tkinter` and IDLE, and SQLite's TEA interface.
+
+
+### Boot to XDM
+
+A GNU dmd service `xdm` was added to start a graphical login prompt.  Replace
+`console` with `xdm` in `/etc/dmdconf.scm` to make it the default on boot.
+Selecting "Exit Window Maker" from the right-click menu will log out the
+current user and return to the XDM login screen.  Running `sudo deco stop xdm`
+will drop back to the Hurd console.
+
+
+### Build system upgrades
+
+Smaller custom files that need to be installed on the final OS image are now
+expressed inline with GNU Make's multi-line variables, and they are written by
+its `file` function for better readability and performance.
+
+The project Makefiles have been restructured so that their build steps' times
+of completion are recorded in the project directories.  This allows changing
+package versions back and forth while preserving their individual build states.
+Makefiles have also mostly had references to their own names removed, so new
+packages can be easily based off existing ones by copying them.
+
+The sysroot builders and documentation now use Fedora's new package management
+tool, DNF.  This allowed shifting the bootstrapping switches from reliance on
+an environment variable to RPM macros, which adds support for the RPM options
+`--with=bootstrap` and `--without=bootstrap`.
+
+The cross-compiler specs were reworked to conform to Fedora's newer packaging
+guidelines about licenses and bootstrapping.  They were also rebuilt using
+`mock`, so all of the packages are sure to have complete build requirements.
+
+
+
+## 2015-01-04
+
+This snapshot from around the Fedora 21 release adds many enhancements toward a
+complete desktop distribution.  Some notable packages now included are IceCat,
+sudo, and Python 3.
+
+The following details highlight some of the bigger features that were added to
+the build system and OS.
+
+
+### Daemon management
 
 GNU dmd is now used as the init program.  System daemons can be controlled with
 the `deco` command.  A `service` command is also provided for compatibility
@@ -31,7 +104,7 @@ installation etc. more manageable.  Some important daemon configurations:
     reads all `/etc/syslog.d/*.conf` files with the same syntax.
 
 
-## Portability via GNU Linux-libre
+### Portability via GNU Linux-libre
 
 A new custom project `hal.mk` has been added to provide a virtual hardware
 environment that is compatible with Hurd and Mach.  It installs an additional
@@ -54,7 +127,7 @@ procedure document.  It uses the Linux-libre kernel to handle the actual EFI
 boot and proceeds to run Hurd virtually.
 
 
-## Theme extension
+### Theme extension
 
 The `theme.mk` project aims to eventually apply a unified theme across the
 various environments in the OS.  It has added a new section to theme the Apple
@@ -64,7 +137,7 @@ The GRUB theme has also been updated and will now display a Linux-libre logo
 when it detects that it is running in the included virtual environment.
 
 
-## Temporary filesystems
+### Temporary filesystems
 
 Both `/tmp` and `/var/run` are now `tmpfs` by default.  This entails a few
 changes to earlier behavior.
@@ -81,13 +154,13 @@ A partially implemented `systemd-tmpfiles` alternative is provided by a script
 configuration.  It is first run by `/etc/dmdconf.scm`.
 
 
-## Cross-compiling configure results
+### Cross-compiling configure results
 
 The filesystem package installs a `config.site` file in the sysroot to provide
 the results of configure tests which can't be executed on the build system.
 
 
-## New sysroot builder
+### New sysroot builder
 
 A new script to build the sysroot `setup-sysroot.scm` is now included.  It is a
 Scheme file and Make file.  When run with `make`, it will build every sysroot

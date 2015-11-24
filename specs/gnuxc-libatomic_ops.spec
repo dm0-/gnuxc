@@ -47,6 +47,7 @@ statically, which is highly discouraged.
 
 %install
 %gnuxc_make_install
+mv doc/LICENSING.txt .
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libatomic_ops{,_gpl}.la
@@ -60,7 +61,8 @@ rm -rf %{buildroot}%{gnuxc_datadir}/libatomic_ops
 %{gnuxc_libdir}/libatomic_ops.so.1.0.3
 %{gnuxc_libdir}/libatomic_ops_gpl.so.1
 %{gnuxc_libdir}/libatomic_ops_gpl.so.1.0.3
-%doc AUTHORS ChangeLog COPYING doc/*.txt README.md TODO
+%doc AUTHORS ChangeLog doc/*.txt README.md TODO
+%license COPYING LICENSING.txt
 
 %files devel
 %{gnuxc_includedir}/atomic_ops

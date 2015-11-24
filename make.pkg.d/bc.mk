@@ -1,15 +1,15 @@
 bc                      := bc-1.06.95
 bc_url                  := http://alpha.gnu.org/gnu/bc/$(bc).tar.bz2
 
-prepare-bc-rule:
-	$(RM) $(bc)/configure
+$(prepare-rule):
+	$(RM) $(builddir)/configure
 
-configure-bc-rule:
-	cd $(bc) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--with-readline
 
-build-bc-rule:
-	$(MAKE) -C $(bc) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-bc-rule: $(call installed,readline)
-	$(MAKE) -C $(bc) install
+$(install-rule): $$(call installed,readline)
+	$(MAKE) -C $(builddir) install

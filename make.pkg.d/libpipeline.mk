@@ -1,16 +1,16 @@
-libpipeline             := libpipeline-1.4.0
+libpipeline             := libpipeline-1.4.1
 libpipeline_url         := http://download.savannah.gnu.org/releases/libpipeline/$(libpipeline).tar.gz
 
-configure-libpipeline-rule:
-	cd $(libpipeline) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-silent-rules \
 		--enable-socketpair-pipe \
 		--enable-static \
 		--enable-threads=posix
 
-build-libpipeline-rule:
-	$(MAKE) -C $(libpipeline) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libpipeline-rule: $(call installed,glibc)
-	$(MAKE) -C $(libpipeline) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

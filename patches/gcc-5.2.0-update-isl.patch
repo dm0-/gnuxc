@@ -1,0 +1,92 @@
+Switch to the ISL 0.15 API.
+
+--- gcc/graphite-dependences.c
++++ gcc/graphite-dependences.c
+@@ -227,7 +227,7 @@
+ /* Helper function used on each MAP of a isl_union_map.  Computes the
+    maximal output dimension.  */
+ 
+-static int
++static isl_stat
+ max_number_of_out_dimensions (__isl_take isl_map *map, void *user)
+ {
+   int global_max = *((int *) user);
+@@ -239,7 +239,7 @@
+ 
+   isl_map_free (map);
+   isl_space_free (space);
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ /* Extends the output dimension of MAP to MAX dimensions.  */
+@@ -263,12 +263,12 @@
+ 
+ /* Helper function for extend_schedule.  */
+ 
+-static int
++static isl_stat
+ extend_schedule_1 (__isl_take isl_map *map, void *user)
+ {
+   struct extend_schedule_str *str = (struct extend_schedule_str *) user;
+   str->umap = isl_union_map_add_map (str->umap, extend_map (map, str->max));
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ /* Return a relation that has uniform output dimensions.  */
+--- gcc/graphite-isl-ast-to-gimple.c
++++ gcc/graphite-isl-ast-to-gimple.c
+@@ -23,6 +23,7 @@
+ #ifdef HAVE_isl
+ #include <isl/set.h>
+ #include <isl/map.h>
++#include <isl/union_set.h>
+ #include <isl/union_map.h>
+ #include <isl/ast_build.h>
+ 
+--- gcc/graphite-optimize-isl.c
++++ gcc/graphite-optimize-isl.c
+@@ -23,6 +23,7 @@
+ #ifdef HAVE_isl
+ #include <isl/set.h>
+ #include <isl/map.h>
++#include <isl/union_set.h>
+ #include <isl/union_map.h>
+ #include <isl/schedule.h>
+ #include <isl/band.h>
+@@ -530,13 +531,13 @@
+   return ScheduleMap;
+ }
+ 
+-static int
++static isl_stat
+ getSingleMap (__isl_take isl_map *map, void *user)
+ {
+   isl_map **singleMap = (isl_map **) user;
+   *singleMap = map;
+ 
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ static void
+@@ -608,7 +609,7 @@
+ 
+   isl_options_set_schedule_max_constant_term (scop->ctx, CONSTANT_BOUND);
+   isl_options_set_schedule_maximize_band_depth (scop->ctx, 1);
+-  isl_options_set_schedule_fuse (scop->ctx, ISL_SCHEDULE_FUSE_MIN);
++  isl_options_set_schedule_serialize_sccs (scop->ctx, 1);
+   isl_options_set_on_error (scop->ctx, ISL_ON_ERROR_CONTINUE);
+ 
+ #ifdef HAVE_ISL_SCHED_CONSTRAINTS_COMPUTE_SCHEDULE
+--- gcc/graphite-poly.h
++++ gcc/graphite-poly.h
+@@ -21,6 +21,7 @@
+ 
+ #ifndef GCC_GRAPHITE_POLY_H
+ #define GCC_GRAPHITE_POLY_H
++#include <isl/constraint.h>
+ 
+ typedef struct poly_dr *poly_dr_p;
+ 

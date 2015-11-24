@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgpg-error
-Version:        1.17
+Version:        1.20
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -39,6 +39,9 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
+# Don't include the standard sysroot paths in config flags.
+sed -i -e '/-[IL]/s/[^ ].*/:/' src/gpg-error-config.in
+
 # Create a host-dependent header when cross-compiling.
 sed 's/i486-pc-gnu/%{gnuxc_target}/g' \
     < src/syscfg/lock-obj-pub.i486-pc-gnu.h \
@@ -47,6 +50,7 @@ sed 's/i486-pc-gnu/%{gnuxc_target}/g' \
 %build
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
+    --disable-doc \
     --disable-nls \
     \
     --disable-rpath \
@@ -72,14 +76,12 @@ rm -f %{buildroot}%{gnuxc_libdir}/libgpg-error.la
 # This functionality should be used from the system package.
 rm -rf %{buildroot}%{gnuxc_datadir}/{aclocal,common-lisp}
 
-# Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_mandir} %{buildroot}%{gnuxc_infodir}
-
 
 %files
 %{gnuxc_libdir}/libgpg-error.so.0
-%{gnuxc_libdir}/libgpg-error.so.0.13.0
-%doc AUTHORS ChangeLog* COPYING* NEWS README THANKS
+%{gnuxc_libdir}/libgpg-error.so.0.16.0
+%doc AUTHORS ChangeLog* NEWS README THANKS
+%license COPYING COPYING.LIB
 
 %files devel
 %{_bindir}/%{gnuxc_target}-gpg-error-config

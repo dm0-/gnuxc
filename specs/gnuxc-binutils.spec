@@ -1,14 +1,16 @@
-# Determine whether this package requires a complete GCC.
-%if 0%{!?gnuxc_bootstrapped:1}
-%global gnuxc_bootstrapped %(test -n "$gnuxc_bootstrapped" && echo $gnuxc_bootstrapped || (rpm --quiet -q gnuxc-glibc && echo 1 || echo 0))
+%if 0%{?_with_bootstrap:1}%{!?_without_bootstrap:%(rpm --quiet -q gnuxc-glibc ; echo ${gnuxc_bootstrap:-$?})}
+%global bootstrap 1
 %endif
 
-# (This value is used in the RPM release number in order to ensure the full
-# packages are always an upgrade over bootstrapping sub-packages.)
+%global _docdir_fmt gnuxc/binutils
+%if ! 0%{?bootstrap}
+%global __elf_magic ELF.*for GNU/Linux
+%undefine _binaries_in_noarch_packages_terminate_build
+%endif
 
 Name:           gnuxc-binutils
-Version:        2.25
-Release:        1.%{gnuxc_bootstrapped}%{?dist}
+Version:        2.25.1
+Release:        1.%{?bootstrap:0}%{!?bootstrap:1}%{?dist}
 Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
@@ -17,7 +19,7 @@ URL:            http://www.gnu.org/software/binutils/
 Source0:        http://ftpmirror.gnu.org/binutils/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-filesystem
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-zlib-devel
 %endif
@@ -25,19 +27,23 @@ BuildRequires:  gnuxc-zlib-devel
 BuildRequires:  flex
 BuildRequires:  bison
 BuildRequires:  gettext
+BuildRequires:  texinfo
 BuildRequires:  zlib-devel
 
 Requires:       gnuxc-filesystem
 Provides:       bundled(libiberty)
 
+%if 0%{?bootstrap}
+Provides:       gnuxc-bootstrap(%{gnuxc_name}) = %{version}-%{release}
+%else
+Obsoletes:      gnuxc-bootstrap(%{gnuxc_name}) <= %{version}-%{release}
+%endif
+
 %description
 Cross-compiler binutils (utilities like "strip", "as", "ld") which understand
 GNU Hurd executables and libraries.
 
-%if 0%{gnuxc_bootstrapped}
-%global __elf_magic ELF.*for GNU/Linux
-%undefine _binaries_in_noarch_packages_terminate_build
-
+%if ! 0%{?bootstrap}
 %package libs
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 Group:          System Environment/Libraries
@@ -112,7 +118,7 @@ mkdir -p cross && (pushd cross
     --with-sysroot=%{gnuxc_sysroot}
 popd)
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 mkdir -p host && (pushd host
 %gnuxc_configure %{binutils_configuration} \
     --disable-nls
@@ -120,7 +126,7 @@ popd)
 %endif
 
 make -C cross %{?_smp_mflags} all
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %gnuxc_make -C host %{?_smp_mflags} all-{bfd,libiberty,opcodes}
 %endif
 
@@ -144,7 +150,7 @@ do
         cat gnuxc-$mo.lang >> %{name}.lang
 done
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %gnuxc_make -C host install-{bfd,libiberty,opcodes} DESTDIR=%{buildroot}
 
 # We don't need libtool's help.
@@ -200,9 +206,10 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 %{gnuxc_root}/bin/ranlib
 %{gnuxc_root}/bin/strip
 %{gnuxc_root}/lib/ldscripts
-%doc ChangeLog COPYING* MAINTAINERS README*
+%doc ChangeLog MAINTAINERS README
+%license COPYING COPYING.LIB COPYING3 COPYING3.LIB
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %files libs
 %{gnuxc_libdir}/libbfd-%{version}.so
 %{gnuxc_libdir}/libopcodes-%{version}.so

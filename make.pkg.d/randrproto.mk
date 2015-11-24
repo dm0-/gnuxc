@@ -1,12 +1,12 @@
-randrproto              := randrproto-1.4.0
+randrproto              := randrproto-1.5.0
 randrproto_url          := http://xorg.freedesktop.org/releases/individual/proto/$(randrproto).tar.bz2
 
-configure-randrproto-rule:
-	cd $(randrproto) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-strict-compilation
 
-build-randrproto-rule:
-	$(MAKE) -C $(randrproto) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-randrproto-rule: $(call installed,xextproto)
-	$(MAKE) -C $(randrproto) install
+$(install-rule): $$(call installed,xextproto)
+	$(MAKE) -C $(builddir) install

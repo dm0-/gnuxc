@@ -31,6 +31,7 @@ BuildRequires:  gnuxc-ncurses-devel
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       gnuxc-ncurses-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -83,7 +84,8 @@ rm -rf \
 %{gnuxc_libdir}/libhistory.so.6.3
 %{gnuxc_libdir}/libreadline.so.6
 %{gnuxc_libdir}/libreadline.so.6.3
-%doc CHANGELOG CHANGES COPYING INSTALL NEWS README USAGE
+%doc CHANGELOG CHANGES INSTALL NEWS README USAGE
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/readline

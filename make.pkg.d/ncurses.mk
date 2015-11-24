@@ -1,19 +1,21 @@
-ncurses                 := ncurses-5.9-20141227
-ncurses_url             := ftp://invisible-island.net/ncurses/current/$(ncurses).tgz
+ncurses                 := ncurses-6.0-20151121
+ncurses_url             := http://invisible-mirror.net/archives/ncurses/current/$(ncurses).tgz
 
 ifeq ($(host),$(build))
-export NCURSES_CONFIG   = ncurses5-config
+export NCURSES_CONFIG   = ncurses6-config
 export NCURSESW_CONFIG  = ncursesw6-config
 export NCURSEST_CONFIG  = ncursest6-config
 export NCURSESTW_CONFIG = ncursestw6-config
 else
-export NCURSES_CONFIG   = $(host)-ncurses5-config
+export NCURSES_CONFIG   = $(host)-ncurses6-config
 export NCURSESW_CONFIG  = $(host)-ncursesw6-config
 export NCURSEST_CONFIG  = $(host)-ncursest6-config
 export NCURSESTW_CONFIG = $(host)-ncursestw6-config
 endif
 
-ncurses_configuration := --exec-prefix= \
+$(call configure-rule,classic pthread widec widec+pthread): configure := $(configure:--docdir%=)
+$(call configure-rule,classic pthread widec widec+pthread): configure := $(configure:--localedir%=)
+$(call configure-rule,classic pthread widec widec+pthread): private override configuration := --exec-prefix= \
 	\
 	--disable-relink \
 	--disable-rpath \
@@ -31,46 +33,40 @@ ncurses_configuration := --exec-prefix= \
 	\
 	--without-gpm
 
-configure-ncurses-classic-rule: $(ncurses)/configure
-	$(MKDIR) $(ncurses)/classic && cd $(ncurses)/classic && ../$(configure) $(ncurses_configuration) \
+$(call configure-rule,classic): $(builddir)/configure
+	$(MKDIR) $(builddir)/classic && cd $(builddir)/classic && ../$(configure) $(configuration) \
 		--includedir='$${prefix}/include/ncurses'
-configure-ncurses-pthread-rule: $(ncurses)/configure
-	$(MKDIR) $(ncurses)/pthread && cd $(ncurses)/pthread && ../$(configure) $(ncurses_configuration) \
+$(call configure-rule,pthread): $(builddir)/configure
+	$(MKDIR) $(builddir)/pthread && cd $(builddir)/pthread && ../$(configure) $(configuration) \
 		--includedir='$${prefix}/include/ncursest' \
 		--with-pthread
-configure-ncurses-widec-rule: $(ncurses)/configure
-	$(MKDIR) $(ncurses)/widec && cd $(ncurses)/widec && ../$(configure) $(ncurses_configuration) \
+$(call configure-rule,widec): $(builddir)/configure
+	$(MKDIR) $(builddir)/widec && cd $(builddir)/widec && ../$(configure) $(configuration) \
 		--includedir='$${prefix}/include/ncursesw' \
 		--enable-ext-colors \
 		--enable-widec
-configure-ncurses-widec+pthread-rule: $(ncurses)/configure
-	$(MKDIR) $(ncurses)/widec+pthread && cd $(ncurses)/widec+pthread && ../$(configure) $(ncurses_configuration) \
+$(call configure-rule,widec+pthread): $(builddir)/configure
+	$(MKDIR) $(builddir)/widec+pthread && cd $(builddir)/widec+pthread && ../$(configure) $(configuration) \
 		--includedir='$${prefix}/include/ncursestw' \
 		--enable-ext-colors \
 		--enable-widec \
 		--with-pthread
 
-configure-ncurses-rule: configure := $(configure:--docdir%=)
-configure-ncurses-rule: configure := $(configure:--localedir%=)
-configure-ncurses-rule: $(call configured,ncurses-classic ncurses-pthread ncurses-widec ncurses-widec+pthread)
+$(configure-rule): $(call configured,classic pthread widec widec+pthread)
 
-build-ncurses-classic-rule: $(call configured,ncurses)
-	$(MAKE) -C $(ncurses)/classic libs
-build-ncurses-pthread-rule: $(call configured,ncurses)
-	$(MAKE) -C $(ncurses)/pthread libs
-build-ncurses-widec-rule: $(call configured,ncurses)
-	$(MAKE) -C $(ncurses)/widec libs
-build-ncurses-widec+pthread-rule: $(call configured,ncurses)
-	$(MAKE) -C $(ncurses)/widec+pthread all
+$(call build-rule,classic): $(call configured,classic)
+	$(MAKE) -C $(builddir)/classic libs
+$(call build-rule,pthread): $(call configured,pthread)
+	$(MAKE) -C $(builddir)/pthread libs
+$(call build-rule,widec): $(call configured,widec)
+	$(MAKE) -C $(builddir)/widec libs
+$(call build-rule,widec+pthread): $(call configured,widec+pthread)
+	$(MAKE) -C $(builddir)/widec+pthread all
 
-build-ncurses-rule: $(call built,ncurses-classic ncurses-pthread ncurses-widec ncurses-widec+pthread)
+$(build-rule): $(call built,classic pthread widec widec+pthread)
 
-install-ncurses-rule: $(call installed,glibc)
-	$(MAKE) -C $(ncurses)/classic       install.libs
-	$(MAKE) -C $(ncurses)/pthread       install.libs
-	$(MAKE) -C $(ncurses)/widec         install.libs
-	$(MAKE) -C $(ncurses)/widec+pthread install
-
-clean-ncurses-variants:
-	$(RM) $(timedir)/{build,configure}-ncurses-{classic,pthread,widec,widec+pthread}-{rule,stamp}
-.PHONY clean-ncurses: clean-ncurses-variants
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir)/classic       install.libs
+	$(MAKE) -C $(builddir)/pthread       install.libs
+	$(MAKE) -C $(builddir)/widec         install.libs
+	$(MAKE) -C $(builddir)/widec+pthread install

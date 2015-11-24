@@ -1,8 +1,11 @@
-e2fsprogs               := e2fsprogs-1.42.12
+e2fsprogs               := e2fsprogs-1.42.13
 e2fsprogs_url           := http://prdownloads.sourceforge.net/e2fsprogs/$(e2fsprogs).tar.gz
 
-configure-e2fsprogs-rule:
-	cd $(e2fsprogs) && ./$(configure) \
+$(prepare-rule):
+	$(EDIT) 's/ REBOOT LINUX / REBOOT GNU /' $(builddir)/e2fsck/unix.c
+
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--disable-fsck \
@@ -17,9 +20,9 @@ configure-e2fsprogs-rule:
 		--enable-verbose-makecmds \
 		--without-included-gettext
 
-build-e2fsprogs-rule:
-	$(MAKE) -C $(e2fsprogs) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-e2fsprogs-rule: $(call installed,glibc)
-	$(MAKE) -C $(e2fsprogs) install install-libs \
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install install-libs \
 		pkgconfigdir=/usr/lib/pkgconfig

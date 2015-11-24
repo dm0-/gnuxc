@@ -1,8 +1,8 @@
 libXmu                  := libXmu-1.1.2
 libXmu_url              := http://xorg.freedesktop.org/releases/individual/lib/$(libXmu).tar.bz2
 
-configure-libXmu-rule:
-	cd $(libXmu) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-ipv6 \
 		--enable-local-transport \
@@ -10,8 +10,8 @@ configure-libXmu-rule:
 		--enable-tcp-transport \
 		--enable-unix-transport
 
-build-libXmu-rule:
-	$(MAKE) -C $(libXmu) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libXmu-rule: $(call installed,libXext libXt)
-	$(MAKE) -C $(libXmu) install
+$(install-rule): $$(call installed,libXext libXt)
+	$(MAKE) -C $(builddir) install

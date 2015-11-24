@@ -1,0 +1,25 @@
+Show the fancy MOTD file when the console supports it.
+
+--- utils/loginpr.sh
++++ utils/loginpr.sh
+@@ -6,15 +6,16 @@
+ # pseudo-user `login'.
+ #
+ 
+-prompt='login: '
++prompt="$HOSTNAME login: "
+ user=''
+ 
+ test "$_LOGIN_RETRY" && echo ''
+ unset _LOGIN_RETRY
+ 
+ until [ "$user" ]; do
+-  echo -n "$prompt"
+-  read user args || exit 0
++  read -ep "$prompt" user args || exit 0
+ done
+ 
+-exec login "$@" -p --paranoid -R-aSHELL="$0" -R-aMOTD -R-p -R-e_LOGIN_RETRY=yes "$user" $args
++test "$TERM" = hurd && MOTD=/etc/motd.UTF8 || MOTD=/etc/motd
++
++exec login "$@" -p --paranoid -aMOTD="$MOTD" -R-aSHELL="$0" -R-aMOTD -R-p -R-e_LOGIN_RETRY=yes "$user" $args

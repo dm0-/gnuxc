@@ -12,6 +12,8 @@ Source0:        http://download.savannah.gnu.org/releases/attr/%{gnuxc_name}-%{v
 
 BuildRequires:  gnuxc-glibc-devel
 
+BuildRequires:  gettext
+
 %description
 %{summary}.
 
@@ -64,7 +66,8 @@ rm -f %{buildroot}%{gnuxc_datadir}/locale/??/LC_MESSAGES/attr.mo
 %files
 %{gnuxc_libdir}/libattr.so.1
 %{gnuxc_libdir}/libattr.so.1.1.0
-%doc doc/CHANGES doc/COPYING* doc/INSTALL doc/PORTING README
+%doc doc/CHANGES doc/PORTING README
+%license doc/COPYING doc/COPYING.LGPL
 
 %files devel
 %{gnuxc_includedir}/attr

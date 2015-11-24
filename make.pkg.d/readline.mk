@@ -2,22 +2,19 @@ readline                := readline-6.3.8
 readline_branch         := readline-6.3
 readline_url            := http://ftpmirror.gnu.org/readline/$(readline_branch).tar.gz
 
-prepare-readline-rule:
-	for n in {001..008} ; do \
-		$(DOWNLOAD) "http://ftpmirror.gnu.org/readline/$(readline_branch)-patches/readline63-$$n" | \
-		$(PATCH) -d $(readline) ; \
-	done
-	$(PATCH) -d $(readline) < $(patchdir)/$(readline)-shlib.patch
+$(prepare-rule):
+	$(DOWNLOAD) 'http://ftpmirror.gnu.org/readline/$(readline_branch)-patches/'readline63-{001..008} | $(PATCH) -d $(builddir)
+	$(call apply,shlib)
 
-configure-readline-rule:
-	cd $(readline) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--enable-multibyte
 
-build-readline-rule:
-	$(MAKE) -C $(readline) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-readline-rule: $(call installed,ncurses)
-	$(MAKE) -C $(readline) install \
+$(install-rule): $$(call installed,ncurses)
+	$(MAKE) -C $(builddir) install \
 		DESTDIR='$(DESTDIR)'

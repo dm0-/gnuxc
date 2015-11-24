@@ -63,7 +63,8 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libgdbm.so.4
 %{gnuxc_libdir}/libgdbm.so.4.0.0
-%doc AUTHORS ChangeLog COPYING NEWS NOTE-WARNING README THANKS
+%doc AUTHORS ChangeLog NEWS NOTE-WARNING README THANKS
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/gdbm.h

@@ -1,24 +1,20 @@
-file                    := file-5.22
+file                    := file-5.25
 file_url                := ftp://ftp.astron.com/pub/file/$(file).tar.gz
 
 ifneq ($(host),$(build))
-configure-file-native-rule: $(file)/configure
-	$(MKDIR) $(file)/native && cd $(file)/native && ../configure \
+$(call configure-rule,native): $(builddir)/configure
+	$(MKDIR) $(builddir)/native && cd $(builddir)/native && ../configure \
 		--disable-silent-rules CC=gcc
-configure-file-rule: $(call configured,file-native)
+$(configure-rule): $(call configured,native)
 
-build-file-native-rule: $(call configured,file)
-	$(MAKE) -C $(file)/native/src file
-	$(EDIT) '/^FILE_COMPILE *=/s,=.*,= $(CURDIR)/$(file)/native/src/file,' $(file)/magic/Makefile
-build-file-rule: $(call built,file-native)
-
-clean-file-native:
-	$(RM) $(timedir)/{configure,build}-file-native-{rule,stamp}
-.PHONY clean-file: clean-file-native
+$(call build-rule,native): $(configured)
+	$(MAKE) -C $(builddir)/native/src file
+	$(EDIT) '/^FILE_COMPILE *=/s,=.*,= $(CURDIR)/$(builddir)/native/src/file,' $(builddir)/magic/Makefile
+$(build-rule): $(call built,native)
 endif
 
-configure-file-rule:
-	cd $(file) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-elf \
 		--enable-elf-core \
@@ -26,9 +22,9 @@ configure-file-rule:
 		--enable-static \
 		--enable-warnings
 
-build-file-rule:
-	$(MAKE) -C $(file) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-file-rule: $(call installed,python)
-	$(MAKE) -C $(file) install
-	$(INSTALL) -Dpm 644 $(file)/python/magic.py $(DESTDIR)/usr/lib/python`$(PKG_CONFIG) --modversion python3`/site-packages/magic.py
+$(install-rule): $$(call installed,python)
+	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 644 $(builddir)/python/magic.py $(DESTDIR)/usr/lib/python`$(PKG_CONFIG) --modversion python3`/site-packages/magic.py

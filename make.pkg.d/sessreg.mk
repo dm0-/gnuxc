@@ -1,13 +1,14 @@
-sessreg                 := sessreg-1.0.8
+sessreg                 := sessreg-1.1.0
 sessreg_url             := http://xorg.freedesktop.org/releases/individual/app/$(sessreg).tar.bz2
 
-configure-sessreg-rule:
-	cd $(sessreg) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
-		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no
+		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
+		CPPFLAGS=-P
 
-build-sessreg-rule:
-	$(MAKE) -C $(sessreg) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-sessreg-rule: $(call installed,glibc)
-	$(MAKE) -C $(sessreg) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

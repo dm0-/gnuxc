@@ -1,14 +1,15 @@
-xf86-video-vesa         := xf86-video-vesa-2.3.3
+xf86-video-vesa         := xf86-video-vesa-2.3.4
 xf86-video-vesa_url     := http://xorg.freedesktop.org/releases/individual/driver/$(xf86-video-vesa).tar.bz2
 
-configure-xf86-video-vesa-rule:
-	cd $(xf86-video-vesa) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-static \
-		--enable-strict-compilation
+		--enable-strict-compilation \
+		CPPFLAGS=-I$(sysroot)/usr/include/xorg
 
-build-xf86-video-vesa-rule:
-	$(MAKE) -C $(xf86-video-vesa) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-xf86-video-vesa-rule: $(call installed,xorg-server)
-	$(MAKE) -C $(xf86-video-vesa) install
+$(install-rule): $$(call installed,xorg-server)
+	$(MAKE) -C $(builddir) install

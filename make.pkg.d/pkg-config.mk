@@ -1,4 +1,4 @@
-pkg-config              := pkg-config-0.28
+pkg-config              := pkg-config-0.29
 pkg-config_url          := http://pkg-config.freedesktop.org/releases/$(pkg-config).tar.gz
 
 ifeq ($(host),$(build))
@@ -7,8 +7,8 @@ else
 export PKG_CONFIG = /usr/bin/$(host)-pkg-config --define-variable=prefix=/usr
 endif
 
-configure-pkg-config-rule:
-	cd $(pkg-config) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-host-tool \
 		--disable-silent-rules \
 		--with-pc-path=/usr/lib/pkgconfig:/usr/share/pkgconfig \
@@ -16,8 +16,8 @@ configure-pkg-config-rule:
 		--with-system-library-path=/usr/lib:/lib \
 		--without-internal-glib
 
-build-pkg-config-rule:
-	$(MAKE) -C $(pkg-config) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-pkg-config-rule: $(call installed,glib)
-	$(MAKE) -C $(pkg-config) install
+$(install-rule): $$(call installed,glib)
+	$(MAKE) -C $(builddir) install

@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-xproto
-Version:        7.0.27
+Version:        7.0.28
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -38,11 +38,16 @@ Provides:       %{name}-devel = %{version}-%{release}
 %install
 %gnuxc_make_install
 
+# Provide this parent directory for GLX headers.
+install -dm 755 %{buildroot}%{gnuxc_includedir}/GL
+
 
 %files
+%{gnuxc_includedir}/GL
 %{gnuxc_includedir}/X11
 %{gnuxc_libdir}/pkgconfig/xproto.pc
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 
 %changelog

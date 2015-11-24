@@ -1,5 +1,6 @@
 For our Hurd install, assume the GRUB directory is always on the root device.
 Also, provide both simple and advanced menus in auto-generated configurations.
+Also also, fall back to a VGA text menu when we're in Linux-libre with no fb0.
 
 --- grub-core/osdep/unix/relpath.c
 +++ grub-core/osdep/unix/relpath.c
@@ -66,3 +67,28 @@ Also, provide both simple and advanced menus in auto-generated configurations.
  
    kernels=`echo $kernels | tr ' ' '\n' | grep -vx $kernel | tr '\n' ' '`
  done
+--- util/grub.d/00_header.in
++++ util/grub.d/00_header.in
+@@ -145,6 +145,12 @@
+ fi
+ 
+ if [ "x$gfxterm" = x1 ]; then
++    cat << EOF
++smbios --type 1 --get-string 5 --set system_product
++if [ "\$system_product" = "hal-curses" ] ; then
++    terminal_output vga_text
++else
++EOF
+     if [ -n "$GRUB_FONT" ] ; then
+        # Make the font accessible
+        prepare_grub_to_access_device `${grub_probe} --target=device "${GRUB_FONT}"`
+@@ -278,6 +284,9 @@
+ background_image -m stretch `make_system_path_relative_to_its_root "$GRUB_BACKGROUND"`
+ EOF
+     fi
++    cat << EOF
++fi
++EOF
+ fi
+ 
+ make_timeout ()

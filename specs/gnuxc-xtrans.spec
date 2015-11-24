@@ -39,7 +39,8 @@ rm -rf %{buildroot}%{gnuxc_datadir}/aclocal
 %files
 %{gnuxc_datadir}/pkgconfig/xtrans.pc
 %{gnuxc_includedir}/X11/Xtrans
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 
 %changelog

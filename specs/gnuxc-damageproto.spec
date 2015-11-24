@@ -39,7 +39,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %{gnuxc_includedir}/X11/extensions/damageproto.h
 %{gnuxc_includedir}/X11/extensions/damagewire.h
 %{gnuxc_libdir}/pkgconfig/damageproto.pc
-%doc AUTHORS ChangeLog COPYING NEWS README
+%doc AUTHORS ChangeLog NEWS README
+%license COPYING
 
 
 %changelog

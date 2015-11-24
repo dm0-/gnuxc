@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libtool
-Version:        2.4.4
+Version:        2.4.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,6 +11,8 @@ URL:            http://www.gnu.org/software/libtool/
 Source0:        http://ftpmirror.gnu.org/libtool/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glibc-devel
+
+BuildRequires:  m4
 
 %description
 %{summary}.
@@ -73,7 +75,8 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %files -n gnuxc-ltdl
 %{gnuxc_libdir}/libltdl.so.7
 %{gnuxc_libdir}/libltdl.so.7.3.1
-%doc AUTHORS ChangeLog* COPYING NEWS README THANKS TODO
+%doc AUTHORS ChangeLog* NEWS README THANKS TODO
+%license COPYING
 
 %files -n gnuxc-ltdl-devel
 %{gnuxc_includedir}/libltdl

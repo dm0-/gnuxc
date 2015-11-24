@@ -1,0 +1,69 @@
+Don't override the environment settings.  While we're at it, don't strip debug
+symbols, install to crazy locations, or skip shared libraries.  Also fix the
+host detection in the configure script.
+
+--- Makefile
++++ Makefile
+@@ -2,7 +2,7 @@
+ # (c) 1998--2015 Martin Mares <mj@ucw.cz>
+ 
+ OPT=-O2
+-CFLAGS=$(OPT) -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes
++CFLAGS ?= $(OPT) -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes
+ 
+ VERSION=3.4.0
+ DATE=2015-09-14
+@@ -19,7 +19,7 @@
+ DNS=
+ 
+ # Build libpci as a shared library (yes/no; or local for testing; requires GCC)
+-SHARED=no
++SHARED=yes
+ 
+ # Use libkmod to resolve kernel modules on Linux (yes/no, default: detect)
+ LIBKMOD=
+@@ -32,11 +32,11 @@
+ ABI_VERSION=.3
+ 
+ # Installation directories
+-PREFIX=/usr/local
++PREFIX=/usr
+ SBINDIR=$(PREFIX)/sbin
+ SHAREDIR=$(PREFIX)/share
+-IDSDIR=$(SHAREDIR)
+-MANDIR:=$(shell if [ -d $(PREFIX)/share/man ] ; then echo $(PREFIX)/share/man ; else echo $(PREFIX)/man ; fi)
++IDSDIR=$(SHAREDIR)/hwdata
++MANDIR=$(SHAREDIR)/man
+ INCDIR=$(PREFIX)/include
+ LIBDIR=$(PREFIX)/lib
+ PKGCFDIR=$(LIBDIR)/pkgconfig
+@@ -44,10 +44,10 @@
+ # Commands
+ INSTALL=install
+ DIRINSTALL=install -d
+-STRIP=-s
+-CC=$(CROSS_COMPILE)gcc
+-AR=$(CROSS_COMPILE)ar
+-RANLIB=$(CROSS_COMPILE)ranlib
++STRIP=
++CC ?= $(CROSS_COMPILE)gcc
++AR ?= $(CROSS_COMPILE)ar
++RANLIB ?= $(CROSS_COMPILE)ranlib
+ 
+ # Base name of the library (overriden on NetBSD, which has its own libpci)
+ LIBNAME=libpci
+--- lib/configure
++++ lib/configure
+@@ -44,9 +44,9 @@
+ fi
+ [ -n "$RELEASE" ] && rel="${RELEASE}"
+ # CAVEAT: tr on Solaris is a bit weird and the extra [] is otherwise harmless.
+-host=`echo $HOST | sed -e 's/^\([^-]*\)-\([^-]*\)-\([^-]*\)-\([^-]*\)$/\1-\3/' -e 's/^\([^-]*\)-\([^-]*\)-\([^-]*\)$/\1-\2/' -e 's/^\([^-]*\)-\([^-]*\)$/\1--\2/' | tr '[A-Z]' '[a-z]'`
+-cpu=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+-sys=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
++host=`echo $HOST | sed -e 's/^\([^-]*\)-\([^-]*\)-\([^-]*\)-\([^-]*\)$/\1-\3/' -e 's/^\([^-]*\)-\([^-]*\)-\([^-]*\)$/\1-\2/' -e 's/^\([^-]*\)-\([^-]*\)$/\1-\2/' | tr '[A-Z]' '[a-z]'`
++cpu=`echo $HOST | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
++sys=`echo $HOST | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+ echo " $host $rel $cpu $sys"
+ 
+ c=config.h

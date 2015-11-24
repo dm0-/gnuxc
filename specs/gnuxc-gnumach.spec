@@ -1,12 +1,11 @@
-# Declare that this package does not require a complete GCC.
-%global gnuxc_bootstrapped 0
+%global bootstrap 1
 
 %?gnuxc_package_header
 %global debug_package %{nil}
 
 Name:           gnuxc-gnumach
-Version:        1.4
-%global snap    87b7d8
+Version:        1.6
+%global snap    4c721d
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        GNU Mach kernel
 
@@ -17,6 +16,7 @@ Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot
 
 BuildRequires:  gnuxc-gcc
 
+BuildRequires:  automake
 BuildRequires:  texinfo
 
 %description
@@ -53,7 +53,8 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 %{gnuxc_includedir}/mach
 %{gnuxc_includedir}/mach_debug
 %{gnuxc_includedir}/device
-%doc =announce-* AUTHORS ChangeLog COPYING DEVELOPMENT NEWS README
+%doc =announce-* AUTHORS ChangeLog DEVELOPMENT NEWS README
+%license COPYING
 
 
 %changelog

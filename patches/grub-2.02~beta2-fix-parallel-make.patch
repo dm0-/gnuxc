@@ -1,0 +1,20 @@
+Use the configured builddir for staging files to avoid parallel conflicts.
+
+--- conf/Makefile.common
++++ conf/Makefile.common
+@@ -133,11 +133,11 @@
+ 
+ .PRECIOUS: $(top_srcdir)/Makefile.util.am
+ $(top_srcdir)/Makefile.util.am: $(top_srcdir)/gentpl.py $(top_srcdir)/Makefile.util.def $(top_srcdir)/Makefile.utilgcry.def
+-	python $^ > $@.new || (rm -f $@.new; exit 1)
+-	mv $@.new $@
++	python $^ > $(top_builddir)/$(@F).new || (rm -f $(top_builddir)/$(@F).new; exit 1)
++	mv $(top_builddir)/$(@F).new $@
+ 
+ .PRECIOUS: $(top_srcdir)/grub-core/Makefile.core.am
+ $(top_srcdir)/grub-core/Makefile.core.am: $(top_srcdir)/gentpl.py $(top_srcdir)/grub-core/Makefile.core.def $(top_srcdir)/grub-core/Makefile.gcry.def
+ 	if [ "x$$GRUB_CONTRIB" != x ]; then echo "You need to run ./autogen.sh manually." >&2; exit 1; fi
+-	python $^ > $@.new || (rm -f $@.new; exit 1)
+-	mv $@.new $@
++	python $^ > $(top_builddir)/grub-core/$(@F).new || (rm -f $(top_builddir)/grub-core/$(@F).new; exit 1)
++	mv $(top_builddir)/grub-core/$(@F).new $@

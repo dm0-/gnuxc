@@ -1,12 +1,8 @@
-# Determine whether this package will build a complete GCC.
-%if 0%{!?gnuxc_bootstrapped:1}
-%global gnuxc_bootstrapped %(test -n "$gnuxc_bootstrapped" && echo $gnuxc_bootstrapped || (rpm --quiet -q gnuxc-glibc && echo 1 || echo 0))
+%if 0%{?_with_bootstrap:1}%{!?_without_bootstrap:%(rpm --quiet -q gnuxc-glibc ; echo ${gnuxc_bootstrap:-$?})}
+%global bootstrap 1
 %endif
 
-# (This value is used in the RPM release number in order to ensure the full
-# packages are always an upgrade over bootstrapping sub-packages.)
-
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %undefine _binaries_in_noarch_packages_terminate_build
 %global __gnuxc_path ^%{gnuxc_root}/
 %global __elf_exclude_path ^(%{?__elf_exclude_path}|%{gnuxc_root}/.*)$
@@ -14,8 +10,8 @@
 %endif
 
 Name:           gnuxc-gcc
-Version:        4.9.2
-Release:        1.%{gnuxc_bootstrapped}%{?dist}
+Version:        5.2.0
+Release:        1.%{?bootstrap:0}%{!?bootstrap:1}%{?dist}
 Summary:        Cross-compiler for C for pure GNU systems
 
 License:        GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions
@@ -24,30 +20,31 @@ URL:            http://www.gnu.org/software/gcc/
 Source0:        http://ftpmirror.gnu.org/gcc/gcc-%{version}/%{gnuxc_name}-%{version}.tar.bz2
 
 Patch101:       %{gnuxc_name}-%{version}-no-add-needed.patch
-Patch102:       %{gnuxc_name}-%{version}-color-auto.patch
-Patch103:       %{gnuxc_name}-%{version}-update-isl.patch
 
 BuildRequires:  gnuxc-binutils
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 BuildRequires:  gnuxc-glibc-devel
 %endif
 
 BuildRequires:  bison
+BuildRequires:  cloog-devel
 BuildRequires:  flex
 BuildRequires:  gettext
 BuildRequires:  libmpc-devel
 BuildRequires:  libgomp
 BuildRequires:  zlib-devel
-BuildRequires:  ppl ppl-devel
-BuildRequires:  cloog-ppl cloog-ppl-devel
+%if ! 0%{?bootstrap}
+BuildRequires:  python-devel
+%endif
 
 Requires:       gnuxc-binutils
 Requires:       gnuxc-cpp = %{version}-%{release}
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 Requires:       gnuxc-libatomic = %{version}-%{release}
 Requires:       gnuxc-libgcc = %{version}-%{release}
 Requires:       gnuxc-libgomp = %{version}-%{release}
 Requires:       gnuxc-libssp = %{version}-%{release}
+Requires:       gnuxc-glibc-devel
 Provides:       gnuxc-libatomic-devel = %{version}-%{release}
 Provides:       gnuxc-libgcc-devel = %{version}-%{release}
 Provides:       gnuxc-libgomp-devel = %{version}-%{release}
@@ -56,10 +53,16 @@ Provides:       gnuxc(bootstrapped)
 %endif
 Provides:       bundled(libiberty)
 
+%if 0%{?bootstrap}
+Provides:       gnuxc-bootstrap(%{gnuxc_name}) = %{version}-%{release}
+%else
+Obsoletes:      gnuxc-bootstrap(%{gnuxc_name}) <= %{version}-%{release}
+%endif
+
 %description
 Cross-compiler for C for pure GNU systems.
-%if 0%{gnuxc_bootstrapped} == 0
-This is only a bootstrapping version!  Install glibc and rebuild this package.
+%if 0%{?bootstrap}
+This is only a bootstrap version!  Install gnuxc-glibc and rebuild this RPM.
 %endif
 
 %package -n gnuxc-cpp
@@ -69,12 +72,11 @@ Requires:       gnuxc-filesystem
 %description -n gnuxc-cpp
 Cross-compiler version of a C preprocessor for pure GNU systems.
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %package c++
 Summary:        Cross-compiler for C++ for pure GNU systems
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-libstdc++ = %{version}-%{release}
-Requires:       gnuxc-glibc-devel
 Provides:       gnuxc-libstdc++-devel = %{version}-%{release}
 
 %description c++
@@ -244,8 +246,6 @@ run C++ dynamically linked programs for pure GNU systems.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 %patch101
-%patch102
-%patch103
 
 # Provide non-conflicting internationalized messages.
 sed -i -e 's/"gcc"/"gnuxc-gcc"/' gcc/intl.c
@@ -278,13 +278,13 @@ mkdir -p build && pushd build
     --with-arch=%{gnuxc_arch} \
     --with-cloog --disable-cloog-version-check \
     --with-gxx-include-dir=%{gnuxc_includedir}/c++ \
+    --with-isl= --disable-isl-version-check \
     --with-native-system-header-dir=%{_includedir} \
-    --with-ppl --disable-ppl-version-check \
     --with-system-zlib \
     --without-included-gettext \
     --without-newlib \
     \
-%if 0%{gnuxc_bootstrapped} == 0
+%if 0%{?bootstrap}
     --enable-languages=c \
     --disable-decimal-float \
     --disable-libgomp \
@@ -297,16 +297,18 @@ mkdir -p build && pushd build
     --enable-dependency-tracking
 popd
 unset CFLAGS CXXFLAGS FFLAGS FCFLAGS LDFLAGS
-%if 0%{gnuxc_bootstrapped}
-make -C build %{?_smp_mflags} all \
-%else
+%if 0%{?bootstrap}
 make -C build %{?_smp_mflags} all-gcc all-target-libgcc \
+%else
+make -C build %{?_smp_mflags} all \
 %endif
     CFLAGS_FOR_TARGET="${CFLAGS_FOR_TARGET/ -Wp,-D_FORTIFY_SOURCE=? / }" \
     CXXFLAGS_FOR_TARGET="${CXXFLAGS_FOR_TARGET/ -Wp,-D_FORTIFY_SOURCE=? / }"
 
 %install
-%if 0%{gnuxc_bootstrapped}
+%if 0%{?bootstrap}
+make -C build install-gcc install-target-libgcc DESTDIR=%{buildroot}
+%else
 %make_install -C build
 
 # We don't need libtool's help.
@@ -321,8 +323,6 @@ ln -s ../../../lib/libstdc++.so.6 %{buildroot}%{gnuxc_libdir}/
 
 # These files conflict with existing installed files.
 rm -rf %{buildroot}%{_datadir}/gcc-%{version}
-%else
-make -C build install-gcc install-target-libgcc DESTDIR=%{buildroot}
 %endif
 
 # These files conflict with existing installed files.
@@ -330,11 +330,11 @@ rm -rf %{buildroot}%{_infodir} %{buildroot}%{_mandir}/man7
 rm -f %{buildroot}%{_libdir}/libiberty.a
 
 %find_lang %{name}
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %find_lang gnuxc-cpplib
+
+# Drop cross-compiled library translations.
 rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
-%else
-touch gnuxc-cpplib.lang
 %endif
 
 
@@ -345,6 +345,7 @@ touch gnuxc-cpplib.lang
 %{_bindir}/%{gnuxc_target}-gcc-nm
 %{_bindir}/%{gnuxc_target}-gcc-ranlib
 %{_bindir}/%{gnuxc_target}-gcov
+%{_bindir}/%{gnuxc_target}-gcov-tool
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/crtbegin.o
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/crtbeginS.o
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/crtbeginT.o
@@ -382,7 +383,7 @@ touch gnuxc-cpplib.lang
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/lto-wrapper
 %{_mandir}/man1/%{gnuxc_target}-gcc.1.gz
 %{_mandir}/man1/%{gnuxc_target}-gcov.1.gz
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/libgcc_eh.a
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/lto1
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/liblto_plugin.so
@@ -397,16 +398,20 @@ touch gnuxc-cpplib.lang
 %{gnuxc_root}/lib/libgcc_s.so
 # gnuxc-libgomp-devel
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/omp.h
+%{_libdir}/gcc/%{gnuxc_target}/%{version}/include/openacc.h
 %{gnuxc_root}/lib/libgomp.a
 %{gnuxc_root}/lib/libgomp.so
+%{gnuxc_root}/lib/libgomp-plugin-host_nonshm.so
 # gnuxc-libssp-devel
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/ssp
 %{gnuxc_root}/lib/libssp.a
 %{gnuxc_root}/lib/libssp.so
 %{gnuxc_root}/lib/libssp_nonshared.a
 %endif
+%doc gcc/ChangeLog* gcc/FSFChangeLog* gcc/ONEWS
+%license gcc/COPYING*
 
-%files -f gnuxc-cpplib.lang -n gnuxc-cpp
+%files %{!?bootstrap:-f gnuxc-cpplib.lang} -n gnuxc-cpp
 %{_bindir}/%{gnuxc_target}-cpp
 %dir %{_libdir}/gcc/%{gnuxc_target}
 %dir %{_libdir}/gcc/%{gnuxc_target}/%{version}
@@ -414,8 +419,9 @@ touch gnuxc-cpplib.lang
 %dir %{_libexecdir}/gcc/%{gnuxc_target}/%{version}
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/cc1
 %{_mandir}/man1/%{gnuxc_target}-cpp.1.gz
+%doc libcpp/ChangeLog
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %files c++
 %{_bindir}/%{gnuxc_target}-g++
 %{_bindir}/%{gnuxc_target}-c++
@@ -470,6 +476,8 @@ touch gnuxc-cpplib.lang
 %files -n gnuxc-libgomp
 %{gnuxc_root}/lib/libgomp.so.1
 %{gnuxc_root}/lib/libgomp.so.1.0.0
+%{gnuxc_root}/lib/libgomp-plugin-host_nonshm.so.1
+%{gnuxc_root}/lib/libgomp-plugin-host_nonshm.so.1.0.0
 %doc libgomp/ChangeLog*
 
 %files -n gnuxc-libitm
@@ -498,7 +506,8 @@ touch gnuxc-cpplib.lang
 %files -n gnuxc-libquadmath
 %{gnuxc_root}/lib/libquadmath.so.0
 %{gnuxc_root}/lib/libquadmath.so.0.0.0
-%doc libquadmath/ChangeLog libquadmath/COPYING.LIB
+%doc libquadmath/ChangeLog
+%license libquadmath/COPYING.LIB
 
 %files -n gnuxc-libquadmath-devel
 %{_libdir}/gcc/%{gnuxc_target}/%{version}/include/quadmath.h
@@ -513,10 +522,10 @@ touch gnuxc-cpplib.lang
 
 %files -n gnuxc-libstdc++
 %{gnuxc_root}/lib/libstdc++.so.6
-%{gnuxc_root}/lib/libstdc++.so.6.0.20
-%{gnuxc_root}/lib/libstdc++.so.6.0.20-gdb.py
-%{gnuxc_root}/lib/libstdc++.so.6.0.20-gdb.pyc
-%{gnuxc_root}/lib/libstdc++.so.6.0.20-gdb.pyo
+%{gnuxc_root}/lib/libstdc++.so.6.0.21
+%{gnuxc_root}/lib/libstdc++.so.6.0.21-gdb.py
+%{gnuxc_root}/lib/libstdc++.so.6.0.21-gdb.pyc
+%{gnuxc_root}/lib/libstdc++.so.6.0.21-gdb.pyo
 %{gnuxc_libdir}/libstdc++.so.6
 %doc libstdc++-v3/ChangeLog* libstdc++-v3/README
 %endif

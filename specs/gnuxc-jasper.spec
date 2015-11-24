@@ -12,6 +12,8 @@ Source0:        http://www.ece.uvic.ca/~frodo/jasper/software/%{gnuxc_name}-%{ve
 
 BuildRequires:  gnuxc-libjpeg-turbo-devel
 
+BuildRequires:  libtool
+
 %description
 %{summary}.
 
@@ -51,7 +53,7 @@ autoreconf -fi
     --with-x \
     EXTRACFLAGS="$CFLAGS" \
     \
-    --disable-opengl
+    --disable-opengl # This requires libGLUT.
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -70,7 +72,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libjasper.so.1
 %{gnuxc_libdir}/libjasper.so.1.0.0
-%doc doc/*.pdf LICENSE NEWS README
+%doc doc/*.pdf NEWS README
+%license LICENSE
 
 %files devel
 %{gnuxc_includedir}/jasper

@@ -1,16 +1,18 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nettle
-Version:        2.7.1
+Version:        3.1.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
-License:        LGPLv2+
+License:        GPLv2+ or LGPLv3+
 Group:          Development/Libraries
 URL:            http://www.gnu.org/software/nettle/
 Source0:        http://ftpmirror.gnu.org/nettle/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-gmp-devel
+
+BuildRequires:  m4
 
 %description
 %{summary}.
@@ -41,6 +43,7 @@ statically, which is highly discouraged.
 %gnuxc_configure \
     --disable-documentation \
     \
+    --disable-mini-gmp \
     --disable-openssl
 %gnuxc_make %{?_smp_mflags} all
 
@@ -48,18 +51,21 @@ statically, which is highly discouraged.
 %gnuxc_make_install
 
 # There is no need to install binary programs in the sysroot.
-rm -f %{buildroot}%{gnuxc_bindir}/{nettle-{hash,lfib-stream},{pkcs1,sexp}-conv}
+rm -f \
+    %{buildroot}%{gnuxc_bindir}/nettle-{hash,lfib-stream,pbkdf2} \
+    %{buildroot}%{gnuxc_bindir}/{pkcs1,sexp}-conv
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
 chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib{hogweed,nettle}.so.*.*
 
 
 %files
-%{gnuxc_libdir}/libhogweed.so.2
-%{gnuxc_libdir}/libhogweed.so.2.5
-%{gnuxc_libdir}/libnettle.so.4
-%{gnuxc_libdir}/libnettle.so.4.7
-%doc AUTHORS ChangeLog COPYING.LIB descore.README NEWS README TODO
+%{gnuxc_libdir}/libhogweed.so.4
+%{gnuxc_libdir}/libhogweed.so.4.1
+%{gnuxc_libdir}/libnettle.so.6
+%{gnuxc_libdir}/libnettle.so.6.1
+%doc AUTHORS ChangeLog descore.README NEWS README TODO
+%license COPYING.LESSERv3 COPYINGv2 COPYINGv3
 
 %files devel
 %{gnuxc_includedir}/nettle

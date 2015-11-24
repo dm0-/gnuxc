@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libtasn1
-Version:        4.2
+Version:        4.7
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -55,13 +55,14 @@ rm -f %{buildroot}%{gnuxc_bindir}/asn1{Coding,Decoding,Parser}
 rm -f %{buildroot}%{gnuxc_libdir}/libtasn1.la
 
 # Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_mandir} %{buildroot}%{gnuxc_infodir}
+rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 
 %files
 %{gnuxc_libdir}/libtasn1.so.6
-%{gnuxc_libdir}/libtasn1.so.6.3.2
-%doc AUTHORS ChangeLog COPYING COPYING.LIB NEWS README THANKS doc/TODO
+%{gnuxc_libdir}/libtasn1.so.6.5.1
+%doc AUTHORS ChangeLog NEWS README THANKS doc/TODO
+%license COPYING COPYING.LIB
 
 %files devel
 %{gnuxc_includedir}/libtasn1.h

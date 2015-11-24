@@ -6,6 +6,7 @@
 
 ac_cv_file__dev_ptc=no
 ac_cv_file__dev_ptmx=no
+ac_cv_file__dev_random=yes
 ac_cv_func_calloc_0_nonnull=yes
 ac_cv_func_getgroups_works=yes
 ac_cv_func_gettimeofday=yes
@@ -85,6 +86,7 @@ gl_cv_func_rename_dest_works=yes
 gl_cv_func_rename_link_works=yes
 gl_cv_func_rmdir_works=yes
 gl_cv_func_round_works=yes
+gl_cv_func_select_detects_ebadf=yes
 gl_cv_func_setenv_works=yes
 gl_cv_func_sleep_works=yes
 gl_cv_func_snprintf_directive_n=no
@@ -96,6 +98,7 @@ gl_cv_func_stpncpy=yes
 gl_cv_func_strerror_0_works=yes
 gl_cv_func_svid_putenv=yes
 gl_cv_func_symlink_works=yes
+gl_cv_func_symlinkat_works=yes
 gl_cv_func_ttyname_r_works=yes
 gl_cv_func_tzset_clobber=no
 gl_cv_func_ungetc_works=yes
@@ -106,6 +109,7 @@ gl_cv_func_wcwidth_works=yes
 gl_cv_func_working_acl_get_file=yes
 gl_cv_func_working_getdelim=yes
 gl_cv_func_working_mktime=yes
+gl_cv_have_proc_uptime=yes
 gl_cv_have_weak=yes
 gl_cv_header_working_fcntl_h='no (bad O_NOFOLLOW)'
 gl_cv_struct_dirent_d_ino=yes
@@ -114,9 +118,14 @@ glib_cv_uscore=no
 gmp_cv_func_vsnprintf=yes
 gt_cv_func_printf_posix=yes
 gt_cv_int_divbyzero_sigfpe=yes
+lsh_cv_lib_argp_works=yes
 lt_cv_dlopen_self=yes
 lt_cv_dlopen_self_static=no
 M4_cv_func_rename_open_file_works=yes
+tcl_cv_strstr_unbroken=yes
+tcl_cv_strtod_buggy=ok
+tcl_cv_strtod_unbroken=yes
+tcl_cv_strtoul_unbroken=yes
 xorg_cv_malloc0_returns_null=yes
 
 # Read version-dependent settings based on installed packages.

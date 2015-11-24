@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXrandr
-Version:        1.4.2
+Version:        1.5.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,6 +12,7 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 
 BuildRequires:  gnuxc-libXext-devel
 BuildRequires:  gnuxc-libXrender-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-randrproto
 
 %description
@@ -61,7 +62,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libXrandr.so.2
 %{gnuxc_libdir}/libXrandr.so.2.2.0
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/extensions/Xrandr.h

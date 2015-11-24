@@ -41,7 +41,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %{gnuxc_includedir}/X11/extensions/xf86dgaproto.h
 %{gnuxc_includedir}/X11/extensions/xf86dgastr.h
 %{gnuxc_libdir}/pkgconfig/xf86dgaproto.pc
-%doc ChangeLog COPYING
+%doc ChangeLog
+%license COPYING
 
 
 %changelog

@@ -10,6 +10,7 @@ Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-xtrans
 
 %description
@@ -62,7 +63,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libICE.la
 %files
 %{gnuxc_libdir}/libICE.so.6
 %{gnuxc_libdir}/libICE.so.6.3.0
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/ICE

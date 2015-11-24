@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-harfbuzz
-Version:        0.9.37
+Version:        1.1.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -14,6 +14,7 @@ BuildRequires:  gnuxc-cairo-devel
 BuildRequires:  gnuxc-freetype-devel
 BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-icu4c-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -47,7 +48,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -79,12 +80,13 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 
 %files
 %{gnuxc_libdir}/libharfbuzz.so.0
-%{gnuxc_libdir}/libharfbuzz.so.0.937.0
+%{gnuxc_libdir}/libharfbuzz.so.0.10101.0
 %{gnuxc_libdir}/libharfbuzz-gobject.so.0
-%{gnuxc_libdir}/libharfbuzz-gobject.so.0.937.0
+%{gnuxc_libdir}/libharfbuzz-gobject.so.0.10101.0
 %{gnuxc_libdir}/libharfbuzz-icu.so.0
-%{gnuxc_libdir}/libharfbuzz-icu.so.0.937.0
-%doc AUTHORS ChangeLog COPYING NEWS README THANKS TODO
+%{gnuxc_libdir}/libharfbuzz-icu.so.0.10101.0
+%doc AUTHORS ChangeLog NEWS README THANKS TODO
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/harfbuzz

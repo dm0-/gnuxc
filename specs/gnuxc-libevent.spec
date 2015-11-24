@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libevent
-Version:        2.0.21
+Version:        2.0.22
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -65,7 +65,8 @@ rm -f %{buildroot}%{gnuxc_bindir}/event_rpcgen.py
 %{gnuxc_libdir}/libevent_extra-2.0.so.5.1.9
 %{gnuxc_libdir}/libevent_pthreads-2.0.so.5
 %{gnuxc_libdir}/libevent_pthreads-2.0.so.5.1.9
-%doc ChangeLog LICENSE README
+%doc ChangeLog README
+%license LICENSE
 
 %files devel
 %{gnuxc_includedir}/evdns.h

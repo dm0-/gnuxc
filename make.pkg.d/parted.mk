@@ -1,8 +1,8 @@
 parted                  := parted-3.2
 parted_url              := http://ftpmirror.gnu.org/parted/$(parted).tar.xz
 
-configure-parted-rule:
-	cd $(parted) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--disable-device-mapper \
@@ -15,9 +15,9 @@ configure-parted-rule:
 		--with-readline \
 		--without-included-regex
 
-build-parted-rule:
-	$(MAKE) -C $(parted) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-parted-rule: $(call installed,e2fsprogs readline)
-	$(MAKE) -C $(parted) install \
+$(install-rule): $$(call installed,e2fsprogs readline)
+	$(MAKE) -C $(builddir) install \
 		pcdir=/usr/lib/pkgconfig

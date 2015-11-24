@@ -4,7 +4,7 @@ be located in /etc/shadow instead of just /etc/passwd.
 
 --- greeter/verify.c
 +++ greeter/verify.c
-@@ -468,7 +468,7 @@
+@@ -465,7 +465,7 @@
  	if (strcmp (crypt (greet->password, user_pass), user_pass))
  #  endif
  	{
@@ -15,10 +15,9 @@ be located in /etc/shadow instead of just /etc/passwd.
  			return 0;
 --- config/Xresources.cpp
 +++ config/Xresources.cpp
-@@ -80,3 +80,6 @@
+@@ -80,3 +80,5 @@
  Chooser*label.label:		XDMCP Host Menu from CLIENTHOST
  Chooser*list.font:		-*-*-medium-r-normal-*-*-230-*-*-c-*-iso8859-1
  Chooser*Command.font:		*-new century schoolbook-bold-r-normal-*-180-*
 +
 +xlogin.Login.allowNullPasswd:	true
-+xlogin.Login.allowRootLogin:	true

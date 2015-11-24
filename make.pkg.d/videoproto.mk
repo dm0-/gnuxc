@@ -1,12 +1,12 @@
 videoproto              := videoproto-2.3.2
 videoproto_url          := http://xorg.freedesktop.org/releases/individual/proto/$(videoproto).tar.bz2
 
-configure-videoproto-rule:
-	cd $(videoproto) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-strict-compilation
 
-build-videoproto-rule:
-	$(MAKE) -C $(videoproto) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-videoproto-rule: $(call installed,xextproto)
-	$(MAKE) -C $(videoproto) install
+$(install-rule): $$(call installed,xextproto)
+	$(MAKE) -C $(builddir) install

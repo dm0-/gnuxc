@@ -1,17 +1,18 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gettext
-Version:        0.19.4
+Version:        0.19.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+ and LGPLv2+
 Group:          Development/Tools
 URL:            http://www.gnu.org/software/gettext/
-Source0:        http://ftpmirror.gnu.org/gettext/%{gnuxc_name}-%{version}.tar.lz
+Source0:        http://ftpmirror.gnu.org/gettext/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-acl-devel
+BuildRequires:  gnuxc-expat-devel
 BuildRequires:  gnuxc-libcroco-devel
 BuildRequires:  gnuxc-libunistring-devel
 BuildRequires:  gnuxc-ncurses-devel
@@ -46,7 +47,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' build-aux/ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' gettext-tools/configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' gettext-tools/configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' gettext-tools/configure
 
 %build
 %gnuxc_configure \
@@ -90,7 +91,8 @@ rm -f \
     %{buildroot}%{gnuxc_bindir}/msg{filter,fmt,grep,init,merge,unfmt,uniq} \
     %{buildroot}%{gnuxc_bindir}/{n,x}gettext \
     %{buildroot}%{gnuxc_bindir}/recode-sr-latin \
-    %{buildroot}%{gnuxc_libdir}/gettext/{hostname,project-id,urlget,user-email}
+    %{buildroot}%{gnuxc_libdir}/gettext/{cldr-plurals,hostname} \
+    %{buildroot}%{gnuxc_libdir}/gettext/{project-id,urlget,user-email}
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/lib{asprintf,gettext{lib,po,src}}.la
@@ -112,8 +114,8 @@ rm -rf %{buildroot}{%{gnuxc_docdir},%{gnuxc_infodir},%{gnuxc_mandir}}
 %{gnuxc_libdir}/libgettextpo.so.0
 %{gnuxc_libdir}/libgettextpo.so.0.5.3
 %{gnuxc_libdir}/libgettextsrc-%{version}.so
-%doc *.gettext-runtime *.gettext-tools COPYING
-%doc AUTHORS ChangeLog* DEPENDENCIES HACKING NEWS PACKAGING README THANKS
+%doc AUTHORS* BUGS* ChangeLog* HACKING NEWS* PACKAGING README* THANKS
+%license COPYING*
 
 %files devel
 %{gnuxc_includedir}/autosprintf.h

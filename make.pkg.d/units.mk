@@ -1,11 +1,11 @@
-units                   := units-2.11a
-units_url               := http://alpha.gnu.org/gnu/units/$(units).tar.gz
+units                   := units-2.12
+units_url               := http://ftpmirror.gnu.org/units/$(units).tar.gz
 
-configure-units-rule:
-	cd $(units) && ./$(configure)
+$(configure-rule):
+	cd $(builddir) && ./$(configure)
 
-build-units-rule:
-	$(MAKE) -C $(units) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-units-rule: $(call installed,readline)
-	$(MAKE) -C $(units) install
+$(install-rule): $$(call installed,readline)
+	$(MAKE) -C $(builddir) install

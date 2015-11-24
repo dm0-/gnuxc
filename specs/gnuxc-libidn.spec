@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libidn
-Version:        1.29
+Version:        1.32
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -68,8 +68,9 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libidn.so.11
-%{gnuxc_libdir}/libidn.so.11.6.12
-%doc AUTHORS ChangeLog COPYING* FAQ HACKING NEWS README THANKS TODO
+%{gnuxc_libdir}/libidn.so.11.6.15
+%doc AUTHORS ChangeLog FAQ HACKING NEWS README THANKS TODO
+%license COPYING COPYING.LESSERv2 COPYING.LESSERv3 COPYINGv2 COPYINGv3
 
 %files devel
 %{gnuxc_includedir}/idn-free.h

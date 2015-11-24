@@ -1,20 +1,16 @@
-# Determine whether this package requires a complete GCC.
-%if 0%{!?gnuxc_bootstrapped:1}
-%global gnuxc_bootstrapped %(test -n "$gnuxc_bootstrapped" && echo $gnuxc_bootstrapped || (rpm --quiet -q gnuxc-glibc && echo 1 || echo 0))
+%if 0%{?_with_bootstrap:1}%{!?_without_bootstrap:%(rpm --quiet -q gnuxc-glibc ; echo ${gnuxc_bootstrap:-$?})}
+%global bootstrap 1
 %endif
 
-# (This value is used in the RPM release number in order to ensure the full
-# packages are always an upgrade over bootstrapping sub-packages.)
-
 %?gnuxc_package_header
-%if ! 0%{gnuxc_bootstrapped}
+%if 0%{?bootstrap}
 %global debug_package %{nil}
 %endif
 
 Name:           gnuxc-hurd
-Version:        0.5
-%global snap    c0c693
-Release:        1.%{gnuxc_bootstrapped}.19700101git%{snap}%{?dist}
+Version:        0.7
+%global snap    226a9d
+Release:        1.%{?bootstrap:0}%{!?bootstrap:1}.19700101git%{snap}%{?dist}
 Summary:        GNU Hurd kernel
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
@@ -23,16 +19,25 @@ URL:            http://www.gnu.org/software/hurd/
 Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
 
 Patch101:       %{gnuxc_name}-%{version}-%{snap}-console-nocaps.patch
-Patch102:       %{gnuxc_name}-%{version}-%{snap}-trap-console.patch
-Patch103:       %{gnuxc_name}-%{version}-%{snap}-drop-libexec.patch
+Patch102:       %{gnuxc_name}-%{version}-%{snap}-fancy-motd.patch
+Patch103:       %{gnuxc_name}-%{version}-%{snap}-trap-console.patch
+Patch104:       %{gnuxc_name}-%{version}-%{snap}-fhs.patch
 
 BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-gnumach-headers
 BuildRequires:  gnuxc-mig
 BuildRequires:  gnuxc-pkg-config
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-zlib-devel
+%endif
+
+BuildRequires:  autoconf
+
+%if 0%{?bootstrap}
+Provides:       gnuxc-bootstrap(%{gnuxc_name}) = %{version}-%{release}
+%else
+Obsoletes:      gnuxc-bootstrap(%{gnuxc_name}) <= %{version}-%{release}
 %endif
 
 %description
@@ -48,7 +53,7 @@ Requires:       gnuxc-gnumach-headers
 This package provides system headers taken from the GNU Hurd kernel source for
 use with cross-compilers.
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %package libs
 Summary:        Cross-compiled versions of Hurd libraries for the GNU system
 Group:          System Environment/Libraries
@@ -83,20 +88,21 @@ which is highly discouraged.
 %patch101
 %patch102
 %patch103
+%patch104
 autoreconf -fi
 
 %build
 %gnuxc_configure \
-%if 0%{gnuxc_bootstrapped}
+%if 0%{?bootstrap}
+    CC='%{gnuxc_cc} -nostdlib' \
+%else
     --with-libbz2 \
     --with-libz \
-%else
-    CC='%{gnuxc_cc} -nostdlib' \
 %endif
     --without-libdaemon \
     --without-parted
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %gnuxc_make %{?_smp_mflags} \
     lib{fshelp,ihash,iohelp,netfs,ports,ps,shouldbeinlibc,store}
 %endif
@@ -106,7 +112,7 @@ autoreconf -fi
     includedir=%{buildroot}%{gnuxc_includedir} \
     no_deps=t
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %gnuxc_make \
     lib{fshelp,ihash,iohelp,netfs,ports,ps,shouldbeinlibc,store}-install \
     includedir=%{buildroot}%{gnuxc_includedir} \
@@ -121,9 +127,10 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 %{gnuxc_includedir}/hurd
 %{gnuxc_includedir}/sys/procfs.h
 %{gnuxc_includedir}/*.h
-%doc BUGS ChangeLog COPYING INSTALL* NEWS README* tasks TODO
+%doc BUGS ChangeLog INSTALL* NEWS README* tasks TODO
+%license COPYING
 
-%if 0%{gnuxc_bootstrapped}
+%if ! 0%{?bootstrap}
 %files libs
 %{gnuxc_libdir}/libfshelp.so.0.3
 %{gnuxc_libdir}/libihash.so.0.3

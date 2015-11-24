@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-fontconfig
-Version:        2.11.91
+Version:        2.11.94
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,6 +12,8 @@ Source0:        http://www.freedesktop.org/software/%{gnuxc_name}/release/%{gnux
 
 BuildRequires:  gnuxc-freetype-devel
 BuildRequires:  gnuxc-libxml2-devel
+BuildRequires:  gnuxc-pkg-config
+BuildRequires:  python3
 
 %description
 %{summary}.
@@ -66,9 +68,10 @@ rm -f %{buildroot}%{gnuxc_libdir}/libfontconfig.la
 %{gnuxc_datadir}/fontconfig
 %{gnuxc_datadir}/xml/fontconfig
 %{gnuxc_libdir}/libfontconfig.so.1
-%{gnuxc_libdir}/libfontconfig.so.1.8.0
+%{gnuxc_libdir}/libfontconfig.so.1.9.0
 %{gnuxc_sysconfdir}/fonts
-%doc AUTHORS ChangeLog COPYING NEWS README
+%doc AUTHORS ChangeLog NEWS README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/fontconfig

@@ -3,8 +3,8 @@ xauth_url               := http://xorg.freedesktop.org/releases/individual/app/$
 
 export MCOOKIE = /usr/bin/mcookie
 
-configure-xauth-rule:
-	cd $(xauth) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-ipv6 \
 		--enable-local-transport \
@@ -12,17 +12,26 @@ configure-xauth-rule:
 		--enable-tcp-transport \
 		--enable-unix-transport
 
-build-xauth-rule:
-	$(MAKE) -C $(xauth) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-xauth-rule: $(call installed,libXmu)
-	$(MAKE) -C $(xauth) install
-	$(INSTALL) -Dpm 755 $(xauth)/mcookie.sh $(DESTDIR)/usr/bin/mcookie
+$(install-rule): $$(call installed,libXmu)
+	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 755 $(call addon-file,mcookie.sh) $(DESTDIR)/usr/bin/mcookie
+
+# Write inline files.
+$(call addon-file,mcookie.sh): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,mcookie.sh)
+
 
 # Provide a dumb placeholder for util-linux's "mcookie" command.
-$(xauth)/mcookie.sh: | $(xauth)
-	$(ECHO) '#!$(BASH) -e' > $@
-	$(ECHO) -e 'for i in {1..16}\ndo' >> $@
-	$(ECHO) "        printf '%02x' "'$$(( RANDOM % 256 ))' >> $@
-	$(ECHO) -e 'done\necho' >> $@
-$(call prepared,xauth): $(xauth)/mcookie.sh
+override define contents
+#!/bin/bash -e
+for i in {1..16}
+do
+        printf '%02x' $(( RANDOM % 256 ))
+done
+echo
+endef
+$(call addon-file,mcookie.sh): private override contents := $(value contents)

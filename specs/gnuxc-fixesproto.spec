@@ -39,7 +39,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %{gnuxc_includedir}/X11/extensions/xfixesproto.h
 %{gnuxc_includedir}/X11/extensions/xfixeswire.h
 %{gnuxc_libdir}/pkgconfig/fixesproto.pc
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 
 %changelog

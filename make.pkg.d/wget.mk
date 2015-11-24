@@ -1,8 +1,8 @@
-wget                    := wget-1.16.1
+wget                    := wget-1.17
 wget_url                := http://ftpmirror.gnu.org/wget/$(wget).tar.xz
 
-configure-wget-rule:
-	cd $(wget) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--enable-assert \
 		--enable-debug \
@@ -19,10 +19,11 @@ configure-wget-rule:
 		--with-zlib \
 		--without-included-regex \
 		\
-		--without-libpsl
+		--without-libpsl \
+		--without-metalink
 
-build-wget-rule:
-	$(MAKE) -C $(wget) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-wget-rule: $(call installed,e2fsprogs gnutls pcre)
-	$(MAKE) -C $(wget) install
+$(install-rule): $$(call installed,e2fsprogs gnutls pcre)
+	$(MAKE) -C $(builddir) install

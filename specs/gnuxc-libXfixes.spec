@@ -12,6 +12,7 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 
 BuildRequires:  gnuxc-fixesproto
 BuildRequires:  gnuxc-libX11-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -20,7 +21,7 @@ BuildRequires:  gnuxc-libX11-devel
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-BuildRequires:  gnuxc-fixesproto
+Requires:       gnuxc-fixesproto
 Requires:       gnuxc-libX11-devel
 
 %description devel
@@ -60,7 +61,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libXfixes.so.3
 %{gnuxc_libdir}/libXfixes.so.3.1.0
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/extensions/Xfixes.h

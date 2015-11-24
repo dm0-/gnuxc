@@ -3,8 +3,8 @@ m4_url                  := http://ftpmirror.gnu.org/m4/$(m4).tar.xz
 
 export M4 = /usr/bin/m4
 
-configure-m4-rule:
-	cd $(m4) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--enable-assert \
 		--enable-c++ \
@@ -13,8 +13,8 @@ configure-m4-rule:
 		--enable-threads=posix \
 		--without-included-regex
 
-build-m4-rule:
-	$(MAKE) -C $(m4) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-m4-rule: $(call installed,glibc)
-	$(MAKE) -C $(m4) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

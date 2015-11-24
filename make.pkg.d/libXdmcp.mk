@@ -1,13 +1,13 @@
-libXdmcp                := libXdmcp-1.1.1
+libXdmcp                := libXdmcp-1.1.2
 libXdmcp_url            := http://xorg.freedesktop.org/releases/individual/lib/$(libXdmcp).tar.bz2
 
-configure-libXdmcp-rule:
-	cd $(libXdmcp) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-strict-compilation
 
-build-libXdmcp-rule:
-	$(MAKE) -C $(libXdmcp) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libXdmcp-rule: $(call installed,xproto)
-	$(MAKE) -C $(libXdmcp) install
+$(install-rule): $$(call installed,xproto)
+	$(MAKE) -C $(builddir) install

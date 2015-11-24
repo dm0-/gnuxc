@@ -1,8 +1,8 @@
-grep                    := grep-2.21
+grep                    := grep-2.22
 grep_url                := http://ftpmirror.gnu.org/grep/$(grep).tar.xz
 
-configure-grep-rule:
-	cd $(grep) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--disable-silent-rules \
@@ -11,16 +11,23 @@ configure-grep-rule:
 		--enable-threads=posix \
 		--without-included-regex
 
-build-grep-rule:
-	$(MAKE) -C $(grep) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-grep-rule: $(call installed,pcre)
-	$(MAKE) -C $(grep) install
-	$(INSTALL) -Dpm 644 $(grep)/bashrc.sh $(DESTDIR)/etc/bashrc.d/grep.sh
+$(install-rule): $$(call installed,pcre)
+	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/grep.sh
+
+# Write inline files.
+$(call addon-file,bashrc.sh): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,bashrc.sh)
+
 
 # Provide bash aliases to choose the default command-line options.
-$(grep)/bashrc.sh: | $(grep)
-	$(ECHO) "alias grep='grep --color=auto'" > $@
-	$(ECHO) "alias egrep='egrep --color=auto'" >> $@
-	$(ECHO) "alias fgrep='fgrep --color=auto'" >> $@
-$(call prepared,grep): $(grep)/bashrc.sh
+override define contents
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+endef
+$(call addon-file,bashrc.sh): private override contents := $(value contents)

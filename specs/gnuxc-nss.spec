@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nss
-Version:        3.17.3
+Version:        3.21
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -13,6 +13,7 @@ Source0:        http://ftp.mozilla.org/pub/security/nss/releases/NSS_%(echo %{ve
 Patch101:       %{gnuxc_name}-%{version}-hurd-port.patch
 
 BuildRequires:  gnuxc-nspr-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-sqlite-devel
 BuildRequires:  gnuxc-zlib-devel
 
@@ -42,7 +43,8 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-mv %{gnuxc_name}/{*,.[^.]*} .
+mv %{gnuxc_name}/{*,.[!.]*} .
+chmod -c 644 *.txt
 %patch101
 
 %build
@@ -54,6 +56,7 @@ mv %{gnuxc_name}/{*,.[^.]*} .
     MOZ_DEBUG_SYMBOLS=1 \\\
     NSPR_INCLUDE_DIR="`%{gnuxc_pkgconfig} --cflags-only-I nspr | sed s/^-I//`" \\\
     NSS_DISABLE_DBM=1 \\\
+    NSS_DISABLE_GTESTS=1 \\\
     NSS_USE_SYSTEM_SQLITE=1 \\\
     OBJDIR_NAME=gnu \\\
     USE_PTHREADS=1 \\\
@@ -100,7 +103,7 @@ ln %{buildroot}%{gnuxc_root}/bin/nss-config \
 %{gnuxc_libdir}/libsoftokn3.chk
 %{gnuxc_libdir}/libsoftokn3.so
 %{gnuxc_libdir}/libssl3.so
-%doc COPYING trademarks.txt
+%license COPYING trademarks.txt
 
 %files devel
 %{_bindir}/%{gnuxc_target}-nss-config

@@ -1,15 +1,11 @@
-glib                    := glib-2.42.1
-glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.42/$(glib).tar.xz
+glib                    := glib-2.46.2
+glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.46/$(glib).tar.xz
 
-prepare-glib-rule:
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(glib)/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(glib)/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(glib)/configure
+$(prepare-rule):
+	$(call drop-rpath,configure,ltmain.sh)
 
-configure-glib-rule:
-	cd $(glib) && ./$(configure) \
-		--disable-modular-tests \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-debug \
 		--enable-gc-friendly \
@@ -22,8 +18,8 @@ configure-glib-rule:
 		--disable-libelf \
 		--disable-selinux
 
-build-glib-rule:
-	$(MAKE) -C $(glib) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-glib-rule: $(call installed,libffi pcre)
-	$(MAKE) -C $(glib) install
+$(install-rule): $$(call installed,libffi pcre)
+	$(MAKE) -C $(builddir) install

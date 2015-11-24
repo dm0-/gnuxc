@@ -2,20 +2,20 @@ pptop                   := pptop-0.1.1
 pptop_snap              := 2014-01-01
 pptop_url               := cvs://anonymous@cvs.sv.gnu.org/sources/hurdextras
 
-prepare-pptop-rule:
-	$(COPY) /usr/share/gettext/config.rpath $(pptop)/
+$(prepare-rule):
+	$(COPY) /usr/share/gettext/config.rpath $(builddir)/
 
-configure-pptop-rule:
-	cd $(pptop) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--enable-threads=posix \
 		CPPFLAGS="`$(NCURSES_CONFIG) --cflags`" \
 		LIBS="`$(NCURSES_CONFIG) --libs`"
 
-build-pptop-rule:
-	$(MAKE) -C $(pptop) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-pptop-rule: $(call installed,ncurses)
-	$(MAKE) -C $(pptop) install \
-		mkinstalldirs='mkdir -p'
+$(install-rule): $$(call installed,ncurses)
+	$(MAKE) -C $(builddir) install \
+		mkinstalldirs='$(MKDIR)'
 	test -e $(DESTDIR)/usr/bin/top || $(SYMLINK) pptop $(DESTDIR)/usr/bin/top

@@ -1,14 +1,11 @@
-libxcb                  := libxcb-1.11
+libxcb                  := libxcb-1.11.1
 libxcb_url              := http://xcb.freedesktop.org/dist/$(libxcb).tar.bz2
 
-prepare-libxcb-rule:
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(libxcb){,/build-aux}/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(libxcb)/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(libxcb)/configure
+$(prepare-rule):
+	$(call drop-rpath,configure,ltmain.sh build-aux/ltmain.sh)
 
-configure-libxcb-rule:
-	cd $(libxcb) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-composite \
 		--enable-damage \
@@ -37,8 +34,8 @@ configure-libxcb-rule:
 		--enable-xv \
 		--enable-xvmc
 
-build-libxcb-rule:
-	$(MAKE) -C $(libxcb) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libxcb-rule: $(call installed,libpthread-stubs libXau xcb-proto)
-	$(MAKE) -C $(libxcb) install
+$(install-rule): $$(call installed,libpthread-stubs libXau xcb-proto)
+	$(MAKE) -C $(builddir) install

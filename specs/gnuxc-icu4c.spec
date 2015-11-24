@@ -1,14 +1,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-icu4c
-Version:        54.1
+Version:        56.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT and UCD and Public Domain
 Group:          Development/Libraries
 URL:            http://www.icu-project.org/
-Source0:        http://download.icu-project.org/files/icu4c/%{version}/%{gnuxc_name}-54_1-src.tgz
+Source0:        http://download.icu-project.org/files/icu4c/%{version}/%{gnuxc_name}-56_1-src.tgz
 
 BuildRequires:  gnuxc-gcc-c++
 
@@ -81,23 +81,24 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 
 %files
-%{gnuxc_libdir}/libicudata.so.54
+%{gnuxc_libdir}/libicudata.so.56
 %{gnuxc_libdir}/libicudata.so.%{version}
-%{gnuxc_libdir}/libicui18n.so.54
+%{gnuxc_libdir}/libicui18n.so.56
 %{gnuxc_libdir}/libicui18n.so.%{version}
-%{gnuxc_libdir}/libicuio.so.54
+%{gnuxc_libdir}/libicuio.so.56
 %{gnuxc_libdir}/libicuio.so.%{version}
-%{gnuxc_libdir}/libicule.so.54
+%{gnuxc_libdir}/libicule.so.56
 %{gnuxc_libdir}/libicule.so.%{version}
-%{gnuxc_libdir}/libiculx.so.54
+%{gnuxc_libdir}/libiculx.so.56
 %{gnuxc_libdir}/libiculx.so.%{version}
-%{gnuxc_libdir}/libicutest.so.54
+%{gnuxc_libdir}/libicutest.so.56
 %{gnuxc_libdir}/libicutest.so.%{version}
-%{gnuxc_libdir}/libicutu.so.54
+%{gnuxc_libdir}/libicutu.so.56
 %{gnuxc_libdir}/libicutu.so.%{version}
-%{gnuxc_libdir}/libicuuc.so.54
+%{gnuxc_libdir}/libicuuc.so.56
 %{gnuxc_libdir}/libicuuc.so.%{version}
-%doc APIChangeReport.html icu4c.css license.html readme.html
+%doc APIChangeReport.html icu4c.css readme.html
+%license icu4c.css license.html
 
 %files devel
 %{_bindir}/%{gnuxc_target}-icu-config

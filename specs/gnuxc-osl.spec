@@ -55,7 +55,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libosl.la
 %files
 %{gnuxc_libdir}/libosl.so.0
 %{gnuxc_libdir}/libosl.so.0.0.0
-%doc doc/openscop.pdf AUTHORS ChangeLog COPYING NEWS README THANKS
+%doc doc/openscop.pdf AUTHORS ChangeLog NEWS README THANKS
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/osl

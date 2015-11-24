@@ -1,21 +1,18 @@
-# Declare that this package does not require a complete GCC.
-%global gnuxc_bootstrapped 0
+%global bootstrap 1
 
 %?gnuxc_package_header
-
-%global __filter_GLIBC_PRIVATE 1
 %global __provides_exclude_from ^%{gnuxc_libdir}/gconv/
 %global __requires_exclude_from ^%{gnuxc_libdir}/gconv/
 
 Name:           gnuxc-glibc
-Version:        2.17.90
-%global snap    7a3271
+Version:        2.19
+%global snap    0c5c4d
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 %global lpname  libpthread
 %global lpvers  0.3
-%global lpsnap  ed9f86
+%global lpsnap  37d6d0
 
 License:        LGPLv2+ and LGPLv2+ with exceptions and GPLv2+
 Group:          System Environment/Libraries
@@ -23,16 +20,16 @@ URL:            http://www.gnu.org/software/glibc/
 Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
 Source1:        http://git.savannah.gnu.org/cgit/hurd/%{lpname}.git/snapshot/%{lpname}-%{lpsnap}.tar.xz
 
-Patch101:       %{gnuxc_name}-%{version}-%{snap}-provide-hurd-api.patch
-Patch102:       %{gnuxc_name}-%{version}-%{snap}-create-gnumach-header.patch
-Patch201:       %{gnuxc_name}-%{version}-%{snap}-%{lpname}-%{lpvers}-%{lpsnap}-steal-libihash.patch
-Patch202:       %{gnuxc_name}-%{version}-%{snap}-%{lpname}-%{lpvers}-%{lpsnap}-glibc-preparation.patch
+Patch201:       %{lpname}-%{lpvers}-%{lpsnap}-steal-libihash.patch
 
 Requires:       gnuxc-filesystem
 
 BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-hurd-headers
 BuildRequires:  gnuxc-mig
+
+BuildRequires:  bison
+BuildRequires:  gettext
 
 %description
 %{summary}.
@@ -41,7 +38,6 @@ BuildRequires:  gnuxc-mig
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-gcc
 Requires:       gnuxc-hurd-headers
 
 %description devel
@@ -61,56 +57,36 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{snap}
-%patch101
-%patch102
-sed -i -e '/ | 3/s/)/ | 4.*)/' -e 's/nss-config /%{gnuxc_target}-&/' configure
-sed -i -e '59a@end deftypefun' manual/platform.texi
-
 %setup -q -D -T -a 1 -n %{gnuxc_name}-%{snap}
 mv %{lpname}-%{lpsnap} %{lpname} && cd %{lpname}
 %patch201
-%patch202
-
-# Work around an earlier gnuxc-libpthread-headers requirement.
-mkdir -p include_hack/bits && cd include_hack/bits
-ln -s ../../sysdeps/{i386/bits/spin-lock,generic/bits/}*.h .
 
 %build
 %global _configure ../configure
-%global gnuxc_env \
-    CFLAGS='-O3 -g -pipe -Wall -fasynchronous-unwind-tables ' ; \
-    CFLAGS+="--param=ssp-buffer-size=4 -march=%{gnuxc_arch} -mtune=generic" ; \
-    export CFLAGS
+%global gnuxc_optflags %(echo %gnuxc_optflags | sed 's/-O2/-O3/;s/-Wp,-D_FORTIFY_SOURCE[^ ]*//;s/-fstack-protector[^ ]*/-fasynchronous-unwind-tables/')
+%global gnuxc_env %gnuxc_env ; unset AR NM RANLIB # Don't use GCC variants yet.
 mkdir -p build && pushd build
 %gnuxc_configure \
     --disable-multi-arch \
+    --disable-pt_chown \
     --enable-all-warnings \
     --enable-obsolete-rpc \
     --enable-stackguard-randomization \
     BASH_SHELL=/bin/bash \
     \
-    -disable-nscd
+    --disable-nscd
 popd
-%gnuxc_make -C build %{?_smp_mflags} all \
-    CC="%{gnuxc_gcc} -I$PWD/%{lpname}/include_hack" \
-    install_root=.
+%gnuxc_make -C build %{?_smp_mflags} all build-programs=no
 # This target seems to break parallel builds when given in the above command.
 %gnuxc_make -C build %{?_smp_mflags} info
 
 %install
 # These dirs are needed because ld scripts are dumb when it comes to sysroots.
-%gnuxc_make_install -C build \
+%gnuxc_make_install -C build build-programs=no \
     {lib,rtld,slib}dir=%{_prefix}/lib \
     inst_{lib,rtld,slib}dir=%{buildroot}%{gnuxc_libdir} \
     auditdir=%{gnuxc_libdir}/audit \
     gconvdir=%{gnuxc_libdir}/gconv
-
-# There is no need to install binary programs in the sysroot.
-rm -f \
-    %{buildroot}%{gnuxc_bindir}/{catchsegv,gencat,getconf,getent,iconv,ldd} \
-    %{buildroot}%{gnuxc_bindir}/{locale{,def},makedb,mtrace,pcprofiledump} \
-    %{buildroot}%{gnuxc_bindir}/{pldd,rpcgen,sotruss,sprof,tzselect,xtrace} \
-    %{buildroot}%{gnuxc_sbindir}/{iconvconfig,sln,zdump,zic}
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_infodir}
@@ -174,11 +150,10 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/librt-%{version}.so
 %{gnuxc_libdir}/libutil.so.1
 %{gnuxc_libdir}/libutil-%{version}.so
-%{gnuxc_libexecdir}/getconf
-%{gnuxc_libexecdir}/pt_chown
 %{gnuxc_localstatedir}/db/Makefile
 %{gnuxc_sysconfdir}/rpc
-%doc BUGS ChangeLog* CONFORMANCE COPYING* LICENSES NEWS PROJECTS README
+%doc BUGS ChangeLog* CONFORMANCE NEWS PROJECTS README
+%license COPYING COPYING.LIB LICENSES
 
 %files devel
 %{gnuxc_includedir}/arpa
@@ -187,6 +162,8 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_includedir}/device/device_request.h
 %{gnuxc_includedir}/gnu
 %{gnuxc_includedir}/hurd/auth.h
+%{gnuxc_includedir}/hurd/auth_reply.h
+%{gnuxc_includedir}/hurd/auth_request.h
 %{gnuxc_includedir}/hurd/crash.h
 %{gnuxc_includedir}/hurd/exec.h
 %{gnuxc_includedir}/hurd/exec_startup.h
@@ -235,6 +212,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_includedir}/mach/memory_object_default.h
 %{gnuxc_includedir}/mach/memory_object_user.h
 %{gnuxc_includedir}/mach/mig_support.h
+%{gnuxc_includedir}/mach/task_notify.h
 %{gnuxc_includedir}/net
 %{gnuxc_includedir}/netinet
 %{gnuxc_includedir}/nfs
@@ -250,7 +228,6 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/ld.so
 %{gnuxc_libdir}/libanl.so
 %{gnuxc_libdir}/libBrokenLocale.so
-%{gnuxc_libdir}/libbsd-compat.a
 %{gnuxc_libdir}/libc.so
 %{gnuxc_libdir}/libcidn.so
 %{gnuxc_libdir}/libcrt.a

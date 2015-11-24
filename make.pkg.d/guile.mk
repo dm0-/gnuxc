@@ -8,35 +8,41 @@ else
 export GUILE_CONFIG = $(host)-guile-config
 endif
 
-prepare-guile-rule:
+$(prepare-rule):
 # Fix readline startup when HOME is undefined.
-	$(DOWNLOAD) 'http://git.savannah.gnu.org/cgit/guile.git/patch?id=3a3316e200ac49f0e8e9004c233747efd9f54a04' | $(PATCH) -d $(guile) -p1
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(guile)/build-aux/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(guile)/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(guile)/configure
+	$(DOWNLOAD) 'http://git.savannah.gnu.org/cgit/guile.git/patch?id='3a3316e200ac49f0e8e9004c233747efd9f54a04 | $(PATCH) -d $(builddir) -p1
+# Add new signal definitions.
+	$(DOWNLOAD) 'http://git.savannah.gnu.org/cgit/guile.git/patch/?id='{ead362f8d144e7d76af4fd127c024c62b74562fb,1be3063bf60fb1b9e540a3d35ecc3f00002ec0fd} | $(PATCH) -d $(builddir) -p1
+	$(call drop-rpath,configure,build-aux/ltmain.sh)
 
-configure-guile-rule:
-	cd $(guile) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-silent-rules \
 		--enable-debug-malloc \
 		--enable-guile-debug \
 		--with-threads \
-		--without-included-regex \
-		ac_cv_libunistring=yes # Our libunistring is too new for configure.
+		--without-included-regex
 
-build-guile-rule:
+$(build-rule):
 ifneq ($(host),$(build))
-	$(MAKE) -C $(guile)/meta guile-config PKG_CONFIG=/usr/bin/pkg-config
+	$(MAKE) -C $(builddir)/meta guile-config PKG_CONFIG=/usr/bin/pkg-config
 endif
-	$(MAKE) -C $(guile) all
+	$(MAKE) -C $(builddir) all
 
-install-guile-rule: $(call installed,gc libffi libtool libunistring readline)
-	$(MAKE) -C $(guile) install
-	$(INSTALL) -Dpm 644 $(guile)/guile-user $(DESTDIR)/etc/skel/.guile
+$(install-rule): $$(call installed,gc libffi libtool libunistring readline)
+	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 644 $(call addon-file,user.scm) $(DESTDIR)/etc/skel/.guile
+
+# Write inline files.
+$(call addon-file,user.scm): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,user.scm)
+
 
 # Provide default user settings for Guile.
-$(guile)/guile-user: | $(guile)
-	$(ECHO) -e '(use-modules (ice-9 readline))\n(activate-readline)' > $@
-$(call prepared,guile): $(guile)/guile-user
+override define contents
+(use-modules (ice-9 readline))
+(activate-readline)
+endef
+$(call addon-file,user.scm): private override contents := $(value contents)

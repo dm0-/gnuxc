@@ -1,16 +1,16 @@
-isl                     := isl-0.14
+isl                     := isl-0.15
 isl_url                 := http://isl.gforge.inria.fr/$(isl).tar.xz
 
-configure-isl-rule:
-	cd $(isl) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-portable-binary \
 		--with-gcc-arch=$(arch) \
 		--with-gmp=system \
 		--with-int=gmp
 
-build-isl-rule:
-	$(MAKE) -C $(isl) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-isl-rule: $(call installed,gmp)
-	$(MAKE) -C $(isl) install
+$(install-rule): $$(call installed,gmp)
+	$(MAKE) -C $(builddir) install

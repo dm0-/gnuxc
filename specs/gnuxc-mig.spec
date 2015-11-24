@@ -1,6 +1,10 @@
+%global bootstrap 1 # This does nothing other than flag this RPM as pre-glibc.
+
+%global _docdir_fmt gnuxc/mig
+
 Name:           gnuxc-mig
-Version:        1.4
-%global snap    5a2d1f
+Version:        1.6
+%global snap    c01a23
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        Cross-compiler version of GNU MIG for Hurd systems
 
@@ -14,6 +18,9 @@ Patch101:       %{gnuxc_name}-%{version}-%{snap}-drop-perl.patch
 BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-gnumach-headers
 
+BuildRequires:  automake
+BuildRequires:  bison
+BuildRequires:  flex
 BuildRequires:  flex-devel
 
 Requires:       gnuxc-filesystem
@@ -47,7 +54,8 @@ ln %{buildroot}%{_bindir}/%{gnuxc_target}-mig %{buildroot}%{gnuxc_root}/bin/mig
 %{_bindir}/%{gnuxc_target}-mig
 %{_libexecdir}/%{gnuxc_target}-migcom
 %{gnuxc_root}/bin/mig
-%doc =announce-* AUTHORS ChangeLog COPYING NEWS README
+%doc =announce-* AUTHORS ChangeLog NEWS README
+%license COPYING
 
 
 %changelog

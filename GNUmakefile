@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Copyright (C) 2013,2014 David Michael <fedora.dm0@gmail.com>
+# Copyright (C) 2013,2014,2015 David Michael <fedora.dm0@gmail.com>
 #
 # This file is part of gnuxc.
 #
@@ -17,9 +17,8 @@
 
 # Locate build system components.
 makefile := $(lastword $(MAKEFILE_LIST))
-patchdir := $(dir $(makefile))patches
 pkgdir   := $(dir $(makefile))make.pkg.d
-timedir  := $(CURDIR)/timestamps
+patchdir := $(dir $(makefile))patches
 
 # Determine the cross-compilation system types.
 arch  := i686
@@ -39,12 +38,18 @@ export CFLAGS   = -O2 -g -pipe -Wall -Werror=format-security \
 export CXXFLAGS = $(CFLAGS)
 export LDFLAGS  = -Wl,-z,relro
 
+# Set up GNU extensions, and don't pass command-line variables to the projects.
+override MAKEOVERRIDES :=
+override SHELL := /bin/bash
+override .SHELLFLAGS := --posix -c
+.SECONDEXPANSION:
+
 # Configure external commands and their default behavior.
 AUTOGEN  := autoreconf --force --install
 CONVERT  := convert
 COPY     := cp --force
 CVS      := cvs
-DOWNLOAD := wget --output-document=- # curl --location
+DOWNLOAD := wget --content-on-error --output-document=-
 ECHO     := echo
 EDIT     := sed --in-place
 GIT      := git -c user.name='GNU Hacker' -c user.email='root@localhost'
@@ -58,6 +63,7 @@ RM       := rm --force
 RMDIR    := rmdir
 TAR      := tar --no-same-owner --numeric-owner --overwrite --owner=0 --group=0
 TOUCH    := touch
+UNZIP    := unzip -q
 
 # Define the template for configuring packages.
 configure = configure \
@@ -93,71 +99,84 @@ targ_xz   := --xz
 packages := $(patsubst $(pkgdir)/%.mk,%,$(wildcard $(pkgdir)/*.mk))
 packages-requested := $(filter-out $(subst *,%,$(exclude)),$(packages))
 
-.PHONY:   all $(packages) \
-  prepare-all $(packages:%=prepare-%)   prepare \
-configure-all $(packages:%=configure-%) configure \
-    build-all $(packages:%=build-%)     build \
-  install-all $(packages:%=install-%)   install \
-     dist-all $(packages:%=dist-%)      dist \
-    clean-all $(packages:%=clean-%)     clean
+.PHONY: all $(packages) \
+    prepare $(packages:%=prepare-%) \
+  configure $(packages:%=configure-%) \
+      build $(packages:%=build-%) \
+    install $(packages:%=install-%) \
+      clean $(packages:%=clean-%)
 
 all: $(packages-requested)
-prepare-all prepare: $(packages-requested:%=prepare-%)
-configure-all configure: $(packages-requested:%=configure-%)
-build-all build: $(packages-requested:%=build-%)
-install-all install: $(packages-requested:%=install-%)
-dist-all dist: $(packages-requested:%=dist-%)
-clean-all clean: $(packages-requested:%=clean-%)
-	test '!' -d $(timedir) || $(RMDIR) $(timedir)
+prepare: $(packages-requested:%=prepare-%)
+configure: $(packages-requested:%=configure-%)
+build: $(packages-requested:%=build-%)
+install: $(packages-requested:%=install-%)
+clean: $(packages-requested:%=clean-%)
 
-# Log when each step successfully completes, so it isn't needlessly repeated.
-vpath %-rule $(timedir)
-$(timedir):
-	$(MKDIR) $@
-$(timedir)/%-stamp: %-rule | $(timedir)
+# Include some common build system shortcuts.
+self = $(basename $(notdir $(lastword $(MAKEFILE_LIST))))
+builddir = $(firstword $(subst /, ,$(or $@,$($(self)))))
+addon-file = $(1:%=$(builddir)/.gnuxc/%)
+apply = $(1:%=$(PATCH) --directory=$(builddir) \
+	< $(patchdir)/$(builddir)-%.patch &&) :
+drop-rpath = $(EDIT) 's/\(need_relink\)=yes/\1=no/' $(2:%=$(builddir)/%) && \
+	$(EDIT) $(1:%=$(builddir)/%) -e 's/\(hardcode_into_libs\)=yes/\1=no/' \
+	-e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/'
+
+# Declare variables to abstract packages' build states/timestamps.
+prepare-rule   = $(or $(1:%=$($(self))/.gnuxc/prepare-%-rule),\
+	$($(self))/.gnuxc/prepare-rule)
+configure-rule = $(or $(1:%=$($(self))/.gnuxc/configure-%-rule),\
+	$($(self))/.gnuxc/configure-rule)
+build-rule     = $(or $(1:%=$($(self))/.gnuxc/build-%-rule),\
+	$($(self))/.gnuxc/build-rule)
+install-rule   = $(or $(1:%=$($(self))/.gnuxc/install-%-rule),\
+	$($(self))/.gnuxc/install-rule)
+prepared   = $(foreach p,$(or $(1:%=-%-),-),$($(self))/.gnuxc/prepare$pstamp)
+configured = $(foreach p,$(or $(1:%=-%-),-),$($(self))/.gnuxc/configure$pstamp)
+built      = $(foreach p,$(or $(1:%=-%-),-),$($(self))/.gnuxc/build$pstamp)
+installed  = $(foreach p,$(or $1,$(self)),$($p)/.gnuxc/install-stamp)
+%-stamp: %-rule
 	$(TOUCH) $(@D)/$(<F) && $(LINK) $(@D)/$(<F) $@
-prepared   = $(1:%=$(timedir)/prepare-%-stamp)
-configured = $(1:%=$(timedir)/configure-%-stamp)
-built      = $(1:%=$(timedir)/build-%-stamp)
-installed  = $(1:%=$(timedir)/install-%-stamp)
 
 # Define the skeleton targets for each package's build phases.
 define init-package-rules =
-$$($(1)):
-ifeq ($$(firstword $$(subst ://, ,$$($(1)_url))),git)
-	$$(GIT) clone $$($(1)_branch:%=-b %) -n '$$($(1)_url)' $$@
-	$$(GIT) -C $$@ reset --hard $$($(1)_snap)
-else ifeq ($$(firstword $$(subst ://, ,$$($(1)_url))),cvs)
-	$$(CVS) -d'$$($(1)_url:cvs://%=:pserver:%)' export \
-		-D$$($(1)_snap) -d$$@ -kv $$(firstword $$($(1)_branch) $(1))
-else ifneq ($$(filter tar tgz,$$(subst ., ,$$($(1)_url))),)
-	$$(DOWNLOAD) '$$($(1)_url)' | \
-	$$(TAR) $$($(1)_branch:%=--transform='s,^/*%/*,$$@/,') \
-		$$(targ_$$(lastword $$(subst ., ,$$($(1)_url)))) -x
+$$($1):
+ifeq ($$(firstword $$(subst ://, ,$$($1_url))),git)
+	$$(GIT) clone $$($1_branch:%=--branch=%) -n '$$($1_url)' $$@
+	$$(GIT) -C $$@ reset --hard $$($1_snap)
+else ifeq ($$(firstword $$(subst ://, ,$$($1_url))),cvs)
+	$$(CVS) -d'$$($1_url:cvs://%=:pserver:%)' export \
+		-D$$($1_snap) -d$$@ -kv $$(or $$($1_branch),$1)
+else ifneq ($$(filter tar tgz,$$(subst ., ,$$($1_url))),)
+	$$(DOWNLOAD) '$$($1_url)' | \
+	$$(TAR) $$($1_branch:%=--transform='s,^/*%/*,$$@/,') \
+		$$(targ_$$(lastword $$(subst ., ,$$($1_url)))) -x
+else ifeq ($$(lastword $$(subst ., ,$$($1_url))),zip)
+	$$(MKDIR) $$@/.gnuxc
+	$$(DOWNLOAD) '$$($1_url)' > $$@/.gnuxc/$$@.zip
+	$$(UNZIP) $$@/.gnuxc/$$@.zip
 else
 	$$(MKDIR) $$@
 endif
-$$($(1))/configure: $$(timedir)/prepare-$(1)-stamp
+$$($1)/.gnuxc: | $$($1)
+	$$(MKDIR) $$@
+$$($1)/configure: $$($1)/.gnuxc/prepare-stamp
 	test -x $$@ || \
 	( test -f $$@.ac -o -f $$@.in && $$(AUTOGEN) $$(@D) ) ; \
 	$$(TOUCH) $$@
-$$($(1)).tar.xz: $$($(1))/configure
-	$$(TAR) --exclude=autom4te.cache --exclude-vcs --xz -cf $$@ $$($(1))
 
-prepare-$(1)-rule: | $$($(1))
-configure-$(1)-rule: $$($(1))/configure
-build-$(1)-rule: $$(timedir)/configure-$(1)-stamp
-install-$(1)-rule: $$(timedir)/build-$(1)-stamp
+$$($1)/.gnuxc/prepare-rule: | $$($1)/.gnuxc
+$$($1)/.gnuxc/configure-rule: $$($1)/configure
+$$($1)/.gnuxc/build-rule: $$($1)/.gnuxc/configure-stamp
+$$($1)/.gnuxc/install-rule: $$($1)/.gnuxc/build-stamp
 
-prepare-$(1): $$(timedir)/prepare-$(1)-stamp
-configure-$(1): $$(timedir)/configure-$(1)-stamp
-build-$(1) $(1): $$(timedir)/build-$(1)-stamp
-install-$(1): $$(timedir)/install-$(1)-stamp
-
-dist-$(1): $$($(1)).tar.xz
-clean-$(1):
-	$$(RM) $$(timedir)/{prepare,configure,build,install}-$(1)-{rule,stamp}
-	$$(RM) --recursive $$($(1))
+prepare-$1: $$($1)/configure
+configure-$1: $$($1)/.gnuxc/configure-stamp
+build-$1 $1: $$($1)/.gnuxc/build-stamp
+install-$1: $$($1)/.gnuxc/install-stamp
+clean-$1:
+	$$(RM) --recursive $$($1)
 endef
 
 # Declare the package rules.

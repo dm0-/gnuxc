@@ -38,7 +38,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %{gnuxc_includedir}/X11/extensions/xcmiscproto.h
 %{gnuxc_includedir}/X11/extensions/xcmiscstr.h
 %{gnuxc_libdir}/pkgconfig/xcmiscproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

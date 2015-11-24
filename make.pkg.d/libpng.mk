@@ -1,4 +1,4 @@
-libpng                  := libpng-1.6.16
+libpng                  := libpng-1.6.19
 libpng_url              := http://prdownloads.sourceforge.net/libpng/$(libpng).tar.xz
 
 ifeq ($(host),$(build))
@@ -7,15 +7,15 @@ else
 export LIBPNG_CONFIG = $(host)-libpng-config
 endif
 
-prepare-libpng-rule:
-	$(DOWNLOAD) 'http://prdownloads.sourceforge.net/libpng-apng/$(libpng)-apng.patch.gz' | gzip -d | $(PATCH) -d $(libpng) -p1
+$(prepare-rule):
+	$(DOWNLOAD) 'http://prdownloads.sourceforge.net/libpng-apng/$(libpng)-apng.patch.gz' | gzip -d | $(PATCH) -d $(builddir) -p1
 
-configure-libpng-rule:
-	cd $(libpng) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--with-binconfigs
 
-build-libpng-rule:
-	$(MAKE) -C $(libpng) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libpng-rule: $(call installed,zlib)
-	$(MAKE) -C $(libpng) install
+$(install-rule): $$(call installed,zlib)
+	$(MAKE) -C $(builddir) install

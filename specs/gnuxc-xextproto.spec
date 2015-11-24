@@ -37,7 +37,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %files
 %{gnuxc_includedir}/X11/extensions
 %{gnuxc_libdir}/pkgconfig/xextproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

@@ -39,7 +39,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %{gnuxc_includedir}/X11/extensions/render.h
 %{gnuxc_includedir}/X11/extensions/renderproto.h
 %{gnuxc_libdir}/pkgconfig/renderproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-mpc
-Version:        1.0.2
+Version:        1.0.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -56,7 +56,8 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 %files
 %{gnuxc_libdir}/libmpc.so.3
 %{gnuxc_libdir}/libmpc.so.3.0.0
-%doc AUTHORS ChangeLog COPYING.LESSER NEWS README TODO
+%doc AUTHORS ChangeLog NEWS README TODO
+%license COPYING.LESSER
 
 %files devel
 %{gnuxc_includedir}/mpc.h

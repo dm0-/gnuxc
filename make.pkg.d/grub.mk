@@ -7,7 +7,8 @@ else
 export MKFONT := grub2-mkfont --force-autohint
 endif
 
-grub_configuration := --libdir=/usr/lib \
+$(call configure-rule,bios efi): CFLAGS := $(CFLAGS:-fstack-protector%=)
+$(call configure-rule,bios efi): private override configuration := --libdir=/usr/lib \
 	\
 	--disable-rpath \
 	--disable-werror \
@@ -19,50 +20,46 @@ grub_configuration := --libdir=/usr/lib \
 	--enable-mm-debug \
 	--without-included-regex
 
-prepare-grub-rule:
-	$(PATCH) -d $(grub) < $(patchdir)/$(grub)-hurd-mkconfig.patch
-# Integrate the SMBIOS module into the build.
-	$(ECHO) -e '\nmodule = {\n  name = smbios;\n  x86 = commands/i386/smbios.c;\n  enable = x86;\n};' >> $(grub)/grub-core/Makefile.core.def
-	$(ECHO) ./grub-core/commands/i386/smbios.c >> $(grub)/po/POTFILES.in
-	$(RM) $(grub)/configure
+$(prepare-rule):
+	$(call apply,smbios-module hurd-mkconfig fix-parallel-make)
+# Regenerate everything for the new SMBIOS module.
+	$(ECHO) ./grub-core/commands/smbios.c >> $(builddir)/po/POTFILES.in
+	$(RM) $(builddir)/configure
 
-configure-grub-bios-rule: $(grub)/configure
-	$(MKDIR) $(grub)/bios && cd $(grub)/bios && ../$(configure) $(grub_configuration)
-configure-grub-efi-rule: $(grub)/configure
-	$(MKDIR) $(grub)/efi && cd $(grub)/efi && ../$(configure) $(grub_configuration) \
+$(call configure-rule,bios): $(builddir)/configure
+	$(MKDIR) $(builddir)/bios && cd $(builddir)/bios && ../$(configure) $(configuration)
+$(call configure-rule,efi): $(builddir)/configure
+	$(MKDIR) $(builddir)/efi && cd $(builddir)/efi && ../$(configure) $(configuration) \
 		--with-platform=efi
-	$(EDIT) 's, util/bash-completion.d,,g' $(grub)/efi/Makefile
+	$(EDIT) 's, util/bash-completion.d,,g' $(builddir)/efi/Makefile
 
-configure-grub-rule: CFLAGS := $(CFLAGS:-fstack-protector%=)
-configure-grub-rule: $(call configured,grub-bios grub-efi)
+$(configure-rule): $(call configured,bios efi)
 
-build-grub-bios-rule: $(call configured,grub)
-	$(MAKE) -C $(grub)/bios all
-build-grub-efi-rule: $(call configured,grub)
-	$(MAKE) -C $(grub)/efi all
+$(call build-rule,bios): $(call configured,bios)
+	$(MAKE) -C $(builddir)/bios all
+$(call build-rule,efi): $(call configured,efi)
+	$(MAKE) -C $(builddir)/efi all
 
-build-grub-rule: $(call built,grub-bios grub-efi)
+$(build-rule): $(call built,bios efi)
 
-install-grub-rule: $(call installed,bash freetype xz)
-	$(MAKE) -C $(grub)/efi install
-	$(MAKE) -C $(grub)/bios install bashcompletiondir=/usr/share/bash-completion/completions
-	$(INSTALL) -Dpm 644 $(grub)/settings.sh $(DESTDIR)/etc/default/grub
+$(install-rule): $$(call installed,bash freetype xz)
+	$(MAKE) -C $(builddir)/efi install
+	$(MAKE) -C $(builddir)/bios install bashcompletiondir=/usr/share/bash-completion/completions
+	$(INSTALL) -Dpm 644 $(call addon-file,settings.sh) $(DESTDIR)/etc/default/grub
 	$(INSTALL) -Dpm 644 $(DESTDIR)/usr/share/locale/en{'@quot',}/LC_MESSAGES/grub.mo
 	$(SYMLINK) ../boot/grub/grub.cfg $(DESTDIR)/etc/grub.cfg
 
-clean-grub-variants:
-	$(RM) $(timedir)/{build,configure}-grub-{bios,efi}-{rule,stamp}
-.PHONY clean-grub: clean-grub-variants
+# Write inline files.
+$(call addon-file,settings.sh): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,settings.sh)
+
 
 # Provide some default configuration settings for generating the boot menu.
-$(grub)/settings.sh: | $(grub)
-	$(ECHO) GRUB_DISABLE_SUBMENU=y > $@
-	$(ECHO) GRUB_TERMINAL_OUTPUT=gfxterm >> $@
-	$(ECHO) GRUB_THEME=/boot/grub/themes/gnu/theme.txt >> $@
-	$(ECHO) GRUB_TIMEOUT=60 >> $@
-$(call prepared,grub): $(grub)/settings.sh
-
-# Provide a module "smbios" to give GRUB scripts access to system information.
-$(grub)/grub-core/commands/i386/smbios.c: $(patchdir)/$(grub)-smbios.c | $(grub)
-	$(COPY) $< $@
-$(call prepared,grub): $(grub)/grub-core/commands/i386/smbios.c
+override define contents
+GRUB_DISABLE_SUBMENU=y
+GRUB_TERMINAL_OUTPUT=gfxterm
+GRUB_THEME=/boot/grub/themes/gnu/theme.txt
+GRUB_TIMEOUT=60
+endef
+$(call addon-file,settings.sh): private override contents := $(value contents)

@@ -1,18 +1,22 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-glib
-Version:        2.42.1
+Version:        2.46.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 Group:          System Environment/Libraries
 URL:            http://developer.gnome.org/glib/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.42/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.46/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-libffi-devel
 BuildRequires:  gnuxc-pcre-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-zlib-devel
+
+BuildRequires:  gettext
+BuildRequires:  glib2-devel
 
 %description
 %{summary}.
@@ -46,11 +50,10 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
-    --disable-modular-tests \
     --disable-silent-rules \
     --enable-debug \
     --enable-gc-friendly \
@@ -99,16 +102,17 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < %{gnuxc_name}20.lang
 %dir %{gnuxc_datadir}/glib-2.0/schemas
 %{gnuxc_libdir}/gio
 %{gnuxc_libdir}/libgio-2.0.so.0
-%{gnuxc_libdir}/libgio-2.0.so.0.4200.1
+%{gnuxc_libdir}/libgio-2.0.so.0.4600.2
 %{gnuxc_libdir}/libglib-2.0.so.0
-%{gnuxc_libdir}/libglib-2.0.so.0.4200.1
+%{gnuxc_libdir}/libglib-2.0.so.0.4600.2
 %{gnuxc_libdir}/libgmodule-2.0.so.0
-%{gnuxc_libdir}/libgmodule-2.0.so.0.4200.1
+%{gnuxc_libdir}/libgmodule-2.0.so.0.4600.2
 %{gnuxc_libdir}/libgobject-2.0.so.0
-%{gnuxc_libdir}/libgobject-2.0.so.0.4200.1
+%{gnuxc_libdir}/libgobject-2.0.so.0.4600.2
 %{gnuxc_libdir}/libgthread-2.0.so.0
-%{gnuxc_libdir}/libgthread-2.0.so.0.4200.1
-%doc AUTHORS* ChangeLog* COPYING* NEWS* README
+%{gnuxc_libdir}/libgthread-2.0.so.0.4600.2
+%doc AUTHORS* ChangeLog* NEWS* README
+%license COPYING*
 
 %files devel
 %{gnuxc_datadir}/glib-2.0/codegen

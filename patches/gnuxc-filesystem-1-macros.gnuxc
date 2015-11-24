@@ -4,11 +4,12 @@
 %gnuxc_arch             i686
 %gnuxc_host             %{gnuxc_arch}-pc-gnu
 %gnuxc_target           %{gnuxc_host}
+%gnuxc_tune             generic
 
 # Directory structure
 %gnuxc_root             %{_prefix}/%{gnuxc_target}
 %gnuxc_sysroot          %{gnuxc_root}/sys-root
-%gnuxc_prefix           %{gnuxc_sysroot}%{_prefix}
+%gnuxc_prefix           %{gnuxc_sysroot}/usr
 %gnuxc_exec_prefix      %{gnuxc_prefix}
 %gnuxc_bindir           %{gnuxc_exec_prefix}/bin
 %gnuxc_datadir          %{gnuxc_prefix}/share
@@ -19,6 +20,7 @@
 %gnuxc_libexecdir       %{gnuxc_exec_prefix}/libexec
 %gnuxc_localstatedir    %{gnuxc_sysroot}/var
 %gnuxc_mandir           %{gnuxc_datadir}/man
+%gnuxc_rundir           %{gnuxc_sysroot}/run
 %gnuxc_sbindir          %{gnuxc_exec_prefix}/sbin
 %gnuxc_sharedstatedir   %{gnuxc_localstatedir}/lib
 %gnuxc_sysconfdir       %{gnuxc_sysroot}/etc
@@ -29,17 +31,18 @@
 %gnuxc_optflags         %{__global_cflags}
 
 %gnuxc_env              \
-	AR="%{gnuxc_ar}" ; export AR ; \
-	NM="%{gnuxc_nm}" ; export NM ; \
-	RANLIB="%{gnuxc_ranlib}" ; export RANLIB ; \
-        CC="%{gnuxc_cc} -march=%{gnuxc_arch} -mtune=generic" ; export CC ; \
-        CFLAGS="${CFLAGS:-%{gnuxc_optflags}}" ; export CFLAGS ; \
-        CXX="%{gnuxc_cxx} -march=%{gnuxc_arch} -mtune=generic" ; export CXX ; \
-        CXXFLAGS="${CXXFLAGS:-%{gnuxc_optflags}}" ; export CXXFLAGS ; \
-        FFLAGS="${FFLAGS:-%{gnuxc_optflags} -I%{_fmoddir}}" ; export FFLAGS ; \
-        LDFLAGS="${LDFLAGS:-%{gnuxc_ldflags}}" ; export LDFLAGS ; \
-        CONFIG_SITE="%{gnuxc_datadir}/config.site" ; export CONFIG_SITE ; \
-        unset PKG_CONFIG_PATH ; unset PKG_CONFIG_LIBDIR
+        export AR="%{gnuxc_ar}" ; \
+        export NM="%{gnuxc_nm}" ; \
+        export RANLIB="%{gnuxc_ranlib}" ; \
+        export CC="%{gnuxc_cc} -march=%{gnuxc_arch} -mtune=%{gnuxc_tune}" ; \
+        export CFLAGS="${CFLAGS:-%{gnuxc_optflags}}" ; \
+        export CXX="%{gnuxc_cxx} -march=%{gnuxc_arch} -mtune=%{gnuxc_tune}" ; \
+        export CXXFLAGS="${CXXFLAGS:-%{gnuxc_optflags}}" ; \
+        export FFLAGS="${FFLAGS:-%{gnuxc_optflags} -I%{_fmoddir}}" ; \
+        export LDFLAGS="${LDFLAGS:-%{gnuxc_ldflags}}" ; \
+        export CONFIG_SITE="%{gnuxc_datadir}/config.site" ; \
+        unset PKG_CONFIG_PATH ; \
+        unset PKG_CONFIG_LIBDIR
 
 %gnuxc_configure        %{gnuxc_env} ; \
         %{_configure} \\\
@@ -64,6 +67,9 @@
 %gnuxc_make             %{__make} \\\
         .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
 
+%gnuxc_make_build       %{__make} %{?_smp_mflags} \\\
+        .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
+
 %gnuxc_make_install     %{__make} install DESTDIR='%{buildroot}' \\\
         .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
 
@@ -85,6 +91,7 @@
 
 # RPM modifications
 %gnuxc_package_header   \
+%global __filter_GLIBC_PRIVATE 1 \
 %global __strip %{gnuxc_strip} \
 %global __objdump %{gnuxc_objdump} \
 %global __debug_install_post %%{gnuxc_debug_install_post} \
@@ -97,7 +104,7 @@
 %global __libsymlink_exclude_path ^(%{?__libsymlink_exclude_path}|%{gnuxc_sysroot}/.*)$ \
 %global __arch_install_post %{__arch_install_post} \\\
 %{_rpmconfigdir}/gnuxc-expand-pc-flags.sh \
-%if 0%{!?gnuxc_bootstrapped:1}%{?gnuxc_bootstrapped} \
+%if ! 0%{?bootstrap} \
 BuildRequires:  gnuxc(bootstrapped) \
 %endif \
 BuildArch:      noarch \

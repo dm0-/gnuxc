@@ -1,13 +1,13 @@
 libXft                  := libXft-2.3.2
 libXft_url              := http://xorg.freedesktop.org/releases/individual/lib/$(libXft).tar.bz2
 
-configure-libXft-rule:
-	cd $(libXft) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no
 
-build-libXft-rule:
-	$(MAKE) -C $(libXft) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libXft-rule: $(call installed,fontconfig libXrender)
-	$(MAKE) -C $(libXft) install
+$(install-rule): $$(call installed,fontconfig libXrender)
+	$(MAKE) -C $(builddir) install

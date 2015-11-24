@@ -1,8 +1,8 @@
-xproto                  := xproto-7.0.27
+xproto                  := xproto-7.0.28
 xproto_url              := http://xorg.freedesktop.org/releases/individual/proto/$(xproto).tar.bz2
 
-configure-xproto-rule:
-	cd $(xproto) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-const-prototypes \
 		--enable-function-prototypes \
 		--enable-nested-prototypes \
@@ -10,8 +10,8 @@ configure-xproto-rule:
 		--enable-varargs-prototypes \
 		--enable-wide-prototypes
 
-build-xproto-rule:
-	$(MAKE) -C $(xproto) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-xproto-rule: $(call installed,glibc)
-	$(MAKE) -C $(xproto) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

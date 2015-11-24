@@ -1,14 +1,12 @@
-This removes the installation's root requirement, fixes guile paths, adds
+This removes the installation's root requirement, compiles guile modules, adds
 support for a drop-in system cron directory, and allows the cron daemon to run
 in the foreground by default for dmd.
 
 --- makefile.am
 +++ makefile.am
-@@ -54,16 +54,17 @@
- fpp = $(DESTDIR)$(bindir)/@real_program_prefix@
+@@ -55,15 +55,12 @@
  
  
-+install-exec-hook: GUILE_SITE := $(shell $(PKG_CONFIG) --variable=sitedir guile-2.0)
  install-exec-hook:
 -	@if [ "x@NO_VIXIE_CLOBBER@" != "xyes"   -a   "`id -u`" -eq "0" ]; then \
 +	@if [ "x@NO_VIXIE_CLOBBER@" != "xyes"   -a   "0" -eq "0" ]; then \
@@ -17,16 +15,14 @@ in the foreground by default for dmd.
         rm -f $(fpp)crontab$(EXEEXT) > /dev/null 2>&1; \
         $(INSTALL) --mode='u=rwxs,og=rx' mcron$(EXEEXT) $(fpp)crontab$(EXEEXT); \
 -       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)/var/cron; \
-+       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)$(CONFIG_SPOOL_DIR); \
-        $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)/var/run; \
+-       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)/var/run; \
 -       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)@GUILE_SITE@; \
 -       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)@GUILE_SITE@/mcron; \
-+       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)$(GUILE_SITE); \
-+       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)$(GUILE_SITE)/mcron; \
++       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)$(CONFIG_SPOOL_DIR); \
      elif [ "x@NO_VIXIE_CLOBBER@" = "xyes" ]; then \
         echo "Not installing Vixie-style programs"; \
      else \
-@@ -72,7 +73,7 @@
+@@ -72,7 +69,7 @@
  
  
  uninstall-hook:
@@ -35,39 +31,33 @@ in the foreground by default for dmd.
          rm -f $(fpp){cron,crontab}$(EXEEXT); \
      fi
  
---- makefile.in
-+++ makefile.in
-@@ -1212,16 +1212,17 @@
- 	@$(ED) < makefile.ed > /dev/null 2>&1
- 	@rm -f mcron.escaped.scm > /dev/null 2>&1
+--- scm/mcron/makefile.am
++++ scm/mcron/makefile.am
+@@ -4,6 +4,14 @@
  
-+install-exec-hook: GUILE_SITE := $(shell $(PKG_CONFIG) --variable=sitedir guile-2.0)
- install-exec-hook:
--	@if [ "x@NO_VIXIE_CLOBBER@" != "xyes"   -a   "`id -u`" -eq "0" ]; then \
-+	@if [ "x@NO_VIXIE_CLOBBER@" != "xyes"   -a   "0" -eq "0" ]; then \
-        rm -f $(fpp)cron$(EXEEXT) > /dev/null 2>&1; \
-        $(INSTALL) --mode='u=rwx' mcron$(EXEEXT) $(fpp)cron$(EXEEXT); \
-        rm -f $(fpp)crontab$(EXEEXT) > /dev/null 2>&1; \
-        $(INSTALL) --mode='u=rwxs,og=rx' mcron$(EXEEXT) $(fpp)crontab$(EXEEXT); \
--       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)/var/cron; \
-+       $(INSTALL) -d --mode='u=rwx' $(DESTDIR)$(CONFIG_SPOOL_DIR); \
-        $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)/var/run; \
--       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)@GUILE_SITE@; \
--       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)@GUILE_SITE@/mcron; \
-+       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)$(GUILE_SITE); \
-+       $(INSTALL) -d --mode='u=rwx,og=rx' $(DESTDIR)$(GUILE_SITE)/mcron; \
-     elif [ "x@NO_VIXIE_CLOBBER@" = "xyes" ]; then \
-        echo "Not installing Vixie-style programs"; \
-     else \
-@@ -1229,7 +1230,7 @@
-     fi
+ pkgdata_DATA = core.scm environment.scm job-specifier.scm redirect.scm \
+                vixie-time.scm vixie-specification.scm config.scm
++nodist_pkgdata_DATA = $(pkgdata_DATA:%.scm=%.go)
++
++%.go: %.scm
++	guild compile --target="$(host_alias)" \
++		-L "$(top_builddir)/scm" \
++		-L "$(top_srcdir)/scm" \
++		-Wformat -Wunbound-variable -Warity-mismatch \
++		-o "$@" "$<"
  
- uninstall-hook:
--	if [ "`id -u`" -eq "0" ]; then \
-+	if [ "0" -eq "0" ]; then \
-         rm -f $(fpp){cron,crontab}$(EXEEXT); \
-     fi
  
+ # If you're wondering, the configure script keeps deleting all files with a name
+--- mcron.c.template
++++ mcron.c.template
+@@ -113,6 +113,7 @@
+ main (int argc, char **argv)
+ {
+   setenv ("GUILE_LOAD_PATH", GUILE_LOAD_PATH, 1);
++  setenv ("GUILE_LOAD_COMPILED_PATH", GUILE_LOAD_PATH, 1);
+   
+   scm_boot_guile (argc, argv, inner_main, 0);
+   
 --- scm/mcron/main.scm
 +++ scm/mcron/main.scm
 @@ -368,6 +368,26 @@

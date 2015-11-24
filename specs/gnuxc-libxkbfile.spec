@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libxkbfile
-Version:        1.0.8
+Version:        1.0.9
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,6 +11,7 @@ URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-libX11-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -55,7 +56,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libxkbfile.la
 %files
 %{gnuxc_libdir}/libxkbfile.so.1
 %{gnuxc_libdir}/libxkbfile.so.1.0.2
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/extensions/XKBbells.h

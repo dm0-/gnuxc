@@ -1,16 +1,18 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-flex
-Version:        2.5.39
+Version:        2.6.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
 Group:          Development/Tools
 URL:            http://flex.sourceforge.net/
-Source0:        http://prdownloads.sourceforge.net/flex/%{gnuxc_name}-%{version}.tar.bz2
+Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glibc-devel
+
+BuildRequires:  m4
 
 Requires:       gnuxc-gcc-c++
 
@@ -30,6 +32,9 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+
+# Skip tests.
+sed -i -e '/^SUBDIRS *=/,/^$/{/tests/d;}' Makefile.in
 
 %build
 %gnuxc_configure \
@@ -59,7 +64,8 @@ rm -rf \
 %{gnuxc_libdir}/libfl.so.2.0.0
 %{gnuxc_libdir}/libfl_pic.so.2
 %{gnuxc_libdir}/libfl_pic.so.2.0.0
-%doc AUTHORS ChangeLog COPYING NEWS ONEWS README THANKS TODO
+%doc AUTHORS ChangeLog NEWS ONEWS README THANKS TODO
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/FlexLexer.h

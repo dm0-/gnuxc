@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libxcb
-Version:        1.11
+Version:        1.11.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,7 +12,10 @@ Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-libpthread-stubs
 BuildRequires:  gnuxc-libXau-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-xcb-proto
+
+BuildRequires:  python3
 
 %description
 %{summary}.
@@ -21,6 +24,7 @@ BuildRequires:  gnuxc-xcb-proto
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       gnuxc-libpthread-stubs
 Requires:       gnuxc-libXau-devel
 
 %description devel
@@ -44,11 +48,11 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' {,build-aux/}ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
-    --disable-build-docs \
+    --disable-devel-docs \
     \
     --disable-silent-rules \
     --enable-composite \
@@ -144,7 +148,8 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libxcb-xvmc.so.0.0.0
 %{gnuxc_libdir}/libxcb-xv.so.0
 %{gnuxc_libdir}/libxcb-xv.so.0.0.0
-%doc COPYING NEWS README
+%doc NEWS README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/xcb

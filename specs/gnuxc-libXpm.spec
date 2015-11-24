@@ -11,6 +11,9 @@ URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-libXt-devel
+BuildRequires:  gnuxc-pkg-config
+
+BuildRequires:  gettext
 
 %description
 %{summary}.
@@ -62,7 +65,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libXpm.so.4
 %{gnuxc_libdir}/libXpm.so.4.11.0
-%doc AUTHORS ChangeLog COPYING COPYRIGHT NEWS* README
+%doc AUTHORS ChangeLog NEWS.old README
+%license COPYING COPYRIGHT
 
 %files devel
 %{gnuxc_includedir}/X11/xpm.h

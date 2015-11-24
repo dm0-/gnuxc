@@ -1,4 +1,4 @@
-libgcrypt               := libgcrypt-1.6.2
+libgcrypt               := libgcrypt-1.6.4
 libgcrypt_url           := ftp://ftp.gnupg.org/gcrypt/libgcrypt/$(libgcrypt).tar.bz2
 
 ifeq ($(host),$(build))
@@ -7,14 +7,11 @@ else
 export LIBGCRYPT_CONFIG = $(host)-libgcrypt-config
 endif
 
-prepare-libgcrypt-rule:
-	$(PATCH) -d $(libgcrypt) < $(patchdir)/$(libgcrypt)-build-fixes.patch
-ifneq ($(host),$(build))
-	$(EDIT) 's/@GPG_ERROR_CFLAGS@//;s/@GPG_ERROR_LIBS@/-lgpg-error/' $(libgcrypt)/src/libgcrypt-config.in
-endif
+$(prepare-rule):
+	$(call apply,build-fixes)
 
-configure-libgcrypt-rule:
-	cd $(libgcrypt) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-hmac-binary-check \
 		--enable-m-guard \
 		--enable-static \
@@ -22,8 +19,8 @@ configure-libgcrypt-rule:
 		\
 		--disable-asm
 
-build-libgcrypt-rule:
-	$(MAKE) -C $(libgcrypt) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libgcrypt-rule: $(call installed,libgpg-error)
-	$(MAKE) -C $(libgcrypt) install
+$(install-rule): $$(call installed,libgpg-error)
+	$(MAKE) -C $(builddir) install

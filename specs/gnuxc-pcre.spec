@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-pcre
-Version:        8.36
+Version:        8.38
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,7 +10,7 @@ Group:          System Environment/Libraries
 URL:            http://www.pcre.org/
 Source0:        ftp://ftp.csx.cam.ac.uk/pub/software/programming/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.bz2
 
-BuildRequires:  gnuxc-gcc
+BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-readline-devel
 BuildRequires:  gnuxc-zlib-devel
@@ -44,7 +44,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -81,16 +81,17 @@ rm -rf %{buildroot}%{gnuxc_docdir}/%{gnuxc_name} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpcre.so.1
-%{gnuxc_libdir}/libpcre.so.1.2.4
+%{gnuxc_libdir}/libpcre.so.1.2.6
 %{gnuxc_libdir}/libpcre16.so.0
-%{gnuxc_libdir}/libpcre16.so.0.2.4
+%{gnuxc_libdir}/libpcre16.so.0.2.6
 %{gnuxc_libdir}/libpcre32.so.0
-%{gnuxc_libdir}/libpcre32.so.0.0.4
+%{gnuxc_libdir}/libpcre32.so.0.0.6
 %{gnuxc_libdir}/libpcrecpp.so.0
 %{gnuxc_libdir}/libpcrecpp.so.0.0.1
 %{gnuxc_libdir}/libpcreposix.so.0
 %{gnuxc_libdir}/libpcreposix.so.0.0.3
-%doc AUTHORS ChangeLog COPYING LICENCE NEWS README
+%doc AUTHORS ChangeLog HACKING NEWS README
+%license COPYING LICENCE
 
 %files devel
 %{_bindir}/%{gnuxc_target}-pcre-config

@@ -11,6 +11,7 @@ URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-libXext-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-xineramaproto
 
 %description
@@ -60,7 +61,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libXinerama.so.1
 %{gnuxc_libdir}/libXinerama.so.1.0.0
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/extensions/panoramiXext.h

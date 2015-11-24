@@ -1,20 +1,20 @@
-gawk                    := gawk-4.1.1
-gawk_url                := http://ftpmirror.gnu.org/gawk/$(gawk).tar.xz
+gawk                    := gawk-4.1.3
+gawk_url                := http://ftpmirror.gnu.org/gawk/$(gawk).tar.lz
 
 export AWK = /usr/bin/gawk
 
-prepare-gawk-rule:
-	$(EDIT) 's/\(_found_readline\)=no/\1=yes/' $(gawk)/configure
+$(prepare-rule):
+	$(EDIT) 's/\(_found_readline\)=no/\1=yes/' $(builddir)/configure
 
-configure-gawk-rule:
-	cd $(gawk) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--enable-extensions \
 		--with-mpfr \
 		--with-readline
 
-build-gawk-rule:
-	$(MAKE) -C $(gawk) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gawk-rule: $(call installed,mpfr readline)
-	$(MAKE) -C $(gawk) install
+$(install-rule): $$(call installed,mpfr readline)
+	$(MAKE) -C $(builddir) install

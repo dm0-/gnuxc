@@ -1,4 +1,4 @@
-binutils                := binutils-2.25
+binutils                := binutils-2.25.1
 binutils_url            := http://ftpmirror.gnu.org/binutils/$(binutils).tar.bz2
 
 ifeq ($(host),$(build))
@@ -9,8 +9,8 @@ export OBJCOPY = $(host)-objcopy
 export OBJDUMP = $(host)-objdump
 endif
 
-configure-binutils-rule:
-	cd $(binutils) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-cloog-version-check \
 		--disable-isl-version-check \
 		--disable-rpath \
@@ -32,9 +32,9 @@ configure-binutils-rule:
 		--without-included-gettext \
 		--without-newlib
 
-build-binutils-rule:
-	$(MAKE) -C $(binutils) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-binutils-rule: $(call installed,zlib)
-	$(MAKE) -C $(binutils) install
+$(install-rule): $$(call installed,zlib)
+	$(MAKE) -C $(builddir) install
 	$(RM) --recursive $(DESTDIR)/usr/$(host)

@@ -13,6 +13,13 @@
   (display "Single-user mode requested; dropping to a shell prompt\n")
   (go-to-shell))
 
+;; Reconnect to the console if its ports were lost.
+(sigaction SIGLOST
+  (lambda (sig)
+    (let ((console (open-fdes "/dev/console" O_WRONLY)))
+      (dup2 1 console)
+      (dup2 2 console))))
+
 ;; Begin regular system initialization.
 (use-modules (dmd comm) (dmd system))
 (system* "/sbin/tmpfiles" "--boot")
@@ -32,7 +39,11 @@
   (let ((pkgdir (opendir "/etc/dmd.d")))
     (do ((entry (readdir pkgdir) (readdir pkgdir))) ((eof-object? entry))
       (if (string-suffix? ".scm" entry)
-        (register-services (load (string-append "/etc/dmd.d/" entry)))))
+        (catch #t
+          (lambda ()
+            (register-services (load (string-append "/etc/dmd.d/" entry))))
+          (lambda (key . args)
+            (display (string-append "Bad service file: " entry "\n"))))))
     (closedir pkgdir)))
 
 ;; Start the desired services.

@@ -1,12 +1,12 @@
 xtrans                  := xtrans-1.3.5
 xtrans_url              := http://xorg.freedesktop.org/releases/individual/lib/$(xtrans).tar.bz2
 
-configure-xtrans-rule:
-	cd $(xtrans) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-strict-compilation
 
-build-xtrans-rule:
-	$(MAKE) -C $(xtrans) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-xtrans-rule: $(call installed,xproto)
-	$(MAKE) -C $(xtrans) install
+$(install-rule): $$(call installed,xproto)
+	$(MAKE) -C $(builddir) install

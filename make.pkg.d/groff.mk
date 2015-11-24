@@ -1,23 +1,23 @@
 groff                   := groff-1.22.3
 groff_url               := http://ftpmirror.gnu.org/groff/$(groff).tar.gz
 
-prepare-groff-rule:
-	$(PATCH) -d $(groff) < $(patchdir)/$(groff)-relative-links.patch
+$(prepare-rule):
+	$(call apply,relative-links)
 
-configure-groff-rule:
-	cd $(groff) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--with-appresdir='/usr/share/X11/app-defaults' \
 		--with-awk='$(AWK)' \
 		--with-grofferdir='/usr/share/groff/$(groff:groff-%=%)/groffer' \
 		--with-x
 
-build-groff-rule:
-	$(MAKE) -C $(groff) -j1 all \
+$(build-rule):
+	$(MAKE) -C $(builddir) -j1 all \
 		GROFFBIN=/usr/bin/groff \
 		TROFFBIN=/usr/bin/troff
 
-install-groff-rule: $(call installed,libXaw readline)
-	$(MAKE) -C $(groff) install \
+$(install-rule): $$(call installed,libXaw readline)
+	$(MAKE) -C $(builddir) install \
 		docdir='$$(datarootdir)/doc/groff'
 	test -e $(DESTDIR)/usr/bin/gtbl || $(SYMLINK) tbl $(DESTDIR)/usr/bin/gtbl

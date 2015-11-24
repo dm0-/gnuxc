@@ -11,6 +11,7 @@ URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-libX11-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -60,7 +61,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libXext.so.6
 %{gnuxc_libdir}/libXext.so.6.4.0
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/extensions/dpms.h

@@ -1,12 +1,12 @@
 presentproto            := presentproto-1.0
 presentproto_url        := http://xorg.freedesktop.org/releases/individual/proto/$(presentproto).tar.bz2
 
-configure-presentproto-rule:
-	cd $(presentproto) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-strict-compilation
 
-build-presentproto-rule:
-	$(MAKE) -C $(presentproto) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-presentproto-rule: $(call installed,xextproto)
-	$(MAKE) -C $(presentproto) install
+$(install-rule): $$(call installed,xextproto)
+	$(MAKE) -C $(builddir) install

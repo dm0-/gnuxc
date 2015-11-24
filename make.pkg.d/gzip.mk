@@ -1,8 +1,8 @@
 gzip                    := gzip-1.6
 gzip_url                := http://ftpmirror.gnu.org/gzip/$(gzip).tar.xz
 
-configure-gzip-rule:
-	cd $(gzip) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--disable-silent-rules \
@@ -10,8 +10,8 @@ configure-gzip-rule:
 		--enable-gcc-warnings gl_cv_warn_c__Werror=no \
 		--enable-threads=posix
 
-build-gzip-rule:
-	$(MAKE) -C $(gzip) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gzip-rule: $(call installed,coreutils)
-	$(MAKE) -C $(gzip) install
+$(install-rule): $$(call installed,coreutils)
+	$(MAKE) -C $(builddir) install

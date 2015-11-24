@@ -1,14 +1,11 @@
-gdk-pixbuf              := gdk-pixbuf-2.30.8
-gdk-pixbuf_url          := http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.30/$(gdk-pixbuf).tar.xz
+gdk-pixbuf              := gdk-pixbuf-2.32.2
+gdk-pixbuf_url          := http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.32/$(gdk-pixbuf).tar.xz
 
-prepare-gdk-pixbuf-rule:
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(gdk-pixbuf)/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(gdk-pixbuf)/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(gdk-pixbuf)/configure
+$(prepare-rule):
+	$(call drop-rpath,configure,ltmain.sh)
 
-configure-gdk-pixbuf-rule:
-	cd $(gdk-pixbuf) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-silent-rules \
 		--enable-debug \
@@ -25,8 +22,8 @@ configure-gdk-pixbuf-rule:
 		--disable-glibtest \
 		--disable-introspection
 
-build-gdk-pixbuf-rule:
-	$(MAKE) -C $(gdk-pixbuf) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gdk-pixbuf-rule: $(call installed,glib jasper libpng libX11 tiff)
-	$(MAKE) -C $(gdk-pixbuf) install
+$(install-rule): $$(call installed,glib jasper libpng libX11 tiff)
+	$(MAKE) -C $(builddir) install

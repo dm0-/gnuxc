@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-librsvg
-Version:        2.40.6
+Version:        2.40.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -16,6 +16,10 @@ Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.40/%{gnux
 BuildRequires:  gnuxc-gdk-pixbuf-devel
 BuildRequires:  gnuxc-libcroco-devel
 BuildRequires:  gnuxc-pango-devel
+BuildRequires:  gnuxc-pkg-config
+
+BuildRequires:  gdk-pixbuf2
+BuildRequires:  glib2-devel
 
 Requires:       gnuxc-gdk-pixbuf
 
@@ -51,7 +55,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -59,7 +63,6 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
     --enable-pixbuf-loader \
     --enable-tools \
     \
-    --disable-gtk-theme \
     --disable-vala --disable-introspection
 %gnuxc_make %{?_smp_mflags} all
 
@@ -67,7 +70,7 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
 %gnuxc_make_install
 
 # There is no need to install binary programs in the sysroot.
-rm -f %{buildroot}%{gnuxc_bindir}/rsvg-convert
+rm -f %{buildroot}%{gnuxc_bindir}/rsvg-{convert,view-3}
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/librsvg-2.la \
@@ -81,7 +84,8 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.so
 %{gnuxc_libdir}/librsvg-2.so.2
 %{gnuxc_libdir}/librsvg-2.so.%{version}
-%doc AUTHORS ChangeLog COPYING* NEWS README TODO
+%doc AUTHORS ChangeLog NEWS README TODO
+%license COPYING COPYING.LIB
 
 %files devel
 %{gnuxc_includedir}/librsvg-2.0

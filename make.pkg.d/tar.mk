@@ -1,8 +1,8 @@
 tar                     := tar-1.28
 tar_url                 := http://ftpmirror.gnu.org/tar/$(tar).tar.xz
 
-configure-tar-rule:
-	cd $(tar) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		--libexecdir='$${prefix}/libexec' \
 		\
@@ -14,14 +14,21 @@ configure-tar-rule:
 		--with-posix-acls \
 		--without-included-regex
 
-build-tar-rule:
-	$(MAKE) -C $(tar) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-tar-rule: $(call installed,acl)
-	$(MAKE) -C $(tar) install
-	$(INSTALL) -Dpm 644 $(tar)/bashrc.sh $(DESTDIR)/etc/bashrc.d/tar.sh
+$(install-rule): $$(call installed,acl)
+	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/tar.sh
+
+# Write inline files.
+$(call addon-file,bashrc.sh): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,bashrc.sh)
+
 
 # Provide a bash alias to call "tar" without worrying which users are defined.
-$(tar)/bashrc.sh: | $(tar)
-	$(ECHO) "alias dtar='tar --no-same-owner --numeric-owner --owner=0 --group=0 --preserve-order --preserve-permissions'" > $@
-$(call prepared,tar): $(tar)/bashrc.sh
+override define contents
+alias dtar='tar --no-same-owner --numeric-owner --owner=0 --group=0 --preserve-order --preserve-permissions'
+endef
+$(call addon-file,bashrc.sh): private override contents := $(value contents)

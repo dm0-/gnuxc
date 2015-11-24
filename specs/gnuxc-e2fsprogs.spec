@@ -1,14 +1,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-e2fsprogs
-Version:        1.42.12
+Version:        1.42.13
 Release:        1%{?dist}
 Summary:        Utilities for managing ext2, ext3, and ext4 filesystems
 
 License:        GPLv2 and LGPLv2 and BSD and MIT
 Group:          System Environment/Base
 URL:            http://e2fsprogs.sourceforge.net/
-Source0:        http://prdownloads.sourceforge.net/e2fsprogs/%{gnuxc_name}-libs-%{version}.tar.gz
+Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-libs-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
 
@@ -111,7 +111,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files -n gnuxc-libblkid
 %{gnuxc_libdir}/libblkid.so.1
 %{gnuxc_libdir}/libblkid.so.1.0
-%doc COPYING doc/libblkid.txt
+%doc doc/libblkid.txt
+%license COPYING
 
 %files -n gnuxc-libblkid-devel
 %{gnuxc_includedir}/blkid
@@ -124,7 +125,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files -n gnuxc-libuuid
 %{gnuxc_libdir}/libuuid.so.1
 %{gnuxc_libdir}/libuuid.so.1.2
-%doc COPYING.uuid README*
+%doc README.subset
+%license COPYING.uuid
 
 %files -n gnuxc-libuuid-devel
 %{gnuxc_includedir}/uuid

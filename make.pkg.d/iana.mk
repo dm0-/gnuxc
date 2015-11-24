@@ -1,12 +1,12 @@
 iana                    := iana-1
 
-iana-tzcode_url         := http://www.iana.org/time-zones/repository/releases/tzcode2014j.tar.gz
-iana-tzdata_url         := http://www.iana.org/time-zones/repository/releases/tzdata2014j.tar.gz
+iana-tzcode_url         := http://www.iana.org/time-zones/repository/releases/tzcode2015g.tar.gz
+iana-tzdata_url         := http://www.iana.org/time-zones/repository/releases/tzdata2015g.tar.gz
 
 iana-protocols_url      := http://www.iana.org/assignments/protocol-numbers/protocol-numbers-1.csv
 iana-services_url       := http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv
 
-iana_configuration = \
+$(build-rule) $(install-rule): private override configuration = \
 	TOPDIR=/usr \
 	ETCDIR='$$(TOPDIR)'/sbin \
 	MANDIR='$$(TOPDIR)'/share/man \
@@ -16,53 +16,103 @@ iana_configuration = \
 	cc='$(CC)' \
 	CFLAGS='$(CFLAGS) -DHAVE_GETTEXT=1 -DHAVE_UTMPX_H=1 -DTHREAD_SAFE=1 -DUSE_LTZ=0' \
 	LDFLAGS='$(LDFLAGS)' \
-	RANLIB='$(RANLIB)'
+	RANLIB='$(RANLIB)' \
+	$(and $(filter-out $(host),$(build)),zic=./zic.build)
 
+$(prepare-rule):
+	$(DOWNLOAD) '$(iana-tzdata_url)' | $(TAR) -zC $(builddir) -x
+	$(DOWNLOAD) '$(iana-tzcode_url)' | $(TAR) -zC $(builddir) -x
+	$(call apply,adjust-install)
+
+$(build-rule):
 ifneq ($(host),$(build))
-iana_configuration += zic=./zic.build
+	$(MAKE) -C $(builddir) clean
+	$(MAKE) -C $(builddir) zic $(configuration) AR=gcc-ar cc=gcc RANLIB=gcc-ranlib
+	$(MOVE) $(builddir)/zic $(builddir)/zic.build
+	$(MAKE) -C $(builddir) clean
 endif
+	$(MAKE) -C $(builddir) all $(configuration)
 
-prepare-iana-rule:
-	$(DOWNLOAD) '$(iana-tzdata_url)' | $(TAR) -zC $(iana) -x
-	$(DOWNLOAD) '$(iana-tzcode_url)' | $(TAR) -zC $(iana) -x
-	$(PATCH) -d $(iana) < $(patchdir)/$(iana)-adjust-install.patch
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install $(configuration)
+	$(INSTALL) -Dpm 644 $(call addon-file,protocols) $(DESTDIR)/etc/protocols
+	$(INSTALL) -Dpm 644 $(call addon-file,services) $(DESTDIR)/etc/services
 
-build-iana-rule:
-ifneq ($(host),$(build))
-	$(MAKE) -C $(iana) clean
-	$(MAKE) -C $(iana) zic $(iana_configuration) AR=gcc-ar cc=gcc RANLIB=gcc-ranlib
-	$(MOVE) $(iana)/zic $(iana)/zic.build
-	$(MAKE) -C $(iana) clean
-endif
-	$(MAKE) -C $(iana) all $(iana_configuration)
+# Write inline files.
+$(call addon-file,convert-protocols.sh convert-services.sh): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,convert-protocols.sh convert-services.sh)
 
-$(iana)/protocols: $(iana)/protocols.csv
-	$(BASH) $(iana)/convert-protocols.sh < $< > $@
-$(iana)/services: $(iana)/services.csv
-	$(BASH) $(iana)/convert-services.sh < $< > $@
-$(call built,iana): $(iana)/protocols $(iana)/services
-
-install-iana-rule: $(call installed,glibc)
-	$(MAKE) -C $(iana) install $(iana_configuration)
-	$(INSTALL) -Dpm 644 $(iana)/protocols $(DESTDIR)/etc/protocols
-	$(INSTALL) -Dpm 644 $(iana)/services $(DESTDIR)/etc/services
-
-# Fetch the list of registered protocols in CSV format.
-$(iana)/protocols.csv: | $(iana)
+# Fetch the lists of registered protocols and services in CSV format.
+$(call addon-file,protocols.csv): | $$(@D)
 	$(DOWNLOAD) '$(iana-protocols_url)' > $@
-$(call prepared,iana): $(iana)/protocols.csv
-
-# Fetch the list of registered services in CSV format.
-$(iana)/services.csv: | $(iana)
+$(call addon-file,services.csv): | $$(@D)
 	$(DOWNLOAD) '$(iana-services_url)' > $@
-$(call prepared,iana): $(iana)/services.csv
+$(prepared): $(call addon-file,protocols.csv services.csv)
+
+# Convert the lists into a format that can be installed into /etc.
+$(call addon-file,protocols): $(call addon-file,protocols.csv convert-protocols.sh)
+	$(BASH) $(call addon-file,convert-protocols.sh) < $< > $@
+$(call addon-file,services): $(call addon-file,services.csv convert-services.sh)
+	$(BASH) $(call addon-file,convert-services.sh) < $< > $@
+$(built): $(call addon-file,protocols services)
+
 
 # Provide a script to convert the protocols CSV file to glibc's format.
-$(iana)/convert-protocols.sh: $(patchdir)/$(iana)-convert-protocols.sh | $(iana)
-	$(COPY) $< $@
-$(call prepared,iana): $(iana)/convert-protocols.sh
+override define contents
+#!/bin/bash
+
+echo -n '# Automatically generated from IANA protocols registry on '
+date -u '+%Y-%m-%d.'
+
+tr '\n\r' ' \n' |
+sed 's/^ *//;s/,,/,-,/' |
+while IFS=, read -rs decimal keyword protocol reference
+do
+        [[ $decimal =~ ^[0-9]+$ ]] || continue
+
+        keyword=${keyword// /-}
+        [[ $keyword =~ ^-|Reserved$ ]] && continue
+        (( ${#keyword} < 8 )) && keyword+='\t'
+
+        protocol=$(echo -n $protocol | sed 's/[ \t]\+/ /g;s/^ *" *//;s/ *" *$//;s/""/"/g')
+
+        echo -e "${keyword,,}\t$decimal\t$keyword\t# $protocol"
+done
+endef
+$(call addon-file,convert-protocols.sh): private override contents := $(value contents)
+
 
 # Provide a script to convert the services CSV file to glibc's format.
-$(iana)/convert-services.sh: $(patchdir)/$(iana)-convert-services.sh | $(iana)
-	$(COPY) $< $@
-$(call prepared,iana): $(iana)/convert-services.sh
+override define contents
+#!/bin/bash
+
+echo -n '# Automatically generated from IANA services registry on '
+date -u '+%Y-%m-%d.'
+
+cat - <(echo -n END,65536,,,) |
+tr '\n\r' ' \n' |
+sed 's/^ *//;s/,,/,-,/' |
+LC_ALL=C sort -t, -k2n,2 -k3,3 |
+while IFS=, read -rs name port transport description assignee
+do
+        [ "$name" == END ] && echo -e "${alt:-\t}# $olddesc" && continue
+
+        name=${name##*\(} name=${name%%\)*} name=${name//\ /-}
+        [ -n "$name" ] || continue
+
+        [[ $port =~ ^[0-9]+$ ]] && [ "$transport" != - ] || continue
+        (( ${#port} + ${#transport} < 7 )) && transport+='\t'
+
+        [ "$oldport" == "$port/$transport" ] && alt+="${alt:+ }$name" && continue
+        (( ${#name} <  8 )) && name+='\t'
+        (( ${#alt}  >= 8 )) && alt+=' '
+        (( ${#alt}  <  8 )) && alt+='\t'
+        echo -en "${olddesc:+$alt# $olddesc\n}$name\t$port/$transport\t"
+
+        alt=
+        olddesc=$(echo -n $description | sed 's/[ \t]\+/ /g;s/^ *" *//;s/ *" *$//;s/""/"/g')
+        oldport="$port/$transport"
+done
+endef
+$(call addon-file,convert-services.sh): private override contents := $(value contents)

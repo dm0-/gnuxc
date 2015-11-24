@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/X11/locale/common/
 
 Name:           gnuxc-libX11
-Version:        1.6.2
+Version:        1.6.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -16,6 +16,7 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 BuildRequires:  gnuxc-inputproto
 BuildRequires:  gnuxc-kbproto
 BuildRequires:  gnuxc-libxcb-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-xextproto
 BuildRequires:  gnuxc-xtrans
 
@@ -53,7 +54,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -104,11 +105,10 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/X11/locale/common/xlcUTF8Load.so.2.0.0
 %{gnuxc_libdir}/X11/locale/common/xlibi18n.so.2
 %{gnuxc_libdir}/X11/locale/common/xlibi18n.so.2.0.0
-%{gnuxc_libdir}/X11/locale/common/xlocale.so.2
-%{gnuxc_libdir}/X11/locale/common/xlocale.so.2.0.0
 %{gnuxc_libdir}/X11/locale/common/xomGeneric.so.2
 %{gnuxc_libdir}/X11/locale/common/xomGeneric.so.2.0.0
-%doc AUTHORS ChangeLog COPYING NEWS README
+%doc AUTHORS ChangeLog NEWS README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/cursorfont.h
@@ -131,7 +131,6 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/X11/locale/common/xlcDef.so
 %{gnuxc_libdir}/X11/locale/common/xlcUTF8Load.so
 %{gnuxc_libdir}/X11/locale/common/xlibi18n.so
-%{gnuxc_libdir}/X11/locale/common/xlocale.so
 %{gnuxc_libdir}/X11/locale/common/xomGeneric.so
 
 %files static
@@ -141,7 +140,6 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/X11/locale/common/xlcDef.a
 %{gnuxc_libdir}/X11/locale/common/xlcUTF8Load.a
 %{gnuxc_libdir}/X11/locale/common/xlibi18n.a
-%{gnuxc_libdir}/X11/locale/common/xlocale.a
 %{gnuxc_libdir}/X11/locale/common/xomGeneric.a
 
 

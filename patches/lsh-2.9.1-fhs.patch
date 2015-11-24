@@ -1,0 +1,73 @@
+Put the seed file in a more appropriate location.  Also move a readline history
+file to keep home directories cleaner.
+
+--- doc/lsh.texinfo
++++ doc/lsh.texinfo
+@@ -586,7 +586,7 @@
+ @end example
+ 
+ as root. By default, the seed file is stored as
+-@file{/usr/local/var/spool/lsh/yarrow-seed-file}, this can be changed
++@file{/usr/local/var/lib/lsh/yarrow-seed-file}, this can be changed
+ using the @option{--localstatedir} option to configure or the
+ @code{LSH_YARROW_SEED_FILE} environment variable at run time.
+ 
+@@ -1844,7 +1844,7 @@
+ @item /usr/local/etc/lshd/host-key.pub
+ The corresponding public key.
+ 
+-@item /usr/local/var/spool/lsh/yarrow-seed-file
++@item /usr/local/var/lib/lsh/yarrow-seed-file
+ The seed-file for @command{lshd}'s randomness generator.
+ 
+ @item ~/.lsh/authorized_keys_sha1
+diff --git a/doc/lshd.8 b/doc/lshd.8
+index 1bafa3a..bf5e1d2 100644
+--- doc/lshd.8
++++ doc/lshd.8
+@@ -207,7 +207,7 @@
+ seed file and the server key.
+ By default 
+ 
+-/var/spool/lsh/yarrow-seed-file 
++/var/lib/lsh/yarrow-seed-file
+ 
+ is used as random seed file (see 
+ .B ENVIRONMENT
+diff --git a/src/environ.h.in b/src/environ.h.in
+index 76d50ed..4de9d31 100644
+--- src/environ.h.in
++++ src/environ.h.in
+@@ -23,8 +23,8 @@
+ #define FILE_LSHD_CONFIG_DIR	SYSCONFDIR "/lshd"
+ #define FILE_LSHD_HOST_KEY	FILE_LSHD_CONFIG_DIR "/host-key"
+ #define FILE_LSHD_PID		LOCALSTATEDIR "/run/lshd.pid"
+-#define FILE_SEED_FILE_DIR	LOCALSTATEDIR "/spool/lsh"
+-#define FILE_SEED_FILE		LOCALSTATEDIR "/spool/lsh/yarrow-seed-file"
++#define FILE_SEED_FILE_DIR	LOCALSTATEDIR "/lib/lsh"
++#define FILE_SEED_FILE		FILE_SEED_FILE_DIR "/yarrow-seed-file"
+ 
+ #define FILE_LSHD_CONNECTION	"lshd-connection"
+ #define FILE_LSHD_PTY_HELPER	"lshd-pty-helper"
+--- sftp/rl.h
++++ sftp/rl.h
+@@ -55,7 +55,7 @@
+ #endif /* HAVE_READLINE_HISTORY_H */
+ 
+ #define LSFTP_HISTNAME_VAR "LSFTP_HISTORY_FILE"
+-#define LSFTP_HIST_FILENAME "/.lsftp"
++#define LSFTP_HIST_FILENAME "/.lsh/lsftp-history"
+ 
+ 
+ 
+--- sftp/rl.c
++++ sftp/rl.c
+@@ -525,7 +525,7 @@
+   if( mgetenv( "HOME" ) )   /* HOME is set? */
+     {
+       int homelen = strlen( mgetenv( "HOME" ) );
+-      int len = homelen + strlen( LSFTP_HIST_FILENAME ) + 1; /* We'll have $HOME/.lsftp */
++      int len = homelen + strlen( LSFTP_HIST_FILENAME ) + 1; /* We'll have $HOME/.lsh/lsftp-history */
+ 
+       fname = malloc( len );
+ 

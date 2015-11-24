@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-tiff
-Version:        4.0.3
+Version:        4.0.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -45,7 +45,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' config/ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -92,10 +92,11 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libtiff.so.5
-%{gnuxc_libdir}/libtiff.so.5.2.0
+%{gnuxc_libdir}/libtiff.so.5.2.4
 %{gnuxc_libdir}/libtiffxx.so.5
-%{gnuxc_libdir}/libtiffxx.so.5.2.0
-%doc ChangeLog COPYRIGHT README TODO VERSION
+%{gnuxc_libdir}/libtiffxx.so.5.2.4
+%doc ChangeLog README TODO
+%license COPYRIGHT
 
 %files devel
 %{gnuxc_includedir}/tiff.h

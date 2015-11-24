@@ -1,13 +1,13 @@
-libtasn1                := libtasn1-4.2
+libtasn1                := libtasn1-4.7
 libtasn1_url            := http://ftpmirror.gnu.org/libtasn1/$(libtasn1).tar.gz
 
-configure-libtasn1-rule:
-	cd $(libtasn1) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-gcc-warnings
 
-build-libtasn1-rule:
-	$(MAKE) -C $(libtasn1) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libtasn1-rule: $(call installed,glibc)
-	$(MAKE) -C $(libtasn1) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

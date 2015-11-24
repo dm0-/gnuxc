@@ -1,17 +1,17 @@
-xf86-input-keyboard     := xf86-input-keyboard-1.8.0
+xf86-input-keyboard     := xf86-input-keyboard-1.8.1
 xf86-input-keyboard_url := http://xorg.freedesktop.org/releases/individual/driver/$(xf86-input-keyboard).tar.bz2
 
-prepare-xf86-input-keyboard-rule:
-	$(PATCH) -d $(xf86-input-keyboard) < $(patchdir)/$(xf86-input-keyboard)-xkb-options.patch
+$(prepare-rule):
+	$(call apply,xkb-options)
 
-configure-xf86-input-keyboard-rule:
-	cd $(xf86-input-keyboard) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-static \
 		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no
 
-build-xf86-input-keyboard-rule:
-	$(MAKE) -C $(xf86-input-keyboard) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-xf86-input-keyboard-rule: $(call installed,xorg-server)
-	$(MAKE) -C $(xf86-input-keyboard) install
+$(install-rule): $$(call installed,xorg-server)
+	$(MAKE) -C $(builddir) install

@@ -1,15 +1,15 @@
-freetype                := freetype-2.5.5
+freetype                := freetype-2.6.1
 freetype_url            := http://download.savannah.gnu.org/releases/freetype/$(freetype).tar.bz2
 
-configure-freetype-rule:
-	cd $(freetype) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--with-bzip2 \
 		--with-old-mac-fonts \
 		--with-png \
 		--with-zlib
 
-build-freetype-rule:
-	$(MAKE) -C $(freetype) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-freetype-rule: $(call installed,bzip2 libpng) # harfbuzz
-	$(MAKE) -C $(freetype) install
+$(install-rule): $$(call installed,bzip2 libpng) # harfbuzz
+	$(MAKE) -C $(builddir) install

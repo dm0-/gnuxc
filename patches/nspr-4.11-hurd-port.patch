@@ -1,0 +1,37 @@
+Declare the name of a class preemptively and link the standard C++ library when
+supporting C++.  Also choose a memory detection implementation.
+
+--- pr/src/Makefile.in
++++ pr/src/Makefile.in
+@@ -183,6 +183,10 @@
+ OS_LIBS		= -framework CoreServices -framework CoreFoundation
+ endif
+ 
++ifeq ($(USE_CPLUS), 1)
++OS_LIBS += -lstdc++
++endif
++
+ EXTRA_LIBS += $(OS_LIBS)
+ 
+ #
+--- pr/src/cplus/rcthread.h
++++ pr/src/cplus/rcthread.h
+@@ -14,6 +14,7 @@
+ #include <prthread.h>
+ 
+ class RCInterval;
++class PR_IMPLEMENT(RCPrimordialThread);
+ 
+ class PR_IMPLEMENT(RCThreadPrivateData)
+ {
+--- pr/src/misc/prsystem.c
++++ pr/src/misc/prsystem.c
+@@ -268,7 +268,7 @@
+ {
+     PRUint64 bytes = 0;
+ 
+-#if defined(LINUX) || defined(SOLARIS)
++#if defined(LINUX) || defined(SOLARIS) || defined(XP_UNIX)
+ 
+     long pageSize = sysconf(_SC_PAGESIZE);
+     long pageCount = sysconf(_SC_PHYS_PAGES);

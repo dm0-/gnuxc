@@ -42,7 +42,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %{gnuxc_includedir}/X11/extensions/XvMCproto.h
 %{gnuxc_includedir}/X11/extensions/Xvproto.h
 %{gnuxc_libdir}/pkgconfig/videoproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

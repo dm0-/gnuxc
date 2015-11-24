@@ -1,11 +1,11 @@
-parallel                := parallel-20141122
+parallel                := parallel-20151122
 parallel_url            := http://ftpmirror.gnu.org/parallel/$(parallel).tar.bz2
 
-configure-parallel-rule:
-	cd $(parallel) && ./$(configure)
+$(configure-rule):
+	cd $(builddir) && ./$(configure)
 
-build-parallel-rule:
-	$(MAKE) -C $(parallel) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-parallel-rule: $(call installed,perl)
-	$(MAKE) -C $(parallel) install
+$(install-rule): $$(call installed,perl)
+	$(MAKE) -C $(builddir) install

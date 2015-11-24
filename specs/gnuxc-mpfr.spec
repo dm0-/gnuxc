@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-mpfr
-Version:        3.1.2
+Version:        3.1.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -58,8 +58,9 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_infodir}
 
 %files
 %{gnuxc_libdir}/libmpfr.so.4
-%{gnuxc_libdir}/libmpfr.so.4.1.2
-%doc AUTHORS BUGS ChangeLog COPYING COPYING.LESSER NEWS README TODO
+%{gnuxc_libdir}/libmpfr.so.4.1.3
+%doc AUTHORS BUGS ChangeLog NEWS README TODO
+%license COPYING COPYING.LESSER
 
 %files devel
 %{gnuxc_includedir}/mpf2mpfr.h

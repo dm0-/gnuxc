@@ -1,17 +1,14 @@
-bash                    := bash-4.3.33
+bash                    := bash-4.3.42
 bash_branch             := bash-4.3.30
 bash_url                := http://ftpmirror.gnu.org/bash/$(bash_branch).tar.gz
 
 export BASH = /bin/bash
 
-prepare-bash-rule:
-	for n in {031..0$(lastword $(subst ., ,$(bash)))} ; do \
-		$(DOWNLOAD) "http://ftpmirror.gnu.org/bash/bash-4.3-patches/bash43-$$n" | \
-		$(PATCH) -d $(bash) ; \
-	done
+$(prepare-rule):
+	$(DOWNLOAD) 'http://ftpmirror.gnu.org/bash/bash-4.3-patches/'bash43-{031..0$(lastword $(subst ., ,$(bash)))} | $(PATCH) -d $(builddir)
 
-configure-bash-rule:
-	cd $(bash) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--disable-rpath \
@@ -45,12 +42,12 @@ configure-bash-rule:
 		--with-installed-readline \
 		--without-included-gettext
 
-build-bash-rule:
-	$(MAKE) -C $(bash) all \
+$(build-rule):
+	$(MAKE) -C $(builddir) all \
 		CPPFLAGS=-DRECYCLES_PIDS
 
-install-bash-rule: $(call installed,readline)
-	$(MAKE) -C $(bash) install \
+$(install-rule): $$(call installed,readline)
+	$(MAKE) -C $(builddir) install \
 		DESTDIR='$(DESTDIR)'
 	$(SYMLINK) bash $(DESTDIR)/bin/rbash
 	$(SYMLINK) bash $(DESTDIR)/bin/sh

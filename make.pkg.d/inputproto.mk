@@ -1,12 +1,12 @@
 inputproto              := inputproto-2.3.1
 inputproto_url          := http://xorg.freedesktop.org/releases/individual/proto/$(inputproto).tar.bz2
 
-configure-inputproto-rule:
-	cd $(inputproto) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-strict-compilation
 
-build-inputproto-rule:
-	$(MAKE) -C $(inputproto) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-inputproto-rule: $(call installed,xextproto)
-	$(MAKE) -C $(inputproto) install
+$(install-rule): $$(call installed,xextproto)
+	$(MAKE) -C $(builddir) install

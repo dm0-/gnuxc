@@ -1,15 +1,15 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-ncurses
-Version:        5.9
-%global snap    20141227
-Release:        1.19700101snap%{snap}%{?dist}
+Version:        6.0
+%global snap    20151121
+Release:        1.%{snap}snap%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+
 Group:          Applications/System
 URL:            http://www.gnu.org/software/ncurses/
-Source0:        ftp://invisible-island.net/ncurses/current/%{gnuxc_name}-%{version}-%{snap}.tgz
+Source0:        http://invisible-mirror.net/archives/ncurses/current/%{gnuxc_name}-%{version}-%{snap}.tgz
 
 BuildRequires:  gnuxc-gcc-c++
 
@@ -96,7 +96,7 @@ popd
 
 # Provide a cross-tools version of the config scripts.
 install -dm 755 %{buildroot}%{_bindir}
-for lib in 5 t6 tw6 w6
+for lib in 6 t6 tw6 w6
 do
         ln %{buildroot}%{gnuxc_root}/bin/ncurses$lib-config \
             %{buildroot}%{_bindir}/%{gnuxc_target}-ncurses$lib-config
@@ -110,56 +110,56 @@ rm -f %{buildroot}%{gnuxc_libdir}/terminfo
 
 
 %files
-%{gnuxc_libdir}/libform.so.5
-%{gnuxc_libdir}/libform.so.5.9
+%{gnuxc_libdir}/libform.so.6
+%{gnuxc_libdir}/libform.so.6.0
 %{gnuxc_libdir}/libformt.so.6
 %{gnuxc_libdir}/libformt.so.6.0
 %{gnuxc_libdir}/libformtw.so.6
 %{gnuxc_libdir}/libformtw.so.6.0
 %{gnuxc_libdir}/libformw.so.6
 %{gnuxc_libdir}/libformw.so.6.0
-%{gnuxc_libdir}/libmenu.so.5
-%{gnuxc_libdir}/libmenu.so.5.9
+%{gnuxc_libdir}/libmenu.so.6
+%{gnuxc_libdir}/libmenu.so.6.0
 %{gnuxc_libdir}/libmenut.so.6
 %{gnuxc_libdir}/libmenut.so.6.0
 %{gnuxc_libdir}/libmenutw.so.6
 %{gnuxc_libdir}/libmenutw.so.6.0
 %{gnuxc_libdir}/libmenuw.so.6
 %{gnuxc_libdir}/libmenuw.so.6.0
-%{gnuxc_libdir}/libncurses.so.5
-%{gnuxc_libdir}/libncurses.so.5.9
+%{gnuxc_libdir}/libncurses.so.6
+%{gnuxc_libdir}/libncurses.so.6.0
 %{gnuxc_libdir}/libncursest.so.6
 %{gnuxc_libdir}/libncursest.so.6.0
 %{gnuxc_libdir}/libncursestw.so.6
 %{gnuxc_libdir}/libncursestw.so.6.0
 %{gnuxc_libdir}/libncursesw.so.6
 %{gnuxc_libdir}/libncursesw.so.6.0
-%{gnuxc_libdir}/libncurses++.so.5
-%{gnuxc_libdir}/libncurses++.so.5.9
+%{gnuxc_libdir}/libncurses++.so.6
+%{gnuxc_libdir}/libncurses++.so.6.0
 %{gnuxc_libdir}/libncurses++t.so.6
 %{gnuxc_libdir}/libncurses++t.so.6.0
 %{gnuxc_libdir}/libncurses++tw.so.6
 %{gnuxc_libdir}/libncurses++tw.so.6.0
 %{gnuxc_libdir}/libncurses++w.so.6
 %{gnuxc_libdir}/libncurses++w.so.6.0
-%{gnuxc_libdir}/libpanel.so.5
-%{gnuxc_libdir}/libpanel.so.5.9
+%{gnuxc_libdir}/libpanel.so.6
+%{gnuxc_libdir}/libpanel.so.6.0
 %{gnuxc_libdir}/libpanelt.so.6
 %{gnuxc_libdir}/libpanelt.so.6.0
 %{gnuxc_libdir}/libpaneltw.so.6
 %{gnuxc_libdir}/libpaneltw.so.6.0
 %{gnuxc_libdir}/libpanelw.so.6
 %{gnuxc_libdir}/libpanelw.so.6.0
-%{gnuxc_libdir}/libtic.so.5
-%{gnuxc_libdir}/libtic.so.5.9
+%{gnuxc_libdir}/libtic.so.6
+%{gnuxc_libdir}/libtic.so.6.0
 %{gnuxc_libdir}/libtict.so.6
 %{gnuxc_libdir}/libtict.so.6.0
 %{gnuxc_libdir}/libtictw.so.6
 %{gnuxc_libdir}/libtictw.so.6.0
 %{gnuxc_libdir}/libticw.so.6
 %{gnuxc_libdir}/libticw.so.6.0
-%{gnuxc_libdir}/libtinfo.so.5
-%{gnuxc_libdir}/libtinfo.so.5.9
+%{gnuxc_libdir}/libtinfo.so.6
+%{gnuxc_libdir}/libtinfo.so.6.0
 %{gnuxc_libdir}/libtinfot.so.6
 %{gnuxc_libdir}/libtinfot.so.6.0
 %{gnuxc_libdir}/libtinfotw.so.6
@@ -169,13 +169,14 @@ rm -f %{buildroot}%{gnuxc_libdir}/terminfo
 %{gnuxc_datadir}/tabset
 %{gnuxc_datadir}/terminfo
 %doc ANNOUNCE AUTHORS INSTALL NEWS README TO-DO
+%license COPYING
 
 %files devel
-%{_bindir}/%{gnuxc_target}-ncurses5-config
+%{_bindir}/%{gnuxc_target}-ncurses6-config
 %{_bindir}/%{gnuxc_target}-ncursest6-config
 %{_bindir}/%{gnuxc_target}-ncursestw6-config
 %{_bindir}/%{gnuxc_target}-ncursesw6-config
-%{gnuxc_root}/bin/ncurses5-config
+%{gnuxc_root}/bin/ncurses6-config
 %{gnuxc_root}/bin/ncursest6-config
 %{gnuxc_root}/bin/ncursestw6-config
 %{gnuxc_root}/bin/ncursesw6-config

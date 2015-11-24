@@ -1,16 +1,17 @@
-coreutils               := coreutils-8.23
+coreutils               := coreutils-8.24
 coreutils_url           := http://ftpmirror.gnu.org/coreutils/$(coreutils).tar.xz
 
+export SORT = /bin/sort
+
 ifneq ($(host),$(build))
-prepare-coreutils-rule:
-	$(EDIT) \
+$(prepare-rule):
+	$(EDIT) $(builddir)/Makefile.in \
 		-e '/run_help2man/{/SHELL/s/^@[^@]*@//;/PERL/s/^@[^@]*@/#/;}' \
-		-e '/^[ \t]*--output=/{h;d};/^[ \t]*--info-page=/G' \
-		$(coreutils)/Makefile.in
+		-e '/^[ \t]*--output=/{h;d};/^[ \t]*--info-page=/G'
 endif
 
-configure-coreutils-rule:
-	cd $(coreutils) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		--libexecdir='$${prefix}/libexec' \
 		\
@@ -30,22 +31,31 @@ configure-coreutils-rule:
 		--disable-libsmack \
 		--without-selinux
 
-build-coreutils-rule:
-	$(MAKE) -C $(coreutils) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-coreutils-rule: $(call installed,acl gmp)
-	$(MAKE) -C $(coreutils) install
+$(install-rule): $$(call installed,acl gmp)
+	$(MAKE) -C $(builddir) install
 	$(INSTALL) -dm 755 $(DESTDIR)/usr/bin
 	$(SYMLINK) ../../bin/env $(DESTDIR)/usr/bin/env
-	$(INSTALL) -Dpm 644 $(coreutils)/bashrc.sh $(DESTDIR)/etc/bashrc.d/coreutils.sh
-	$(INSTALL) -Dpm 644 $(coreutils)/profile.sh $(DESTDIR)/etc/profile.d/coreutils.sh
+	$(INSTALL) -Dpm 644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/coreutils.sh
+	$(INSTALL) -Dpm 644 $(call addon-file,profile.sh) $(DESTDIR)/etc/profile.d/coreutils.sh
 
-# Provide a bash profile setting to color "ls" output based on the terminal.
-$(coreutils)/profile.sh: | $(coreutils)
-	$(ECHO) 'eval $$(dircolors --sh)' > $@
-$(call prepared,coreutils): $(coreutils)/profile.sh
+# Write inline files.
+$(call addon-file,bashrc.sh profile.sh): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,bashrc.sh profile.sh)
+
 
 # Provide a bash alias to color "ls" and define some common "ls" abbreviations.
-$(coreutils)/bashrc.sh: | $(coreutils)
-	$(ECHO) -e "alias ls='ls --color=auto'\nalias l='ls -1A'\nalias la='ls -al'\nalias ll='ls -Al'" > $@
-$(call prepared,coreutils): $(coreutils)/bashrc.sh
+override define contents
+alias ls='ls --color=auto'
+alias l='ls -1A'
+alias la='ls -al'
+alias ll='ls -Al'
+endef
+$(call addon-file,bashrc.sh): private override contents := $(value contents)
+
+
+# Provide a bash profile setting to color "ls" output based on the terminal.
+$(call addon-file,profile.sh): private override contents := eval $$(dircolors --sh)

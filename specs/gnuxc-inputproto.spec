@@ -40,7 +40,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %{gnuxc_includedir}/X11/extensions/XI2.h
 %{gnuxc_includedir}/X11/extensions/XI2proto.h
 %{gnuxc_libdir}/pkgconfig/inputproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

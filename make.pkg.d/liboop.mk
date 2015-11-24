@@ -1,19 +1,21 @@
 liboop                  := liboop-1.0
 liboop_url              := http://download.ofb.net/liboop/$(liboop).tar.bz2
 
-prepare-liboop-rule:
-	$(RM) $(liboop)/configure
+$(prepare-rule):
+# Rewrite the old configure script to support a newer TCL version.
+	$(EDIT) '/for version in /s/ 8.4 / 8.6&/' $(builddir)/configure.ac
+	$(RM) $(builddir)/configure
 
-configure-liboop-rule:
-	cd $(liboop) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--with-glib \
 		--with-readline \
+		--with-tcl \
 		--without-adns \
-		--without-libwww \
-		--without-tcl
+		--without-libwww
 
-build-liboop-rule:
-	$(MAKE) -C $(liboop) -j1 all
+$(build-rule):
+	$(MAKE) -C $(builddir) -j1 all
 
-install-liboop-rule: $(call installed,glib)
-	$(MAKE) -C $(liboop) install
+$(install-rule): $$(call installed,glib tcl)
+	$(MAKE) -C $(builddir) install

@@ -1,40 +1,26 @@
-glibc                   := glibc-2.17.90-7a3271
+glibc                   := glibc-2.19-0c5c4d
 glibc_branch            := tschwinge/Roger_Whittaker
-glibc_snap              := 7a32719e4dc679fa53402a602f07df21b1a9420f
+glibc_snap              := 0c5c4d150f7447df4936acc5320472194b9dafae
 glibc_url               := git://git.sv.gnu.org/hurd/glibc.git
 
-glibc-libpthread        := $(glibc)/libpthread-0.3-ed9f86
-glibc-libpthread_snap   := ed9f866df04350bd3bf4661710eda07c02e8ff6a
+glibc-libpthread        := libpthread-0.3-37d6d0
+glibc-libpthread_branch := master
+glibc-libpthread_snap   := 37d6d0fd80143a25b0d1f2a875e2cce6504d9567
 glibc-libpthread_url    := git://git.sv.gnu.org/hurd/libpthread.git
 
-$(glibc-libpthread): | $(glibc)
-	$(GIT) clone -n $(glibc-libpthread_url) $@
-	$(GIT) -C $@ reset --hard $(glibc-libpthread_snap)
+$(call prepare-rule,libpthread): | $$(@D)
+	$(GIT) clone -n $(glibc-libpthread_url) $(builddir)/libpthread
+	$(GIT) -C $(builddir)/libpthread reset --hard $(glibc-libpthread_snap)
+$(prepare-rule): $(call prepared,libpthread)
 
-prepare-glibc-rule: | $(glibc-libpthread)
-# Fix a documentation error.
-	$(GIT) -C $(glibc) cherry-pick 2b66ef5d55325b2957d6c62908ca065228e56814
-	$(PATCH) -d $(glibc) < $(patchdir)/$(glibc)-provide-hurd-api.patch
-	$(PATCH) -d $(glibc) < $(patchdir)/$(glibc)-create-gnumach-header.patch
-	$(PATCH) -d $(glibc-libpthread) < $(patchdir)/$(subst /,-,$(glibc-libpthread))-steal-libihash.patch
-	$(PATCH) -d $(glibc-libpthread) < $(patchdir)/$(subst /,-,$(glibc-libpthread))-glibc-preparation.patch
-	$(RM) $(glibc-libpthread)/include/{libc-symbols,set-hooks}.h
-# Stop getauxval() from segfaulting.
-#	$(ECHO) '#include <libc-symbols.h>' > $(glibc)/sysdeps/mach/hurd/getauxval.c
-#	$(ECHO) 'unsigned long int __getauxval (unsigned long int type) { return 0; }' >> $(glibc)/sysdeps/mach/hurd/getauxval.c
-#	$(ECHO) 'weak_alias (__getauxval, getauxval)' >> $(glibc)/sysdeps/mach/hurd/getauxval.c
-# Support make 4.
-	$(EDIT) '/ | 3/s/)/ | 4.*)/' $(glibc)/configure
-# Static libraries miss some object files if libpthread isn't named libpthread.
-	$(MOVE) $(glibc-libpthread) $(glibc)/libpthread && $(TOUCH) $(glibc-libpthread)
-
-configure-glibc-rule: CFLAGS := $(CFLAGS:-O2=-O3)
-configure-glibc-rule: CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=)
-configure-glibc-rule: CFLAGS := $(CFLAGS:-fexceptions=-fasynchronous-unwind-tables)
-configure-glibc-rule: CFLAGS := $(CFLAGS:-fstack-protector%=)
-configure-glibc-rule:
-	$(MKDIR) $(glibc)/build && cd $(glibc)/build && ../$(configure) \
+$(configure-rule): CFLAGS := $(CFLAGS:-O2=-O3)
+$(configure-rule): CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=)
+$(configure-rule): CFLAGS := $(CFLAGS:-fexceptions%=)
+$(configure-rule): CFLAGS := $(CFLAGS:-fstack-protector%=-fasynchronous-unwind-tables)
+$(configure-rule):
+	$(MKDIR) $(builddir)/build && cd $(builddir)/build && ../$(configure) \
 		--disable-multi-arch \
+		--disable-pt_chown \
 		--enable-all-warnings \
 		--enable-obsolete-rpc \
 		--enable-stackguard-randomization \
@@ -42,14 +28,13 @@ configure-glibc-rule:
 		\
 		--disable-nscd
 
-build-glibc-rule:
-	$(MAKE) -C $(glibc)/build all \
-		CFLAGS-clock_gettime.c='-DSYSDEP_GETTIME="case CLOCK_MONOTONIC:"' \
-		install_root=.
-	$(MAKE) -C $(glibc)/build info
+$(build-rule):
+	$(MAKE) -C $(builddir)/build all \
+		CFLAGS-clock_gettime.c='-DSYSDEP_GETTIME="case CLOCK_MONOTONIC:"'
+# This target seems to break parallel builds when given in the above command.
+	$(MAKE) -C $(builddir)/build info
 
-install-glibc-rule: $(call installed,hurd)
-	$(MAKE) -C $(glibc)/build install
+$(install-rule): $$(call installed,hurd)
+	$(MAKE) -C $(builddir)/build install
 	$(SYMLINK) ld.so.1 $(DESTDIR)/lib/ld.so
 	$(INSTALL) -dm 755 $(DESTDIR)/usr/lib/locale
-	$(RM) $(DESTDIR)/usr/libexec/pt_chown

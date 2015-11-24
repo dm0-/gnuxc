@@ -1,19 +1,19 @@
-fontconfig              := fontconfig-2.11.91
+fontconfig              := fontconfig-2.11.94
 fontconfig_url          := http://www.freedesktop.org/software/fontconfig/release/$(fontconfig).tar.bz2
 
-configure-fontconfig-rule:
-	cd $(fontconfig) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-iconv \
 		--enable-libxml2 \
 		--enable-static \
 		CPPFLAGS=-DPATH_MAX=4096
 ifneq ($(host),$(build))
-	$(EDIT) 's,$(sysroot),,g' $(fontconfig)/fontconfig.pc
+	$(EDIT) 's,$(sysroot),,g' $(builddir)/fontconfig.pc
 endif
 
-build-fontconfig-rule:
-	$(MAKE) -C $(fontconfig) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-fontconfig-rule: $(call installed,freetype libxml2)
-	$(MAKE) -C $(fontconfig) install
+$(install-rule): $$(call installed,freetype libxml2)
+	$(MAKE) -C $(builddir) install

@@ -1,19 +1,19 @@
-pciutils                := pciutils-3.3.0
+pciutils                := pciutils-3.4.0
 pciutils_url            := ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/$(pciutils).tar.gz
 
-prepare-pciutils-rule:
-	$(PATCH) -d $(pciutils) < $(patchdir)/$(pciutils)-environment.patch
+$(prepare-rule):
+	$(call apply,environment)
 
-configure-pciutils-rule:
-	$(MAKE) -C $(pciutils) lib/config.mk \
+$(configure-rule):
+	$(MAKE) -C $(builddir) lib/config.mk \
 		HOST=$(host) \
 		DNS=yes \
 		ZLIB=yes
 
-build-pciutils-rule:
-	$(MAKE) -C $(pciutils) all
-	$(MAKE) -C $(pciutils) lib/libpci.a PCILIB=libpci.a SHARED=no
+$(build-rule):
+	$(MAKE) -C $(builddir) all
+	$(MAKE) -C $(builddir) lib/libpci.a PCILIB=libpci.a SHARED=no
 
-install-pciutils-rule: $(call installed,zlib)
-	$(MAKE) -C $(pciutils) install install-lib
-	$(MAKE) -C $(pciutils) install-pcilib PCILIB=libpci.a
+$(install-rule): $$(call installed,zlib)
+	$(MAKE) -C $(builddir) install install-lib
+	$(MAKE) -C $(builddir) install-pcilib PCILIB=libpci.a

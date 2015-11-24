@@ -11,14 +11,14 @@ entire build procedure, some initial runtime instructions, and uninstallation.
 file system, `fat32` for the EFI system partition, and `qemu` (with KVM, if
 possible) for a virtual runtime environment will require the following tools.
 
-    sudo yum -y install dosfstools e2fsprogs qemu-system-x86
+    sudo dnf -y install dosfstools e2fsprogs qemu-system-x86
 
 **Install build system dependencies.**  The main `GNUmakefile` and RPM build
 commands call these external programs for their various operations.
 
-    sudo yum -y install \
+    sudo dnf -y install \
         gcc-c++ guile libtool make \
-        bzip2 gzip lzip tar xz-lzma-compat \
+        bzip2 gzip lzip tar xz-lzma-compat unzip \
         cvs git wget
 
 **Abbreviate the virtual machine command.**  This alias starts `qemu` with a
@@ -36,11 +36,20 @@ KVM, if it's available and running on `x86`.
 
 **Abbreviate the build command.**  If you are going to use a working directory
 separate from the source directory, use this alias to call the `make` system.
-It is unnecessary when building in the same directory as the `make` files.
+This alias is also where you can append tuning settings such as `tune=pentium`
+or `exclude='hal icecat'` to omit projects.
 
     alias gmake="make -f ${SOURCE_DIR:-$PWD}/GNUmakefile"
     sed -i -e '/^alias gmake=/d' ~/.bashrc
     alias gmake >> ~/.bashrc
+
+**Optionally, configure account groups.**  If you build the bundled Linux-libre
+virtual machine and want its console to use consistent key bindings with the
+Hurd system, add yourself to the `tty` group.  You can also remove the need for
+`sudo` while working with loop devices by adding yourself to `disk`.  Remember
+to log out after this for new groups to take effect.
+
+    sudo usermod -a -G disk,tty "$USER"
 
 
 ## Sysroot and Cross-Tools
@@ -52,7 +61,7 @@ development files are packaged in RPMs for easy management on the build system.
 **Install RPM development utilities.**  These tools are necessary to build and
 install packages on the build system.
 
-    sudo yum -y install createrepo redhat-rpm-config rpmdevtools yum-utils
+    sudo dnf -y install createrepo_c dnf-plugins-core rpmdevtools
 
 **Set up an RPM build environment.**  This will create the `rpmbuild` directory
 hierarchy and place links to the source files in the expected paths.
@@ -70,8 +79,8 @@ will let the RPM build settings decide that number for you.
     guile --no-auto-compile "${SOURCE_DIR:-.}/setup-sysroot.scm" |
     make -f- $(rpm -E %_smp_mflags)
 
-If you have GNU Make version 4 or later built with Guile support, you can run
-this equivalent command instead.
+If you have GNU Make version 4 or later built with Guile support (which is
+currently only in Rawhide), you can run this equivalent command instead.
 
     make -f "${SOURCE_DIR:-.}/setup-sysroot.scm" $(rpm -E %_smp_mflags)
 
@@ -111,7 +120,7 @@ disk space for the operating system itself.
         n p 2 $ext2_offset '' \
         t 1 ef \
         t 2 63 \
-        w | tr ' ' '\n' | fdisk -b $sector_size $gnu_disk
+        w | tr ' ' '\n' | sudo fdisk -b $sector_size $gnu_disk
 
 **Create the ESP file system.**  It's just FAT32.
 
@@ -124,7 +133,7 @@ on the file system, since they can make Linux write things to the disk that
 Hurd won't be able to understand.
 
     loop=$(sudo losetup --show -fo $(( ext2_offset * sector_size )) $gnu_disk)
-    sudo mke2fs -t ext2 -o hurd \
+    sudo mke2fs -F -t ext2 -o hurd \
         -T hurd -b 4096 -I 128 \
         -O none,dir_index,ext_attr,sparse_super \
         -L GNU -m 0 $loop
@@ -134,25 +143,18 @@ Hurd won't be able to understand.
 
 ### Downloads
 
-**Install project dependencies.**  If you are building the OS and sysroot RPMs
-on different systems, you will need the RPMs' build dependencies here as well.
+**Install project dependencies.**  Most of these will already be installed if
+you built the sysroot packages on the same machine.
 
-    sudo gnuxc_bootstrapped=1 yum-builddep -y "${SOURCE_DIR:-.}"/specs/*
-
-In addition, these packages weren't required for the RPMs, but they are needed
-by some of the other projects.
-
-    sudo yum -y install \
+    sudo dnf -y install \
+        bc bison ed flex{,-devel} gperf groff intltool nasm texinfo yasm \
         {gnu-free-{mono,sans,serif},unifont}-fonts ImageMagick libicns-utils \
         help2man perl-ExtUtils-MakeMaker perl-gettext perl-podlators \
-        bc ed freetype-devel gperf groff intltool nasm yasm
+        {freetype,gdk-pixbuf2,gobject-introspection,guile,xorg-x11-proto}-devel
 
-The `hal` project requires a few native static libraries, and it builds its own
-`pixman` since a static version isn't packaged.  Remove the system development
-files to avoid confusing the configure scripts.
+The `hal` project requires a few native static libraries.
 
-    sudo yum -y install {glib2,glibc,ncurses,zlib}-static
-    sudo yum -y remove pixman-devel
+    sudo dnf -y install {glib2,glibc,ncurses,zlib}-static
 
 **Download and patch all the sources.**  The `prepare` target refers to having
 a complete and patched source tree prepared to be built.  This `make` command
@@ -171,7 +173,7 @@ let the RPM build settings decide that number for you.
     gmake $(rpm -E %_smp_mflags)
 
 **Mount the target file system over the install root.**  Making your account
-the owner allows installation without superuser privileges.
+the owner allows installation without super user privileges.
 
     sudo mount -t ext2 \
         -o 'context="system_u:object_r:tmp_t:s0",x-mount.mkdir' \
@@ -205,29 +207,18 @@ the dynamic linker.  Keep a copy of them outside the target file system.
     cp gnu-root/hurd/ext2fs.static ext2fs
     cp gnu-root/lib/ld.so exec
 
-**Unmount the file system.**  This section *should* be no more than a `chown`
-and `umount -d`, but Linux's behavior requires some workarounds.  Run the
-following to generate scripts to fix the issues.
+**Correct file ownership.**  Since the installation was done without super user
+privileges, the install root should have its files' owners recursively set to
+`root`.  Linux's `chown` system call drops certain mode bits, so those must be
+restored separately.
 
-    find gnu-root \
-        -fprintf fix_trans.txt 'sif /%P translator 0\n' \
-        -perm /7000 -fprintf fix_suid.sh 'chmod %m %p\n'
-
-Recursively set the installed files' owner to `root`.  Linux's `chown` system
-call drops certain mode bits, so those must be restored.
-
+    find gnu-root -perm /7000 -printf 'chmod %m %p\n' > fix_suid.sh
     sudo chown -hR 0:0 gnu-root
     sudo sh -e fix_suid.sh && rm -f fix_suid.sh
 
-The `ext2` file system will now have to be modified offline.  Unmount it.
+**Unmount and verify the root file system.**
 
     sudo umount gnu-root && rmdir gnu-root
-
-Linux writes its `version` in place of Hurd's `translator` inode field, despite
-the file system's OS setting.  Zero every file's translator value, verify the
-file system, and detach the loop device.
-
-    sudo debugfs -wf fix_trans.txt $loop && rm -f fix_trans.txt
     sudo e2fsck -Dfy $loop
     sudo losetup -d $loop
 
@@ -235,7 +226,7 @@ file system, and detach the loop device.
 ### Native Initialization
 
 **Boot your new system.**  One of the remaining steps is to install the disk's
-bootloader, so the system first requires `qemu`'s built-in multiboot support.
+bootloader, so the system first requires QEMU's built-in multiboot support.
 
     qemu-hurd $gnu_disk \
         -kernel gnumach \
@@ -257,15 +248,12 @@ translators etc. to the disk, as well as to install the bootloader.  When this
 script is finished, it will start GNU dmd as in a regular system boot.
 
 When the initialization is complete, you should see a login prompt.  You can
-now explore the system, but don't forget to try the bootloader.  The following
-commands (starting from the login prompt) will shut down the system so it can
-be started in its natural state.
-
-    login root
-    halt
+now explore the system, but don't forget to try the bootloader.  To shut down,
+run `sudo halt` after logging into the system with either the `root` or `gnu`
+user (both with no password by default).
 
 **Clean up files.**  With the bootloader installed, you can decide whether you
-plan on using `qemu`'s multiboot options again to bypass it.  If not, clean up
+plan on using QEMU's multiboot options again to bypass it.  If not, clean up
 the now-redundant boot files in the build directory.
 
     rm -f gnumach ext2fs exec
@@ -297,8 +285,7 @@ boots Linux-libre, which runs the Hurd-based OS in QEMU for compatibility.
 
 **Using the GNU Hurd console.**  After selecting the default boot option, the
 system should display a login prompt.  Two usable accounts are provided, `root`
-and `gnu`.  They can be used with the `login` command (e.g. `login gnu`).  The
-`gnu` account is a regular user account with `sudo` abilities.
+and `gnu`.  The `gnu` account is a regular user account with `sudo` abilities.
 
 There are six virtual terminals by default.  With `Alt+Left` or `Alt+Right` you
 can switch to an adjacent terminal, and `Alt+n` will jump to the terminal
@@ -316,6 +303,11 @@ following while logged into the `gnu` account on one of the virtual terminals.
 
     startx
 
+If instead of directly starting a user's desktop environment, you want to show
+a graphical login screen, start the XDM service.
+
+    sudo deco start xdm
+
 **Using GNU WindowMaker.**  The X environment is provided by `wmaker` by
 default.  Applications can be accessed easily from its right-click menu, as can
 adding new workspaces, etc.  Pressing `Alt+F2` will display a window prompting
@@ -331,8 +323,10 @@ terminated with `Ctrl+Alt+Backspace` to return to the Hurd console.
 **Configure daemons to start on boot.**  The last line of `/etc/dmdconf.scm`
 contains a space-separated list of services (defined in `/etc/dmd.d`) to start
 automatically.  The provided configuration starts the Hurd console client and
-login programs by default, but you will probably want to add other services to
-start at boot, such as `cron` and `syslog`.
+login programs by default.  Change `console` to `xdm` to boot to a graphical
+login prompt instead of the console, if desired.  You will probably want to add
+other services to start at boot, such as `cron` or `syslog`.  Use the `deco`
+command to start other services at runtime, e.g. `sudo deco start syslog`.
 
 **Preempt the cron jobs.**  There are some cache databases being regenerated at
 random times daily.  Run the cron commands manually if you don't want to wait
@@ -340,26 +334,17 @@ for their scheduled times.  The following will list each system cron job.
 
     cat /etc/cron.d/*
 
-**Initialize a random seed for SSH clients.**  For each user that will run the
-SSH client, create a seed file.
-
-    lsh-make-seed
-
 **Install the packages that were too broken for cross-compilation.**  Log into
 the `root` account, which has an alias `gmake` to build and install packages.
 
-First, install `perl` and its `Locale::gettext` module.  This is required for
-`help2man` to run, for example.
+Install `perl` and its assorted modules.  They are required to run certain
+utilities such as `help2man` and `intltool`.
 
     gmake install-perl
-    gmake install-perl-gettext
+    gmake install-perl-gettext install-perl-XML-Parser
 
-Optionally, `git` can be rebuilt with Perl support now.
-
-    gmake install-git
-
-A proper Emacs installation is also required.  (Without running this step, the
-`emacs` command launches Zile.)
+Emacs still needs to be installed properly since its binary is generated at
+runtime.  (Without running this step, the `emacs` command launches Zile.)
 
     gmake install-emacs
 
@@ -372,13 +357,12 @@ If your goal is to reset the build environment in order to start fresh, there
 are two areas to clean.
 
 **Remove the cross-tools and sysroot.**  Since everything was installed from
-RPMs, a `yum remove` command will handle the obvious parts.  The RPM repository
-also must be deleted or moved so that bootstrapping steps aren't skipped during
-the next rebuild.
+RPMs, a `dnf remove` command will handle the obvious parts.  The RPM repository
+also must be removed so that no packages are skipped during the next rebuild.
 
-    sudo yum -y remove 'gnuxc-*'
+    sudo dnf -y remove 'gnuxc-*'
     rm -fr "$(rpm -E %_rpmdir)/repodata"
-    rm -f {"$(rpm -E %_rpmdir)"/*,"$(rpm -E %_srcrpmdir)"}/gnuxc-*.rpm
+    rm -f {"$(rpm -E %_rpmdir)"{/*,},"$(rpm -E %_srcrpmdir)"}/gnuxc-*.rpm
 
 **Remove the cross-compiled source directories.**  If you used a dedicated
 working directory for running the `gmake` commands, simply delete it.  If you

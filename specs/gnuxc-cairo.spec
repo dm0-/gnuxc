@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-cairo
-Version:        1.14.0
+Version:        1.14.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -16,6 +16,7 @@ BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-libXext-devel
 BuildRequires:  gnuxc-libXrender-devel
 BuildRequires:  gnuxc-pixman-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -52,7 +53,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' build/ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -110,13 +111,14 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 %{gnuxc_libdir}/cairo/libcairo-trace.so.0
 %{gnuxc_libdir}/cairo/libcairo-trace.so.0.0.0
 %{gnuxc_libdir}/libcairo.so.2
-%{gnuxc_libdir}/libcairo.so.2.11400.0
+%{gnuxc_libdir}/libcairo.so.2.11400.4
 %{gnuxc_libdir}/libcairo-gobject.so.2
-%{gnuxc_libdir}/libcairo-gobject.so.2.11400.0
+%{gnuxc_libdir}/libcairo-gobject.so.2.11400.4
 %{gnuxc_libdir}/libcairo-script-interpreter.so.2
-%{gnuxc_libdir}/libcairo-script-interpreter.so.2.11400.0
-%doc AUTHORS BIBLIOGRAPHY BUGS ChangeLog* CODING_STYLE COPYING* HACKING INSTALL
+%{gnuxc_libdir}/libcairo-script-interpreter.so.2.11400.4
+%doc AUTHORS BIBLIOGRAPHY BUGS ChangeLog* CODING_STYLE HACKING
 %doc KNOWN_ISSUES NEWS PORTING_GUIDE README RELEASING
+%license COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1
 
 %files devel
 %{gnuxc_includedir}/cairo

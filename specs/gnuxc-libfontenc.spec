@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libfontenc
-Version:        1.1.2
+Version:        1.1.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,6 +11,8 @@ URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-font-util-devel
+BuildRequires:  gnuxc-pkg-config
+BuildRequires:  gnuxc-xproto
 BuildRequires:  gnuxc-zlib-devel
 
 %description
@@ -56,7 +58,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libfontenc.la
 %files
 %{gnuxc_libdir}/libfontenc.so.1
 %{gnuxc_libdir}/libfontenc.so.1.0.0
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/fonts/fontenc.h

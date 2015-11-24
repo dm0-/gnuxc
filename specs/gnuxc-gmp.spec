@@ -1,17 +1,18 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gmp
-Version:        6.0.0a
-%global basever 6.0.0
+Version:        6.1.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv3+
 Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/gmp/
-Source0:        http://ftpmirror.gnu.org/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.lz
+Source0:        http://ftpmirror.gnu.org/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-gcc-c++
+
+BuildRequires:  m4
 
 %description
 %{summary}.
@@ -38,12 +39,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{basever}
+%setup -q -n %{gnuxc_name}-%{version}
 
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -65,10 +66,11 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 
 %files
 %{gnuxc_libdir}/libgmp.so.10
-%{gnuxc_libdir}/libgmp.so.10.2.0
+%{gnuxc_libdir}/libgmp.so.10.3.0
 %{gnuxc_libdir}/libgmpxx.so.4
-%{gnuxc_libdir}/libgmpxx.so.4.4.0
-%doc AUTHORS ChangeLog COPYING* NEWS README
+%{gnuxc_libdir}/libgmpxx.so.4.5.0
+%doc AUTHORS ChangeLog NEWS README
+%license COPYING COPYING.LESSERv3 COPYINGv2 COPYINGv3
 
 %files devel
 %{gnuxc_includedir}/gmp.h

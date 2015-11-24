@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-freetype
-Version:        2.5.5
+Version:        2.6.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,6 +12,7 @@ Source0:        http://download.savannah.gnu.org/releases/freetype/%{gnuxc_name}
 
 BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-libpng-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -20,7 +21,7 @@ BuildRequires:  gnuxc-libpng-devel
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-bzip2-devel
+Requires:       gnuxc-libpng-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -53,6 +54,7 @@ statically, which is highly discouraged.
 
 %install
 %gnuxc_make_install
+mv docs/{FTL,GPLv2,LICENSE}.TXT .
 
 # Provide a cross-tools version of the config script.
 install -dm 755 %{buildroot}%{_bindir}
@@ -71,8 +73,9 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libfreetype.so.6
-%{gnuxc_libdir}/libfreetype.so.6.11.4
+%{gnuxc_libdir}/libfreetype.so.6.12.1
 %doc ChangeLog* docs README*
+%license FTL.TXT GPLv2.TXT LICENSE.TXT
 
 %files devel
 %{_bindir}/%{gnuxc_target}-freetype-config

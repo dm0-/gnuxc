@@ -11,7 +11,9 @@ URL:            http://www.lysator.liu.se/liboop/
 Source0:        http://download.ofb.net/liboop/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-glib-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-readline-devel
+BuildRequires:  gnuxc-tcl-devel
 
 BuildRequires:  libtool
 
@@ -42,23 +44,24 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
-# Rewrite the old configure script.
+# Rewrite the old configure script to support a newer TCL version.
+sed -i -e '/for version in /s/ 8.4 / 8.6&/' configure.ac
 autoreconf -fi
 
 %build
 %gnuxc_configure \
     --with-glib \
     --with-readline \
+    --with-tcl \
     --without-adns \
-    --without-libwww \
-    --without-tcl
+    --without-libwww
 %gnuxc_make -j1 all
 
 %install
 %gnuxc_make_install
 
 # We don't need libtool's help.
-rm -f %{buildroot}%{gnuxc_libdir}/liboop{,-glib2,-rl}.la
+rm -f %{buildroot}%{gnuxc_libdir}/liboop{,-glib2,-rl,-tcl}.la
 
 
 %files
@@ -68,7 +71,9 @@ rm -f %{buildroot}%{gnuxc_libdir}/liboop{,-glib2,-rl}.la
 %{gnuxc_libdir}/liboop-glib2.so.0.0.0
 %{gnuxc_libdir}/liboop-rl.so.0
 %{gnuxc_libdir}/liboop-rl.so.0.0.0
-%doc COPYING
+%{gnuxc_libdir}/liboop-tcl.so.0
+%{gnuxc_libdir}/liboop-tcl.so.0.0.0
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/oop.h
@@ -81,6 +86,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/liboop{,-glib2,-rl}.la
 %{gnuxc_libdir}/liboop.so
 %{gnuxc_libdir}/liboop-glib2.so
 %{gnuxc_libdir}/liboop-rl.so
+%{gnuxc_libdir}/liboop-tcl.so
 %{gnuxc_libdir}/pkgconfig/liboop.pc
 %{gnuxc_libdir}/pkgconfig/liboop-glib2.pc
 
@@ -88,6 +94,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/liboop{,-glib2,-rl}.la
 %{gnuxc_libdir}/liboop.a
 %{gnuxc_libdir}/liboop-glib2.a
 %{gnuxc_libdir}/liboop-rl.a
+%{gnuxc_libdir}/liboop-tcl.a
 
 
 %changelog

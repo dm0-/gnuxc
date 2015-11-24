@@ -1,17 +1,18 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libjpeg-turbo
-Version:        1.3.1
+Version:        1.4.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        IJG
 Group:          System Environment/Libraries
 URL:            http://libjpeg-turbo.virtualgl.org/
-Source0:        http://prdownloads.sourceforge.net/libjpeg-turbo/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
 
+BuildRequires:  libtool
 BuildRequires:  nasm
 
 %description
@@ -40,6 +41,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+chmod -c 644 *.txt
 
 # Rewrite the old configure script.
 autoreconf -fi
@@ -73,8 +75,8 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libjpeg.so.62
 %{gnuxc_libdir}/libjpeg.so.62.1.0
 %{gnuxc_libdir}/libturbojpeg.so.0
-%{gnuxc_libdir}/libturbojpeg.so.0.0.0
-%doc BUILDING.txt README*
+%{gnuxc_libdir}/libturbojpeg.so.0.1.0
+%doc ChangeLog.txt README README-turbo.txt
 
 %files devel
 %{gnuxc_includedir}/jconfig.h

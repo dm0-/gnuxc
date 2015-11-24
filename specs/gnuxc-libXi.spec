@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXi
-Version:        1.7.4
+Version:        1.7.5
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -13,6 +13,7 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 BuildRequires:  gnuxc-inputproto
 BuildRequires:  gnuxc-libXext-devel
 BuildRequires:  gnuxc-libXfixes-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -65,7 +66,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libXi.so.6
 %{gnuxc_libdir}/libXi.so.6.1.0
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/extensions/XInput.h

@@ -1,13 +1,13 @@
-help2man                := help2man-1.46.4
+help2man                := help2man-1.47.3
 help2man_url            := http://ftpmirror.gnu.org/help2man/$(help2man).tar.xz
 
-configure-help2man-rule:
-	cd $(help2man) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-nls
 
-build-help2man-rule:
-	$(MAKE) -C $(help2man) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-help2man-rule: $(call installed,perl-gettext)
-	$(MAKE) -C $(help2man) install \
+$(install-rule): $$(call installed,perl-gettext)
+	$(MAKE) -C $(builddir) install \
 		DESTDIR='$(DESTDIR)'

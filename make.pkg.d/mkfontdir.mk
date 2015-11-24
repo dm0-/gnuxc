@@ -1,13 +1,13 @@
 mkfontdir               := mkfontdir-1.0.7
 mkfontdir_url           := http://xorg.freedesktop.org/releases/individual/app/$(mkfontdir).tar.bz2
 
-configure-mkfontdir-rule:
-	cd $(mkfontdir) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-strict-compilation
 
-build-mkfontdir-rule:
-	$(MAKE) -C $(mkfontdir) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-mkfontdir-rule: $(call installed,mkfontscale)
-	$(MAKE) -C $(mkfontdir) install
+$(install-rule): $$(call installed,mkfontscale)
+	$(MAKE) -C $(builddir) install

@@ -1,8 +1,8 @@
 libICE                  := libICE-1.0.9
 libICE_url              := http://xorg.freedesktop.org/releases/individual/lib/$(libICE).tar.bz2
 
-configure-libICE-rule:
-	cd $(libICE) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-ipv6 \
 		--enable-local-transport \
@@ -10,8 +10,8 @@ configure-libICE-rule:
 		--enable-tcp-transport \
 		--enable-unix-transport
 
-build-libICE-rule:
-	$(MAKE) -C $(libICE) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libICE-rule: $(call installed,xtrans)
-	$(MAKE) -C $(libICE) install
+$(install-rule): $$(call installed,xtrans)
+	$(MAKE) -C $(builddir) install

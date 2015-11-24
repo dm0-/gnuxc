@@ -7,7 +7,6 @@ else
 FREEFONTDIR = /usr/share/fonts/gnu-free
 endif
 
-install-freefont-rule:
-	for font in $(freefont)/*.otf ; \
-	do $(INSTALL) -Dpm 644 $$font $(DESTDIR)/usr/share/fonts/freefont/$${font##*/} ; \
-	done
+$(install-rule):
+	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/fonts/freefont
+	$(INSTALL) -pm 644 -t $(DESTDIR)/usr/share/fonts/freefont $(builddir)/*.otf

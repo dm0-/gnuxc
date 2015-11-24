@@ -2,39 +2,35 @@ gnugo                   := gnugo-3.8
 gnugo_url               := http://ftpmirror.gnu.org/gnugo/$(gnugo).tar.gz
 
 ifneq ($(host),$(build))
-configure-gnugo-native-rule: CFLAGS := $(CFLAGS) -Wno-error=format-security
-configure-gnugo-native-rule: $(gnugo)/configure
-	$(MKDIR) $(gnugo)/native && cd $(gnugo)/native && ../configure \
+$(call configure-rule,native): CFLAGS := $(CFLAGS) -Wno-error=format-security
+$(call configure-rule,native): $(builddir)/configure
+	$(MKDIR) $(builddir)/native && cd $(builddir)/native && ../configure \
 		AR=ar CC=gcc RANLIB=ranlib
-configure-gnugo-rule: $(call configured,gnugo-native)
+$(configure-rule): $(call configured,native)
 
-build-gnugo-native-rule: $(call configured,gnugo)
-	$(MAKE) -C $(gnugo)/native/engine   libboard.a libengine.a
-	$(MAKE) -C $(gnugo)/native/sgf      libsgf.a
-	$(MAKE) -C $(gnugo)/native/utils    libutils.a
-	$(MAKE) -C $(gnugo)/native/patterns mkpat joseki mkeyes uncompress_fuseki mkmcpat
-	$(MAKE) -C $(gnugo)/engine   libboard.a libengine.a
-	$(MAKE) -C $(gnugo)/sgf      libsgf.a
-	$(MAKE) -C $(gnugo)/utils    libutils.a
-	$(MAKE) -C $(gnugo)/patterns mkpat joseki mkeyes uncompress_fuseki mkmcpat
-	$(COPY) $(gnugo)/native/patterns/{mkpat,joseki,mkeyes,uncompress_fuseki,mkmcpat} $(gnugo)/patterns/
-build-gnugo-rule: $(call built,gnugo-native)
-
-clean-gnugo-native:
-	$(RM) $(timedir)/{configure,build}-gnugo-native-{rule,stamp}
-.PHONY clean-gnugo: clean-gnugo-native
+$(call build-rule,native): $(configured)
+	$(MAKE) -C $(builddir)/native/engine   libboard.a libengine.a
+	$(MAKE) -C $(builddir)/native/sgf      libsgf.a
+	$(MAKE) -C $(builddir)/native/utils    libutils.a
+	$(MAKE) -C $(builddir)/native/patterns mkpat joseki mkeyes uncompress_fuseki mkmcpat
+	$(MAKE) -C $(builddir)/engine   libboard.a libengine.a
+	$(MAKE) -C $(builddir)/sgf      libsgf.a
+	$(MAKE) -C $(builddir)/utils    libutils.a
+	$(MAKE) -C $(builddir)/patterns mkpat joseki mkeyes uncompress_fuseki mkmcpat
+	$(COPY) $(builddir)/native/patterns/{mkpat,joseki,mkeyes,uncompress_fuseki,mkmcpat} $(builddir)/patterns/
+$(build-rule): $(call built,native)
 endif
 
-configure-gnugo-rule: CFLAGS := $(CFLAGS) -Wno-error=format-security
-configure-gnugo-rule:
-	cd $(gnugo) && ./$(configure) \
+$(configure-rule): CFLAGS := $(CFLAGS) -Wno-error=format-security
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-color \
 		--enable-socket-support \
 		--with-curses \
 		--with-readline
 
-build-gnugo-rule:
-	$(MAKE) -C $(gnugo) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gnugo-rule: $(call installed,readline)
-	$(MAKE) -C $(gnugo) install
+$(install-rule): $$(call installed,readline)
+	$(MAKE) -C $(builddir) install

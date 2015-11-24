@@ -57,7 +57,8 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libffi.so.6
 %{gnuxc_libdir}/libffi.so.6.0.4
-%doc ChangeLog* LICENSE README
+%doc ChangeLog* README
+%license LICENSE
 
 %files devel
 %{gnuxc_libdir}/%{gnuxc_name}-%{version}

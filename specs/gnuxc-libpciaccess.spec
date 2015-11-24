@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpciaccess
-Version:        0.13.2
+Version:        0.13.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -56,7 +56,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libpciaccess.la
 %files
 %{gnuxc_libdir}/libpciaccess.so.0
 %{gnuxc_libdir}/libpciaccess.so.0.11.1
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/pciaccess.h

@@ -1,4 +1,4 @@
-nspr                    := nspr-4.10.7
+nspr                    := nspr-4.11
 nspr_branch             := $(nspr)/nspr
 nspr_url                := http://ftp.mozilla.org/pub/nspr/releases/v$(nspr:nspr-%=%)/src/$(nspr).tar.gz
 
@@ -8,13 +8,11 @@ else
 export NSPR_CONFIG = $(host)-nspr-config
 endif
 
-prepare-nspr-rule:
-# Make the pthread definition usage more POSIX-friendly.
-	$(DOWNLOAD) 'http://hg.mozilla.org/projects/nspr/raw-rev/1fcea1618bb7' | $(PATCH) -d $(nspr) -p1
-	$(PATCH) -d $(nspr) < $(patchdir)/$(nspr)-hurd-port.patch
+$(prepare-rule):
+	$(call apply,hurd-port)
 
-configure-nspr-rule:
-	cd $(nspr) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-strip \
 		--enable-cplus \
 		--enable-debug --enable-debug-symbols \
@@ -22,11 +20,11 @@ configure-nspr-rule:
 		--enable-optimize \
 		--with-pthreads
 
-build-nspr-rule:
+$(build-rule):
 ifneq ($(host),$(build))
-	$(MAKE) -C $(nspr)/config export CC=gcc
+	$(MAKE) -C $(builddir)/config export CC=gcc
 endif
-	$(MAKE) -C $(nspr) all
+	$(MAKE) -C $(builddir) all
 
-install-nspr-rule: $(call installed,gcc)
-	$(MAKE) -C $(nspr) install
+$(install-rule): $$(call installed,gcc)
+	$(MAKE) -C $(builddir) install

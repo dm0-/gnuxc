@@ -4,18 +4,21 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/pango/
 
 Name:           gnuxc-pango
-Version:        1.36.8
+Version:        1.38.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 Group:          System Environment/Libraries
 URL:            http://developer.gnome.org/pango/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/1.36/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/1.38/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-cairo-devel
 BuildRequires:  gnuxc-harfbuzz-devel
 BuildRequires:  gnuxc-libXft-devel
+BuildRequires:  gnuxc-pkg-config
+
+BuildRequires:  glib2-devel
 
 %description
 %{summary}.
@@ -49,13 +52,12 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
     --disable-silent-rules \
     --enable-debug \
-    --enable-explicit-deps \
     --enable-static \
     --with-cairo \
     --with-xft \
@@ -67,12 +69,10 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
 %gnuxc_make_install
 
 # There is no need to install binary programs in the sysroot.
-rm -f %{buildroot}%{gnuxc_bindir}/pango-{querymodules,view}
+rm -f %{buildroot}%{gnuxc_bindir}/pango-view
 
 # We don't need libtool's help.
-rm -f %{buildroot}%{gnuxc_libdir}/libpango{,cairo,ft2,xft}-1.0.la \
-    %{buildroot}%{gnuxc_libdir}/pango/1.8.0/modules/pango-basic-fc.la \
-   %{buildroot}%{gnuxc_libdir}/pango/1.8.0/modules/pango-{arabic,indic}-lang.la
+rm -f %{buildroot}%{gnuxc_libdir}/libpango{,cairo,ft2,xft}-1.0.la
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
@@ -80,20 +80,15 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpango-1.0.so.0
-%{gnuxc_libdir}/libpango-1.0.so.0.3600.8
+%{gnuxc_libdir}/libpango-1.0.so.0.3800.1
 %{gnuxc_libdir}/libpangocairo-1.0.so.0
-%{gnuxc_libdir}/libpangocairo-1.0.so.0.3600.8
+%{gnuxc_libdir}/libpangocairo-1.0.so.0.3800.1
 %{gnuxc_libdir}/libpangoft2-1.0.so.0
-%{gnuxc_libdir}/libpangoft2-1.0.so.0.3600.8
+%{gnuxc_libdir}/libpangoft2-1.0.so.0.3800.1
 %{gnuxc_libdir}/libpangoxft-1.0.so.0
-%{gnuxc_libdir}/libpangoxft-1.0.so.0.3600.8
-%dir %{gnuxc_libdir}/pango
-%dir %{gnuxc_libdir}/pango/1.8.0
-%dir %{gnuxc_libdir}/pango/1.8.0/modules
-%{gnuxc_libdir}/pango/1.8.0/modules/pango-arabic-lang.so
-%{gnuxc_libdir}/pango/1.8.0/modules/pango-basic-fc.so
-%{gnuxc_libdir}/pango/1.8.0/modules/pango-indic-lang.so
-%doc AUTHORS ChangeLog* COPYING HACKING MAINTAINERS NEWS README THANKS
+%{gnuxc_libdir}/libpangoxft-1.0.so.0.3800.1
+%doc AUTHORS ChangeLog* HACKING MAINTAINERS NEWS README THANKS
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/pango-1.0
@@ -111,9 +106,6 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libpangocairo-1.0.a
 %{gnuxc_libdir}/libpangoft2-1.0.a
 %{gnuxc_libdir}/libpangoxft-1.0.a
-%{gnuxc_libdir}/pango/1.8.0/modules/pango-arabic-lang.a
-%{gnuxc_libdir}/pango/1.8.0/modules/pango-basic-fc.a
-%{gnuxc_libdir}/pango/1.8.0/modules/pango-indic-lang.a
 
 
 %changelog

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXrender
-Version:        0.9.8
+Version:        0.9.9
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,6 +11,7 @@ URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-libX11-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-renderproto
 
 %description
@@ -60,7 +61,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %files
 %{gnuxc_libdir}/libXrender.so.1
 %{gnuxc_libdir}/libXrender.so.1.3.0
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/extensions/Xrender.h

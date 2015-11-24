@@ -1,13 +1,13 @@
-libXrandr               := libXrandr-1.4.2
+libXrandr               := libXrandr-1.5.0
 libXrandr_url           := http://xorg.freedesktop.org/releases/individual/lib/$(libXrandr).tar.bz2
 
-configure-libXrandr-rule:
-	cd $(libXrandr) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no
 
-build-libXrandr-rule:
-	$(MAKE) -C $(libXrandr) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libXrandr-rule: $(call installed,libXext libXrender randrproto)
-	$(MAKE) -C $(libXrandr) install
+$(install-rule): $$(call installed,libXext libXrender randrproto)
+	$(MAKE) -C $(builddir) install

@@ -1,12 +1,13 @@
-nettle                  := nettle-2.7.1
+nettle                  := nettle-3.1.1
 nettle_url              := http://ftpmirror.gnu.org/nettle/$(nettle).tar.gz
 
-configure-nettle-rule:
-	cd $(nettle) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
+		--disable-mini-gmp \
 		--disable-openssl
 
-build-nettle-rule:
-	$(MAKE) -C $(nettle) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-nettle-rule: $(call installed,gmp)
-	$(MAKE) -C $(nettle) install
+$(install-rule): $$(call installed,gmp)
+	$(MAKE) -C $(builddir) install

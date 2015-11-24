@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-file
-Version:        5.22
+Version:        5.25
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -58,7 +58,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libmagic.la
 %files
 %{gnuxc_libdir}/libmagic.so.1
 %{gnuxc_libdir}/libmagic.so.1.0.0
-%doc AUTHORS ChangeLog COPYING MAINT NEWS README TODO
+%doc AUTHORS ChangeLog MAINT NEWS README TODO
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/magic.h

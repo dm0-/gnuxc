@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-font-util
-Version:        1.3.0
+Version:        1.3.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -53,7 +53,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_datadir}/X11/fonts
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_libdir}/pkgconfig/fontutil.pc

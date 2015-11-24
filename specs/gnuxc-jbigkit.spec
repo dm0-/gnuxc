@@ -69,7 +69,8 @@ install -Dpm 644 libjbig/jbig_ar.h %{buildroot}%{gnuxc_includedir}/jbig_ar.h
 %files
 %{gnuxc_libdir}/libjbig.so.%{version}
 %{gnuxc_libdir}/libjbig85.so.%{version}
-%doc ANNOUNCE CHANGES COPYING INSTALL libjbig/jbig*.txt TODO
+%doc ANNOUNCE CHANGES INSTALL libjbig/jbig*.txt TODO
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/jbig.h

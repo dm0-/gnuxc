@@ -12,6 +12,7 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 
 BuildRequires:  gnuxc-fontconfig-devel
 BuildRequires:  gnuxc-libXrender-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -60,7 +61,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libXft.so.2
 %{gnuxc_libdir}/libXft.so.%{version}
-%doc AUTHORS ChangeLog COPYING NEWS README
+%doc AUTHORS ChangeLog NEWS README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/Xft

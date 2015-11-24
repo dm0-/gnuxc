@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXdmcp
-Version:        1.1.1
+Version:        1.1.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,6 +11,7 @@ URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-glibc-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-xproto
 
 %description
@@ -58,7 +59,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libXdmcp.la
 %files
 %{gnuxc_libdir}/libXdmcp.so.6
 %{gnuxc_libdir}/libXdmcp.so.6.0.0
-%doc AUTHORS ChangeLog COPYING README Wraphelp.README.crypto
+%doc AUTHORS ChangeLog README Wraphelp.README.crypto
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/Xdmcp.h

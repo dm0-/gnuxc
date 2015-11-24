@@ -1,5 +1,9 @@
+%global bootstrap 1 # This does nothing other than flag this RPM as pre-glibc.
+
+%global _docdir_fmt gnuxc/pkg-config
+
 Name:           gnuxc-pkg-config
-Version:        0.28
+Version:        0.29
 Release:        1%{?dist}
 Summary:        A tool for determining cross-compilation options to GNU systems
 
@@ -51,7 +55,8 @@ rm -f %{buildroot}%{_datadir}/doc/pkg-config/pkg-config-guide.html
 %{_bindir}/%{gnuxc_target}-pkg-config
 %{gnuxc_root}/bin/pkg-config
 %{_mandir}/man1/%{gnuxc_target}-pkg-config.1.gz
-%doc AUTHORS ChangeLog COPYING NEWS README pkg-config-guide.html
+%doc AUTHORS ChangeLog NEWS README pkg-config-guide.html
+%license COPYING
 
 
 %changelog

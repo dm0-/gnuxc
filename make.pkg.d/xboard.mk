@@ -1,24 +1,24 @@
 xboard                  := xboard-4.8.0
 xboard_url              := http://ftpmirror.gnu.org/xboard/$(xboard).tar.gz
 
-prepare-xboard-rule:
-	$(EDIT) 's/ChessProgram fairymax/ChessProgram gnuchess/' $(xboard)/xboard.conf
+$(prepare-rule):
+	$(EDIT) 's/ChessProgram fairymax/ChessProgram gnuchess/' $(builddir)/xboard.conf
 
-configure-xboard-rule:
+$(configure-rule):
 # Hurd needs to support /dev/ptmx before grantpt can do anything.
-	cd $(xboard) && ./$(configure) \
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-silent-rules \
 		--enable-ptys ac_cv_func_grantpt=no \
 		--enable-sigint \
-		--enable-xpm \
 		--enable-zippy \
 		--with-x \
 		--with-Xaw \
-		--with-gtk
+		\
+		--with-gtk # Font rendering is horrible without this.
 
-build-xboard-rule:
-	$(MAKE) -C $(xboard) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-xboard-rule: $(call installed,font-adobe-100dpi gnuchess librsvg libXaw)
-	$(MAKE) -C $(xboard) install
+$(install-rule): $$(call installed,font-adobe-100dpi gnuchess librsvg libXaw)
+	$(MAKE) -C $(builddir) install

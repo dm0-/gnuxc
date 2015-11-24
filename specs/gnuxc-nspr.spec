@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nspr
-Version:        4.10.7
+Version:        4.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,7 +10,6 @@ Group:          System Environment/Libraries
 URL:            http://www.mozilla.org/projects/nspr/
 Source0:        http://ftp.mozilla.org/pub/nspr/releases/v%{version}/src/%{gnuxc_name}-%{version}.tar.gz
 
-Patch001:       http://hg.mozilla.org/projects/nspr/raw-rev/1fcea1618bb7#/%{gnuxc_name}-%{version}-posix-fix.patch
 Patch101:       %{gnuxc_name}-%{version}-hurd-port.patch
 
 BuildRequires:  gnuxc-gcc-c++
@@ -41,8 +40,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-mv %{gnuxc_name}/{*,.[^.]*} .
-%patch001 -p1
+mv %{gnuxc_name}/{*,.[!.]*} .
 %patch101
 
 %build
@@ -77,7 +75,7 @@ rm -f %{buildroot}%{gnuxc_datadir}/aclocal/nspr.m4
 %{gnuxc_libdir}/libnspr4.so
 %{gnuxc_libdir}/libplc4.so
 %{gnuxc_libdir}/libplds4.so
-%doc LICENSE
+%license LICENSE
 
 %files devel
 %{_bindir}/%{gnuxc_target}-nspr-config

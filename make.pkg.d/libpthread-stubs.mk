@@ -1,12 +1,11 @@
 libpthread-stubs        := libpthread-stubs-0.3
 libpthread-stubs_url    := http://xcb.freedesktop.org/dist/$(libpthread-stubs).tar.bz2
 
-configure-libpthread-stubs-rule:
-	cd $(libpthread-stubs) && ./$(configure) \
-		LIBS=-lpthread
+$(configure-rule):
+	cd $(builddir) && ./$(configure)
 
-build-libpthread-stubs-rule:
-	$(MAKE) -C $(libpthread-stubs) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libpthread-stubs-rule: $(call installed,glibc)
-	$(MAKE) -C $(libpthread-stubs) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

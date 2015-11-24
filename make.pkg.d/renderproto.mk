@@ -1,12 +1,12 @@
 renderproto             := renderproto-0.11.1
 renderproto_url         := http://xorg.freedesktop.org/releases/individual/proto/$(renderproto).tar.bz2
 
-configure-renderproto-rule:
-	cd $(renderproto) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-strict-compilation
 
-build-renderproto-rule:
-	$(MAKE) -C $(renderproto) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-renderproto-rule: $(call installed,xextproto)
-	$(MAKE) -C $(renderproto) install
+$(install-rule): $$(call installed,xextproto)
+	$(MAKE) -C $(builddir) install

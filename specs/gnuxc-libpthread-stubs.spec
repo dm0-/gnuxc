@@ -24,8 +24,7 @@ Provides:       %{name}-devel = %{version}-%{release}
 %setup -q -n %{gnuxc_name}-%{version}
 
 %build
-%gnuxc_configure \
-    LIBS=-lpthread
+%gnuxc_configure
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -34,7 +33,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 
 %files
 %{gnuxc_libdir}/pkgconfig/pthread-stubs.pc
-%doc COPYING README
+%doc README
+%license COPYING
 
 
 %changelog

@@ -1,16 +1,20 @@
-xorg-server             := xorg-server-1.16.3
+xorg-server             := xorg-server-1.18.0
 xorg-server_url         := http://xorg.freedesktop.org/releases/individual/xserver/$(xorg-server).tar.bz2
 
-prepare-xorg-server-rule:
-	$(ECHO) 'install-sdkHEADERS:' >> $(xorg-server)/Makefile.in
+$(prepare-rule):
+# Fix memory corruption (sometimes segfaults when client programs are started).
+	$(DOWNLOAD) 'http://bugs.freedesktop.org/attachment.cgi?id='117194 | $(PATCH) -d $(builddir) -p1
+# Fix the install-headers target.
+	$(ECHO) 'install-sdkHEADERS:' >> $(builddir)/Makefile.in
 
-configure-xorg-server-rule:
-	cd $(xorg-server) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--disable-suid-wrapper \
 		--enable-debug \
 		--enable-dga \
 		--enable-dpms \
+		--enable-glx \
 		--enable-int10-module \
 		--enable-ipv6 \
 		--enable-local-transport \
@@ -42,21 +46,25 @@ configure-xorg-server-rule:
 		--disable-dri \
 		--disable-dri2 \
 		--disable-dri3 \
-		--disable-glx \
+		--disable-libdrm \
+		--disable-libunwind \
 		--disable-record \
 		--disable-screensaver \
-		--disable-selective-werror
+		--disable-selective-werror \
+		--disable-strict-compilation \
+		--disable-unit-tests \
+		CFLAGS='$(CFLAGS) -O0 -g3'
 
-build-xorg-server-rule:
-	$(MAKE) -C $(xorg-server) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-xorg-server-rule: $(call installed,bigreqsproto damageproto fixesproto libpciaccess libxcb libXdmcp libXext libXfont libXinerama libxkbfile nettle pixman presentproto randrproto renderproto resourceproto videoproto xcmiscproto xf86dgaproto)
-	$(MAKE) -C $(xorg-server) install install-headers
-	$(INSTALL) -Dpm 644 $(xorg-server)/tmpfiles.conf $(DESTDIR)/usr/lib/tmpfiles.d/xorg-server.conf
+$(install-rule): $$(call installed,bigreqsproto damageproto fixesproto libpciaccess libXdmcp libXext libXfont libXinerama libxkbfile mesa nettle pixman presentproto randrproto renderproto resourceproto videoproto xcb-util-keysyms xcmiscproto xf86dgaproto)
+	$(MAKE) -C $(builddir) install install-headers
+	$(INSTALL) -Dpm 644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/xorg-server.conf
 # Lazily work around --enable-install-setuid requiring root.
-	chmod u+s $(DESTDIR)/usr/bin/Xorg
+	chmod 4755 $(DESTDIR)/usr/bin/Xorg
 
 # Provide the configuration to manage X's /tmp files as root.
-$(xorg-server)/tmpfiles.conf: | $(xorg-server)
+$(call addon-file,tmpfiles.conf): | $$(@D)
 	$(ECHO) 'd /tmp/.X11-unix 1777' > $@
-$(call prepared,xorg-server): $(xorg-server)/tmpfiles.conf
+$(prepared): $(call addon-file,tmpfiles.conf)

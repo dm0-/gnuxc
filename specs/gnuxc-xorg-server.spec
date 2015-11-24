@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/xorg/modules/
 
 Name:           gnuxc-xorg-server
-Version:        1.16.3
+Version:        1.18.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -13,19 +13,23 @@ Group:          User Interface/X
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/xserver/%{gnuxc_name}-%{version}.tar.bz2
 
+Patch001:       http://bugs.freedesktop.org/attachment.cgi?id=117194#/%{gnuxc_name}-%{version}-fix-segfaults.patch
+
 BuildRequires:  gnuxc-bigreqsproto
 BuildRequires:  gnuxc-damageproto
 BuildRequires:  gnuxc-fixesproto
 BuildRequires:  gnuxc-font-util-devel
+BuildRequires:  gnuxc-inputproto
 BuildRequires:  gnuxc-libpciaccess-devel
-BuildRequires:  gnuxc-libxcb-devel
+BuildRequires:  gnuxc-xcb-util-keysyms-devel
 BuildRequires:  gnuxc-libXdmcp-devel
-BuildRequires:  gnuxc-libXext-devel
 BuildRequires:  gnuxc-libXfont-devel
 BuildRequires:  gnuxc-libXinerama-devel
 BuildRequires:  gnuxc-libxkbfile-devel
+BuildRequires:  gnuxc-mesa-devel
 BuildRequires:  gnuxc-nettle-devel
 BuildRequires:  gnuxc-pixman-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-presentproto
 BuildRequires:  gnuxc-randrproto
 BuildRequires:  gnuxc-renderproto
@@ -61,6 +65,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch001 -p1
 echo 'install-sdkHEADERS:' >> Makefile.in
 
 %build
@@ -68,9 +73,11 @@ echo 'install-sdkHEADERS:' >> Makefile.in
     --disable-docs --disable-devel-docs \
     \
     --disable-silent-rules \
+    --disable-suid-wrapper \
     --enable-debug \
     --enable-dga \
     --enable-dpms \
+    --enable-glx \
     --enable-int10-module \
     --enable-ipv6 \
     --enable-local-transport \
@@ -102,10 +109,11 @@ echo 'install-sdkHEADERS:' >> Makefile.in
     --disable-dri \
     --disable-dri2 \
     --disable-dri3 \
-    --disable-glx \
+    --disable-libdrm \
     --disable-record \
     --disable-screensaver \
-    --disable-selective-werror
+    --disable-selective-werror \
+    --disable-strict-compilation 
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -115,7 +123,7 @@ echo 'install-sdkHEADERS:' >> Makefile.in
 rm -f %{buildroot}%{gnuxc_bindir}/{cvt,gtf,X,Xnest,Xorg,Xvfb}
 
 # We don't need libtool's help.
-rm -f %{buildroot}%{gnuxc_libdir}/xorg/modules/{lib*.la,multimedia/*_drv.la}
+rm -f %{buildroot}%{gnuxc_libdir}/xorg/modules{,/extensions}/lib*.la
 
 # This functionality should be used from the system package.
 rm -rf %{buildroot}%{gnuxc_datadir}/aclocal
@@ -127,8 +135,9 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %dir %{gnuxc_libdir}/xorg
 %dir %{gnuxc_libdir}/xorg/modules
-%dir %{gnuxc_libdir}/xorg/modules/multimedia
+%dir %{gnuxc_libdir}/xorg/modules/extensions
 %{gnuxc_libdir}/xorg/protocol.txt
+%{gnuxc_libdir}/xorg/modules/extensions/libglx.so
 %{gnuxc_libdir}/xorg/modules/libexa.so
 %{gnuxc_libdir}/xorg/modules/libfbdevhw.so
 %{gnuxc_libdir}/xorg/modules/libfb.so
@@ -138,21 +147,16 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/xorg/modules/libvbe.so
 %{gnuxc_libdir}/xorg/modules/libvgahw.so
 %{gnuxc_libdir}/xorg/modules/libwfb.so
-%{gnuxc_libdir}/xorg/modules/multimedia/bt829_drv.so
-%{gnuxc_libdir}/xorg/modules/multimedia/fi1236_drv.so
-%{gnuxc_libdir}/xorg/modules/multimedia/msp3430_drv.so
-%{gnuxc_libdir}/xorg/modules/multimedia/tda8425_drv.so
-%{gnuxc_libdir}/xorg/modules/multimedia/tda9850_drv.so
-%{gnuxc_libdir}/xorg/modules/multimedia/tda9885_drv.so
-%{gnuxc_libdir}/xorg/modules/multimedia/uda1380_drv.so
 %{gnuxc_sharedstatedir}/X11
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/xorg
 %{gnuxc_libdir}/pkgconfig/xorg-server.pc
 
 %files static
+%{gnuxc_libdir}/xorg/modules/extensions/libglx.a
 %{gnuxc_libdir}/xorg/modules/libexa.a
 %{gnuxc_libdir}/xorg/modules/libfb.a
 %{gnuxc_libdir}/xorg/modules/libfbdevhw.a
@@ -162,13 +166,6 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/xorg/modules/libvbe.a
 %{gnuxc_libdir}/xorg/modules/libvgahw.a
 %{gnuxc_libdir}/xorg/modules/libwfb.a
-%{gnuxc_libdir}/xorg/modules/multimedia/bt829_drv.a
-%{gnuxc_libdir}/xorg/modules/multimedia/fi1236_drv.a
-%{gnuxc_libdir}/xorg/modules/multimedia/msp3430_drv.a
-%{gnuxc_libdir}/xorg/modules/multimedia/tda8425_drv.a
-%{gnuxc_libdir}/xorg/modules/multimedia/tda9850_drv.a
-%{gnuxc_libdir}/xorg/modules/multimedia/tda9885_drv.a
-%{gnuxc_libdir}/xorg/modules/multimedia/uda1380_drv.a
 
 
 %changelog

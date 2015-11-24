@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgcrypt
-Version:        1.6.2
+Version:        1.6.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -77,8 +77,9 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libgcrypt.so.20
-%{gnuxc_libdir}/libgcrypt.so.20.0.2
-%doc AUTHORS ChangeLog* COPYING* LICENSES NEWS README* THANKS TODO
+%{gnuxc_libdir}/libgcrypt.so.20.0.4
+%doc AUTHORS ChangeLog* NEWS README* THANKS TODO
+%license COPYING COPYING.LIB LICENSES
 
 %files devel
 %{_bindir}/%{gnuxc_target}-libgcrypt-config

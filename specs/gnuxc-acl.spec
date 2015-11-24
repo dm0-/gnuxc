@@ -12,6 +12,8 @@ Source0:        http://download.savannah.gnu.org/releases/acl/%{gnuxc_name}-%{ve
 
 BuildRequires:  gnuxc-attr-devel
 
+BuildRequires:  gettext
+
 %description
 %{summary}.
 
@@ -66,7 +68,8 @@ rm -f %{buildroot}%{gnuxc_datadir}/locale/??/LC_MESSAGES/acl.mo
 %files
 %{gnuxc_libdir}/libacl.so.1
 %{gnuxc_libdir}/libacl.so.1.1.0
-%doc doc/*.txt doc/CHANGES doc/COPYING* doc/INSTALL doc/PORTING doc/TODO README
+%doc doc/*.txt doc/CHANGES doc/PORTING doc/TODO README
+%license doc/COPYING doc/COPYING.LGPL
 
 %files devel
 %{gnuxc_includedir}/acl

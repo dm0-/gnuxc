@@ -1,13 +1,13 @@
 gdbm                    := gdbm-1.11
 gdbm_url                := http://ftpmirror.gnu.org/gdbm/$(gdbm).tar.gz
 
-configure-gdbm-rule:
-	cd $(gdbm) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-silent-rules
 
-build-gdbm-rule:
-	$(MAKE) -C $(gdbm) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gdbm-rule: $(call installed,glibc)
-	$(MAKE) -C $(gdbm) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

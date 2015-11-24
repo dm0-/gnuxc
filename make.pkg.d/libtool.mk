@@ -1,14 +1,14 @@
-libtool                 := libtool-2.4.4
+libtool                 := libtool-2.4.6
 libtool_url             := http://ftpmirror.gnu.org/libtool/$(libtool).tar.xz
 
-configure-libtool-rule:
-	cd $(libtool) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-ltdl-install \
 		ac_cv_path_SED='$(SED)'
 
-build-libtool-rule:
-	$(MAKE) -C $(libtool) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libtool-rule: $(call installed,sed tar)
-	$(MAKE) -C $(libtool) install
+$(install-rule): $$(call installed,sed tar)
+	$(MAKE) -C $(builddir) install

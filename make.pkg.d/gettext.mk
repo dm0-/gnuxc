@@ -1,14 +1,11 @@
-gettext                 := gettext-0.19.4
-gettext_url             := http://ftpmirror.gnu.org/gettext/$(gettext).tar.lz
+gettext                 := gettext-0.19.6
+gettext_url             := http://ftpmirror.gnu.org/gettext/$(gettext).tar.xz
 
-prepare-gettext-rule:
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(gettext)/build-aux/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(gettext)/gettext-tools/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(gettext)/gettext-tools/configure
+$(prepare-rule):
+	$(call drop-rpath,gettext-tools/configure,build-aux/ltmain.sh)
 
-configure-gettext-rule:
-	cd $(gettext) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--enable-acl \
 		--enable-c++ \
@@ -28,8 +25,8 @@ configure-gettext-rule:
 		\
 		--disable-java
 
-build-gettext-rule:
-	$(MAKE) -C $(gettext) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gettext-rule: $(call installed,acl bzip2 gcc git gzip libcroco libunistring ncurses tar)
-	$(MAKE) -C $(gettext) -j1 install
+$(install-rule): $$(call installed,acl bzip2 gcc git gzip libcroco libunistring ncurses tar)
+	$(MAKE) -C $(builddir) -j1 install

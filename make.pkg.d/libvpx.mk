@@ -1,24 +1,29 @@
-libvpx                  := libvpx-1.3.0
-libvpx_branch           := $(subst -,-v,$(libvpx))
-libvpx_url              := http://webm.googlecode.com/files/$(libvpx_branch).tar.bz2
+libvpx                  := libvpx-1.5.0
+libvpx_url              := http://storage.googleapis.com/downloads.webmproject.org/releases/webm/$(libvpx).tar.bz2
 
-configure-libvpx-rule:
-	cd $(libvpx) && CROSS='$(host)-' ./configure \
+$(configure-rule):
+	cd $(builddir) && CROSS='$(host)-' ./configure \
 		--target=generic-gnu \
 		--prefix=/usr \
 		--enable-debug \
 		--enable-error-concealment \
 		--enable-extra-warnings \
-		--enable-install-{bin,lib}s \
 		--enable-internal-stats \
-		--enable-mem-tracker \
+		--enable-multi-res-encoding \
+		--enable-onthefly-bitpacking \
 		--enable-pic \
-		--enable-{,vp9-}postproc \
+		--enable-{,vp9-}{postproc,temporal-denoising} \
 		--enable-shared \
-		--enable-vp{8,9}
+		--enable-vp{8,9} \
+		--enable-vp9-highbitdepth \
+		--enable-webm-io \
+		\
+		--disable-libyuv \
+		--disable-unit-tests \
+		--disable-vp10
 
-build-libvpx-rule:
-	$(MAKE) -C $(libvpx) all V=1
+$(build-rule):
+	$(MAKE) -C $(builddir) all V=1
 
-install-libvpx-rule: $(call installed,glibc)
-	$(MAKE) -C $(libvpx) install V=1
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install V=1

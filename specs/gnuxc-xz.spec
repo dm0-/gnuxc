@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-xz
-Version:        5.2.0
+Version:        5.2.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -66,7 +66,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %files
 %{gnuxc_libdir}/liblzma.so.5
 %{gnuxc_libdir}/liblzma.so.%{version}
-%doc AUTHORS ChangeLog COPYING* INSTALL NEWS PACKAGERS README THANKS TODO
+%doc AUTHORS ChangeLog NEWS README THANKS TODO
+%license COPYING COPYING.GPLv2 COPYING.GPLv3 COPYING.LGPLv2.1
 
 %files devel
 %{gnuxc_includedir}/lzma

@@ -1,14 +1,14 @@
-mpfr                    := mpfr-3.1.2
+mpfr                    := mpfr-3.1.3
 mpfr_url                := http://ftpmirror.gnu.org/mpfr/$(mpfr).tar.xz
 
-configure-mpfr-rule:
-	cd $(mpfr) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-assert \
 		--enable-thread-safe \
 		--enable-warnings
 
-build-mpfr-rule:
-	$(MAKE) -C $(mpfr) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-mpfr-rule: $(call installed,gmp)
-	$(MAKE) -C $(mpfr) install
+$(install-rule): $$(call installed,gmp)
+	$(MAKE) -C $(builddir) install

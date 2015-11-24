@@ -1,9 +1,8 @@
-gmp                     := gmp-6.0.0a
-gmp_branch              := gmp-6.0.0
-gmp_url                 := http://ftpmirror.gnu.org/gmp/$(gmp).tar.lz
+gmp                     := gmp-6.1.0
+gmp_url                 := http://ftpmirror.gnu.org/gmp/$(gmp).tar.xz
 
-configure-gmp-rule:
-	cd $(gmp) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--enable-assembly \
@@ -11,9 +10,9 @@ configure-gmp-rule:
 		--enable-cxx \
 		--enable-fft
 
-build-gmp-rule:
-	$(MAKE) -C $(gmp) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gmp-rule: $(call installed,glibc)
-	$(MAKE) -C $(gmp) install \
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install \
 		includeexecdir='$${includedir}'

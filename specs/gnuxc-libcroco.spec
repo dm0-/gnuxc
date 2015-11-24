@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libcroco
-Version:        0.6.8
+Version:        0.6.9
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,6 +12,7 @@ Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/0.6/%{gnuxc
 
 BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-libxml2-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -72,7 +73,8 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 %files
 %{gnuxc_libdir}/libcroco-0.6.so.3
 %{gnuxc_libdir}/libcroco-0.6.so.3.0.1
-%doc AUTHORS ChangeLog COPYING* HACKING NEWS README TODO
+%doc AUTHORS ChangeLog HACKING NEWS README TODO
+%license COPYING COPYING.LIB
 
 %files devel
 %{_bindir}/%{gnuxc_target}-croco-0.6-config

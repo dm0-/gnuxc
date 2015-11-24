@@ -1,34 +1,37 @@
-icecat                  := icecat-31.2.0
-icecat_url              := http://ftpmirror.gnu.org/$(subst -,/,$(icecat))/$(icecat).tar.xz
+icecat                  := icecat-38.3.0
+icecat_url              := http://ftpmirror.gnu.org/$(subst -,/,$(icecat))/$(icecat)-gnu1.tar.bz2
 
-prepare-icecat-rule:
-	$(PATCH) -d $(icecat) < $(patchdir)/$(icecat)-hurd-port.patch
+$(prepare-rule):
+	$(call apply,hurd-port)
+	$(EDIT) 's/ atk-bridge-2.0//' $(builddir)/configure
 # These configure scripts must be created with old autoconf versions.
-#	cd $(icecat) && autoreconf-2.13 --force --include-deps
-#	cd $(icecat)/js/src && autoconf-2.13
+#	cd $(builddir) && autoreconf-2.13 --force --include-deps
+#	cd $(builddir)/js/src && autoconf-2.13
 
 ifneq ($(host),$(build))
-configure-icecat-rule: configure := $(configure:--docdir%=)
-configure-icecat-rule: configure := $(configure:--localedir%=)
-configure-icecat-rule: configure := $(subst datarootdir,datadir,$(configure:--datadir%=))
-configure-icecat-rule: export NSPR_CONFIG := /usr/bin/$(host)-nspr-config
-configure-icecat-rule: export NSS_CONFIG := /usr/bin/$(host)-nss-config
-configure-icecat-rule: export PYTHON := python
-configure-icecat-rule:
-	$(MKDIR) $(icecat)/hurd && cd $(icecat)/hurd && \
+$(configure-rule): configure := $(configure:--docdir%=)
+$(configure-rule): configure := $(configure:--localedir%=)
+$(configure-rule): configure := $(subst datarootdir,datadir,$(configure:--datadir%=))
+$(configure-rule): private override export NSPR_CONFIG := /usr/bin/$(host)-nspr-config
+$(configure-rule): private override export NSS_CONFIG := /usr/bin/$(host)-nss-config
+$(configure-rule): private override export PYTHON := python
+$(configure-rule):
+	$(MKDIR) $(builddir)/hurd && cd $(builddir)/hurd && \
 	CROSS_COMPILE=1 HOST_AR=gcc-ar HOST_CC=gcc HOST_CXX=g++ HOST_RANLIB=gcc-ranlib ../$(configure) \
 		--disable-official-branding \
 		--disable-strip --disable-install-strip \
 		--disable-tree-freetype \
-		--enable-debug --enable-debug-symbols \
-		--enable-default-toolkit=cairo-gtk2 \
+		--enable-debug-symbols \
+		--enable-default-toolkit=cairo-gtk3 \
+		--enable-opus \
 		--enable-readline \
-		--enable-shared-js \
 		--enable-system-cairo \
 		--enable-system-extension-dirs \
 		--enable-system-ffi \
 		--enable-system-pixman \
 		--enable-system-sqlite \
+		--enable-webgl \
+		--enable-webm \
 		--with-pthreads \
 		--with-system-bz2 \
 		--with-system-icu \
@@ -42,10 +45,10 @@ configure-icecat-rule:
 		--with-x \
 		\
 		--disable-crashreporter \
+		--disable-debug \
+		--disable-shared-js \
 		--disable-system-hunspell \
 		--disable-updater \
-		--enable-opus \
-		--enable-webm \
 		--without-system-libxul \
 		\
 		--disable-callgrind \
@@ -53,9 +56,11 @@ configure-icecat-rule:
 		--disable-instruments \
 		--disable-profiling \
 		--disable-shark \
+		--disable-tests \
 		--disable-valgrind \
 		--disable-vtune \
 		\
+		--disable-accessibility \
 		--disable-alsa \
 		--disable-dbus \
 		--disable-gamepad \
@@ -68,18 +73,21 @@ configure-icecat-rule:
 		--disable-raw \
 		--disable-skia \
 		--disable-wave \
-		--disable-webgl \
 		--disable-webrtc \
 		--disable-webspeech \
 		--disable-wmf
 
-build-icecat-rule:
-	$(MAKE) -C $(icecat)/hurd all
+$(build-rule):
+	$(MAKE) -C $(builddir)/hurd all
 
-install-icecat-rule: $(call installed,gtk2 icu4c libevent libvpx nss)
-	$(MAKE) -C $(icecat)/hurd install
-	$(INSTALL) -Dpm 644 $(icecat)/browser/branding/nightly/default16.png $(DESTDIR)/usr/share/icons/hicolor/16x16/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(icecat)/browser/branding/nightly/default32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(icecat)/browser/branding/nightly/default48.png $(DESTDIR)/usr/share/icons/hicolor/48x48/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(icecat)/browser/branding/nightly/mozicon128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/icecat.png
+$(install-rule): $$(call installed,gtk+ icu4c libevent libvpx nss)
+	$(MAKE) -C $(builddir)/hurd install
+	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default16.png $(DESTDIR)/usr/share/icons/hicolor/16x16/apps/icecat.png
+	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default22.png $(DESTDIR)/usr/share/icons/hicolor/22x22/apps/icecat.png
+	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default24.png $(DESTDIR)/usr/share/icons/hicolor/24x24/apps/icecat.png
+	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/icecat.png
+	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/content/icon48.png $(DESTDIR)/usr/share/icons/hicolor/48x48/apps/icecat.png
+	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/content/icon64.png $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/icecat.png
+	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/mozicon128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/icecat.png
+	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default256.png $(DESTDIR)/usr/share/icons/hicolor/256x256/apps/icecat.png
 endif

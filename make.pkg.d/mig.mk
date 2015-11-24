@@ -1,6 +1,6 @@
-mig                     := mig-1.4-5a2d1f
+mig                     := mig-1.6-c01a23
 mig_branch              := master
-mig_snap                := 5a2d1fb4db65d847d5bc9ea1cf5192bd81d8c7e5
+mig_snap                := c01a23d17a84fc42caba4031241c050e4a533d3f
 mig_url                 := git://git.sv.gnu.org/hurd/mig.git
 
 ifeq ($(host),$(build))
@@ -9,14 +9,14 @@ else
 export MIG = $(host)-mig
 endif
 
-prepare-mig-rule:
-	$(PATCH) -d $(mig) < $(patchdir)/$(mig)-drop-perl.patch
+$(prepare-rule):
+	$(call apply,drop-perl)
 
-configure-mig-rule:
-	cd $(mig) && ./$(configure)
+$(configure-rule):
+	cd $(builddir) && ./$(configure)
 
-build-mig-rule:
-	$(MAKE) -C $(mig) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-mig-rule: $(call installed,flex)
-	$(MAKE) -C $(mig) install
+$(install-rule): $$(call installed,flex)
+	$(MAKE) -C $(builddir) install

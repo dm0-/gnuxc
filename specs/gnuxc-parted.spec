@@ -74,7 +74,8 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libparted.so.2.0.1
 %{gnuxc_libdir}/libparted-fs-resize.so.0
 %{gnuxc_libdir}/libparted-fs-resize.so.0.0.1
-%doc AUTHORS BUGS ChangeLog COPYING NEWS README THANKS TODO
+%doc AUTHORS BUGS ChangeLog NEWS README THANKS TODO
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/parted

@@ -1,42 +1,190 @@
-lsh                     := lsh-2.1
-lsh_url                 := http://ftpmirror.gnu.org/lsh/$(lsh).tar.gz
+lsh                     := lsh-2.9.1
+lsh_snap                := 5bb9d9b0347219747317a1bbeda5b0e02b4c68ca
+lsh_branch              := lsh-$(lsh_snap)-$(lsh_snap)
+lsh_url                 := http://git.lysator.liu.se/lsh/lsh/repository/archive.tar.bz2?ref=$(lsh_snap)&.tar.bz2
 
-prepare-lsh-rule:
-	$(PATCH) -d $(lsh) < $(patchdir)/$(lsh)-fhs.patch
+$(prepare-rule):
+	$(call apply,update-nettle fhs)
+	cd $(builddir) && ./.bootstrap links
+	$(AUTOGEN) $(builddir) $(builddir)/argp $(builddir)/sftp $(builddir)/spki
+# Take out obsolete man pages.
+	$(RM) $(builddir)/doc/example.1 $(builddir)/doc/lsh_*.1 $(builddir)/doc/lsh-writekey.1
+# Don't require TeX etc. for making PDFs.
+	$(EDIT) 's/ lsh.pdf / /' $(builddir)/doc/Makefile.in
+# System sources don't get enough entropy yet, so it will require interraction.
+	$(EDIT) 's/^\(  *get_\)system/\1dev_random/' $(builddir)/src/lsh-make-seed.c
 
-configure-lsh-rule:
-	cd $(lsh) && ./$(configure)
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
+		--enable-{agent,tcp,x11}-forward \
+		--enable-ipv6 \
+		--enable-srp \
+		--enable-utmp \
+		--with-pty \
+		--with-scheme=guile \
+		--with-system-argp \
+		--with-x \
+		\
+		--disable-gss \
+		--disable-kerberos \
+		--disable-pam \
+		--without-system-libspki \
+		--without-tcp-wrappers
 
-build-lsh-rule:
-	$(MAKE) -C $(lsh) all
+$(build-rule):
+	$(MAKE) -C $(builddir) -j1 all
 
-install-lsh-rule: $(call installed,liboop nettle)
-	$(MAKE) -C $(lsh) install
-	$(INSTALL) -Dpm 600 $(lsh)/yarrow-seed-file $(DESTDIR)/var/lib/lsh/yarrow-seed-file
-	$(INSTALL) -Dpm 644 $(lsh)/bashrc.sh $(DESTDIR)/etc/bashrc.d/lsh.sh
-	$(INSTALL) -Dpm 644 $(lsh)/dmd.scm $(DESTDIR)/etc/dmd.d/lshd.scm
-	$(INSTALL) -Dpm 644 $(lsh)/syslog.conf $(DESTDIR)/etc/syslog.d/lsh.conf
+$(install-rule): $$(call installed,liboop libXau nettle)
+	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 755 $(call addon-file,scp.sh)          $(DESTDIR)/usr/bin/scp
+	$(INSTALL) -Dpm 755 $(call addon-file,sftp.sh)         $(DESTDIR)/usr/bin/sftp
+	$(INSTALL) -Dpm 755 $(call addon-file,ssh.sh)          $(DESTDIR)/usr/bin/ssh
+	$(INSTALL) -Dpm 644 $(call addon-file,dmd.scm)         $(DESTDIR)/etc/dmd.d/lshd.scm
+	$(INSTALL) -Dpm 644 $(call addon-file,lshd.conf)       $(DESTDIR)/etc/lshd/lshd.conf
+	$(INSTALL) -Dpm 644 $(call addon-file,connection.conf) $(DESTDIR)/etc/lshd/lshd-connection.conf
+	$(INSTALL) -Dpm 644 $(call addon-file,userauth.conf)   $(DESTDIR)/etc/lshd/lshd-userauth.conf
+	$(INSTALL) -Dpm 644 $(call addon-file,syslog.conf)     $(DESTDIR)/etc/syslog.d/lsh.conf
+	$(INSTALL) -dm 755 $(DESTDIR)/var/lib/lsh $(DESTDIR)/var/log/lsh
+	$(INSTALL) -Dm 644 /dev/null $(DESTDIR)/var/log/syslog/lshd.log
+# Manually install man pages.
+	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/man/man{1,5,8}
+	$(INSTALL) -pm 644 $(builddir)/doc/*.1 $(DESTDIR)/usr/share/man/man1/
+	$(INSTALL) -pm 644 $(builddir)/doc/*.5 $(DESTDIR)/usr/share/man/man5/
+	$(INSTALL) -pm 644 $(builddir)/doc/*.8 $(DESTDIR)/usr/share/man/man8/
 
-# Provide a bash alias that is closer to "ssh" from more common SSH clients.
-$(lsh)/bashrc.sh: | $(lsh)
-	$(ECHO) "alias ssh='lsh --sloppy-host-authentication --capture-to ~/.lsh/host-acls'" > $@
-$(call prepared,lsh): $(lsh)/bashrc.sh
+# Write inline files.
+$(call addon-file,connection.conf dmd.scm lshd.conf scp.sh sftp.sh ssh.sh syslog.conf userauth.conf): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,connection.conf dmd.scm lshd.conf scp.sh sftp.sh ssh.sh syslog.conf userauth.conf)
+
+
+# Provide a default server configuration file.
+override define contents
+enable-core-file = no
+hostkey = /etc/lshd/host-key
+pid-file = /run/lshd.pid
+port = 22
+
+# Offer the following services.
+service ssh-userauth = { lshd-userauth --session-id $(session_id) }
+
+# Choose logging destinations.
+use-syslog = no
+log-file = /var/log/lsh/lshd.log
+
+# Choose logging output.
+quiet = no
+verbose = yes
+debug = no
+trace = no
+endef
+$(call addon-file,lshd.conf): private override contents := $(value contents)
+
+
+# Provide a default user authentication configuration file.
+override define contents
+allow-password = no
+allow-publickey = yes
+allow-root-login = no
+
+# Offer the following services.
+service ssh-connection = { lshd-connection --helper-fd $(helper_fd) }
+
+# Choose logging destinations.
+use-syslog = no
+log-file = /var/log/lsh/lshd-userauth.log
+
+# Choose logging output.
+quiet = no
+verbose = yes
+debug = no
+trace = no
+endef
+$(call addon-file,userauth.conf): private override contents := $(value contents)
+
+
+# Provide a default connection configuration file.
+override define contents
+allow-exec = yes
+allow-pty = yes
+allow-tcpforward = yes
+allow-session = yes
+allow-shell = yes
+allow-x11 = yes
+
+# Offer the following subsystems.
+#subsystem NAME = { COMMAND }
+
+# Choose logging destinations.
+use-syslog = no
+log-file = /var/log/lsh/lshd-connection.log
+
+# Choose logging output.
+quiet = no
+verbose = yes
+debug = no
+trace = no
+endef
+$(call addon-file,connection.conf): private override contents := $(value contents)
+
+
+# Provide a command similar to "scp" from OpenSSH.
+override define contents
+#!/bin/bash -e
+LCP_RSH=ssh exec ${LCP:-lcp} --force "$@"
+endef
+$(call addon-file,scp.sh): private override contents := $(value contents)
+
+
+# Provide a command similar to "sftp" from OpenSSH.
+override define contents
+#!/bin/bash -e
+LSFTP_RSH=ssh exec ${LSFTP:-lsftp} "$@"
+endef
+$(call addon-file,sftp.sh): private override contents := $(value contents)
+
+
+# Provide a command similar to "ssh" from OpenSSH.
+override define contents
+#!/bin/bash -e
+# Mimic OpenSSH defaults.
+exec ${LSH:-lsh} ^
+    --capture-to "$HOME/.lsh/host-acls" ^
+    --no --identity "$HOME/.lsh/identity" ^
+    --no-use-gateway ^
+    --sloppy-host-authentication ^
+    "$@"
+endef
+$(call addon-file,ssh.sh): private override contents := $(subst ^,\,$(value contents))
+
+
+# Provide a syslog configuration to log "lshd*" tagged messages.
+override define contents
+! lshd
+*.*					/var/log/syslog/lshd.log
+! lshd-connection
+*.*					/var/log/syslog/lshd.log
+! lshd-userauth
+*.*					/var/log/syslog/lshd.log
+endef
+$(call addon-file,syslog.conf): private override contents := $(value contents)
+
 
 # Provide a system service definition for "lshd".
-$(lsh)/dmd.scm: | $(lsh)
-	$(ECHO) -e "(define lshd-command\n  '"'("/usr/sbin/lshd"\n    "--pid-file=/var/run/lshd.pid"))' > $@
-	$(ECHO) -e "(define (lshd-start . args)\n  (unless (and-map file-exists? '"'("/etc/lsh_host_key" "/etc/lsh_host_key.pub"))' >> $@
-	$(ECHO) -e '    (system "/usr/bin/lsh-keygen --server | /usr/bin/lsh-writekey --server"))\n  (fork+exec-command lshd-command))' >> $@
-	$(ECHO) -e '(make <service>\n  #:docstring "The lshd service controls the GNU SSH server."' >> $@
-	$(ECHO) -e "  #:provides '(lshd lsh ssh sshd)\n  #:requires '()\n  #:start lshd-start\n  #:stop (make-kill-destructor))" >> $@
-$(call prepared,lsh): $(lsh)/dmd.scm
-
-# Provide a syslog configuration to log "lshd" tagged messages.
-$(lsh)/syslog.conf: | $(lsh)
-	$(ECHO) -e '! lshd\n*.*\t\t\t\t\t/var/log/lshd.log' > $@
-$(call prepared,lsh): $(lsh)/syslog.conf
-
-# Provide a random seed file so it doesn't need to be generated at runtime.
-$(lsh)/yarrow-seed-file: | $(lsh)
-	dd if=/dev/random of=$@ bs=1 count=32
-$(call built,lsh): $(lsh)/yarrow-seed-file
+override define contents
+(define lshd-command '("/usr/sbin/lshd"))
+(define (lshd-start . args)
+  (unless (file-exists? "/var/lib/lsh/yarrow-seed-file")
+    (system* "/usr/bin/lsh-make-seed" "--quiet" "--server"))
+  (unless
+    (and-map file-exists? '("/etc/lshd/host-key" "/etc/lshd/host-key.pub"))
+    (system* "/usr/bin/lsh-keygen" "--quiet" "--server"))
+  (fork+exec-command lshd-command))
+(make <service>
+  #:docstring "The lshd service controls the GNU SSH server."
+  #:provides '(lshd lsh ssh sshd)
+  #:requires '()
+  #:start lshd-start
+  #:stop (make-kill-destructor))
+endef
+$(call addon-file,dmd.scm): private override contents := $(value contents)

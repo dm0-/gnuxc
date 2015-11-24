@@ -1,14 +1,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpng
-Version:        1.6.16
+Version:        1.6.19
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        zlib
 Group:          System Environment/Libraries
 URL:            http://www.libpng.org/pub/png/libpng.html
-Source0:        http://prdownloads.sourceforge.net/libpng/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
 
 Patch001:       http://prdownloads.sourceforge.net/libpng-apng/%{gnuxc_name}-%{version}-apng.patch.gz
 
@@ -71,8 +71,9 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpng16.so.16
-%{gnuxc_libdir}/libpng16.so.16.16.0
-%doc ANNOUNCE CHANGES INSTALL LICENSE README TODO
+%{gnuxc_libdir}/libpng16.so.16.19.0
+%doc ANNOUNCE CHANGES INSTALL README TODO
+%license LICENSE
 
 %files devel
 %{_bindir}/%{gnuxc_target}-libpng-config

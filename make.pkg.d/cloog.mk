@@ -1,11 +1,8 @@
-cloog                   := cloog-0.18.1
+cloog                   := cloog-0.18.4
 cloog_url               := http://www.bastoul.net/cloog/pages/download/$(cloog).tar.gz
 
-prepare-cloog-rule:
-	$(PATCH) -d $(cloog) < $(patchdir)/$(cloog)-update-isl.patch
-
-configure-cloog-rule:
-	cd $(cloog) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-portable-binary \
 		--with-gcc-arch=$(arch) \
@@ -13,8 +10,8 @@ configure-cloog-rule:
 		--with-isl=system \
 		--with-osl=system
 
-build-cloog-rule:
-	$(MAKE) -C $(cloog) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-cloog-rule: $(call installed,isl osl)
-	$(MAKE) -C $(cloog) install
+$(install-rule): $$(call installed,isl osl)
+	$(MAKE) -C $(builddir) install

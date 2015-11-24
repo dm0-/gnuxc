@@ -1,22 +1,22 @@
 zlib                    := zlib-1.2.8
 zlib_url                := http://zlib.net/$(zlib).tar.gz
 
-prepare-zlib-rule:
-	$(PATCH) -d $(zlib) < $(patchdir)/$(zlib)-add-soname.patch
-	$(EDIT) 's/ -L.{sharedlibdir}//g' $(zlib)/zlib.pc.in
+$(prepare-rule):
+	$(call apply,add-soname)
+	$(EDIT) 's/ -L.{sharedlibdir}//g' $(builddir)/zlib.pc.in
 
 ifneq ($(host),$(build))
-configure-zlib-rule: export CHOST = $(host)
+$(configure-rule): private override export CHOST = $(host)
 endif
-configure-zlib-rule:
-	cd $(zlib) && ./configure \
+$(configure-rule):
+	cd $(builddir) && ./configure \
 		--prefix=/usr \
 		--eprefix= \
 		--libdir='$${prefix}/lib' \
 		--sharedlibdir='$${exec_prefix}/lib'
 
-build-zlib-rule:
-	$(MAKE) -C $(zlib) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-zlib-rule: $(call installed,glibc)
-	$(MAKE) -C $(zlib) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

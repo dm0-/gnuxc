@@ -60,7 +60,8 @@ ln -fs libbz2.so.1.0 %{buildroot}%{gnuxc_libdir}/libbz2.so
 %files
 %{gnuxc_libdir}/libbz2.so.1.0
 %{gnuxc_libdir}/libbz2.so.%{version}
-%doc CHANGES LICENSE README*
+%doc CHANGES README*
+%license LICENSE
 
 %files devel
 %{gnuxc_includedir}/bzlib.h

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libunistring
-Version:        0.9.4
+Version:        0.9.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -60,7 +60,8 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_infodir}
 %files
 %{gnuxc_libdir}/libunistring.so.2
 %{gnuxc_libdir}/libunistring.so.2.0.0
-%doc AUTHORS BUGS ChangeLog COPYING* DEPENDENCIES HACKING NEWS README THANKS
+%doc AUTHORS BUGS ChangeLog HACKING NEWS README THANKS
+%license COPYING COPYING.LIB
 
 %files devel
 %{gnuxc_includedir}/unicase.h

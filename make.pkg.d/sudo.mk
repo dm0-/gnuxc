@@ -1,15 +1,12 @@
-sudo                    := sudo-1.8.11p2
+sudo                    := sudo-1.8.15
 sudo_url                := http://www.sudo.ws/sudo/dist/$(sudo).tar.gz
 
-prepare-sudo-rule:
-# Fix linking.
-	$(EDIT) 's/^TESTSUDOERS_LIBS *=.*/& -ldl/' $(sudo)/plugins/sudoers/Makefile.in
-	$(EDIT) 's/^LIBS *=.*/& -ldl/' $(sudo)/src/Makefile.in
+$(prepare-rule):
 # Don't require a password for the wheel group.
-	$(EDIT) '/%wheel .* NOPASSWD/s/^[# ]*//' $(sudo)/plugins/sudoers/sudoers.in
+	$(EDIT) '/%wheel .* NOPASSWD/s/^[# ]*//' $(builddir)/plugins/sudoers/sudoers.in
 
-configure-sudo-rule:
-	cd $(sudo) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-noargs-shell \
 		--disable-rpath \
 		--enable-env-debug \
@@ -17,6 +14,7 @@ configure-sudo-rule:
 		--enable-log-host \
 		--enable-pie \
 		--enable-shell-sets-home \
+		--enable-tmpfiles.d \
 		--enable-warnings \
 		--enable-zlib \
 		--with-devel \
@@ -27,25 +25,34 @@ configure-sudo-rule:
 		--with-man \
 		--with-noexec=/usr/lib/sudo/sudo_noexec.so \
 		--with-plugindir=/usr/lib/sudo \
-		--with-rundir=/var/lib/sudo \
+		--with-rundir=/run/sudo \
 		--with-secure-path=/usr/bin:/usr/sbin:/bin:/sbin \
 		--with-umask=0022 \
 		--without-lecture \
 		--without-sendmail \
 		\
-		--disable-shared-libutil --enable-static-sudoers
+		--disable-shared-libutil --enable-static-sudoers \
+		CPPFLAGS='-DAT_FDCWD=0 -DUTIME_NOW=0 -DUTIME_OMIT=0'
 
-build-sudo-rule:
-	$(MAKE) -C $(sudo) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-sudo-rule: $(call installed,zlib)
-	$(MAKE) -C $(sudo) install \
+$(install-rule): $$(call installed,zlib)
+	$(MAKE) -C $(builddir) install \
 		INSTALL_OWNER=
 	$(RMDIR) $(DESTDIR)/usr/libexec/sudo
-	$(INSTALL) -Dpm 644 $(sudo)/syslog.conf $(DESTDIR)/etc/syslog.d/sudo.conf
-	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/sudo.log
+	$(INSTALL) -Dpm 644 $(call addon-file,syslog.conf) $(DESTDIR)/etc/syslog.d/sudo.conf
+	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/syslog/sudo.log
+
+# Write inline files.
+$(call addon-file,syslog.conf): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,syslog.conf)
+
 
 # Provide a syslog configuration to log "sudo" tagged messages.
-$(sudo)/syslog.conf: | $(sudo)
-	$(ECHO) -e '! sudo\n*.*\t\t\t\t\t/var/log/sudo.log' > $@
-$(call prepared,sudo): $(sudo)/syslog.conf
+override define contents
+! sudo
+*.*					/var/log/syslog/sudo.log
+endef
+$(call addon-file,syslog.conf): private override contents := $(value contents)

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-p11-kit
-Version:        0.22.1
+Version:        0.23.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,6 +12,7 @@ Source0:        http://p11-glue.freedesktop.org/releases/%{gnuxc_name}-%{version
 
 BuildRequires:  gnuxc-libffi-devel
 BuildRequires:  gnuxc-libtasn1-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -32,7 +33,7 @@ applications that use %{gnuxc_name} on GNU systems.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' build/litter/ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -72,7 +73,8 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 %{gnuxc_libdir}/p11-kit-proxy.so
 %{gnuxc_libdir}/pkcs11
 %{gnuxc_sysconfdir}/pkcs11
-%doc AUTHORS ChangeLog COPYING HACKING NEWS README
+%doc AUTHORS ChangeLog HACKING NEWS README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/p11-kit-1

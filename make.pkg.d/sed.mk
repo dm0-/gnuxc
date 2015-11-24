@@ -3,17 +3,17 @@ sed_url                 := http://ftpmirror.gnu.org/sed/$(sed).tar.bz2
 
 export SED = /bin/sed
 
-configure-sed-rule:
-	cd $(sed) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--disable-rpath \
 		--without-included-regex \
 		--without-selinux
 
-build-sed-rule:
-	$(MAKE) -C $(sed) all \
+$(build-rule):
+	$(MAKE) -C $(builddir) all \
 		CPPFLAGS=-DPATH_MAX=4096
 
-install-sed-rule: $(call installed,glibc)
-	$(MAKE) -C $(sed) install
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install

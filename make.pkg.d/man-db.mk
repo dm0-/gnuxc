@@ -1,8 +1,12 @@
-man-db                  := man-db-2.7.1
+man-db                  := man-db-2.7.5
 man-db_url              := http://download.savannah.gnu.org/releases/man-db/$(man-db).tar.xz
 
-configure-man-db-rule:
-	cd $(man-db) && ./$(configure) \
+$(prepare-rule):
+# Since we use --disable-setuid, remove the "man" user from the tmpfiles conf.
+	$(EDIT) 's/ 2755 man / 0755 root /' $(builddir)/init/systemd/man-db.conf
+
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-setuid \
 		--disable-silent-rules \
@@ -12,14 +16,14 @@ configure-man-db-rule:
 		--enable-threads=posix \
 		--without-included-regex
 
-build-man-db-rule:
-	$(MAKE) -C $(man-db) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-man-db-rule: $(call installed,gdbm groff less libpipeline)
-	$(MAKE) -C $(man-db) install
-	$(INSTALL) -Dpm 644 $(man-db)/mandb.cron $(DESTDIR)/etc/cron.d/mandb
+$(install-rule): $$(call installed,gdbm groff less libpipeline)
+	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 644 $(call addon-file,mandb.cron) $(DESTDIR)/etc/cron.d/mandb
 
 # Provide a cron configuration to update the "man" database daily.
-$(man-db)/mandb.cron: | $(man-db)
+$(call addon-file,mandb.cron): | $$(@D)
 	$(ECHO) $$(( RANDOM % 60 )) $$(( RANDOM % 24 )) '* * * root /usr/bin/mandb' > $@
-$(call built,man-db): $(man-db)/mandb.cron
+$(built): $(call addon-file,mandb.cron)

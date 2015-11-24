@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXaw
-Version:        1.0.12
+Version:        1.0.13
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,10 +10,9 @@ Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
-Patch001:       http://cgit.freedesktop.org/xorg/lib/libXaw/patch?id=ec7d7c303385a6bdb0833a5aaae96be697cca7ab&/%{gnuxc_name}-%{version}-fix-format-security.patch
-
 BuildRequires:  gnuxc-libXmu-devel
 BuildRequires:  gnuxc-libXpm-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -42,7 +41,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch001 -p1
 
 %build
 %gnuxc_configure \
@@ -70,7 +68,8 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libXaw6.so.6.0.1
 %{gnuxc_libdir}/libXaw7.so.7
 %{gnuxc_libdir}/libXaw7.so.7.0.0
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/Xaw

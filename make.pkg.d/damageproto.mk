@@ -1,12 +1,12 @@
 damageproto             := damageproto-1.2.1
 damageproto_url         := http://xorg.freedesktop.org/releases/individual/proto/$(damageproto).tar.bz2
 
-configure-damageproto-rule:
-	cd $(damageproto) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-strict-compilation
 
-build-damageproto-rule:
-	$(MAKE) -C $(damageproto) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-damageproto-rule: $(call installed,xextproto)
-	$(MAKE) -C $(damageproto) install
+$(install-rule): $$(call installed,xextproto)
+	$(MAKE) -C $(builddir) install

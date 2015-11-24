@@ -1,37 +1,50 @@
 mcron                   := mcron-1.0.8
 mcron_url               := http://ftpmirror.gnu.org/mcron/$(mcron).tar.gz
 
-prepare-mcron-rule:
-	$(PATCH) -d $(mcron) < $(patchdir)/$(mcron)-fix-everything.patch
+$(prepare-rule):
+	$(call apply,fix-everything)
+	$(RM) $(builddir)/configure
 
-configure-mcron-rule:
-	cd $(mcron) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-no-vixie-clobber \
 		--enable-debug \
 		--with-allow-file=/etc/cron.allow \
 		--with-deny-file=/etc/cron.deny \
-		--with-pid-file=/var/run/cron.pid \
-		--with-socket-file=/var/run/cron.socket \
+		--with-pid-file=/run/cron.pid \
+		--with-socket-file=/run/cron.socket \
 		--with-spool-dir=/var/spool/cron \
 		--with-tmp-dir=/tmp
 
-build-mcron-rule:
+$(build-rule):
 ifneq ($(host),$(build))
-	$(MAKE) -C $(mcron) mcron.c
-	$(TOUCH) $(mcron)/mcron.1
+	$(MAKE) -C $(builddir) mcron.c
+	$(TOUCH) $(builddir)/mcron.1
 endif
-	$(MAKE) -C $(mcron) all
+	$(MAKE) -C $(builddir) all
 
-install-mcron-rule: $(call installed,guile)
-	$(MAKE) -C $(mcron) install
-	$(INSTALL) -Dpm 644 $(mcron)/dmd.scm $(DESTDIR)/etc/dmd.d/cron.scm
+$(install-rule): $$(call installed,guile)
+	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 644 $(call addon-file,mcron.scm) $(DESTDIR)/etc/dmd.d/mcron.scm
 	$(INSTALL) -Dm 644 /dev/null $(DESTDIR)/etc/crontab
 	$(INSTALL) -dm 755 $(DESTDIR)/etc/cron.d
 
-# Provide a system service definition for "cron".
-$(mcron)/dmd.scm: | $(mcron)
-	$(ECHO) -e "(define cron-command\n  '"'("/usr/bin/cron"\n    "--noetc"))' > $@
-	$(ECHO) -e '(make <service>\n  #:docstring "The cron service runs scheduled commands."' >> $@
-	$(ECHO) -e "  #:provides '(cron crond mcron)\n  #:requires '()" >> $@
-	$(ECHO) -e '  #:start (make-forkexec-constructor cron-command)\n  #:stop (make-kill-destructor))' >> $@
-$(call prepared,mcron): $(mcron)/dmd.scm
+# Write inline files.
+$(call addon-file,mcron.scm): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,mcron.scm)
+
+
+# Provide a system service definition for "mcron".
+override define contents
+(define mcron-command
+  '("/usr/bin/cron"
+    "--noetc"))
+(make <service>
+  #:docstring "The mcron service runs scheduled commands."
+  #:provides '(mcron cron crond)
+  #:requires '()
+  #:start (make-forkexec-constructor mcron-command)
+  #:stop (make-kill-destructor))
+endef
+$(call addon-file,mcron.scm): private override contents := $(value contents)

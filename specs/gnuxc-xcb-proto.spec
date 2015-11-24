@@ -15,7 +15,10 @@ Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
 Requires:       gnuxc-python
 Provides:       %{name}-devel = %{version}-%{release}
 
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-python-devel
+
+BuildRequires:  python3-devel
 
 %description
 %{summary}.
@@ -41,7 +44,8 @@ sed -i xcb-proto.pc.in \
 %{gnuxc_datadir}/xcb
 %{gnuxc_libdir}/pkgconfig/xcb-proto.pc
 %{gnuxc_libdir}/python*.*/site-packages/xcbgen
-%doc COPYING NEWS README TODO
+%doc NEWS README TODO
+%license COPYING
 
 
 %changelog

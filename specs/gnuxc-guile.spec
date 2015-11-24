@@ -10,14 +10,19 @@ Group:          Development/Languages
 URL:            http://www.gnu.org/software/guile/
 Source0:        http://ftpmirror.gnu.org/guile/%{gnuxc_name}-%{version}.tar.xz
 
-Patch001:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=3a3316e200ac49f0e8e9004c233747efd9f54a04&/%{gnuxc_name}-%{version}-fix-readline-startup.patch
+Patch001:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=3a3316e200ac49f0e8e9004c233747efd9f54a04#/%{gnuxc_name}-%{version}-fix-readline-startup.patch
+Patch002:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=ead362f8d144e7d76af4fd127c024c62b74562fb#/%{gnuxc_name}-%{version}-add-linux-defs.patch
+Patch003:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=1be3063bf60fb1b9e540a3d35ecc3f00002ec0fd#/%{gnuxc_name}-%{version}-add-hurd-defs.patch
 
 BuildRequires:  gnuxc-gc-devel
+BuildRequires:  gnuxc-gmp-devel
 BuildRequires:  gnuxc-libffi-devel
 BuildRequires:  gnuxc-ltdl-devel
 BuildRequires:  gnuxc-libunistring-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-readline-devel
 
+BuildRequires:  gettext-devel
 BuildRequires:  guile
 
 %description
@@ -47,6 +52,8 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 %patch001 -p1
+%patch002 -p1
+%patch003 -p1
 
 # Call the native guile for guile-config.
 sed -i -e 's,@bindir@/,%{_bindir}/,' meta/Makefile.in
@@ -54,7 +61,7 @@ sed -i -e 's,@bindir@/,%{_bindir}/,' meta/Makefile.in
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' build-aux/ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -65,8 +72,7 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED_
     --enable-debug-malloc \
     --enable-guile-debug \
     --with-threads \
-    --without-included-regex \
-    ac_cv_libunistring=yes # Our libunistring is too new for configure.
+    --without-included-regex
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -98,7 +104,8 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libguile-2.0.so.22.7.2
 %{gnuxc_libdir}/libguilereadline-v-18.so.18
 %{gnuxc_libdir}/libguilereadline-v-18.so.18.0.0
-%doc AUTHORS ChangeLog* COPYING* HACKING LICENSE NEWS README THANKS
+%doc AUTHORS ChangeLog* HACKING NEWS README THANKS
+%license COPYING COPYING.LESSER LICENSE
 
 %files devel
 %{_bindir}/%{gnuxc_target}-guile-config

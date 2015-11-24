@@ -1,15 +1,16 @@
-patch                   := patch-2.7.1
+patch                   := patch-2.7.5
 patch_url               := http://ftpmirror.gnu.org/patch/$(patch).tar.xz
 
-configure-patch-rule:
-	cd $(patch) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
-		--enable-gcc-warnings \
+		--enable-gcc-warnings gl_cv_warn_c__Werror=no \
+		--enable-merge \
 		--enable-xattr \
 		CPPFLAGS=-DPATH_MAX=4096
 
-build-patch-rule:
-	$(MAKE) -C $(patch) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-patch-rule: $(call installed,attr)
-	$(MAKE) -C $(patch) install
+$(install-rule): $$(call installed,attr)
+	$(MAKE) -C $(builddir) install

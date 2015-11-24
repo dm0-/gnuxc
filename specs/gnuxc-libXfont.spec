@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXfont
-Version:        1.5.0
+Version:        1.5.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,8 +10,10 @@ Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
+BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-freetype-devel
 BuildRequires:  gnuxc-libfontenc-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-xtrans
 
 %description
@@ -65,7 +67,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libXfont.la
 %files
 %{gnuxc_libdir}/libXfont.so.1
 %{gnuxc_libdir}/libXfont.so.1.4.1
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/fonts/bdfint.h

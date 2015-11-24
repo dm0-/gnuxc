@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gtk2
-Version:        2.24.25
+Version:        2.24.28
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -12,12 +12,15 @@ Source0:        http://ftp.gnome.org/pub/gnome/sources/gtk+/2.24/gtk+-%{version}
 
 BuildRequires:  gnuxc-atk-devel
 BuildRequires:  gnuxc-gdk-pixbuf-devel
+BuildRequires:  gnuxc-libXdamage-devel
 BuildRequires:  gnuxc-libXi-devel
 BuildRequires:  gnuxc-libXinerama-devel
 BuildRequires:  gnuxc-libXrandr-devel
 BuildRequires:  gnuxc-pango-devel
+BuildRequires:  gnuxc-pkg-config
 
 BuildRequires:  gdk-pixbuf2-devel
+BuildRequires:  gettext
 
 %description
 %{summary}.
@@ -28,6 +31,7 @@ Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-atk-devel
 Requires:       gnuxc-gdk-pixbuf-devel
+Requires:       gnuxc-libXdamage-devel
 Requires:       gnuxc-libXi-devel
 Requires:       gnuxc-libXinerama-devel
 Requires:       gnuxc-libXrandr-devel
@@ -54,7 +58,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -94,6 +98,7 @@ find %{buildroot}%{gnuxc_libdir} -type f -name '*.la' -delete
 # This functionality should be used from the system package.
 rm -rf \
     %{buildroot}%{gnuxc_datadir}/{aclocal,themes} \
+    %{buildroot}%{gnuxc_datadir}/gtk-2.0 \
     %{buildroot}%{gnuxc_sysconfdir}/gtk-2.0
 
 # Skip the documentation.
@@ -106,7 +111,6 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 
 
 %files
-%{gnuxc_datadir}/gtk-2.0
 %dir %{gnuxc_libdir}/gtk-2.0
 %dir %{gnuxc_libdir}/gtk-2.0/2.10.0
 %dir %{gnuxc_libdir}/gtk-2.0/2.10.0/engines
@@ -132,10 +136,11 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 %{gnuxc_libdir}/libgailutil.so.18
 %{gnuxc_libdir}/libgailutil.so.18.0.1
 %{gnuxc_libdir}/libgdk-x11-2.0.so.0
-%{gnuxc_libdir}/libgdk-x11-2.0.so.0.2400.25
+%{gnuxc_libdir}/libgdk-x11-2.0.so.0.2400.28
 %{gnuxc_libdir}/libgtk-x11-2.0.so.0
-%{gnuxc_libdir}/libgtk-x11-2.0.so.0.2400.25
-%doc AUTHORS ChangeLog* COPYING HACKING INSTALL NEWS* README
+%{gnuxc_libdir}/libgtk-x11-2.0.so.0.2400.28
+%doc AUTHORS ChangeLog* HACKING INSTALL NEWS* README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/gail-1.0

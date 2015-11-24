@@ -1,11 +1,11 @@
-spice-protocol          := spice-protocol-0.12.7
+spice-protocol          := spice-protocol-0.12.10
 spice-protocol_url      := http://www.spice-space.org/download/releases/$(spice-protocol).tar.bz2
 
-configure-spice-protocol-rule:
-	cd $(spice-protocol) && ./$(configure)
+$(configure-rule):
+	cd $(builddir) && ./$(configure)
 
-build-spice-protocol-rule:
-	$(MAKE) -C $(spice-protocol) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-spice-protocol-rule: $(call installed,xproto)
-	$(MAKE) -C $(spice-protocol) install
+$(install-rule): $$(call installed,xproto)
+	$(MAKE) -C $(builddir) install

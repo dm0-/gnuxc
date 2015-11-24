@@ -1,11 +1,11 @@
-mpc                     := mpc-1.0.2
+mpc                     := mpc-1.0.3
 mpc_url                 := http://ftpmirror.gnu.org/mpc/$(mpc).tar.gz
 
-configure-mpc-rule:
-	cd $(mpc) && ./$(configure)
+$(configure-rule):
+	cd $(builddir) && ./$(configure)
 
-build-mpc-rule:
-	$(MAKE) -C $(mpc) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-mpc-rule: $(call installed,mpfr)
-	$(MAKE) -C $(mpc) install
+$(install-rule): $$(call installed,mpfr)
+	$(MAKE) -C $(builddir) install

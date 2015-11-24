@@ -38,7 +38,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %{gnuxc_includedir}/X11/extensions/bigreqsproto.h
 %{gnuxc_includedir}/X11/extensions/bigreqstr.h
 %{gnuxc_libdir}/pkgconfig/bigreqsproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libxml2
-Version:        2.9.2
+Version:        2.9.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -11,6 +11,7 @@ URL:            http://xmlsoft.org/
 Source0:        ftp://xmlsoft.org/libxml2/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-icu4c-devel
+BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-python-devel
 BuildRequires:  gnuxc-readline-devel
 BuildRequires:  gnuxc-xz-devel
@@ -22,6 +23,7 @@ BuildRequires:  gnuxc-zlib-devel
 %package devel
 Summary:        Development files for %{name}
 Requires:       %{name} = %{version}-%{release}
+Requires:       gnuxc-icu4c-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -43,7 +45,7 @@ statically, which is highly discouraged.
 # Seriously disable rpaths.
 sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
 sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' configure
+sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 # Use pkg-config for python configuration.
 sed -i configure \
@@ -65,11 +67,12 @@ sed -i -e '/^ *ICU_CONFIG=/s/=.*/=%{gnuxc_target}-icu-config/' configure
     --with-history \
     --with-icu \
     --with-lzma \
-    --with-mem-debug \
     --with-python PYTHON=/usr/bin/python3 \
-    --with-run-debug \
     --with-thread-alloc \
-    --with-zlib
+    --with-zlib \
+    \
+    --with-mem-debug \
+    --with-run-debug
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -102,7 +105,8 @@ rm -rf %{buildroot}{%{gnuxc_datadir}/gtk-doc,%{gnuxc_docdir},%{gnuxc_mandir}}
 %files
 %{gnuxc_libdir}/libxml2.so.2
 %{gnuxc_libdir}/libxml2.so.%{version}
-%doc AUTHORS ChangeLog Copyright NEWS README* TODO*
+%doc AUTHORS ChangeLog NEWS README README.tests TODO TODO_SCHEMAS
+%license Copyright
 
 %files devel
 %{_bindir}/%{gnuxc_target}-xml2-config

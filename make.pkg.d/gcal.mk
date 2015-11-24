@@ -1,8 +1,8 @@
-gcal                    := gcal-3.6.3.34-dae6
-gcal_url                := http://alpha.gnu.org/gnu/gcal/$(gcal).tar.xz
+gcal                    := gcal-4
+gcal_url                := http://ftpmirror.gnu.org/gcal/$(gcal).tar.xz
 
-configure-gcal-rule:
-	cd $(gcal) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-silent-rules \
 		--enable-assert \
@@ -13,9 +13,9 @@ configure-gcal-rule:
 		CPPFLAGS="`$(NCURSES_CONFIG) --cflags`" \
 		LIBS="`$(NCURSES_CONFIG) --libs` -lunistring"
 
-build-gcal-rule:
-	$(MAKE) -C $(gcal) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gcal-rule: $(call installed,libunistring ncurses)
-	$(MAKE) -C $(gcal) install
+$(install-rule): $$(call installed,libunistring ncurses)
+	$(MAKE) -C $(builddir) install
 	test -e $(DESTDIR)/usr/bin/cal || $(SYMLINK) gcal $(DESTDIR)/usr/bin/cal

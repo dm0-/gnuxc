@@ -1,11 +1,11 @@
-libjpeg-turbo           := libjpeg-turbo-1.3.1
+libjpeg-turbo           := libjpeg-turbo-1.4.2
 libjpeg-turbo_url       := http://prdownloads.sourceforge.net/libjpeg-turbo/$(libjpeg-turbo).tar.gz
 
-prepare-libjpeg-turbo-rule:
-	$(RM) $(libjpeg-turbo)/configure
+$(prepare-rule):
+	$(RM) $(builddir)/configure
 
-configure-libjpeg-turbo-rule:
-	cd $(libjpeg-turbo) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--with-arith-{enc,dec} \
 		--with-simd \
@@ -13,10 +13,10 @@ configure-libjpeg-turbo-rule:
 		\
 		--without-java
 
-build-libjpeg-turbo-rule:
-	$(MAKE) -C $(libjpeg-turbo) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-libjpeg-turbo-rule: $(call installed,glibc)
-	$(MAKE) -C $(libjpeg-turbo) install \
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install \
 		docdir=/usr/share/doc/libjpeg-turbo \
 		exampledir=/usr/share/doc/libjpeg-turbo

@@ -1,14 +1,11 @@
-tiff                    := tiff-4.0.3
+tiff                    := tiff-4.0.6
 tiff_url                := ftp://ftp.remotesensing.org/pub/libtiff/$(tiff).tar.gz
 
-prepare-tiff-rule:
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(tiff)/config/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(tiff)/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(tiff)/configure
+$(prepare-rule):
+	$(call drop-rpath,configure,config/ltmain.sh)
 
-configure-tiff-rule:
-	cd $(tiff) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--enable-ccitt \
 		--enable-check-ycbcr-subsampling \
@@ -33,8 +30,8 @@ configure-tiff-rule:
 		--with-docdir='$${datarootdir}/doc/tiff' \
 		--with-x
 
-build-tiff-rule:
-	$(MAKE) -C $(tiff) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-tiff-rule: $(call installed,jbigkit libjpeg-turbo xz zlib)
-	$(MAKE) -C $(tiff) install
+$(install-rule): $$(call installed,jbigkit libjpeg-turbo xz zlib)
+	$(MAKE) -C $(builddir) install

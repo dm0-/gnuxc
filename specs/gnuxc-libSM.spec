@@ -12,6 +12,7 @@ Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name
 
 BuildRequires:  gnuxc-libICE-devel
 BuildRequires:  gnuxc-libuuid-devel
+BuildRequires:  gnuxc-pkg-config
 
 %description
 %{summary}.
@@ -64,7 +65,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/libSM.la
 %files
 %{gnuxc_libdir}/libSM.so.6
 %{gnuxc_libdir}/libSM.so.6.0.1
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 
 %files devel
 %{gnuxc_includedir}/X11/SM

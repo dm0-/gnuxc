@@ -1,13 +1,13 @@
 bdftopcf                := bdftopcf-1.0.5
 bdftopcf_url            := http://xorg.freedesktop.org/releases/individual/app/$(bdftopcf).tar.bz2
 
-configure-bdftopcf-rule:
-	cd $(bdftopcf) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-strict-compilation
 
-build-bdftopcf-rule:
-	$(MAKE) -C $(bdftopcf) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-bdftopcf-rule: $(call installed,libXfont)
-	$(MAKE) -C $(bdftopcf) install
+$(install-rule): $$(call installed,libXfont)
+	$(MAKE) -C $(builddir) install

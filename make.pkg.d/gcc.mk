@@ -1,33 +1,28 @@
-gcc                     := gcc-4.9.2
+gcc                     := gcc-5.2.0
 gcc_url                 := http://ftpmirror.gnu.org/gcc/$(gcc)/$(gcc).tar.bz2
 
 ifeq ($(host),$(build))
 export AR     = gcc-ar
-export CC     = gcc -march=$(arch) -mtune=generic
-export CXX    = g++ -march=$(arch) -mtune=generic
+export CC     = gcc -march=$(arch) -mtune=$(firstword $(tune) generic)
+export CXX    = g++ -march=$(arch) -mtune=$(firstword $(tune) generic)
 export NM     = gcc-nm
 export RANLIB = gcc-ranlib
 else
 export AR     = $(host)-gcc-ar
-export CC     = $(host)-gcc -march=$(arch) -mtune=generic
-export CXX    = $(host)-g++ -march=$(arch) -mtune=generic
+export CC     = $(host)-gcc -march=$(arch) -mtune=$(firstword $(tune) generic)
+export CXX    = $(host)-g++ -march=$(arch) -mtune=$(firstword $(tune) generic)
 export NM     = $(host)-gcc-nm
 export RANLIB = $(host)-gcc-ranlib
 endif
 
-prepare-gcc-rule:
-	$(PATCH) -d $(gcc) < $(patchdir)/$(gcc)-no-add-needed.patch
-	$(PATCH) -d $(gcc) < $(patchdir)/$(gcc)-color-auto.patch
-	$(PATCH) -d $(gcc) < $(patchdir)/$(gcc)-update-isl.patch
-	$(EDIT) '/^ *target_header_dir=/s,=.*,=$(sysroot)/usr/include,' $(gcc)/gcc/configure
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(gcc)/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(gcc)/libgfortran/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(gcc)/libgfortran/configure
+$(prepare-rule):
+	$(call apply,no-add-needed update-isl)
+	$(call drop-rpath,libgfortran/configure libgomp/configure,ltmain.sh)
+	$(EDIT) '/^ *target_header_dir=/s,=.*,=$(sysroot)/usr/include,' $(builddir)/gcc/configure
 
-configure-gcc-rule: CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=)
-configure-gcc-rule:
-	$(MKDIR) $(gcc)/build && cd $(gcc)/build && ../$(configure) \
+$(configure-rule): CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=)
+$(configure-rule):
+	$(MKDIR) $(builddir)/build && cd $(builddir)/build && ../$(configure) \
 		--disable-libcilkrts \
 		--disable-multilib \
 		--disable-plugin \
@@ -50,9 +45,9 @@ configure-gcc-rule:
 		--without-included-gettext \
 		--without-newlib
 
-build-gcc-rule:
-	$(MAKE) -C $(gcc)/build all
+$(build-rule):
+	$(MAKE) -C $(builddir)/build all
 
-install-gcc-rule: $(call installed,cloog mpc zlib)
-	$(MAKE) -C $(gcc)/build install
+$(install-rule): $$(call installed,binutils cloog mpc)
+	$(MAKE) -C $(builddir)/build install
 	$(SYMLINK) gcc $(DESTDIR)/usr/bin/cc

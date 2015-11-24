@@ -1,14 +1,11 @@
-cairo                   := cairo-1.14.0
+cairo                   := cairo-1.14.4
 cairo_url               := http://cairographics.org/releases/$(cairo).tar.xz
 
-prepare-cairo-rule:
-# Seriously disable rpaths.
-	$(EDIT) 's/\(need_relink\)=yes/\1=no/' $(cairo)/build/ltmain.sh
-	$(EDIT) 's/\(hardcode_into_libs\)=yes/\1=no/' $(cairo)/configure
-	$(EDIT) 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__LIBTOOL_NEUTERED__/' $(cairo)/configure
+$(prepare-rule):
+	$(call drop-rpath,configure,build/ltmain.sh)
 
-configure-cairo-rule:
-	cd $(cairo) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--enable-fc \
 		--enable-ft \
@@ -38,8 +35,8 @@ configure-cairo-rule:
 		--disable-qt \
 		--disable-vg
 
-build-cairo-rule:
-	$(MAKE) -C $(cairo) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-cairo-rule: $(call installed,binutils libXmu libXpm)
-	$(MAKE) -C $(cairo) install
+$(install-rule): $$(call installed,binutils libXmu libXpm)
+	$(MAKE) -C $(builddir) install

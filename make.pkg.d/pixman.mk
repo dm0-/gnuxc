@@ -1,13 +1,14 @@
-pixman                  := pixman-0.32.6
+pixman                  := pixman-0.33.4
 pixman_url              := http://xorg.freedesktop.org/releases/individual/lib/$(pixman).tar.bz2
 
-configure-pixman-rule:
-	cd $(pixman) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
-		--enable-libpng
+		--enable-libpng \
+		--enable-timers
 
-build-pixman-rule:
-	$(MAKE) -C $(pixman) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-pixman-rule: $(call installed,libpng)
-	$(MAKE) -C $(pixman) install
+$(install-rule): $$(call installed,libpng)
+	$(MAKE) -C $(builddir) install

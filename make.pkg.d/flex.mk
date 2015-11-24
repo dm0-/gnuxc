@@ -1,14 +1,17 @@
-flex                    := flex-2.5.39
-flex_url                := http://prdownloads.sourceforge.net/flex/$(flex).tar.bz2
+flex                    := flex-2.6.0
+flex_url                := http://prdownloads.sourceforge.net/flex/$(flex).tar.xz
 
-configure-flex-rule:
-	cd $(flex) && ./$(configure) \
+$(prepare-rule):
+# Skip tests.
+	$(EDIT) '/^SUBDIRS *=/,/^$$/{/tests/d;}' $(builddir)/Makefile.in
+
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath
 
-build-flex-rule:
-	$(MAKE) -C $(flex) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-flex-rule: $(call installed,glibc)
-	$(MAKE) -C $(flex) install \
-		TEXI2DVI=:
+$(install-rule): $$(call installed,glibc)
+	$(MAKE) -C $(builddir) install
 	test -e $(DESTDIR)/usr/bin/lex || $(SYMLINK) flex $(DESTDIR)/usr/bin/lex

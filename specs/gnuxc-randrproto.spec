@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-randrproto
-Version:        1.4.0
+Version:        1.5.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -39,7 +39,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %{gnuxc_includedir}/X11/extensions/randr.h
 %{gnuxc_includedir}/X11/extensions/randrproto.h
 %{gnuxc_libdir}/pkgconfig/randrproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

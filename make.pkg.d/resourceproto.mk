@@ -1,12 +1,12 @@
 resourceproto           := resourceproto-1.2.0
 resourceproto_url       := http://xorg.freedesktop.org/releases/individual/proto/$(resourceproto).tar.bz2
 
-configure-resourceproto-rule:
-	cd $(resourceproto) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--enable-strict-compilation
 
-build-resourceproto-rule:
-	$(MAKE) -C $(resourceproto) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-resourceproto-rule: $(call installed,xextproto)
-	$(MAKE) -C $(resourceproto) install
+$(install-rule): $$(call installed,xextproto)
+	$(MAKE) -C $(builddir) install

@@ -35,7 +35,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %files
 %{gnuxc_includedir}/X11/extensions/panoramiXproto.h
 %{gnuxc_libdir}/pkgconfig/xineramaproto.pc
-%doc ChangeLog COPYING README
+%doc ChangeLog README
+%license COPYING
 
 
 %changelog

@@ -1,17 +1,19 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-sqlite
-Version:        3.8.7.4
-%global realver 3080704
+Version:        3.9.2
+%global realver 3090200
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        Public Domain
 Group:          Applications/Databases
 URL:            http://www.sqlite.org/
-Source0:        http://www.sqlite.org/2014/%{gnuxc_name}-autoconf-%{realver}.tar.gz
+Source0:        http://www.sqlite.org/2015/%{gnuxc_name}-autoconf-%{realver}.tar.gz
 
 BuildRequires:  gnuxc-readline-devel
+
+BuildRequires:  libtool
 
 %description
 %{summary}.

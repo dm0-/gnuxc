@@ -1,13 +1,13 @@
-gnuchess                := gnuchess-6.2.0
+gnuchess                := gnuchess-6.2.2
 gnuchess_url            := http://ftpmirror.gnu.org/chess/$(gnuchess).tar.gz
 
-configure-gnuchess-rule:
-	cd $(gnuchess) && ./$(configure) \
+$(configure-rule):
+	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--with-readline
 
-build-gnuchess-rule:
-	$(MAKE) -C $(gnuchess) all
+$(build-rule):
+	$(MAKE) -C $(builddir) all
 
-install-gnuchess-rule: $(call installed,readline)
-	$(MAKE) -C $(gnuchess) install
+$(install-rule): $$(call installed,readline)
+	$(MAKE) -C $(builddir) install
