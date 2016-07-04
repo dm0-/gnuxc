@@ -7,7 +7,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          User Interface/X
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/font/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -20,7 +19,6 @@ Requires:       gnuxc-filesystem
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description devel
@@ -58,6 +56,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files devel
 %{gnuxc_libdir}/pkgconfig/fontutil.pc
-
-
-%changelog

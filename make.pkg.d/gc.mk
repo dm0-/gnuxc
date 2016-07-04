@@ -1,8 +1,6 @@
-gc                      := gc-7.4.2
+gc                      := gc-7.4.4
+gc_sha1                 := 52adf4e7779c0a890ec70d0a41671eefdcc4181a
 gc_url                  := http://www.hboehm.info/gc/gc_source/$(gc).tar.gz
-
-$(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

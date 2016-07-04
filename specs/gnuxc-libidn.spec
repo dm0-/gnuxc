@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+ and GPLv3+ and GFDL
-Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/libidn/
 Source0:        http://ftpmirror.gnu.org/libidn/%{gnuxc_name}-%{version}.tar.gz
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -38,6 +35,9 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+
+# Work around bad prerequisites (due to anti-rpath scripts).
+sed -i -e '/gdoc:.*configure/s, [^ ]*/configure , ,' doc/Makefile.in
 
 %build
 %gnuxc_env ; CFLAGS=${CFLAGS/-Werror=format-security /}
@@ -85,6 +85,3 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libidn.a
-
-
-%changelog

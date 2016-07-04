@@ -1,8 +1,12 @@
-libxcb                  := libxcb-1.11.1
+libxcb                  := libxcb-1.12
+libxcb_sha1             := 2f03490d1c75c8a3f902f74b717af6501773926a
 libxcb_url              := http://xcb.freedesktop.org/dist/$(libxcb).tar.bz2
 
+$(eval $(call verify-download,http://cgit.freedesktop.org/xcb/libxcb/patch/?id=8740a288ca468433141341347aa115b9544891d3,de1397ebe27c6013bf2198804022b84a95aaf904,fix-tabs.patch))
+
 $(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh build-aux/ltmain.sh)
+# Drop tabs in favor of spaces.
+	$(PATCH) -d $(builddir) -p1 < $(call addon-file,fix-tabs.patch)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

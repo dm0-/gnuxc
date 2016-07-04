@@ -2,18 +2,16 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-xproto
-Version:        7.0.28
+Version:        7.0.29
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          Development/System
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/proto/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-filesystem
 
-Requires:       gnuxc-filesystem
 Provides:       %{name}-devel = %{version}-%{release}
 
 %description
@@ -38,8 +36,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 %install
 %gnuxc_make_install
 
-# Provide this parent directory for GLX headers.
-install -dm 755 %{buildroot}%{gnuxc_includedir}/GL
+# Provide these parent directories for GLX and Xext headers.
+install -dm 755 %{buildroot}%{gnuxc_includedir}/{GL,X11/extensions}
 
 
 %files
@@ -48,6 +46,3 @@ install -dm 755 %{buildroot}%{gnuxc_includedir}/GL
 %{gnuxc_libdir}/pkgconfig/xproto.pc
 %doc AUTHORS ChangeLog README
 %license COPYING
-
-
-%changelog

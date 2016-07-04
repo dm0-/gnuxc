@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -18,9 +17,7 @@ BuildRequires:  gnuxc-xtrans
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-xtrans
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -28,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -73,6 +69,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/libICE.la
 
 %files static
 %{gnuxc_libdir}/libICE.a
-
-
-%changelog

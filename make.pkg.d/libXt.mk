@@ -1,4 +1,5 @@
 libXt                   := libXt-1.1.5
+libXt_sha1              := c79e2c4f7de5259a2ade458817a139b66a043d59
 libXt_url               := http://xorg.freedesktop.org/releases/individual/lib/$(libXt).tar.bz2
 
 $(prepare-rule):

@@ -1,12 +1,13 @@
 inetutils               := inetutils-1.9.4
+inetutils_sha1          := 5e515cc9da142cb73bb1beda137b4c2dcf2b528c
 inetutils_url           := http://ftpmirror.gnu.org/inetutils/$(inetutils).tar.xz
 
 $(prepare-rule):
-	$(EDIT) "s,\(LIBNCURSES=\)[^ )]*,\1'`$(NCURSES_CONFIG) --libs`'," $(builddir)/configure $(builddir)/am/libcurses.m4
+	$(EDIT) 's,\(LIBNCURSES=\)[^ )]*,\1"$$NCURSES_ENVLIBS",' $(builddir)/configure $(builddir)/am/libcurses.m4
 	$(TOUCH) --reference=$(builddir)/am/readline.m4 $(builddir)/am/libcurses.m4
 
 $(configure-rule):
-	cd $(builddir) && ./$(configure) \
+	cd $(builddir) && NCURSES_ENVLIBS="`$(NCURSES_CONFIG) --libs`" ./$(configure) \
 		--disable-rpath \
 		--disable-silent-rules \
 		--enable-clients \
@@ -33,11 +34,14 @@ $(install-rule): $$(call installed,libidn readline)
 	$(MAKE) -C $(builddir) install \
 		inetdaemondir='$$(sbindir)'
 	chmod 4755 $(DESTDIR)/usr/bin/ping $(DESTDIR)/usr/bin/ping6
-	$(INSTALL) -Dpm 644 $(call addon-file,syslogd.scm) $(DESTDIR)/etc/dmd.d/syslogd.scm
+	$(INSTALL) -Dpm 644 $(call addon-file,syslogd.scm) $(DESTDIR)/etc/shepherd.d/syslogd.scm
 	$(INSTALL) -Dpm 644 $(call addon-file,syslog.conf) $(DESTDIR)/etc/syslog.conf
 	$(INSTALL) -dm 755 $(DESTDIR)/etc/syslog.d
-	$(INSTALL) -Dm 644 /dev/null $(DESTDIR)/var/log/messages
+	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/messages
 	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/secure
+# Create the syslog socket in /run until /dev is a special tmpfs.
+	$(INSTALL) -dm 755 $(DESTDIR)/dev
+	$(SYMLINK) ../run/log $(DESTDIR)/dev/log
 # Move the hostname command outside the /usr prefix.
 	$(INSTALL) -Dpm 755 $(builddir)/src/hostname $(DESTDIR)/bin/hostname
 	$(SYMLINK) ../../bin/hostname $(DESTDIR)/usr/bin/hostname
@@ -64,7 +68,8 @@ override define contents
     "--ipany"
     "--mark=0"
     "--no-detach"
-    "--no-forward"))
+    "--no-forward"
+    "--socket=/run/log"))
 (make <service>
   #:docstring "The syslogd service controls a system logging daemon."
   #:provides '(syslogd syslog)

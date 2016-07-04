@@ -10,13 +10,13 @@ packages more discoverable and uses their icons by default when provided.
  		addPathToList(panel->icoL, -1, "/usr/local/share/WindowMaker/Pixmaps");
  		addPathToList(panel->icoL, -1, "/usr/share/WindowMaker/Icons");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/scalable/apps");
++		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/48x48/apps"); /* default icon size */
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/256x256/apps");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/192x192/apps");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/128x128/apps");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/96x96/apps");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/72x72/apps");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/64x64/apps");
-+		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/48x48/apps");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/36x36/apps");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/32x32/apps");
 +		addPathToList(panel->icoL, -1, "/usr/share/icons/hicolor/24x24/apps");
@@ -27,26 +27,28 @@ packages more discoverable and uses their icons by default when provided.
  			val = WMGetFromPLArray(array, i);
 --- WindowMaker/Defaults/WindowMaker.in
 +++ WindowMaker/Defaults/WindowMaker.in
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,8 @@
  {
 -  SmoothWorkspaceBack = NO;
++  WindowSnapping = YES;
++  SnapToTopMaximizesFullscreen = YES;
 +  DragMaximizedWindow = RestoreGeometry;
 +  SmoothWorkspaceBack = YES;
    PopupSwitchMenu = NO;
    MenuStyle = normal;
    DisableMiniwindows = NO;
-@@ -17,6 +18,19 @@
+@@ -17,6 +20,19 @@
      "~/GNUstep/Library/WindowMaker/Pixmaps",
      "~/GNUstep/Library/WindowMaker/CachedPixmaps",
      "/usr/share/icons",
 +    "/usr/share/icons/hicolor/scalable/apps",
++    "/usr/share/icons/hicolor/48x48/apps",
 +    "/usr/share/icons/hicolor/256x256/apps",
 +    "/usr/share/icons/hicolor/192x192/apps",
 +    "/usr/share/icons/hicolor/128x128/apps",
 +    "/usr/share/icons/hicolor/96x96/apps",
 +    "/usr/share/icons/hicolor/72x72/apps",
 +    "/usr/share/icons/hicolor/64x64/apps",
-+    "/usr/share/icons/hicolor/48x48/apps",
 +    "/usr/share/icons/hicolor/36x36/apps",
 +    "/usr/share/icons/hicolor/32x32/apps",
 +    "/usr/share/icons/hicolor/24x24/apps",
@@ -55,7 +57,7 @@ packages more discoverable and uses their icons by default when provided.
      "/usr/local/share/pixmaps",
      "/usr/share/pixmaps"
    );
-@@ -32,7 +46,7 @@
+@@ -32,7 +48,7 @@
    );
    WindowTitleBalloons = YES;
    IconSize = 64;
@@ -64,7 +66,7 @@ packages more discoverable and uses their icons by default when provided.
    DisableWSMouseActions = NO;
    MouseLeftButtonAction = SelectWindows;
    MouseMiddleButtonAction = OpenWindowListMenu;
-@@ -56,31 +70,34 @@
+@@ -56,31 +72,34 @@
    UseSaveUnders = NO;
    DisableSound = NO;
    DisableAnimations = NO;
@@ -120,15 +122,16 @@ packages more discoverable and uses their icons by default when provided.
  		NULL
 --- util/wmgenmenu.h
 +++ util/wmgenmenu.h
-@@ -51,6 +51,7 @@
+@@ -51,6 +51,8 @@
  	{ N_("Maple"), "maple" },
  	{ N_("Scilab"), "scilab" },
  	{ N_("bc"), "bc !" },
++	{ N_("R"), "R -g Tk" },
 +	{ N_("units"), "units !" },
  	{ N_("KCalc"), "kcalc" },
  	{ N_("XCalc"), "xcalc" },
  	{ N_("Mathematica"), "mathematica" },
-@@ -135,6 +136,7 @@
+@@ -135,6 +137,7 @@
  	{ N_("Chromium"), "chromium-browser" },
  	{ N_("Google Chrome"), "google-chrome" },
  	{ N_("Mozilla Firefox"), "firefox" },
@@ -136,7 +139,7 @@ packages more discoverable and uses their icons by default when provided.
  	{ N_("Galeon"), "galeon" },
  	{ N_("SkipStone"), "skipstone" },
  	{ N_("Konqueror"), "konqueror" },
-@@ -197,6 +199,7 @@
+@@ -197,6 +200,7 @@
  	{ N_("Pico"), "pico !" },
  	{ N_("Nano"), "nano !" },
  	{ N_("Joe"), "joe !" },
@@ -144,17 +147,20 @@ packages more discoverable and uses their icons by default when provided.
  	{ NULL, NULL }
  };
  
-@@ -314,7 +317,9 @@
+@@ -314,7 +318,11 @@
  char *Games[MAX_NR_APPS][2] = {
  	{ N_("FlightGear Flight Simulator"), "fgfs" },
  	{ N_("Tremulous"), "tremulous" },
+-	{ N_("XBoard"), "xboard" },
++	{ N_("GNU Chess"), "xboard" },
++	{ N_("GNU Mini-Shogi"), "xboard @shogi @mini" },
++	{ N_("GNU Shogi"), "xboard @shogi" },
++	{ N_("NetHack"), "nethack" },
 +	{ N_("XBill"), "xbill" },
- 	{ N_("XBoard"), "xboard" },
-+	{ N_("XShogi"), "xshogi" },
  	{ N_("GNOME Chess"), "gnome-chess" },
  	{ N_("Darkplaces (Quake 1)"), "darkplaces" },
  	{ N_("QuakeSpasm (Quake 1)"), "quakespasm" },
-@@ -438,7 +443,7 @@
+@@ -438,7 +446,7 @@
  	{ N_("gitk"), "gitk" },
  	{ N_("gitview"), "gitview" },
  	{ N_("qgit"), "qgit" },
@@ -163,7 +169,7 @@ packages more discoverable and uses their icons by default when provided.
  	{ N_("glimmer"), "glimmer" },
  	{ N_("glade"), "glade" },
          { N_("Geany"), "geany" },
-@@ -446,7 +451,7 @@
+@@ -446,7 +454,7 @@
  	{ N_("kdevelop"), "kdevelop" },
  	{ N_("designer"), "designer" },
  	{ N_("kbabel"), "kbabel" },
@@ -174,13 +180,14 @@ packages more discoverable and uses their icons by default when provided.
  	{ N_("memprof"), "memprof" },
 --- WindowMaker/Defaults/WMWindowAttributes.in
 +++ WindowMaker/Defaults/WMWindowAttributes.in
-@@ -1,4 +1,9 @@
+@@ -1,4 +1,10 @@
  {
-+  Emacs = {Icon = emacs.png;};
++  Emacs = {Icon = emacs.svg;};
 +  Icecat = {Icon = icecat.png;};
-+  XBill = {Icon = xbill.xpm;};
++  NetHack = {Icon = nethack.png;};
++  XBill = {Icon = xbill.png;};
 +  Xboard = {Icon = xboard.png;};
-+  XTerm = {Icon = xterm.png;};
++  XTerm = {Icon = xterm.svg;};
    Logo.WMDock = {Icon = GNUstepGlow.#extension#;};
    Logo.WMPanel = {Icon = GNUstep.#extension#;};
    Logo.WMClip = {Icon = clip.#extension#;};

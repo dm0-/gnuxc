@@ -1,8 +1,10 @@
-gettext                 := gettext-0.19.6
+gettext                 := gettext-0.19.8.1
+gettext_sha1            := e0fe90ede22f7f16bbde7bdea791a835f2773fc9
 gettext_url             := http://ftpmirror.gnu.org/gettext/$(gettext).tar.xz
 
 $(prepare-rule):
-	$(call drop-rpath,gettext-tools/configure,build-aux/ltmain.sh)
+# Don't make even more data directories.
+	$(EDIT) '/^itsdir =/s/.(PACKAGE_SUFFIX)//' $(builddir)/gettext-tools/its/Makefile.in
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

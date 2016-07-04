@@ -1,4 +1,5 @@
 which                   := which-2.21
+which_sha1              := 6b6bec3d2b3d4661c164feb81b9b1d22d1359ded
 which_url               := http://ftpmirror.gnu.org/which/$(which).tar.gz
 
 $(configure-rule):

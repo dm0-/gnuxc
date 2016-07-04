@@ -4,12 +4,11 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/dri/
 
 Name:           gnuxc-mesa
-Version:        11.0.6
+Version:        11.2.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://www.mesa3d.org/
 Source0:        ftp://ftp.freedesktop.org/pub/%{gnuxc_name}/%{version}/%{gnuxc_name}-%{version}.tar.xz
 
@@ -20,19 +19,18 @@ BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-glproto
 BuildRequires:  gnuxc-libXdamage-devel
 BuildRequires:  gnuxc-libXext-devel
+BuildRequires:  gnuxc-nettle-devel
 BuildRequires:  gnuxc-pkg-config
+
+BuildRequires:  bison
+BuildRequires:  flex
 
 %description
 %{summary}.
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-expat-devel
-Requires:       gnuxc-glproto
-Requires:       gnuxc-libXdamage-devel
-Requires:       gnuxc-libXext-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -43,18 +41,12 @@ applications that use %{gnuxc_name} on GNU systems.
 %setup -q -n %{gnuxc_name}-%{version}
 %patch101
 
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' bin/ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
-
 %build
 %gnuxc_configure \
     --disable-silent-rules \
     --disable-texture-float \
     --disable-xlib-glx \
     --enable-asm \
-    --enable-debug \
     --enable-dri --enable-dri3 \
     --enable-egl \
     --enable-gallium-osmesa \
@@ -66,13 +58,17 @@ sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' c
     --enable-shared-glapi \
     --with-dri-drivers=swrast \
     --with-gallium-drivers=swrast \
+    --with-sha1=libnettle \
+    \
+    --enable-debug \
     \
     --disable-gbm \
     --disable-nine \
     --disable-selinux \
     --disable-static \
     --disable-sysfs \
-    --disable-xa
+    --disable-xa \
+    CPPFLAGS=-DPATH_MAX=4096
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -128,6 +124,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/lib{EGL,GL,GLESv1_CM,GLESv2,OSMesa,glapi}.la
 %{gnuxc_libdir}/pkgconfig/glesv1_cm.pc
 %{gnuxc_libdir}/pkgconfig/glesv2.pc
 %{gnuxc_libdir}/pkgconfig/osmesa.pc
-
-
-%changelog

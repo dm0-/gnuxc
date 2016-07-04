@@ -1,0 +1,40 @@
+Since Hurd doesn't provide a real /proc/self, don't use it as a test for /proc.
+
+--- ps/global.c
++++ ps/global.c
+@@ -367,9 +367,7 @@
+ 
+ /************ Call this to reinitialize everything ***************/
+ void reset_global(void){
+-  static proc_t p;
+   reset_selection_list();
+-  look_up_our_self(&p);
+   set_screen_size();
+   set_personality();
+ 
+@@ -377,7 +375,6 @@
+   bsd_c_option          = 0;
+   bsd_e_option          = 0;
+   cached_euid           = geteuid();
+-  cached_tty            = p.tty;
+ /* forest_prefix must be all zero because of POSIX */
+   forest_type           = 0;
+   format_flags          = 0;   /* -l -f l u s -j... */
+--- top/top.c
++++ top/top.c
+@@ -3257,15 +3257,11 @@
+          * IMPORTANT stuff upon which all those lessor functions depend! */
+ static void before (char *me) {
+    struct sigaction sa;
+-   proc_t p;
+    int i;
+    int linux_version_code = procps_linux_version();
+ 
+    atexit(close_stdout);
+ 
+-   // is /proc mounted?
+-   look_up_our_self(&p);
+-
+    // setup our program name
+    Myname = strrchr(me, '/');
+    if (Myname) ++Myname; else Myname = me;

@@ -1,19 +1,18 @@
-icecat                  := icecat-38.3.0
-icecat_url              := http://ftpmirror.gnu.org/$(subst -,/,$(icecat))/$(icecat)-gnu1.tar.bz2
+icecat                  := icecat-38.8.0
+icecat_sha1             := 8607b22381360fc3673803897b37fd2ba6afeeb6
+icecat_url              := http://ftpmirror.gnu.org/$(subst -,/,$(icecat))-gnu2/$(icecat)-gnu2.tar.bz2
 
 $(prepare-rule):
 	$(call apply,hurd-port)
+# Our GTK+ 3 doesn't use this.
 	$(EDIT) 's/ atk-bridge-2.0//' $(builddir)/configure
-# These configure scripts must be created with old autoconf versions.
-#	cd $(builddir) && autoreconf-2.13 --force --include-deps
-#	cd $(builddir)/js/src && autoconf-2.13
+# Ensure system extension files can be read by all users when installed.
+	chmod -R go+r $(builddir)/extensions/gnu
 
 ifneq ($(host),$(build))
 $(configure-rule): configure := $(configure:--docdir%=)
 $(configure-rule): configure := $(configure:--localedir%=)
 $(configure-rule): configure := $(subst datarootdir,datadir,$(configure:--datadir%=))
-$(configure-rule): private override export NSPR_CONFIG := /usr/bin/$(host)-nspr-config
-$(configure-rule): private override export NSS_CONFIG := /usr/bin/$(host)-nss-config
 $(configure-rule): private override export PYTHON := python
 $(configure-rule):
 	$(MKDIR) $(builddir)/hurd && cd $(builddir)/hurd && \
@@ -82,6 +81,8 @@ $(build-rule):
 
 $(install-rule): $$(call installed,gtk+ icu4c libevent libvpx nss)
 	$(MAKE) -C $(builddir)/hurd install
+	$(INSTALL) -Dpm 644 $(call addon-file,local-settings.js) $(DESTDIR)/usr/lib/$(icecat)/defaults/pref/local-settings.js
+	$(INSTALL) -Dpm 644 $(call addon-file,mozilla.cfg) $(DESTDIR)/usr/lib/$(icecat)/mozilla.cfg
 	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default16.png $(DESTDIR)/usr/share/icons/hicolor/16x16/apps/icecat.png
 	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default22.png $(DESTDIR)/usr/share/icons/hicolor/22x22/apps/icecat.png
 	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default24.png $(DESTDIR)/usr/share/icons/hicolor/24x24/apps/icecat.png
@@ -91,3 +92,26 @@ $(install-rule): $$(call installed,gtk+ icu4c libevent libvpx nss)
 	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/mozicon128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/icecat.png
 	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default256.png $(DESTDIR)/usr/share/icons/hicolor/256x256/apps/icecat.png
 endif
+
+# Write inline files.
+$(call addon-file,local-settings.js mozilla.cfg): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,local-settings.js mozilla.cfg)
+
+
+# Provide the settings that load customized defaults.
+override define contents
+pref("general.config.obscure_value", 0);
+pref("general.config.filename", "mozilla.cfg");
+endef
+$(call addon-file,local-settings.js): private override contents := $(value contents)
+
+
+# Provide a list of default preference overrides.
+override define contents
+// Default preference settings
+defaultPref("browser.link.open_newwindow.restriction", 0);
+defaultPref("browser.search.openintab", true);
+defaultPref("browser.search.suggest.enabled", false);
+endef
+$(call addon-file,mozilla.cfg): private override contents := $(value contents)

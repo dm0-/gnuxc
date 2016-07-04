@@ -1,8 +1,6 @@
-libjpeg-turbo           := libjpeg-turbo-1.4.2
+libjpeg-turbo           := libjpeg-turbo-1.5.0
+libjpeg-turbo_sha1      := 9adc21b927e48e4c6889e77079f6c1f3eecf98ab
 libjpeg-turbo_url       := http://prdownloads.sourceforge.net/libjpeg-turbo/$(libjpeg-turbo).tar.gz
-
-$(prepare-rule):
-	$(RM) $(builddir)/configure
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

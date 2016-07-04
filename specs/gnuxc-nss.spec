@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nss
-Version:        3.21
+Version:        3.25
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MPLv2.0
-Group:          System Environment/Libraries
 URL:            http://www.mozilla.org/projects/security/pki/nss/
 Source0:        http://ftp.mozilla.org/pub/security/nss/releases/NSS_%(echo %{version} | sed 's/\./_/g')_RTM/src/%{gnuxc_name}-%{version}.tar.gz
 
@@ -22,9 +21,7 @@ BuildRequires:  gnuxc-zlib-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-nspr-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -32,7 +29,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -95,6 +91,8 @@ ln %{buildroot}%{gnuxc_root}/bin/nss-config \
 %files
 %{gnuxc_libdir}/libfreebl3.chk
 %{gnuxc_libdir}/libfreebl3.so
+%{gnuxc_libdir}/libfreeblpriv3.chk
+%{gnuxc_libdir}/libfreeblpriv3.so
 %{gnuxc_libdir}/libnss3.so
 %{gnuxc_libdir}/libnssckbi.so
 %{gnuxc_libdir}/libnsssysinit.so
@@ -143,6 +141,3 @@ ln %{buildroot}%{gnuxc_root}/bin/nss-config \
 %{gnuxc_libdir}/libsmime.a
 %{gnuxc_libdir}/libsoftokn.a
 %{gnuxc_libdir}/libssl.a
-
-
-%changelog

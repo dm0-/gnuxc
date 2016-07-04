@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-giflib
-Version:        5.1.1
+Version:        5.1.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://giflib.sourceforge.net/
 Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -68,6 +65,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/libgif.la
 
 %files static
 %{gnuxc_libdir}/libgif.a
-
-
-%changelog

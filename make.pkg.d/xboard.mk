@@ -1,7 +1,10 @@
-xboard                  := xboard-4.8.0
-xboard_url              := http://ftpmirror.gnu.org/xboard/$(xboard).tar.gz
+xboard                  := xboard-4.8.0-6f6a93
+xboard_branch           := gtk3
+xboard_sha1             := 6f6a9373ce9ac622b1ca0ff0b78d05a887058f32
+xboard_url              := git://git.sv.gnu.org/xboard.git
 
 $(prepare-rule):
+# Play normal GNU Chess by default.
 	$(EDIT) 's/ChessProgram fairymax/ChessProgram gnuchess/' $(builddir)/xboard.conf
 
 $(configure-rule):
@@ -13,12 +16,10 @@ $(configure-rule):
 		--enable-sigint \
 		--enable-zippy \
 		--with-x \
-		--with-Xaw \
-		\
-		--with-gtk # Font rendering is horrible without this.
+		--with-gtk
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,font-adobe-100dpi gnuchess librsvg libXaw)
+$(install-rule): $$(call installed,gnuchess gtk+ librsvg)
 	$(MAKE) -C $(builddir) install

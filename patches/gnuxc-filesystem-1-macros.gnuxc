@@ -30,6 +30,13 @@
 %gnuxc_ldflags          %{__global_ldflags}
 %gnuxc_optflags         %{__global_cflags}
 
+%gnuxc_drop_rpath       find . -type f '(' \\\
+        -name ltmain.sh -exec %{__sed} -i \\\
+        -e 's/\\(need_relink\\)=yes/\\1=no/' '{}' + -o \\\
+        -name configure -exec %{__sed} -i -e \\\
+        's/\\(hardcode_libdir_flag_spec[A-Za-z_]*\\)=.*/\\1=-DBAD_LIBTOOL/' \\\
+        -e 's/\\(hardcode_into_libs\\)=yes/\\1=no/' '{}' + ')'
+
 %gnuxc_env              \
         export AR="%{gnuxc_ar}" ; \
         export NM="%{gnuxc_nm}" ; \
@@ -104,6 +111,7 @@
 %global __libsymlink_exclude_path ^(%{?__libsymlink_exclude_path}|%{gnuxc_sysroot}/.*)$ \
 %global __arch_install_post %{__arch_install_post} \\\
 %{_rpmconfigdir}/gnuxc-expand-pc-flags.sh \
+%global __spec_prep_post %%{gnuxc_drop_rpath} ; %{___build_post} \
 %if ! 0%{?bootstrap} \
 BuildRequires:  gnuxc(bootstrapped) \
 %endif \

@@ -21,7 +21,7 @@
       (dup2 2 console))))
 
 ;; Begin regular system initialization.
-(use-modules (dmd comm) (dmd system))
+(use-modules (shepherd comm) (shepherd system))
 (system* "/sbin/tmpfiles" "--boot")
 (if (member "-f" boot-cmdline)
   (display "Fast boot requested; skipping file system checks\n")
@@ -32,19 +32,32 @@
     ((12)         (display "Interrupted fsck, completed\n")    (go-to-shell))
     ((20 130 131) (display "Interrupted fsck, aborted\n")      (go-to-shell))
     (else         (display "Unknown fsck status\n")            (go-to-shell))))
-(start-logging "/var/log/dmd.log")
+(start-logging "/var/log/shepherd.log")
 
 ;; Load package service definitions.
-(if (file-exists? "/etc/dmd.d/.")
-  (let ((pkgdir (opendir "/etc/dmd.d")))
-    (do ((entry (readdir pkgdir) (readdir pkgdir))) ((eof-object? entry))
-      (if (string-suffix? ".scm" entry)
+(if (file-exists? "/etc/shepherd.d/.")
+  (let ((pkgdir (opendir "/etc/shepherd.d")))
+    (do ((file (readdir pkgdir) (readdir pkgdir))) ((eof-object? file))
+      (if (string-suffix? ".scm" file)
         (catch #t
           (lambda ()
-            (register-services (load (string-append "/etc/dmd.d/" entry))))
+            (register-services (load (string-append "/etc/shepherd.d/" file))))
           (lambda (key . args)
-            (display (string-append "Bad service file: " entry "\n"))))))
+            (display (string-append "Bad service file: " file "\n"))))))
     (closedir pkgdir)))
 
-;; Start the desired services.
-(for-each start '(console swap))
+;; Pretend to support boot-time runlevels, and start the desired services.
+(define default-runlevel 3)
+(for-each start
+  (case
+    (string->number
+      (car
+        (last-pair
+          (filter
+            (lambda (x) (member x '("1" "2" "3" "4" "5" "6")))
+            (cons (number->string default-runlevel) boot-cmdline)))))
+    ((1 2) '(runttys swap))
+    ((3 4) '(console swap))
+    ((5)   '(xdm     swap))
+    ((6)   (reboot))
+    (else  (display "Could not determine runlevel\n") (go-to-shell))))

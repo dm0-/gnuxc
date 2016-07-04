@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nspr
-Version:        4.11
+Version:        4.12
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MPLv2.0
-Group:          System Environment/Libraries
 URL:            http://www.mozilla.org/projects/nspr/
 Source0:        http://ftp.mozilla.org/pub/nspr/releases/v%{version}/src/%{gnuxc_name}-%{version}.tar.gz
 
@@ -19,7 +18,6 @@ BuildRequires:  gnuxc-gcc-c++
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-gcc-c++
 
@@ -29,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -52,8 +49,8 @@ mv %{gnuxc_name}/{*,.[!.]*} .
     --enable-debug --enable-debug-symbols \
     --enable-ipv6 \
     --enable-optimize \
-    --with-pthreads
-%__make -C config %{?_smp_mflags} export CC=gcc
+    --with-pthreads \
+    HOST_CC=gcc
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -87,6 +84,3 @@ rm -f %{buildroot}%{gnuxc_datadir}/aclocal/nspr.m4
 %{gnuxc_libdir}/libnspr4.a
 %{gnuxc_libdir}/libplc4.a
 %{gnuxc_libdir}/libplds4.a
-
-
-%changelog

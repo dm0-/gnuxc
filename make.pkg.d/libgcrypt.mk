@@ -1,10 +1,11 @@
-libgcrypt               := libgcrypt-1.6.4
+libgcrypt               := libgcrypt-1.7.1
+libgcrypt_sha1          := b688add52b622bb96bbd823ba21aa05a116d442f
 libgcrypt_url           := ftp://ftp.gnupg.org/gcrypt/libgcrypt/$(libgcrypt).tar.bz2
 
 ifeq ($(host),$(build))
-export LIBGCRYPT_CONFIG = libgcrypt-config
+export LIBGCRYPT_CONFIG = /usr/bin/libgcrypt-config
 else
-export LIBGCRYPT_CONFIG = $(host)-libgcrypt-config
+export LIBGCRYPT_CONFIG = /usr/bin/$(host)-libgcrypt-config
 endif
 
 $(prepare-rule):
@@ -15,9 +16,10 @@ $(configure-rule):
 		--enable-hmac-binary-check \
 		--enable-m-guard \
 		--enable-static \
-		--enable-threads=posix \
 		\
-		--disable-asm
+		--disable-asm \
+		--disable-random-daemon \
+		--without-capabilities
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

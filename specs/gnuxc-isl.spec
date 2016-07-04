@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-isl
-Version:        0.15
+Version:        0.17.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          Development/Libraries
 URL:            http://isl.gforge.inria.fr/
 Source0:        http://isl.gforge.inria.fr/%{gnuxc_name}-%{version}.tar.xz
 
@@ -57,20 +56,17 @@ rm -f %{buildroot}%{gnuxc_libdir}/libisl.la
 
 %files
 %{gnuxc_libdir}/libisl.so.15
-%{gnuxc_libdir}/libisl.so.15.0.0
+%{gnuxc_libdir}/libisl.so.15.2.1
 %doc doc/manual.pdf AUTHORS ChangeLog README
 %license LICENSE
 
 %files devel
 %{gnuxc_includedir}/isl
 %{gnuxc_libdir}/libisl.so
-%{gnuxc_libdir}/libisl.so.15.0.0-gdb.py
-%{gnuxc_libdir}/libisl.so.15.0.0-gdb.pyc
-%{gnuxc_libdir}/libisl.so.15.0.0-gdb.pyo
+%{gnuxc_libdir}/libisl.so.15.2.1-gdb.py
+%{gnuxc_libdir}/libisl.so.15.2.1-gdb.pyc
+%{gnuxc_libdir}/libisl.so.15.2.1-gdb.pyo
 %{gnuxc_libdir}/pkgconfig/isl.pc
 
 %files static
 %{gnuxc_libdir}/libisl.a
-
-
-%changelog

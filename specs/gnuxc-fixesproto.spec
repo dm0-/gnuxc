@@ -7,13 +7,12 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          Development/System
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/proto/%{gnuxc_name}-%{version}.tar.bz2
 
-BuildRequires:  gnuxc-filesystem
+# This is not actually used; it's just for automatic pkg-config dependencies.
+BuildRequires:  gnuxc-xextproto
 
-Requires:       gnuxc-xextproto
 Provides:       %{name}-devel = %{version}-%{release}
 
 %description
@@ -41,6 +40,3 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %{gnuxc_libdir}/pkgconfig/fixesproto.pc
 %doc AUTHORS ChangeLog README
 %license COPYING
-
-
-%changelog

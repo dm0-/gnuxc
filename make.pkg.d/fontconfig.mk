@@ -1,4 +1,5 @@
-fontconfig              := fontconfig-2.11.94
+fontconfig              := fontconfig-2.12.0
+fontconfig_sha1         := 4170b4d11816b10ff739e1b8ce35fae15a45894b
 fontconfig_url          := http://www.freedesktop.org/software/fontconfig/release/$(fontconfig).tar.bz2
 
 $(configure-rule):

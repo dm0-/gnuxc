@@ -1,4 +1,5 @@
-sudo                    := sudo-1.8.15
+sudo                    := sudo-1.8.17p1
+sudo_sha1               := e9bb729513cd15e99def42019c35917bc9a73536
 sudo_url                := http://www.sudo.ws/sudo/dist/$(sudo).tar.gz
 
 $(prepare-rule):
@@ -9,13 +10,15 @@ $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-noargs-shell \
 		--disable-rpath \
+		--enable-asan \
 		--enable-env-debug \
 		--enable-env-reset \
+		--enable-hardening \
 		--enable-log-host \
 		--enable-pie \
 		--enable-shell-sets-home \
 		--enable-tmpfiles.d \
-		--enable-warnings \
+		--enable-warnings --disable-werror \
 		--enable-zlib \
 		--with-devel \
 		--with-editor=emacs \

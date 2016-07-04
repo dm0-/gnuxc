@@ -17,19 +17,21 @@ There are two distinct components for building a working operating system:
  2. *Operating system compilation rules*:  The options and procedures used to
     build all of the OS software are contained in `make.pkg.d` and `patches`.
     These files are mostly reusable on the GNU system to rebuild or upgrade
-    packages at run-time.
+    packages at runtime.
 
-A documentation file `BUILD.md` is provided to walk-through the process of
-compilation, creating a disk image, and running the OS virtually.
+A documentation file `BUILD.md` is provided to walk-through the entire build
+procedure and how to test running the OS virtually.  All sample commands in the
+documentation can be pasted directly into a `bash` prompt.  Some of the
+commands require your account to have `sudo` access, for example to install
+system packages or work with loop devices.
 
-All sample commands in the documentation can be pasted directly into a `bash`
-prompt.  Some of the commands require your account to have `sudo` access, for
-example to install system packages or work with loop devices.
+The file `RUNTIME.md` documents how to use and configure the main environments
+at runtime, especially the aspects that are unique to the `gnuxc` project.
 
 
 ## Requirements
 
-*Operating system*:  Fedora 23 is the current release targeted by this code.
+*Operating system*:  Fedora 24 is the current release targeted by this code.
 
 *Disk space*:  At least 20 GiB of total available storage is required when
 building everything on the same machine, plus however much space is desired for
@@ -43,7 +45,7 @@ directories will greatly improve build times.
     disk after it finishes, requiring almost 2 GiB of disk space.  (This space
     can be reclaimed by removing the RPM build environment after installation.)
 
-  * The main working directory will use around 16 GiB after compilation.
+  * The main working directory will use a bit over 16 GiB after compilation.
 
 *Memory*:  The build is usually tested on systems with at least 8 GiB of RAM.
 
@@ -115,4 +117,4 @@ once before this will work.  See `BUILD.md` for complete instructions.
 installation.
 
     time make -f "${SOURCE_DIR:-.}/setup-sysroot.scm" $(rpm -E %_smp_mflags)
-    time ( gmake prepare && gmake $(rpm -E %_smp_mflags) && gmake install )
+    time ( gmake download && gmake $(rpm -E %_smp_mflags) && gmake install )

@@ -1,8 +1,6 @@
-librsvg                 := librsvg-2.40.11
+librsvg                 := librsvg-2.40.16
+librsvg_sha1            := 6d800afa8d886eba9c3039875d4fc89a8004932f
 librsvg_url             := http://ftp.gnome.org/pub/gnome/sources/librsvg/2.40/$(librsvg).tar.xz
-
-$(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

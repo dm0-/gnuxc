@@ -1,16 +1,17 @@
-ncurses                 := ncurses-6.0-20151121
+ncurses                 := ncurses-6.0-20160702
+ncurses_sha1            := a4b5801dc66fff5cb800609023944e8c423bfbd9
 ncurses_url             := http://invisible-mirror.net/archives/ncurses/current/$(ncurses).tgz
 
 ifeq ($(host),$(build))
-export NCURSES_CONFIG   = ncurses6-config
-export NCURSESW_CONFIG  = ncursesw6-config
-export NCURSEST_CONFIG  = ncursest6-config
-export NCURSESTW_CONFIG = ncursestw6-config
+export NCURSES_CONFIG   = /usr/bin/ncurses6-config
+export NCURSESW_CONFIG  = /usr/bin/ncursesw6-config
+export NCURSEST_CONFIG  = /usr/bin/ncursest6-config
+export NCURSESTW_CONFIG = /usr/bin/ncursestw6-config
 else
-export NCURSES_CONFIG   = $(host)-ncurses6-config
-export NCURSESW_CONFIG  = $(host)-ncursesw6-config
-export NCURSEST_CONFIG  = $(host)-ncursest6-config
-export NCURSESTW_CONFIG = $(host)-ncursestw6-config
+export NCURSES_CONFIG   = /usr/bin/$(host)-ncurses6-config
+export NCURSESW_CONFIG  = /usr/bin/$(host)-ncursesw6-config
+export NCURSEST_CONFIG  = /usr/bin/$(host)-ncursest6-config
+export NCURSESTW_CONFIG = /usr/bin/$(host)-ncursestw6-config
 endif
 
 $(call configure-rule,classic pthread widec widec+pthread): configure := $(configure:--docdir%=)

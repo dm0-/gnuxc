@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-fontconfig
-Version:        2.11.94
+Version:        2.12.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT and Public Domain and UCD
-Group:          System Environment/Libraries
 URL:            http://fontconfig.org/
 Source0:        http://www.freedesktop.org/software/%{gnuxc_name}/release/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -20,10 +19,7 @@ BuildRequires:  python3
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-freetype-devel
-Requires:       gnuxc-libxml2-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -31,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -68,7 +63,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/libfontconfig.la
 %{gnuxc_datadir}/fontconfig
 %{gnuxc_datadir}/xml/fontconfig
 %{gnuxc_libdir}/libfontconfig.so.1
-%{gnuxc_libdir}/libfontconfig.so.1.9.0
+%{gnuxc_libdir}/libfontconfig.so.1.9.1
 %{gnuxc_sysconfdir}/fonts
 %doc AUTHORS ChangeLog NEWS README
 %license COPYING
@@ -80,6 +75,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/libfontconfig.la
 
 %files static
 %{gnuxc_libdir}/libfontconfig.a
-
-
-%changelog

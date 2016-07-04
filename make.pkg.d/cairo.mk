@@ -1,8 +1,6 @@
-cairo                   := cairo-1.14.4
+cairo                   := cairo-1.14.6
+cairo_sha1              := 0a59324e6cbe031b5b898ff8b9e2ffceb9d114f5
 cairo_url               := http://cairographics.org/releases/$(cairo).tar.xz
-
-$(prepare-rule):
-	$(call drop-rpath,configure,build/ltmain.sh)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

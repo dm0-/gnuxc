@@ -1,0 +1,146 @@
+Unfortunately, compiled levels have long integers written directly to their
+files by native programs on the build system.  That means the 32-bit game
+program tries to read those fields as four bytes at runtime, but the 64-bit
+compilers wrote them as eight bytes while cross-compiling.
+
+This changes those fields to regular integers (which are four bytes in both
+cases), and it lies about the total sizes of other key structures containing
+long integers and pointers so they match the 32-bit runtime.  With this, the
+final cross-compiled nhdat file matches one built natively byte-for-byte.
+
+--- include/global.h
++++ include/global.h
+@@ -272,11 +272,11 @@
+ /* Used for consistency checks of various data files; declare it here so
+    that utility programs which include config.h but not hack.h can see it. */
+ struct version_info {
+-    unsigned long incarnation;   /* actual version number */
+-    unsigned long feature_set;   /* bitmask of config settings */
+-    unsigned long entity_count;  /* # of monsters and objects */
+-    unsigned long struct_sizes1; /* size of key structs */
+-    unsigned long struct_sizes2; /* size of more key structs */
++    unsigned int incarnation;   /* actual version number */
++    unsigned int feature_set;   /* bitmask of config settings */
++    unsigned int entity_count;  /* # of monsters and objects */
++    unsigned int struct_sizes1; /* size of key structs */
++    unsigned int struct_sizes2; /* size of more key structs */
+ };
+ 
+ struct savefile_info {
+--- include/qtext.h
++++ include/qtext.h
+@@ -12,7 +12,7 @@
+ struct qtmsg {
+     int msgnum;
+     char delivery;
+-    long offset, size, summary_size;
++    int offset, size, summary_size;
+ };
+ 
+ #ifdef MAKEDEFS_C /***** MAKEDEFS *****/
+@@ -27,7 +27,7 @@
+ struct qthdr {
+     int n_hdr;
+     char id[N_HDR][LEN_HDR];
+-    long offset[N_HDR];
++    int offset[N_HDR];
+ };
+ 
+ /* Error message macros */
+--- include/sp_lev.h
++++ include/sp_lev.h
+@@ -254,7 +254,7 @@
+     xchar spovartyp; /* one of SPOVAR_foo */
+     union {
+         char *str;
+-        long l;
++        int l;
+     } vardata;
+ };
+ 
+@@ -442,7 +442,7 @@
+ 
+ typedef struct {
+     _opcode *opcodes;
+-    long n_opcodes;
++    int n_opcodes;
+ } sp_lev;
+ 
+ typedef struct {
+--- sys/unix/Makefile.top
++++ sys/unix/Makefile.top
+@@ -186,7 +186,7 @@
+ 
+ dlb:
+ 	( cd util ; $(MAKE) dlb )
+-	( cd dat ; ../util/dlb cf nhdat $(DATDLB) )
++	( LANG=C ; cd dat ; ../util/dlb cf nhdat $(DATDLB) )
+ 
+ # recover can be used when INSURANCE is defined in include/config.h
+ # and the checkpoint option is true
+--- util/makedefs.c
++++ util/makedefs.c
+@@ -1139,18 +1139,8 @@
+     /*
+      * Value used for compiler (word size/field alignment/padding) check.
+      */
+-    version.struct_sizes1 =
+-        (((unsigned long) sizeof(struct context_info) << 24)
+-         | ((unsigned long) sizeof(struct obj) << 17)
+-         | ((unsigned long) sizeof(struct monst) << 10)
+-         | ((unsigned long) sizeof(struct you)));
+-    version.struct_sizes2 = (((unsigned long) sizeof(struct flag) << 10) |
+-/* free bits in here */
+-#ifdef SYSFLAGS
+-                             ((unsigned long) sizeof(struct sysflag)));
+-#else
+-                             ((unsigned long) 0L));
+-#endif
++    version.struct_sizes1 = 0xf48195c4UL;
++    version.struct_sizes2 = 0x00025000UL;
+     return;
+ }
+ 
+@@ -1258,19 +1248,19 @@
+ #else
+     ul_sfx = "L";
+ #endif
+-    Fprintf(ofp, "#define VERSION_NUMBER 0x%08lx%s\n", version.incarnation,
++    Fprintf(ofp, "#define VERSION_NUMBER 0x%08x%s\n", version.incarnation,
+             ul_sfx);
+-    Fprintf(ofp, "#define VERSION_FEATURES 0x%08lx%s\n", version.feature_set,
++    Fprintf(ofp, "#define VERSION_FEATURES 0x%08x%s\n", version.feature_set,
+             ul_sfx);
+ #ifdef IGNORED_FEATURES
+     Fprintf(ofp, "#define IGNORED_FEATURES 0x%08lx%s\n",
+             (unsigned long) IGNORED_FEATURES, ul_sfx);
+ #endif
+-    Fprintf(ofp, "#define VERSION_SANITY1 0x%08lx%s\n", version.entity_count,
++    Fprintf(ofp, "#define VERSION_SANITY1 0x%08x%s\n", version.entity_count,
+             ul_sfx);
+-    Fprintf(ofp, "#define VERSION_SANITY2 0x%08lx%s\n", version.struct_sizes1,
++    Fprintf(ofp, "#define VERSION_SANITY2 0x%08x%s\n", version.struct_sizes1,
+             ul_sfx);
+-    Fprintf(ofp, "#define VERSION_SANITY3 0x%08lx%s\n", version.struct_sizes2,
++    Fprintf(ofp, "#define VERSION_SANITY3 0x%08x%s\n", version.struct_sizes2,
+             ul_sfx);
+     Fprintf(ofp, "\n");
+     Fprintf(ofp, "#define VERSION_STRING \"%s\"\n", version_string(buf, "."));
+@@ -2344,7 +2334,7 @@
+ {
+     int i, j;
+     long count = 0L, hdr_offset = sizeof(int)
+-                                  + (sizeof(char) * LEN_HDR + sizeof(long))
++                                  + (sizeof(char) * LEN_HDR + sizeof(int))
+                                         * qt_hdr.n_hdr;
+ 
+     for (i = 0; i < qt_hdr.n_hdr; i++) {
+@@ -2374,7 +2364,7 @@
+     (void) fwrite((genericptr_t) & (qt_hdr.n_hdr), sizeof(int), 1, ofp);
+     (void) fwrite((genericptr_t) & (qt_hdr.id[0][0]), sizeof(char) * LEN_HDR,
+                   qt_hdr.n_hdr, ofp);
+-    (void) fwrite((genericptr_t) & (qt_hdr.offset[0]), sizeof(long),
++    (void) fwrite((genericptr_t) & (qt_hdr.offset[0]), sizeof(int),
+                   qt_hdr.n_hdr, ofp);
+     if (debug) {
+         for (i = 0; i < qt_hdr.n_hdr; i++)

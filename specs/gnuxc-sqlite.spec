@@ -1,16 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-sqlite
-Version:        3.9.2
-%global realver 3090200
+Version:        3.13.0
+%global realver 3130000
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        Public Domain
-Group:          Applications/Databases
 URL:            http://www.sqlite.org/
-Source0:        http://www.sqlite.org/2015/%{gnuxc_name}-autoconf-%{realver}.tar.gz
+Source0:        http://www.sqlite.org/2016/%{gnuxc_name}-autoconf-%{realver}.tar.gz
 
+BuildRequires:  gnuxc-ncurses-devel
 BuildRequires:  gnuxc-readline-devel
 
 BuildRequires:  libtool
@@ -20,7 +20,6 @@ BuildRequires:  libtool
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -30,7 +29,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -44,10 +42,15 @@ statically, which is highly discouraged.
 
 %build
 %gnuxc_configure \
+    --disable-editline \
+    --disable-static-shell \
     --enable-dynamic-extensions \
+    --enable-fts5 \
+    --enable-json1 \
     --enable-readline \
     --enable-threadsafe \
-    CPPFLAGS='-DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_SECURE_DELETE'
+    CPPFLAGS='-DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_SECURE_DELETE' \
+    ac_cv_search_tgetent=-ltinfow
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -66,7 +69,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libsqlite3.so.0
 %{gnuxc_libdir}/libsqlite3.so.0.8.6
-%doc README
+%doc README.txt
 
 %files devel
 %{gnuxc_includedir}/sqlite3.h
@@ -76,6 +79,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libsqlite3.a
-
-
-%changelog

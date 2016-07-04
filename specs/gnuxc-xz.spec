@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        Public Domain and GPLv2+
-Group:          System Environment/Libraries
 URL:            http://tukaani.org/xz/
 Source0:        http://tukaani.org/xz/%{gnuxc_name}-%{version}.tar.xz
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description devel
@@ -26,7 +24,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -77,6 +74,3 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 
 %files static
 %{gnuxc_libdir}/liblzma.a
-
-
-%changelog

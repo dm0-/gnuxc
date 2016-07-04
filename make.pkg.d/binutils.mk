@@ -1,4 +1,5 @@
-binutils                := binutils-2.25.1
+binutils                := binutils-2.26.1
+binutils_sha1           := 624cd377e3a8eef3db83a56ce289a60f556b3ec2
 binutils_url            := http://ftpmirror.gnu.org/binutils/$(binutils).tar.bz2
 
 ifeq ($(host),$(build))
@@ -28,7 +29,7 @@ $(configure-rule):
 		--enable-plugins \
 		--enable-shared \
 		--enable-threads \
-		--with-zlib \
+		--with-system-zlib \
 		--without-included-gettext \
 		--without-newlib
 

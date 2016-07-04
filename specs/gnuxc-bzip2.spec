@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          System Environment/Libraries
 URL:            http://www.bzip.org/
 Source0:        http://www.bzip.org/%{version}/%{gnuxc_name}-%{version}.tar.gz
 
@@ -18,7 +17,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description devel
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -69,6 +66,3 @@ ln -fs libbz2.so.1.0 %{buildroot}%{gnuxc_libdir}/libbz2.so
 
 %files static
 %{gnuxc_libdir}/libbz2.a
-
-
-%changelog

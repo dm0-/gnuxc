@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgpg-error
-Version:        1.20
+Version:        1.23
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/gpg/
 Source0:        ftp://ftp.gnupg.org/gcrypt/libgpg-error/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -43,8 +40,9 @@ statically, which is highly discouraged.
 sed -i -e '/-[IL]/s/[^ ].*/:/' src/gpg-error-config.in
 
 # Create a host-dependent header when cross-compiling.
-sed 's/i486-pc-gnu/%{gnuxc_target}/g' \
-    < src/syscfg/lock-obj-pub.i486-pc-gnu.h \
+test -e src/syscfg/lock-obj-pub.%{gnuxc_target}.h ||
+sed 's/i686-pc-gnu/%{gnuxc_target}/g' \
+    < src/syscfg/lock-obj-pub.i686-pc-gnu.h \
     > src/syscfg/lock-obj-pub.%{gnuxc_target}.h
 
 %build
@@ -79,7 +77,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/{aclocal,common-lisp}
 
 %files
 %{gnuxc_libdir}/libgpg-error.so.0
-%{gnuxc_libdir}/libgpg-error.so.0.16.0
+%{gnuxc_libdir}/libgpg-error.so.0.19.0
 %doc AUTHORS ChangeLog* NEWS README THANKS
 %license COPYING COPYING.LIB
 
@@ -91,6 +89,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/{aclocal,common-lisp}
 
 %files static
 %{gnuxc_libdir}/libgpg-error.a
-
-
-%changelog

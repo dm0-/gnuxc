@@ -3,14 +3,16 @@
 %undefine __python_requires
 
 Name:           gnuxc-xcb-proto
-Version:        1.11
+Version:        1.12
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          Development/Libraries
 URL:            http://xcb.freedesktop.org/
 Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
+
+Patch001:       https://cgit.freedesktop.org/xcb/proto/patch/?id=ea7a3ac6c658164690e0febb55f4467cb9e0bcac#/%{gnuxc_name}-%{version}-fix-tabs.patch
+Patch002:       https://cgit.freedesktop.org/xcb/proto/patch/?id=bea5e1c85bdc0950913790364e18228f20395a3d#/%{gnuxc_name}-%{version}-fix-print.patch
 
 Requires:       gnuxc-python
 Provides:       %{name}-devel = %{version}-%{release}
@@ -26,6 +28,8 @@ BuildRequires:  python3-devel
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+%patch001 -p1
+%patch002 -p1
 
 # Force the cross-libxcb configuration to use files from the sysroot.
 pyver=$(env -i %{gnuxc_pkgconfig} --modversion python3)
@@ -46,6 +50,3 @@ sed -i xcb-proto.pc.in \
 %{gnuxc_libdir}/python*.*/site-packages/xcbgen
 %doc NEWS README TODO
 %license COPYING
-
-
-%changelog

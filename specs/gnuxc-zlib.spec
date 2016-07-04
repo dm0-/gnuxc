@@ -6,11 +6,8 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        zlib and Boost
-Group:          System Environment/Libraries
 URL:            http://zlib.net/
 Source0:        http://zlib.net/%{gnuxc_name}-%{version}.tar.gz
-
-Patch101:       %{gnuxc_name}-%{version}-add-soname.patch
 
 BuildRequires:  gnuxc-glibc-devel
 
@@ -19,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -29,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -40,7 +35,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch101
 
 # This variable is redundant and problematic in the sysroot.
 sed -i -e 's/ -L.{sharedlibdir}//g' zlib.pc.in
@@ -52,7 +46,8 @@ CHOST=%{gnuxc_host} %_configure \
     --eprefix=%{gnuxc_exec_prefix} \
     --includedir=%{gnuxc_includedir} \
     --libdir=%{gnuxc_libdir} \
-    --sharedlibdir=%{gnuxc_libdir}
+    --sharedlibdir=%{gnuxc_libdir} \
+    --uname=GNU
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -75,6 +70,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libz.a
-
-
-%changelog

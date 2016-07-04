@@ -39,7 +39,7 @@ for the initial program.
  
 --- doc/hurd.texi
 +++ doc/hurd.texi
-@@ -566,7 +566,7 @@
+@@ -569,7 +569,7 @@
  it is a root filesystem, which triggers it to run @command{/hurd/startup} as PID
  2.  @command{/hurd/startup} starts the @command{/hurd/proc} and
  @command{/hurd/auth} servers.  After the servers are launched
@@ -50,7 +50,7 @@ for the initial program.
  After the Hurd has been booted, other sets of core Hurd servers can be
 --- startup/startup.c
 +++ startup/startup.c
-@@ -952,7 +952,7 @@
+@@ -1014,7 +1014,7 @@
  /** Running userland.  **/
  
  /* In the "split-init" setup, we just run a single program (usually
@@ -59,7 +59,7 @@ for the initial program.
     If it does exit (or can't be started), we go to an emergency single-user
     shell as a fallback.  */
  
-@@ -1020,7 +1020,7 @@
+@@ -1082,7 +1082,7 @@
      }
  }
  
@@ -68,7 +68,7 @@ for the initial program.
     with the given additional arguments.  */
  static int
  start_child (const char *prog, char **progargs)
-@@ -1032,7 +1032,7 @@
+@@ -1094,7 +1094,7 @@
  
    if (progargs == 0)
      {
@@ -77,7 +77,7 @@ for the initial program.
        err = argz_create ((char **) argv, &args, &arglen);
      }
    else
-@@ -1042,7 +1042,7 @@
+@@ -1104,7 +1104,7 @@
  	++argc;
        {
  	const char *argv[2 + argc + 1];
@@ -86,7 +86,7 @@ for the initial program.
  	argv[1] = prog;
  	argv[2 + argc] = 0;
  	while (argc-- > 0)
-@@ -1102,7 +1102,7 @@
+@@ -1167,7 +1167,7 @@
    static unsigned int try;
    static const char *const tries[] =
    {
@@ -95,7 +95,7 @@ for the initial program.
      _PATH_BSHELL,
      "/bin/shd",			/* XXX */
    };
-@@ -1114,7 +1114,7 @@
+@@ -1179,7 +1179,7 @@
    if (something != MACH_PORT_NULL)
      {
        mach_port_deallocate (mach_task_self (), something);

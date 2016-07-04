@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-pcre
-Version:        8.38
+Version:        8.39
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          System Environment/Libraries
 URL:            http://www.pcre.org/
 Source0:        ftp://ftp.csx.cam.ac.uk/pub/software/programming/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -20,7 +19,6 @@ BuildRequires:  gnuxc-zlib-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description devel
@@ -29,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -40,11 +37,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -81,15 +73,15 @@ rm -rf %{buildroot}%{gnuxc_docdir}/%{gnuxc_name} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpcre.so.1
-%{gnuxc_libdir}/libpcre.so.1.2.6
+%{gnuxc_libdir}/libpcre.so.1.2.7
 %{gnuxc_libdir}/libpcre16.so.0
-%{gnuxc_libdir}/libpcre16.so.0.2.6
+%{gnuxc_libdir}/libpcre16.so.0.2.7
 %{gnuxc_libdir}/libpcre32.so.0
-%{gnuxc_libdir}/libpcre32.so.0.0.6
+%{gnuxc_libdir}/libpcre32.so.0.0.7
 %{gnuxc_libdir}/libpcrecpp.so.0
 %{gnuxc_libdir}/libpcrecpp.so.0.0.1
 %{gnuxc_libdir}/libpcreposix.so.0
-%{gnuxc_libdir}/libpcreposix.so.0.0.3
+%{gnuxc_libdir}/libpcreposix.so.0.0.4
 %doc AUTHORS ChangeLog HACKING NEWS README
 %license COPYING LICENCE
 
@@ -119,6 +111,3 @@ rm -rf %{buildroot}%{gnuxc_docdir}/%{gnuxc_name} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libpcre32.a
 %{gnuxc_libdir}/libpcrecpp.a
 %{gnuxc_libdir}/libpcreposix.a
-
-
-%changelog

@@ -1,9 +1,6 @@
-gtk2                    := gtk2-2.24.28
-gtk2_branch             := $(gtk2:gtk2-%=gtk+-%)
-gtk2_url                := http://ftp.gnome.org/pub/gnome/sources/gtk+/2.24/$(gtk2_branch).tar.xz
-
-$(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh)
+gtk2                    := gtk+-2.24.30
+gtk2_sha1               := aa5bc6dca583cf2bff137606dc2014f6ea559da7
+gtk2_url                := http://ftp.gnome.org/pub/gnome/sources/gtk+/2.24/$(gtk2).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

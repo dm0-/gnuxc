@@ -1,4 +1,5 @@
 libSM                   := libSM-1.2.2
+libSM_sha1              := e6d5dab6828dfd296e564518d2ed0a349a25a714
 libSM_url               := http://xorg.freedesktop.org/releases/individual/lib/$(libSM).tar.bz2
 
 $(configure-rule):

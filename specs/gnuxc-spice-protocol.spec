@@ -2,18 +2,16 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-spice-protocol
-Version:        0.12.10
+Version:        0.12.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD and LGPLv2+
-Group:          Development/System
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-filesystem
 
-Requires:       gnuxc-filesystem
 Provides:       %{name}-devel = %{version}-%{release}
 
 %description
@@ -34,9 +32,5 @@ Provides:       %{name}-devel = %{version}-%{release}
 %files
 %{gnuxc_datadir}/pkgconfig/spice-protocol.pc
 %{gnuxc_includedir}/spice-1
-%{gnuxc_libdir}/spice-protocol
 %doc AUTHORS ChangeLog NEWS README
 %license COPYING
-
-
-%changelog

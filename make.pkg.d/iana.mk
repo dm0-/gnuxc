@@ -1,10 +1,16 @@
 iana                    := iana-1
 
-iana-tzcode_url         := http://www.iana.org/time-zones/repository/releases/tzcode2015g.tar.gz
-iana-tzdata_url         := http://www.iana.org/time-zones/repository/releases/tzdata2015g.tar.gz
+iana-tzcode_sha1        := 043211c9b7d8430671ae29a10e274e0fb00f26b8
+iana-tzcode_url         := http://www.iana.org/time-zones/repository/releases/tzcode2016e.tar.gz
+
+iana-tzdata_sha1        := 5a65dd3aeeb0c8de7b359b810bb0d032d344b6bd
+iana-tzdata_url         := http://www.iana.org/time-zones/repository/releases/tzdata2016e.tar.gz
 
 iana-protocols_url      := http://www.iana.org/assignments/protocol-numbers/protocol-numbers-1.csv
 iana-services_url       := http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv
+
+$(eval $(call verify-download,$(iana-tzdata_url),$(iana-tzdata_sha1),tzdata.tar.gz))
+$(eval $(call verify-download,$(iana-tzcode_url),$(iana-tzcode_sha1),tzcode.tar.gz))
 
 $(build-rule) $(install-rule): private override configuration = \
 	TOPDIR=/usr \
@@ -20,8 +26,8 @@ $(build-rule) $(install-rule): private override configuration = \
 	$(and $(filter-out $(host),$(build)),zic=./zic.build)
 
 $(prepare-rule):
-	$(DOWNLOAD) '$(iana-tzdata_url)' | $(TAR) -zC $(builddir) -x
-	$(DOWNLOAD) '$(iana-tzcode_url)' | $(TAR) -zC $(builddir) -x
+	$(TAR) -C $(builddir) -xzf $(call addon-file,tzdata.tar.gz)
+	$(TAR) -C $(builddir) -xzf $(call addon-file,tzcode.tar.gz)
 	$(call apply,adjust-install)
 
 $(build-rule):
@@ -48,7 +54,7 @@ $(call addon-file,protocols.csv): | $$(@D)
 	$(DOWNLOAD) '$(iana-protocols_url)' > $@
 $(call addon-file,services.csv): | $$(@D)
 	$(DOWNLOAD) '$(iana-services_url)' > $@
-$(prepared): $(call addon-file,protocols.csv services.csv)
+$(downloaded): $(call addon-file,protocols.csv services.csv)
 
 # Convert the lists into a format that can be installed into /etc.
 $(call addon-file,protocols): $(call addon-file,protocols.csv convert-protocols.sh)

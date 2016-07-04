@@ -1,4 +1,5 @@
 automake                := automake-1.15
+automake_sha1           := c279b35ca6c410809dac8ade143b805fb48b7655
 automake_url            := http://ftpmirror.gnu.org/automake/$(automake).tar.xz
 
 $(configure-rule):

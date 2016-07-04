@@ -4,7 +4,7 @@ define UNUSED_CHUNK_SWITCHING_GUILE_BLOCK_COMMENTS_TO_CONFORM_TO_BEST_PRACTICES
 #|
 endef
 
-# Copyright (C) 2014,2015 David Michael <fedora.dm0@gmail.com>
+# Copyright (C) 2014,2015,2016 David Michael <fedora.dm0@gmail.com>
 #
 # This file is part of gnuxc.
 #
@@ -46,13 +46,13 @@ override define CHUNK_O_GUILE
 ;;; Define the empty maps and lists that will be populated by spec file data.
 
 ;; Map a spec file name to the file name of the SRPM it creates.
-(define spec-to-srpm (make-hash-table 1000))
+(define spec-to-srpm (make-hash-table))
 
 ;; Map a package name to the file name of the SRPM that creates it.
-(define name-to-srpm (make-hash-table 1000))
+(define name-to-srpm (make-hash-table))
 
 ;; Map a spec file name to the list of its build requirements.
-(define spec-to-reqs (make-hash-table 1000))
+(define spec-to-reqs (make-hash-table))
 
 ;; List the spec files that can be built while bootstrapping the system.
 (define bootstrap-package-specs '())
@@ -234,8 +234,8 @@ createrepo := createrepo_c --no-database --simple-md-filenames
 install: all
 	$(createrepo) '$(rpmdir)'
 	$(dnf-install) \
-'gnuxc-*-devel' 'gnuxc-*proto' gnuxc-{libpthread-stubs,spice-protocol} \
-gnuxc-gcc-{gfortran,objc++} gnuxc-mig gnuxc-pkg-config \
+'gnuxc-*-devel' gnuxc-gcc-{gfortran,objc++} gnuxc-mig gnuxc-pkg-config \
+'gnuxc-*proto' gnuxc-{libpthread-stubs,spice-protocol,xorg-server,xtrans} \
 gnuxc-{bzip2,glibc,libuuid,parted,zlib}-static
 
 # Also provide an easily typed target that only installs the complete GCC.

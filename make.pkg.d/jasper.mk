@@ -1,4 +1,5 @@
 jasper                  := jasper-1.900.1
+jasper_sha1             := 9c5735f773922e580bf98c7c7dfda9bbed4c5191
 jasper_url              := http://www.ece.uvic.ca/~frodo/jasper/software/$(jasper).zip
 
 $(prepare-rule):

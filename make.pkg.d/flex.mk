@@ -1,4 +1,5 @@
 flex                    := flex-2.6.0
+flex_sha1               := 684c927c9f1b170e9627338de12e99cf2c224b91
 flex_url                := http://prdownloads.sourceforge.net/flex/$(flex).tar.xz
 
 $(prepare-rule):

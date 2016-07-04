@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-tk
-Version:        8.6.4
+Version:        8.6.5
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        TCL
-Group:          Development/Languages
 URL:            http://www.tcl.tk/
 Source0:        http://prdownloads.sourceforge.net/tcl/%{gnuxc_name}%{version}-src.tar.gz
 
@@ -21,9 +20,7 @@ BuildRequires:  autoconf
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-tcl-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -60,7 +57,7 @@ autoreconf -fi unix
 %gnuxc_make %{?_smp_mflags} all
 
 %install
-%gnuxc_make_install
+%gnuxc_make_install install-private-headers
 
 # There is no need to install binary programs in the sysroot.
 rm -f %{buildroot}%{gnuxc_bindir}/wish8.6
@@ -80,10 +77,16 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files devel
 %{gnuxc_includedir}/tk.h
 %{gnuxc_includedir}/tkDecls.h
+%{gnuxc_includedir}/tkInt.h
+%{gnuxc_includedir}/tkIntDecls.h
+%{gnuxc_includedir}/tkIntPlatDecls.h
+%{gnuxc_includedir}/tkIntXlibDecls.h
 %{gnuxc_includedir}/tkPlatDecls.h
+%{gnuxc_includedir}/tkPort.h
+%{gnuxc_includedir}/tkUnixInt.h
+%{gnuxc_includedir}/tkUnixPort.h
+%{gnuxc_includedir}/ttkDecls.h
+%{gnuxc_includedir}/ttkTheme.h
 %{gnuxc_libdir}/libtkstub8.6.a
 %{gnuxc_libdir}/pkgconfig/tk.pc
 %{gnuxc_libdir}/tkConfig.sh
-
-
-%changelog

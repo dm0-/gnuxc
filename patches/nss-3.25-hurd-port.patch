@@ -5,8 +5,8 @@ projects but mysteriously missing from sources.
 --- coreconf/command.mk
 +++ coreconf/command.mk
 @@ -15,7 +15,7 @@
- CFLAGS        = $(OPTIMIZER) $(OS_CFLAGS) $(XP_DEFINE) $(DEFINES) $(INCLUDES) \
- 		$(XCFLAGS)
+ CFLAGS        = $(OPTIMIZER) $(OS_CFLAGS) $(WARNING_CFLAGS) $(XP_DEFINE) \
+                 $(DEFINES) $(INCLUDES) $(XCFLAGS)
  PERL          = perl
 -RANLIB        = echo
 +RANLIB        ?= ranlib
@@ -15,7 +15,7 @@ projects but mysteriously missing from sources.
  # For purify
 --- coreconf/Linux.mk
 +++ coreconf/Linux.mk
-@@ -17,9 +17,9 @@
+@@ -16,9 +16,9 @@
  	IMPL_STRATEGY = _PTH
  endif
  

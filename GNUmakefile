@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Copyright (C) 2013,2014,2015 David Michael <fedora.dm0@gmail.com>
+# Copyright (C) 2013,2014,2015,2016 David Michael <fedora.dm0@gmail.com>
 #
 # This file is part of gnuxc.
 #
@@ -25,6 +25,7 @@ arch  := i686
 build := $(MAKE_HOST)
 host  := $(arch)-pc-gnu
 ifneq ($(host),$(build))
+native = env -i CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' PATH=/bin:/sbin
 sysroot = /usr/$(host)/sys-root
 export CONFIG_SITE = $(sysroot)/usr/share/config.site
 export .LIBPATTERNS = $(sysroot)/usr/lib/lib%.so $(sysroot)/usr/lib/lib%.a
@@ -36,19 +37,20 @@ export CFLAGS   = -O2 -g -pipe -Wall -Werror=format-security \
 	-Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong \
 	--param=ssp-buffer-size=4 -grecord-gcc-switches
 export CXXFLAGS = $(CFLAGS)
+export FCFLAGS  = $(CFLAGS)
+export FFLAGS   = $(FCFLAGS)
 export LDFLAGS  = -Wl,-z,relro
 
 # Set up GNU extensions, and don't pass command-line variables to the projects.
 override MAKEOVERRIDES :=
 override SHELL := /bin/bash
-override .SHELLFLAGS := --posix -c
+override .SHELLFLAGS := -c
 .SECONDEXPANSION:
 
 # Configure external commands and their default behavior.
 AUTOGEN  := autoreconf --force --install
 CONVERT  := convert
 COPY     := cp --force
-CVS      := cvs
 DOWNLOAD := wget --content-on-error --output-document=-
 ECHO     := echo
 EDIT     := sed --in-place
@@ -100,6 +102,7 @@ packages := $(patsubst $(pkgdir)/%.mk,%,$(wildcard $(pkgdir)/*.mk))
 packages-requested := $(filter-out $(subst *,%,$(exclude)),$(packages))
 
 .PHONY: all $(packages) \
+   download $(packages:%=download-%) \
     prepare $(packages:%=prepare-%) \
   configure $(packages:%=configure-%) \
       build $(packages:%=build-%) \
@@ -107,6 +110,7 @@ packages-requested := $(filter-out $(subst *,%,$(exclude)),$(packages))
       clean $(packages:%=clean-%)
 
 all: $(packages-requested)
+download: $(packages-requested:%=download-%)
 prepare: $(packages-requested:%=prepare-%)
 configure: $(packages-requested:%=configure-%)
 build: $(packages-requested:%=build-%)
@@ -119,11 +123,15 @@ builddir = $(firstword $(subst /, ,$(or $@,$($(self)))))
 addon-file = $(1:%=$(builddir)/.gnuxc/%)
 apply = $(1:%=$(PATCH) --directory=$(builddir) \
 	< $(patchdir)/$(builddir)-%.patch &&) :
-drop-rpath = $(EDIT) 's/\(need_relink\)=yes/\1=no/' $(2:%=$(builddir)/%) && \
-	$(EDIT) $(1:%=$(builddir)/%) -e 's/\(hardcode_into_libs\)=yes/\1=no/' \
-	-e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/'
+define verify-download =
+$(call addon-file,$(or $3,$(lastword $(subst /, ,$1)))): | $$$$(@D)
+	$(DOWNLOAD) $(1:%='%') | tee '$$@' | \
+	sha1sum | (read s x ; test "$$$$s" = '$2') || \
+	$(if $(skip_verify),$(ECHO) Bad SHA1 sum,! $(RM) '$$@')
+$(downloaded): $(call addon-file,$(or $3,$(lastword $(subst /, ,$1))))
+endef
 
-# Declare variables to abstract packages' build states/timestamps.
+# Declare variables to abstract packages' build states and time stamps.
 prepare-rule   = $(or $(1:%=$($(self))/.gnuxc/prepare-%-rule),\
 	$($(self))/.gnuxc/prepare-rule)
 configure-rule = $(or $(1:%=$($(self))/.gnuxc/configure-%-rule),\
@@ -132,6 +140,7 @@ build-rule     = $(or $(1:%=$($(self))/.gnuxc/build-%-rule),\
 	$($(self))/.gnuxc/build-rule)
 install-rule   = $(or $(1:%=$($(self))/.gnuxc/install-%-rule),\
 	$($(self))/.gnuxc/install-rule)
+downloaded = $($(self))/.gnuxc/downloaded
 prepared   = $(foreach p,$(or $(1:%=-%-),-),$($(self))/.gnuxc/prepare$pstamp)
 configured = $(foreach p,$(or $(1:%=-%-),-),$($(self))/.gnuxc/configure$pstamp)
 built      = $(foreach p,$(or $(1:%=-%-),-),$($(self))/.gnuxc/build$pstamp)
@@ -144,33 +153,40 @@ define init-package-rules =
 $$($1):
 ifeq ($$(firstword $$(subst ://, ,$$($1_url))),git)
 	$$(GIT) clone $$($1_branch:%=--branch=%) -n '$$($1_url)' $$@
-	$$(GIT) -C $$@ reset --hard $$($1_snap)
-else ifeq ($$(firstword $$(subst ://, ,$$($1_url))),cvs)
-	$$(CVS) -d'$$($1_url:cvs://%=:pserver:%)' export \
-		-D$$($1_snap) -d$$@ -kv $$(or $$($1_branch),$1)
-else ifneq ($$(filter tar tgz,$$(subst ., ,$$($1_url))),)
-	$$(DOWNLOAD) '$$($1_url)' | \
+	$$(GIT) -C $$@ reset --hard $$($1_sha1)
+else ifneq ($$(filter tar tgz zip,$$(subst ., ,$$($1_url))),)
+	$$(DOWNLOAD) '$$($1_url)' | tee >( \
+$$(if $$(filter zip,$$(lastword $$(subst ., ,$$($1_url)))), \
+	$$(MKDIR) $$@ ; cat > $$@/.zip ; $$(UNZIP) $$@/.zip ; $$(RM) $$@/.zip \
+, \
 	$$(TAR) $$($1_branch:%=--transform='s,^/*%/*,$$@/,') \
-		$$(targ_$$(lastword $$(subst ., ,$$($1_url)))) -x
-else ifeq ($$(lastword $$(subst ., ,$$($1_url))),zip)
-	$$(MKDIR) $$@/.gnuxc
-	$$(DOWNLOAD) '$$($1_url)' > $$@/.gnuxc/$$@.zip
-	$$(UNZIP) $$@/.gnuxc/$$@.zip
+		$$(targ_$$(lastword $$(subst ., ,$$($1_url)))) -x \
+) \
+	) | sha1sum | (read s x ; test "$$$$s" = '$$($1_sha1)') || \
+	$$(if $$(skip_verify),$$(ECHO) Bad SHA1 sum,! $$(RM) --recursive $$@)
 else
 	$$(MKDIR) $$@
 endif
 $$($1)/.gnuxc: | $$($1)
 	$$(MKDIR) $$@
-$$($1)/configure: $$($1)/.gnuxc/prepare-stamp
-	test -x $$@ || \
-	( test -f $$@.ac -o -f $$@.in && $$(AUTOGEN) $$(@D) ) ; \
+$$($1)/.gnuxc/downloaded: | $$($1)/.gnuxc
 	$$(TOUCH) $$@
+$$($1)/configure: $$($1)/.gnuxc/prepare-stamp
+	test '(' -f $$@.ac -o -f $$@.in ')' -a ! -x $$@ && \
+	$$(AUTOGEN) $$(@D) ; $$(TOUCH) $$@
+	test -n '$$(allow_rpaths)' || find $$(@D) -type f '(' \
+	-name ltmain.sh -exec $$(EDIT) \
+	-e 's/\(need_relink\)=yes/\1=no/' '{}' + -o \
+	-name configure -exec $$(EDIT) \
+	-e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-DBAD_LIBTOOL/' \
+	-e 's/\(hardcode_into_libs\)=yes/\1=no/' '{}' + ')'
 
-$$($1)/.gnuxc/prepare-rule: | $$($1)/.gnuxc
+$$($1)/.gnuxc/prepare-rule: $$($1)/.gnuxc/downloaded
 $$($1)/.gnuxc/configure-rule: $$($1)/configure
 $$($1)/.gnuxc/build-rule: $$($1)/.gnuxc/configure-stamp
 $$($1)/.gnuxc/install-rule: $$($1)/.gnuxc/build-stamp
 
+download-$1: $$($1)/.gnuxc/downloaded
 prepare-$1: $$($1)/configure
 configure-$1: $$($1)/.gnuxc/configure-stamp
 build-$1 $1: $$($1)/.gnuxc/build-stamp

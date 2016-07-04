@@ -1,4 +1,5 @@
-grep                    := grep-2.22
+grep                    := grep-2.25
+grep_sha1               := d9a7f1d90a6d5c123fdffb9a3b14831d17e05960
 grep_url                := http://ftpmirror.gnu.org/grep/$(grep).tar.xz
 
 $(configure-rule):

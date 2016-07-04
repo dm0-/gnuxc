@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libxml2
-Version:        2.9.3
+Version:        2.9.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          Development/Libraries
 URL:            http://xmlsoft.org/
 Source0:        ftp://xmlsoft.org/libxml2/%{gnuxc_name}-%{version}.tar.gz
 
@@ -42,11 +41,6 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
-
 # Use pkg-config for python configuration.
 sed -i configure \
     -e '/PYTHON_INCLUDES=`/s,`.*`,`%{gnuxc_pkgconfig} --cflags python3`,' \
@@ -68,6 +62,7 @@ sed -i -e '/^ *ICU_CONFIG=/s/=.*/=%{gnuxc_target}-icu-config/' configure
     --with-icu \
     --with-lzma \
     --with-python PYTHON=/usr/bin/python3 \
+    --with-readline \
     --with-thread-alloc \
     --with-zlib \
     \
@@ -118,6 +113,3 @@ rm -rf %{buildroot}{%{gnuxc_datadir}/gtk-doc,%{gnuxc_docdir},%{gnuxc_mandir}}
 
 %files static
 %{gnuxc_libdir}/libxml2.a
-
-
-%changelog

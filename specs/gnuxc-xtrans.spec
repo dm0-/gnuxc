@@ -7,13 +7,13 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
-BuildRequires:  gnuxc-filesystem
+# This is not actually used; it's just for automatic pkg-config dependencies.
+BuildRequires:  gnuxc-xproto
 
-Requires:       gnuxc-xproto
+Provides:       %{name}-devel = %{version}-%{release}
 
 %description
 %{summary}.
@@ -21,6 +21,9 @@ Requires:       gnuxc-xproto
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+
+# Installed headers include xproto headers.
+echo 'Requires: xproto' >> %{gnuxc_name}.pc.in
 
 %build
 %gnuxc_configure \
@@ -41,6 +44,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/aclocal
 %{gnuxc_includedir}/X11/Xtrans
 %doc AUTHORS ChangeLog README
 %license COPYING
-
-
-%changelog

@@ -1,46 +1,65 @@
 hal                     := hal-1
 
-hal-busybox             := busybox-1.24.1
+hal-busybox             := busybox-1.25.0
+hal-busybox_sha1        := c6c759bf4c4f24b37f52e136e2b15d921a8d44cb
 hal-busybox_url         := http://www.busybox.net/downloads/$(hal-busybox).tar.bz2
 
-hal-linux-libre         := linux-libre-4.3
+hal-linux-libre         := linux-libre-4.6.3
 hal-linux-libre_branch  := $(hal-linux-libre:linux-libre-%=linux-%)
+hal-linux-libre_sha1    := 8c83ef9309a51750892b35bd78c4891f68320b06
 hal-linux-libre_url     := http://linux-libre.fsfla.org/pub/linux-libre/releases/$(hal-linux-libre:linux-libre-%=%)-gnu/$(hal-linux-libre)-gnu.tar.xz
 
-hal-qemu                := qemu-1.7.2
-hal-qemu_branch         := $(hal-qemu:qemu-%=v%)
-hal-qemu_url            := git://git.qemu.org/qemu.git
+hal-qemu                := qemu-2.6.0
+hal-qemu_sha1           := d558a11d681dd095b1d7cb03c5b723c9d3045020
+hal-qemu_url            := http://qemu-project.org/download/$(hal-qemu).tar.bz2
+
+hal-wpa_supplicant      := wpa_supplicant-2.5
+hal-wpa_supplicant_sha1 := f82281c719d2536ec4783d9442c42ff956aa39ed
+hal-wpa_supplicant_url  := http://w1.fi/releases/$(hal-wpa_supplicant).tar.gz
+
+# Download all the sub-project sources.
+$(eval $(call verify-download,$(hal-busybox_url),$(hal-busybox_sha1)))
+$(eval $(call verify-download,$(hal-linux-libre_url),$(hal-linux-libre_sha1),$(hal-linux-libre).tar.xz))
+$(eval $(call verify-download,$(hal-qemu_url),$(hal-qemu_sha1)))
+$(eval $(call verify-download,$(hal-wpa_supplicant_url),$(hal-wpa_supplicant_sha1)))
+
+# Download firmware for supported hardware.  (This could just be built from source, but it requires making an entire xtensa-elf cross-compiler toolchain.)
+$(eval $(call verify-download,http://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.git/plain/ath9k_htc/htc_9271-1.4.0.fw?id=3de1c437e75320c0d2f23dc990fac741f0bcc3ca,62686323432b63ec8091234f9b1b9ee6d746eec4,htc_9271-1.4.0.fw))
 
 ifneq ($(host),$(build))
-$(prepare-rule): $(call prepared,busybox linux-libre qemu)
-#	t=../../../EFI/gnu/hal-vmlinuz.efi ; printf 'XSym\n%04u\n%.32s\n%-1024s' $${#t} "`echo -n $$t | md5sum`" $$t$$'\n' > $(builddir)/link.efi
+$(prepare-rule): $(call prepared,busybox linux-libre qemu wpa_supplicant)
+#	t=../../../EFI/gnuxc/hal-vmlinuz.efi ; printf 'XSym\n%04u\n%.32s\n%-1024s' $${#t} "`echo -n $$t | md5sum`" $$t$$'\n' > $(builddir)/link.efi
 
-$(configure-rule): $(call configured,busybox linux-libre qemu)
+$(configure-rule): $(call configured,busybox linux-libre qemu wpa_supplicant)
+$(builddir)/configure: private override allow_rpaths = 1 # Don't mess with QEMU's configure scripts.
 
-$(build-rule): $(call built,busybox linux-libre qemu)
+$(build-rule): $(call built,busybox linux-libre qemu wpa_supplicant)
 	$(RM) --recursive $(builddir)/iroot && $(MKDIR) $(builddir)/iroot/{bin,dev,etc,proc,sbin,sys,usr/share/qemu}
 	$(INSTALL) -Dpm 755 $(call addon-file,init.sh) $(builddir)/iroot/init
 	$(INSTALL) -Dpm 644 $(call addon-file,emacs2.kbd) $(builddir)/iroot/usr/share/kbd/emacs2
 	$(INSTALL) -Dpm 644 $(call addon-file,linux.terminfo) $(builddir)/iroot/usr/share/terminfo/l/linux
 	$(INSTALL) -Dpm 755 $(call addon-file,udhcpc.sh) $(builddir)/iroot/usr/share/udhcpc/default.script
+	$(INSTALL) -Dpm 644 $(call addon-file,htc_9271-1.4.0.fw) $(builddir)/iroot/lib/firmware/ath9k_htc/htc_9271-1.4.0.fw
 # Install BusyBox.
 	$(INSTALL) -pm 755 -st $(builddir)/iroot/sbin $(builddir)/$(hal-busybox)/busybox
 	$(SYMLINK) ../sbin/busybox $(builddir)/iroot/bin/ash
+	$(SYMLINK) ../sbin/busybox $(builddir)/iroot/bin/ctrl_is_down
 	$(SYMLINK) ../sbin/busybox $(builddir)/iroot/bin/loadkmap
 	$(SYMLINK) ../sbin/busybox $(builddir)/iroot/bin/mount
 	$(SYMLINK) ../sbin/busybox $(builddir)/iroot/bin/sleep
 	$(SYMLINK) busybox $(builddir)/iroot/sbin/findfs
 	$(SYMLINK) busybox $(builddir)/iroot/sbin/ifconfig
-	$(SYMLINK) busybox $(builddir)/iroot/sbin/mdev
 	$(SYMLINK) busybox $(builddir)/iroot/sbin/poweroff
 	$(SYMLINK) busybox $(builddir)/iroot/sbin/reboot
 	$(SYMLINK) busybox $(builddir)/iroot/sbin/route
 	$(SYMLINK) busybox $(builddir)/iroot/sbin/udhcpc
+# Install the WPA supplicant.
+	$(INSTALL) -pm 755 -st $(builddir)/iroot/sbin $(builddir)/$(hal-wpa_supplicant)/wpa_supplicant/wpa_supplicant
 # Install QEMU.
 	$(INSTALL) -pm 755 -st $(builddir)/iroot/bin $(builddir)/$(hal-qemu)/x86_64-softmmu/qemu-system-x86_64
 	$(INSTALL) -pm 644 -t $(builddir)/iroot/usr/share/qemu \
-		$(builddir)/$(hal-qemu)/pc-bios/bios.bin \
-		$(builddir)/$(hal-qemu)/pc-bios/efi-rtl8139.rom \
+		$(builddir)/$(hal-qemu)/pc-bios/bios-256k.bin \
+		$(builddir)/$(hal-qemu)/pc-bios/efi-pcnet.rom \
 		$(builddir)/$(hal-qemu)/pc-bios/kvmvapic.bin \
 		$(builddir)/$(hal-qemu)/pc-bios/vgabios-stdvga.bin
 # Finalize.
@@ -49,18 +68,22 @@ $(build-rule): $(call built,busybox linux-libre qemu)
 
 $(install-rule):
 	$(INSTALL) -Dpm 755 $(call addon-file,grub.cfg) $(DESTDIR)/etc/grub.d/39_hal
-	$(INSTALL) -Dpm 644 $(builddir)/initrd.img $(DESTDIR)/boot/efi/EFI/gnu/hal-initrd.img
-# Write the kernel in a dedicated location for persistent boot entries to use.
-	$(INSTALL) -Dpm 644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/EFI/gnu/hal-vmlinuz.efi
-# Write the kernel where Apple systems will find it.  (This could overwrite existing system stuff.)
+# Write the files in a dedicated ESP location for persistent boot entries to use.
+	$(INSTALL) -Dpm 644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/EFI/gnuxc/hal-vmlinuz.efi
+	$(INSTALL) -Dpm 644 $(builddir)/initrd.img $(DESTDIR)/boot/efi/EFI/gnuxc/hal-initrd.img
+# Write the kernel where Apple systems will find it.
+	test -e $(DESTDIR)/boot/efi/System/Library/CoreServices/boot.efi && \
+	$(ECHO) 'The Apple EFI boot program already exists; not overwiting' || \
 	$(INSTALL) -Dpm 644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/System/Library/CoreServices/boot.efi
-# Write the kernel where everything else will find it.  (This could overwrite existing system stuff.)
+# Write the kernel where everything else will find it.
+	test -e $(DESTDIR)/boot/efi/EFI/BOOT/BOOTX64.EFI && \
+	$(ECHO) 'The default EFI boot program already exists; not overwiting' || \
 	$(INSTALL) -Dpm 644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/EFI/BOOT/BOOTX64.EFI
 
 # Write inline files.
-$(call addon-file,busybox.config grub.cfg udhcpc.sh): | $$(@D)
+$(call addon-file,busybox.config ctrl_is_down.c grub.cfg udhcpc.sh wpa_supplicant.config): | $$(@D)
 	$(file >$@,$(contents))
-$(prepared): $(call addon-file,busybox.config grub.cfg udhcpc.sh)
+$(prepared): $(call addon-file,grub.cfg udhcpc.sh)
 
 # Provide a sensible keymap for debugging the Linux environment.
 $(call addon-file,emacs2.kbd): | $$(@D)
@@ -72,11 +95,6 @@ $(call addon-file,linux.terminfo): | $$(@D)
 	$(COPY) /usr/share/terminfo/l/linux $@
 $(prepared): $(call addon-file,linux.terminfo)
 
-# Provide a minimal set of Linux configuration options.
-$(call addon-file,linux.config): $(patchdir)/$(hal)-linux.config | $$(@D)
-	$(COPY) $< $@
-$(prepared): $(call addon-file,linux.config)
-
 # Provide the initialization script that launches QEMU.
 $(call addon-file,init.sh): $(patchdir)/$(hal)-init.sh | $$(@D)
 	$(COPY) $< $@
@@ -84,19 +102,21 @@ $(prepared): $(call addon-file,init.sh)
 
 
 
-$(builddir)/$(hal-busybox): | $(builddir)/.gnuxc
-	$(DOWNLOAD) '$(hal-busybox_url)' | $(TAR) -jC $(builddir) -x
+$(builddir)/$(hal-busybox): | $(call addon-file,$(hal-busybox).tar.bz2)
+	$(TAR) -C $(builddir) -xjf $|
 
-$(call prepare-rule,busybox): $(call addon-file,busybox.config) | $(builddir)/$(hal-busybox)
+$(call prepare-rule,busybox): $(call addon-file,busybox.config ctrl_is_down.c) | $(builddir)/$(hal-busybox)
 	$(MAKE) -C $(builddir)/$(hal-busybox) mrproper V=1
-	$(COPY) $< $(builddir)/$(hal-busybox)/all.config.in
+	$(COPY) $(call addon-file,busybox.config) $(builddir)/$(hal-busybox)/all.config.in
+	$(COPY) $(call addon-file,ctrl_is_down.c) $(builddir)/$(hal-busybox)/console-tools/
+# Disable rebooting through init, since we don't have a real init system.
+	$(EDIT) '/ no -f /s/if (/&0 \&\& /' $(builddir)/$(hal-busybox)/init/halt.c
 
-$(call configure-rule,busybox): private override export KCONFIG_ALLCONFIG = all.config
 $(call configure-rule,busybox): $(call prepared,busybox)
 	$(SED) $(builddir)/$(hal-busybox)/all.config.in > $(builddir)/$(hal-busybox)/all.config \
 		-e '/^CONFIG[^ =]*_CFLAGS=/s/=.*/="$(CFLAGS)"/' \
 		-e '/^CONFIG[^ =]*_LDFLAGS=/s/=.*/="$(LDFLAGS)"/'
-	$(MAKE) -C $(builddir)/$(hal-busybox) allnoconfig V=1
+	KCONFIG_ALLCONFIG=all.config $(MAKE) -C $(builddir)/$(hal-busybox) allnoconfig V=1
 
 $(call build-rule,busybox): $(call configured,busybox)
 	$(MAKE) -C $(builddir)/$(hal-busybox) all V=1 \
@@ -104,34 +124,35 @@ $(call build-rule,busybox): $(call configured,busybox)
 
 
 
-$(builddir)/$(hal-linux-libre): | $(builddir)/.gnuxc
-	$(DOWNLOAD) '$(hal-linux-libre_url)' | $(TAR) --transform='s,^$(hal-linux-libre_branch),$@,' -Jx
+$(builddir)/$(hal-linux-libre): | $(call addon-file,$(hal-linux-libre).tar.xz)
+	$(TAR) --transform='s,^$(hal-linux-libre_branch),$@,' -Jxf $|
 
 $(call prepare-rule,linux-libre): $(call addon-file,linux.config) | $(builddir)/$(hal-linux-libre)
 	$(MAKE) -C $(builddir)/$(hal-linux-libre) mrproper V=1
 	$(PATCH) -d $(builddir)/$(hal-linux-libre) < $(patchdir)/$(hal-linux-libre)-efistub-cmdline.patch
 	$(COPY) $< $(builddir)/$(hal-linux-libre)/all.config
 
-$(call configure-rule,linux-libre): private override export KCONFIG_ALLCONFIG = all.config
 $(call configure-rule,linux-libre): $(call prepared,linux-libre)
-	$(MAKE) -C $(builddir)/$(hal-linux-libre) allnoconfig V=1
+	KCONFIG_ALLCONFIG=all.config $(MAKE) -C $(builddir)/$(hal-linux-libre) allnoconfig V=1
 
 $(call build-rule,linux-libre): $(call configured,linux-libre)
 	$(MAKE) -C $(builddir)/$(hal-linux-libre) all V=1
 
+# Provide a minimal set of Linux configuration options.
+$(call addon-file,linux.config): $(patchdir)/$(hal)-linux.config | $$(@D)
+	$(COPY) $< $@
 
 
-$(builddir)/$(hal-qemu): | $(builddir)/.gnuxc
-	$(GIT) clone --branch $(hal-qemu_branch) --depth 1 '$(hal-qemu_url)' $@
-	$(GIT) -C $@ submodule update --init pixman
-	$(GIT) -C $@/pixman cherry-pick 8f7cc5e4388e83eb1b77aea978f3c58338232320
 
-$(call prepare-rule,qemu): $(call addon-file,qemu-fbdev.patch) | $(builddir)/$(hal-qemu)
-	$(PATCH) -d $(builddir)/$(hal-qemu) -F2 -p1 < $<
+$(builddir)/$(hal-qemu): | $(call addon-file,$(hal-qemu).tar.bz2)
+	$(TAR) -C $(builddir) -xjf $|
+
+$(call prepare-rule,qemu): | $(builddir)/$(hal-qemu)
+	$(PATCH) -d $(builddir)/$(hal-qemu) < $(patchdir)/$(hal-qemu)-fbdev.patch
 	$(AUTOGEN) $(builddir)/$(hal-qemu)/pixman
 
 $(call configure-rule,qemu): $(call prepared,qemu)
-	cd $(builddir)/$(hal-qemu) && env -i CFLAGS='$(CFLAGS)' PATH=/bin ./configure \
+	cd $(builddir)/$(hal-qemu) && $(native) ./configure \
 		--prefix=/usr --bindir=/bin --libdir=/lib --sysconfdir=/etc \
 		--enable-curses --enable-fbdev \
 		--enable-kvm \
@@ -141,14 +162,16 @@ $(call configure-rule,qemu): $(call prepared,qemu)
 		--disable-{gtk,sdl,spice,vnc} \
 		--disable-{blobs,docs,guest-agent,user,werror,xen} \
 		--disable-{glusterfs,libssh2,virtfs} \
+		--disable-{gcrypt,gnutls,nettle} \
 		--disable-{attr,bluez,brlapi,cap-ng,curl,linux-aio,uuid} \
-		--disable-{libiscsi,libusb,smartcard-nss,usb-redir} \
-		--disable-{fdt,rdma,seccomp,vde,vhost-net} \
+		--disable-{libiscsi,libusb,smartcard,usb-redir} \
+		--disable-{fdt,rdma,seccomp,vde,vhost-net,vhost-scsi} \
 		\
 		--without-system-pixman
-	cd $(builddir)/$(hal-qemu)/pixman && env -i CFLAGS='$(CFLAGS)' PATH=/bin ./configure \
+	cd $(builddir)/$(hal-qemu)/pixman && $(native) ./configure \
 		--prefix=/usr \
 		--disable-gtk \
+		--disable-libpng \
 		--disable-silent-rules \
 		--disable-shared \
 		--enable-static
@@ -156,35 +179,18 @@ $(call configure-rule,qemu): $(call prepared,qemu)
 $(call build-rule,qemu): $(call configured,qemu)
 	$(MAKE) -C $(builddir)/$(hal-qemu) all V=1
 
-# Fetch the latest QEMU framebuffer patch from the mailing list archives.
-$(call addon-file,qemu-fbdev.patch.orig): | $$(@D)
-	$(DOWNLOAD) 'ftp://lists.gnu.org/qemu-devel/2013-06' | $(AWK) > $@ \
-		-e '/^From MAILER-/ { if (date && subj) p[subj] = msg; date = subj = msg = "" }' \
-		-e '/^Date: Wed, 26 Jun 2013/ { date = 1 }' \
-		-e '/^Subject: .Qemu-devel.* fbdev/ { subj = substr($$0, match($$0, /[12]/), 1) }' \
-		-e '{ msg = msg $$0 "\n" }' \
-		-e 'END { print p[1] p[2] }'
-$(call addon-file,qemu-fbdev.patch): $(call addon-file,qemu-fbdev.patch.orig)
-	$(SED) < $< > $@ \
-		-e '### Make the patch apply on current QEMU 1.*' \
-		-e 's/^@@ -1161,3 +1161,17 @@/@@ -1161,6 +1161,20 @@/' \
-		-e 's/^diff.*Makefile.objs/ \n \n \n&/' \
-		-e 's/^@@ -3608,3 +3608,46 @@/@@ -3608,6 +3608,49 @@/' \
-		-e 's/^diff.*qmp-commands.hx/ \n \n \n&/' \
-		-e '/^@@ -549,6 +550,7 @@/,+7d' \
-	;:	\
-		-e '### Make the patch apply on current QEMU 2.*' \
-		-e 's/^ sdl=""/ sdlabi="1.2"/' \
-		-e '/^\([ +]\)echo ".*able/s/echo "\(.*\)"/\1/' \
-		-e 's/enable-gtk.*/with-gtkabi            select preferred GTK ABI 2.0 or 3.0/' \
-		-e '/curses support/{s/curses/VTE/;s/.curses/   $$vte/;}' \
-		-e 's/vnc=<.*]/gtk[,grab_on_hover=on|off]|/' \
-		-e '/^--- a.hmp.h/,/^diff/{s/^@@.*@@/@@ -86,4 +86,5 @@/;/^ $$/d;s/.*_io.*/ /;}' \
-		\
-		-e '### Make the patch compile on current QEMU 2.* (incomplete)' \
-		-e 's/1164 /1165 /;/"sysemu/a+#include "trace.h"' \
-		-e 's/kbd_mouse_is_absolute/qemu_input_is_absolute/' \
-		-e 's/error_is_set(&\([^)]*\))/(\1)/;s/error_is_set(\([^)]*\))/(\1 \&\& *\1)/'
+
+
+$(builddir)/$(hal-wpa_supplicant): | $(call addon-file,$(hal-wpa_supplicant).tar.gz)
+	$(TAR) -C $(builddir) -xzf $|
+
+$(call prepare-rule,wpa_supplicant): $(call addon-file,wpa_supplicant.config) | $(builddir)/$(hal-wpa_supplicant)
+	$(COPY) $< $(builddir)/$(hal-wpa_supplicant)/wpa_supplicant/.config
+
+$(call configure-rule,wpa_supplicant): $(call prepared,wpa_supplicant)
+
+$(call build-rule,wpa_supplicant): $(call configured,wpa_supplicant)
+	$(native) $(MAKE) -C $(builddir)/$(hal-wpa_supplicant)/wpa_supplicant all V=1
 endif
 
 
@@ -196,13 +202,14 @@ CONFIG_EXTRA_CFLAGS="$(CFLAGS)"
 CONFIG_EXTRA_LDFLAGS="$(LDFLAGS)"
 CONFIG_FEATURE_FANCY_ECHO=y
 CONFIG_SLEEP=y
+CONFIG_CTRL_IS_DOWN=y
 CONFIG_LOADKMAP=y
 CONFIG_HALT=y
-CONFIG_MDEV=y
 CONFIG_FINDFS=y
 CONFIG_MOUNT=y
 CONFIG_VOLUMEID=y
 CONFIG_FEATURE_VOLUMEID_EXT=y
+CONFIG_FEATURE_VOLUMEID_FAT=y
 CONFIG_IFCONFIG=y
 CONFIG_ROUTE=y
 CONFIG_UDHCPC=y
@@ -216,6 +223,47 @@ CONFIG_FEATURE_SH_IS_NONE=y
 CONFIG_SH_MATH_SUPPORT=y
 endef
 $(call addon-file,busybox.config): private override contents := $(contents)
+
+
+# Provide a minimal set of wpa_supplicant configuration options.
+override define contents
+LDFLAGS+=-static
+# Use the wireless extensions driver to avoid needing libnl.
+CONFIG_DRIVER_WEXT=y
+# Don't require an external TLS library.
+CONFIG_CRYPTO=internal
+CONFIG_INTERNAL_LIBTOMMATH=y
+CONFIG_INTERNAL_LIBTOMMATH_FAST=y
+CONFIG_TLS=internal
+# We only read a text configuration file.
+CONFIG_NO_CONFIG_BLOBS=y
+CONFIG_NO_CONFIG_WRITE=y
+endef
+$(call addon-file,wpa_supplicant.config): private override contents := $(contents)
+
+
+# Provide a BusyBox applet to test if Control is being held on boot.
+override define contents
+#include "libbb.h"
+//config:config $1
+//config:	bool "$1"
+//kbuild:lib-$$(CONFIG_$1) += $2.o
+//applet:IF_$1(APPLET($2, BB_DIR_USR_BIN, BB_SUID_DROP))
+//usage:#define $2_trivial_usage ""
+#define main(...) $2_main(__VA_ARGS__) MAIN_EXTERNALLY_VISIBLE
+endef
+override define contents :=
+$(call contents,CTRL_IS_DOWN,ctrl_is_down)
+#include <linux/keyboard.h>
+#include <sys/ioctl.h>
+int main() {
+  char shift_state = 6;
+  if (ioctl(0, TIOCLINUX, &shift_state) < 0)
+    return 1;
+  return !(shift_state & (1 << KG_CTRL));
+}
+endef
+$(call addon-file,ctrl_is_down.c): private override contents := $(value contents)
 
 
 # Provide a DHCP network configuration script.
@@ -239,7 +287,7 @@ endef
 $(call addon-file,udhcpc.sh): private override contents := $(subst ^,\,$(value contents))
 
 
-# Provide a GRUB configuration that adds a virtualization boot option.
+# Provide a GRUB configuration file that adds a virtualization boot option.
 override define contents
 #!/bin/tail -n+2
 smbios --type 1 --get-string 4 --set system_manufacturer
@@ -250,13 +298,13 @@ if [ "$system_manufacturer" != "gnuxc" ] ; then
 menuentry 'Boot a Virtual Machine for Compatibility' --class linux --class os {
 	insmod part_msdos
 	insmod fat
-	search.file /EFI/gnu/hal-vmlinuz.efi root
+	search.file /EFI/gnuxc/hal-vmlinuz.efi root
 
 	echo 'Loading Linux-libre ...'
-	linux /EFI/gnu/hal-vmlinuz.efi
+	linux /EFI/gnuxc/hal-vmlinuz.efi
 
 	echo 'Loading QEMU ...'
-	initrd /EFI/gnu/hal-initrd.img
+	initrd /EFI/gnuxc/hal-initrd.img
 }
 
 # If we are in the VM, use a theme variant advertising so (if one exists).

@@ -1,8 +1,8 @@
-libxml2                 := libxml2-2.9.3
+libxml2                 := libxml2-2.9.4
+libxml2_sha1            := 958ae70baf186263a4bd801a81dd5d682aedd1db
 libxml2_url             := ftp://xmlsoft.org/libxml2/$(libxml2).tar.gz
 
 $(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh)
 # Use pkg-config for python configuration.
 	$(EDIT) $(builddir)/configure \
 		-e '/PYTHON_INCLUDES=`/s,`.*`,`$(PKG_CONFIG) --cflags python3`,' \
@@ -11,7 +11,7 @@ $(prepare-rule):
 		-e '/PYTHON_VERSION=`/s,`.*`,`$(PKG_CONFIG) --modversion python3`,'
 	$(EDIT) 's/-I..PYTHON_INCLUDES./$$(PYTHON_INCLUDES)/' $(builddir)/python/Makefile.in
 # Use the correct icu-config script.
-	$(EDIT) '/^ *ICU_CONFIG=/s/=.*/=$(ICU_CONFIG)/' $(builddir)/configure
+	$(EDIT) '/^ *ICU_CONFIG=/s,=.*,=$(ICU_CONFIG),' $(builddir)/configure
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -20,7 +20,8 @@ $(configure-rule):
 		--with-history \
 		--with-icu \
 		--with-lzma \
-		--with-python PYTHON='$(PYTHON)' \
+		--with-python \
+		--with-readline \
 		--with-thread-alloc \
 		--with-zlib \
 		\

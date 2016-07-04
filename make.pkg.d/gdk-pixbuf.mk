@@ -1,8 +1,6 @@
-gdk-pixbuf              := gdk-pixbuf-2.32.2
-gdk-pixbuf_url          := http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.32/$(gdk-pixbuf).tar.xz
-
-$(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh)
+gdk-pixbuf              := gdk-pixbuf-2.34.0
+gdk-pixbuf_sha1         := 240018b35da047500e43caac7e32a4482edd3852
+gdk-pixbuf_url          := http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.34/$(gdk-pixbuf).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

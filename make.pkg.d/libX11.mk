@@ -1,8 +1,6 @@
 libX11                  := libX11-1.6.3
+libX11_sha1             := 6f2aadf8346ee00b7419bd338461c6986e274733
 libX11_url              := http://xorg.freedesktop.org/releases/individual/lib/$(libX11).tar.bz2
-
-$(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

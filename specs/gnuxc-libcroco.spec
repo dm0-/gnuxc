@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libcroco
-Version:        0.6.9
+Version:        0.6.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
-License:        LGPLv2.1
-Group:          System Environment/Libraries
+License:        LGPLv2
 URL:            http://developer.gnome.org/libcroco/
 Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/0.6/%{gnuxc_name}-%{version}.tar.xz
 
@@ -19,10 +18,7 @@ BuildRequires:  gnuxc-pkg-config
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-glib-devel
-Requires:       gnuxc-libxml2-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -30,7 +26,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -85,6 +80,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 
 %files static
 %{gnuxc_libdir}/libcroco-0.6.a
-
-
-%changelog

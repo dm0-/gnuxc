@@ -1,4 +1,5 @@
-pkg-config              := pkg-config-0.29
+pkg-config              := pkg-config-0.29.1
+pkg-config_sha1         := 271ce928f6d673cc16cbced2bfd14a5f2e5d3d37
 pkg-config_url          := http://pkg-config.freedesktop.org/releases/$(pkg-config).tar.gz
 
 ifeq ($(host),$(build))

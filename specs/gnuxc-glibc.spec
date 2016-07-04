@@ -1,26 +1,22 @@
 %global bootstrap 1
 
 %?gnuxc_package_header
-%global __provides_exclude_from ^%{gnuxc_libdir}/gconv/
-%global __requires_exclude_from ^%{gnuxc_libdir}/gconv/
 
 Name:           gnuxc-glibc
 Version:        2.19
-%global snap    0c5c4d
+%global commit  2032cc261fc6434899a689ddec1b9230bcc774ac
+%global snap    %(c=%{commit} ; echo -n ${c:0:6})
 Release:        1.19700101git%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 %global lpname  libpthread
-%global lpvers  0.3
-%global lpsnap  37d6d0
+%global lpcomm  6106225fdc09f013ec4f7b1d7ec82780061c8a14
 
 License:        LGPLv2+ and LGPLv2+ with exceptions and GPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/glibc/
-Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
-Source1:        http://git.savannah.gnu.org/cgit/hurd/%{lpname}.git/snapshot/%{lpname}-%{lpsnap}.tar.xz
-
-Patch201:       %{lpname}-%{lpvers}-%{lpsnap}-steal-libihash.patch
+# Savannah is too slow to get a tar.xz archive; it aborts after one minute.
+Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{commit}.tar.gz
+Source1:        http://git.savannah.gnu.org/cgit/hurd/%{lpname}.git/snapshot/%{lpname}-%{lpcomm}.tar.xz
 
 Requires:       gnuxc-filesystem
 
@@ -36,7 +32,6 @@ BuildRequires:  gettext
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-hurd-headers
 
@@ -46,7 +41,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -56,29 +50,43 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{snap}
-%setup -q -D -T -a 1 -n %{gnuxc_name}-%{snap}
-mv %{lpname}-%{lpsnap} %{lpname} && cd %{lpname}
-%patch201
+%setup -q -n %{gnuxc_name}-%{commit}
+%setup -q -D -T -a 1 -n %{gnuxc_name}-%{commit}
+mv %{lpname}-%{lpcomm} libpthread
+
+echo hurd > libpthread/Depend
+echo mach > hurd/Depend
+
+%if 0%{?bootstrap}
+# Don't require a real libihash for linking libpthread.
+sed -i -e 's/^LDLIBS-pthread.so[ :=].*/LDFLAGS-pthread.so = -Wl,--defsym=hurd_ihash_{add,create,find,free,remove}=0/' libpthread/Makefile
+%endif
+
+# Avoid race conditions regenerating this with an incompatible bison version.
+touch intl/plural.c
 
 %build
-%global _configure ../configure
 %global gnuxc_optflags %(echo %gnuxc_optflags | sed 's/-O2/-O3/;s/-Wp,-D_FORTIFY_SOURCE[^ ]*//;s/-fstack-protector[^ ]*/-fasynchronous-unwind-tables/')
-%global gnuxc_env %gnuxc_env ; unset AR NM RANLIB # Don't use GCC variants yet.
+%global _configure ../configure
 mkdir -p build && pushd build
 %gnuxc_configure \
     --disable-multi-arch \
     --disable-pt_chown \
     --enable-all-warnings \
+    --enable-lock-elision \
     --enable-obsolete-rpc \
     --enable-stackguard-randomization \
+    --without-selinux \
     BASH_SHELL=/bin/bash \
     \
     --disable-nscd
 popd
-%gnuxc_make -C build %{?_smp_mflags} all build-programs=no
-# This target seems to break parallel builds when given in the above command.
-%gnuxc_make -C build %{?_smp_mflags} info
+# Force libpthread to build before librt.
+%gnuxc_make -C build %{?_smp_mflags} mach/subdir_lib
+%gnuxc_make -C build %{?_smp_mflags} hurd/subdir_lib
+%gnuxc_make -C build %{?_smp_mflags} libpthread/subdir_lib
+# Do the real build.
+%gnuxc_make -C build %{?_smp_mflags} all info build-programs=no
 
 %install
 # These dirs are needed because ld scripts are dumb when it comes to sysroots.
@@ -88,11 +96,14 @@ popd
     auditdir=%{gnuxc_libdir}/audit \
     gconvdir=%{gnuxc_libdir}/gconv
 
+# Fedora manually strips the installed object files.
+%{gnuxc_strip} -gv %{buildroot}%{gnuxc_libdir}/*.o
+
+# There is no need to install these modules for cross-compiling.
+rm -rf %{buildroot}%{gnuxc_libdir}/{audit,gconv}
+
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_infodir}
-
-# Provide a default ld.so link.
-ln -s ld.so.1 %{buildroot}%{gnuxc_libdir}/ld.so
 
 %find_lang libc
 while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
@@ -101,8 +112,6 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %files
 %{gnuxc_datadir}/i18n
 %{gnuxc_datadir}/locale/locale.alias
-%{gnuxc_libdir}/audit
-%{gnuxc_libdir}/gconv
 %{gnuxc_libdir}/libmemusage.so
 %{gnuxc_libdir}/libpcprofile.so
 %{gnuxc_libdir}/libSegFault.so
@@ -225,7 +234,6 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/crt[01in].o
 %{gnuxc_libdir}/gcrt[01].o
 %{gnuxc_libdir}/[MS]crt1.o
-%{gnuxc_libdir}/ld.so
 %{gnuxc_libdir}/libanl.so
 %{gnuxc_libdir}/libBrokenLocale.so
 %{gnuxc_libdir}/libc.so
@@ -269,6 +277,3 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libresolv.a
 %{gnuxc_libdir}/librt.a
 %{gnuxc_libdir}/libutil.a
-
-
-%changelog

@@ -1,4 +1,5 @@
 mcron                   := mcron-1.0.8
+mcron_sha1              := de7df62e324a1c4e52b77b08dda0a0c428ad8e64
 mcron_url               := http://ftpmirror.gnu.org/mcron/$(mcron).tar.gz
 
 $(prepare-rule):
@@ -25,7 +26,7 @@ endif
 
 $(install-rule): $$(call installed,guile)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,mcron.scm) $(DESTDIR)/etc/dmd.d/mcron.scm
+	$(INSTALL) -Dpm 644 $(call addon-file,mcron.scm) $(DESTDIR)/etc/shepherd.d/mcron.scm
 	$(INSTALL) -Dm 644 /dev/null $(DESTDIR)/etc/crontab
 	$(INSTALL) -dm 755 $(DESTDIR)/etc/cron.d
 

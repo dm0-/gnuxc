@@ -1,17 +1,19 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libxcb
-Version:        1.11.1
+Version:        1.12
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://xcb.freedesktop.org/
 Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
 
+Patch001:       http://cgit.freedesktop.org/xcb/libxcb/patch/?id=8740a288ca468433141341347aa115b9544891d3#/%{gnuxc_name}-%{version}-fix-tabs.patch
+
 BuildRequires:  gnuxc-libpthread-stubs
 BuildRequires:  gnuxc-libXau-devel
+BuildRequires:  gnuxc-libXdmcp-devel
 BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-xcb-proto
 
@@ -22,10 +24,7 @@ BuildRequires:  python3
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-libpthread-stubs
-Requires:       gnuxc-libXau-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -33,7 +32,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -44,11 +42,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' {,build-aux/}ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
+%patch001 -p1
 
 %build
 %gnuxc_configure \
@@ -236,6 +230,3 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libxcb-xtest.a
 %{gnuxc_libdir}/libxcb-xvmc.a
 %{gnuxc_libdir}/libxcb-xv.a
-
-
-%changelog

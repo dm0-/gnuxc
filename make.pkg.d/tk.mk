@@ -1,5 +1,6 @@
-tk                      := tk-8.6.4
+tk                      := tk-8.6.5
 tk_branch               := $(tk:tk-%=tk%)
+tk_sha1                 := e63f9e46cfd4ea37799554b003958b54b51dc347
 tk_url                  := http://prdownloads.sourceforge.net/tcl/$(tk_branch)-src.tar.gz
 
 export WISH = /usr/bin/wish
@@ -32,5 +33,5 @@ $(build-rule):
 	$(MAKE) -C $(builddir) all
 
 $(install-rule): $$(call installed,libXft tcl)
-	$(MAKE) -C $(builddir) install
+	$(MAKE) -C $(builddir) install install-private-headers
 	test -e $(DESTDIR)/usr/bin/wish || $(SYMLINK) wish8.6 $(DESTDIR)/usr/bin/wish

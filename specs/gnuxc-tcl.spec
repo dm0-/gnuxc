@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-tcl
-Version:        8.6.4
+Version:        8.6.5
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        TCL
-Group:          Development/Languages
 URL:            http://www.tcl.tk/
 Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-core%{version}-src.tar.gz
 
@@ -19,9 +18,7 @@ BuildRequires:  autoconf
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-glibc-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -55,7 +52,7 @@ autoreconf -fi unix
 %gnuxc_make %{?_smp_mflags} all
 
 %install
-%gnuxc_make_install
+%gnuxc_make_install install-private-headers
 
 # There is no need to install binary programs in the sysroot.
 rm -f %{buildroot}%{gnuxc_bindir}/tclsh8.6
@@ -75,15 +72,19 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files devel
 %{gnuxc_includedir}/tcl.h
 %{gnuxc_includedir}/tclDecls.h
+%{gnuxc_includedir}/tclInt.h
+%{gnuxc_includedir}/tclIntDecls.h
+%{gnuxc_includedir}/tclIntPlatDecls.h
 %{gnuxc_includedir}/tclOO.h
 %{gnuxc_includedir}/tclOODecls.h
+%{gnuxc_includedir}/tclOOInt.h
+%{gnuxc_includedir}/tclOOIntDecls.h
 %{gnuxc_includedir}/tclPlatDecls.h
+%{gnuxc_includedir}/tclPort.h
 %{gnuxc_includedir}/tclTomMath.h
 %{gnuxc_includedir}/tclTomMathDecls.h
+%{gnuxc_includedir}/tclUnixPort.h
 %{gnuxc_libdir}/libtclstub8.6.a
 %{gnuxc_libdir}/pkgconfig/tcl.pc
 %{gnuxc_libdir}/tclConfig.sh
 %{gnuxc_libdir}/tclooConfig.sh
-
-
-%changelog

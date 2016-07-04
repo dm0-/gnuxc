@@ -2,7 +2,7 @@ Use the configured builddir for staging files to avoid parallel conflicts.
 
 --- conf/Makefile.common
 +++ conf/Makefile.common
-@@ -133,11 +133,11 @@
+@@ -126,11 +126,11 @@
  
  .PRECIOUS: $(top_srcdir)/Makefile.util.am
  $(top_srcdir)/Makefile.util.am: $(top_srcdir)/gentpl.py $(top_srcdir)/Makefile.util.def $(top_srcdir)/Makefile.utilgcry.def

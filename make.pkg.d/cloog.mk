@@ -1,4 +1,5 @@
 cloog                   := cloog-0.18.4
+cloog_sha1              := 8f7568ca1873f8d55bb694c8b9b83f7f4c6c1aa5
 cloog_url               := http://www.bastoul.net/cloog/pages/download/$(cloog).tar.gz
 
 $(configure-rule):

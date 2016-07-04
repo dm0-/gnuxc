@@ -1,5 +1,6 @@
-tcl                     := tcl-8.6.4
+tcl                     := tcl-8.6.5
 tcl_branch              := $(tcl:tcl-%=tcl%)
+tcl_sha1                := 817b99b78d78362beece30080250bfc0df494f33
 tcl_url                 := http://prdownloads.sourceforge.net/tcl/$(tcl:tcl-%=tcl-core%)-src.tar.gz
 
 export TCLSH = /usr/bin/tclsh
@@ -30,5 +31,5 @@ $(build-rule):
 	$(MAKE) -C $(builddir) all
 
 $(install-rule): $$(call installed,zlib)
-	$(MAKE) -C $(builddir) install
+	$(MAKE) -C $(builddir) install install-private-headers
 	test -e $(DESTDIR)/usr/bin/tclsh || $(SYMLINK) tclsh8.6 $(DESTDIR)/usr/bin/tclsh

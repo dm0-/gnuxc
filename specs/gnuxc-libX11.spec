@@ -9,7 +9,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -27,11 +26,7 @@ BuildRequires:  xorg-x11-proto-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-kbproto
-Requires:       gnuxc-libxcb-devel
-Requires:       gnuxc-xextproto
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -39,7 +34,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -50,11 +44,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -141,6 +130,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/X11/locale/common/xlcUTF8Load.a
 %{gnuxc_libdir}/X11/locale/common/xlibi18n.a
 %{gnuxc_libdir}/X11/locale/common/xomGeneric.a
-
-
-%changelog

@@ -1,4 +1,5 @@
 xf86-input-keyboard     := xf86-input-keyboard-1.8.1
+xf86-input-keyboard_sha1 := c23cbba8b665c09cbc12ada36bc3cbf4ac4eff9f
 xf86-input-keyboard_url := http://xorg.freedesktop.org/releases/individual/driver/$(xf86-input-keyboard).tar.bz2
 
 $(prepare-rule):

@@ -1,23 +1,23 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gdbm
-Version:        1.11
+Version:        1.12
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+
-Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/gdbm/
 Source0:        http://ftpmirror.gnu.org/gdbm/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
+
+BuildRequires:  texinfo
 
 %description
 %{summary}.
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -44,7 +43,8 @@ statically, which is highly discouraged.
     --disable-nls \
     \
     --disable-rpath \
-    --disable-silent-rules
+    --disable-silent-rules \
+    --enable-libgdbm-compat
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -54,7 +54,7 @@ statically, which is highly discouraged.
 rm -f %{buildroot}%{gnuxc_bindir}/gdbm{_dump,_load,tool}
 
 # We don't need libtool's help.
-rm -f %{buildroot}%{gnuxc_libdir}/libgdbm.la
+rm -f %{buildroot}%{gnuxc_libdir}/libgdbm{,_compat}.la
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
@@ -63,15 +63,18 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libgdbm.so.4
 %{gnuxc_libdir}/libgdbm.so.4.0.0
+%{gnuxc_libdir}/libgdbm_compat.so.4
+%{gnuxc_libdir}/libgdbm_compat.so.4.0.0
 %doc AUTHORS ChangeLog NEWS NOTE-WARNING README THANKS
 %license COPYING
 
 %files devel
+%{gnuxc_includedir}/dbm.h
 %{gnuxc_includedir}/gdbm.h
+%{gnuxc_includedir}/ndbm.h
 %{gnuxc_libdir}/libgdbm.so
+%{gnuxc_libdir}/libgdbm_compat.so
 
 %files static
 %{gnuxc_libdir}/libgdbm.a
-
-
-%changelog
+%{gnuxc_libdir}/libgdbm_compat.a

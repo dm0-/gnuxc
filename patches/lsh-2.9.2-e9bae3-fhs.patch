@@ -8,7 +8,7 @@ file to keep home directories cleaner.
  
  as root. By default, the seed file is stored as
 -@file{/usr/local/var/spool/lsh/yarrow-seed-file}, this can be changed
-+@file{/usr/local/var/lib/lsh/yarrow-seed-file}, this can be changed
++@file{/var/lib/lsh/yarrow-seed-file}, this can be changed
  using the @option{--localstatedir} option to configure or the
  @code{LSH_YARROW_SEED_FILE} environment variable at run time.
  
@@ -17,7 +17,7 @@ file to keep home directories cleaner.
  The corresponding public key.
  
 -@item /usr/local/var/spool/lsh/yarrow-seed-file
-+@item /usr/local/var/lib/lsh/yarrow-seed-file
++@item /var/lib/lsh/yarrow-seed-file
  The seed-file for @command{lshd}'s randomness generator.
  
  @item ~/.lsh/authorized_keys_sha1

@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://github.com/anholt/libepoxy
 Source0:        http://github.com/anholt/%{gnuxc_name}/releases/download/v%{version}/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -19,7 +18,6 @@ BuildRequires:  python3
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-mesa-devel
 
@@ -29,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -69,6 +66,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/libepoxy.la
 
 %files static
 %{gnuxc_libdir}/libepoxy.a
-
-
-%changelog

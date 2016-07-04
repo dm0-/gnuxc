@@ -1,4 +1,5 @@
 acl                     := acl-2.2.52
+acl_sha1                := 537dddc0ee7b6aa67960a3de2d36f1e2ff2059d9
 acl_url                 := http://download.savannah.gnu.org/releases/acl/$(acl).src.tar.gz
 
 $(configure-rule):

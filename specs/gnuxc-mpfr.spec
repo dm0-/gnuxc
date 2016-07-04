@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-mpfr
-Version:        3.1.3
+Version:        3.1.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv3+ and GPLv3+ and GFDL
-Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/mpfr/
 Source0:        http://ftpmirror.gnu.org/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-gmp-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-gmp-devel
 
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -58,7 +55,7 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_infodir}
 
 %files
 %{gnuxc_libdir}/libmpfr.so.4
-%{gnuxc_libdir}/libmpfr.so.4.1.3
+%{gnuxc_libdir}/libmpfr.so.4.1.4
 %doc AUTHORS BUGS ChangeLog NEWS README TODO
 %license COPYING COPYING.LESSER
 
@@ -69,6 +66,3 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_infodir}
 
 %files static
 %{gnuxc_libdir}/libmpfr.a
-
-
-%changelog

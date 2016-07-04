@@ -1,4 +1,5 @@
 xkbdata                 := xkbdata-1.0.1
+xkbdata_sha1            := 66ff0387bae7afc26444bdc564001d39c17e806a
 xkbdata_url             := http://xorg.freedesktop.org/releases/individual/data/$(xkbdata).tar.bz2
 
 $(configure-rule): configure := $(configure:--docdir%=)

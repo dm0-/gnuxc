@@ -1,4 +1,5 @@
-pciutils                := pciutils-3.4.0
+pciutils                := pciutils-3.5.1
+pciutils_sha1           := 512f68df5ee6d661ebc209befdf89ecffcdcf69d
 pciutils_url            := ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/$(pciutils).tar.gz
 
 $(prepare-rule):

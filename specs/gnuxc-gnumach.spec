@@ -4,15 +4,15 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-gnumach
-Version:        1.6
-%global snap    4c721d
+Version:        1.7
+%global commit  4bccd10cfeaf126382467dd90d7339a98989b9d2
+%global snap    %(c=%{commit} ; echo -n ${c:0:6})
 Release:        1.19700101git%{snap}%{?dist}
-Summary:        GNU Mach kernel
+Summary:        GNU Mach microkernel
 
-License:        CMU and GPLv2
-Group:          System Environment/Kernel
+License:        MIT and GPLv2
 URL:            http://www.gnu.org/software/gnumach/
-Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
+Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{commit}.tar.xz
 
 BuildRequires:  gnuxc-gcc
 
@@ -25,7 +25,6 @@ subpackage is built from it to provide system headers for cross-compiling.
 
 %package headers
 Summary:        System headers from GNU Mach used for cross-compiling
-Group:          Development/System
 Requires:       gnuxc-filesystem
 
 %description headers
@@ -34,7 +33,7 @@ use with cross-compilers.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{snap}
+%setup -q -n %{gnuxc_name}-%{commit}
 autoreconf -fi
 
 %build
@@ -55,6 +54,3 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 %{gnuxc_includedir}/device
 %doc =announce-* AUTHORS ChangeLog DEVELOPMENT NEWS README
 %license COPYING
-
-
-%changelog

@@ -1,6 +1,6 @@
 This removes the installation's root requirement, compiles guile modules, adds
 support for a drop-in system cron directory, and allows the cron daemon to run
-in the foreground by default for dmd.
+in the foreground by default for Shepherd.
 
 --- makefile.am
 +++ makefile.am

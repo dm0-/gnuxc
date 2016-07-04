@@ -1,4 +1,5 @@
 font-util               := font-util-1.3.1
+font-util_sha1          := 0b16add3637c64b0bbaf1dd223b71b0421100c20
 font-util_url           := http://xorg.freedesktop.org/releases/individual/font/$(font-util).tar.bz2
 
 $(configure-rule):

@@ -7,7 +7,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          Development/Libraries
 URL:            http://xcb.freedesktop.org/
 Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -35,6 +34,3 @@ Provides:       %{name}-devel = %{version}-%{release}
 %{gnuxc_libdir}/pkgconfig/pthread-stubs.pc
 %doc README
 %license COPYING
-
-
-%changelog

@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv3+
-Group:          Development/Languages
 URL:            http://www.gnu.org/software/guile/
 Source0:        http://ftpmirror.gnu.org/guile/%{gnuxc_name}-%{version}.tar.xz
 
@@ -17,7 +16,7 @@ Patch003:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=1be3063bf60f
 BuildRequires:  gnuxc-gc-devel
 BuildRequires:  gnuxc-gmp-devel
 BuildRequires:  gnuxc-libffi-devel
-BuildRequires:  gnuxc-ltdl-devel
+BuildRequires:  gnuxc-libltdl-devel
 BuildRequires:  gnuxc-libunistring-devel
 BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-readline-devel
@@ -30,7 +29,6 @@ BuildRequires:  guile
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-gc-devel
 
@@ -40,7 +38,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -57,11 +54,6 @@ statically, which is highly discouraged.
 
 # Call the native guile for guile-config.
 sed -i -e 's,@bindir@/,%{_bindir}/,' meta/Makefile.in
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' build-aux/ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -119,6 +111,3 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %files static
 %{gnuxc_libdir}/libguile-2.0.a
 %{gnuxc_libdir}/libguilereadline-v-18.a
-
-
-%changelog

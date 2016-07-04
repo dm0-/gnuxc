@@ -1,12 +1,17 @@
-gdb                     := gdb-7.10
+gdb                     := gdb-7.11.1
+gdb_sha1                := df23fde077df1b8555949281bc963596f70de3ec
 gdb_url                 := http://ftpmirror.gnu.org/gdb/$(gdb).tar.xz
 
 $(prepare-rule):
+# Don't look for weird TCL header locations.
+	$(EDIT) 's,/\(tcl\|tk\)-private/generic,,g' $(builddir)/gdb/configure
 # Specify Python settings without requiring a python executable.
 	$(EDIT) $(builddir)/gdb/configure \
 		-e 's,\(python_includes\)=.*,\1=`$(PKG_CONFIG) --cflags python3`,' \
 		-e 's,\(python_libs\)=.*,\1=`$(PKG_CONFIG) --libs python3`,' \
 		-e 's,\(python_prefix\)=.*,\1=`$(PKG_CONFIG) --variable=exec_prefix python3`,'
+# Fix missed rename.
+	$(EDIT) 's/ thread_id_to_pid/ global_thread_id_to_ptid/' $(builddir)/gdb/gnu-nat.c
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -15,6 +20,7 @@ $(configure-rule):
 		--disable-rpath \
 		--disable-sim \
 		--enable-{,gdb-}build-warnings --disable-werror \
+		--enable-gdbtk \
 		--enable-libada \
 		--enable-libquadmath \
 		--enable-libssp \
@@ -35,12 +41,17 @@ $(configure-rule):
 		--with-python='$(PYTHON)' \
 		--with-system-gdbinit='/etc/gdbinit' \
 		--with-system-readline \
+		--with-system-zlib \
+		--with-tcl='$(sysroot)/usr/lib' \
+		--with-tk='$(sysroot)/usr/lib' \
 		--with-x \
-		--with-zlib \
-		--without-included-regex
+		--without-included-regex \
+		\
+		--disable-gdbtk # This isn't part of the distribution ... maybe integrate it.
 
 $(build-rule): private override export ac_cv_guild_program_name = /usr/bin/guild
 $(build-rule): private override export ac_cv_path_pkg_config_prog_path = $(PKG_CONFIG)
+$(build-rule): private override export CPPFLAGS = -DPATH_MAX=4096
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 # Refresh the documentation files after building.

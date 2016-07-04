@@ -1,4 +1,5 @@
-coreutils               := coreutils-8.24
+coreutils               := coreutils-8.25
+coreutils_sha1          := 301f186c24afb882a3ca73d19a102a2ce6f456c3
 coreutils_url           := http://ftpmirror.gnu.org/coreutils/$(coreutils).tar.xz
 
 export SORT = /bin/sort

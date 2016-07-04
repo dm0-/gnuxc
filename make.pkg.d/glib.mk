@@ -1,8 +1,6 @@
-glib                    := glib-2.46.2
-glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.46/$(glib).tar.xz
-
-$(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh)
+glib                    := glib-2.48.1
+glib_sha1               := d59b6daf51dff21c6327734a99f1fb6c5328bcf9
+glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.48/$(glib).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

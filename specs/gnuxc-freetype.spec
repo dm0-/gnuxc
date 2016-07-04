@@ -1,27 +1,25 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-freetype
-Version:        2.6.1
+Version:        2.6.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        FTL or GPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.freetype.org/
 Source0:        http://download.savannah.gnu.org/releases/freetype/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-libpng-devel
 BuildRequires:  gnuxc-pkg-config
+BuildRequires:  gnuxc-zlib-devel
 
 %description
 %{summary}.
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-libpng-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -29,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -73,7 +70,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libfreetype.so.6
-%{gnuxc_libdir}/libfreetype.so.6.12.1
+%{gnuxc_libdir}/libfreetype.so.6.12.3
 %doc ChangeLog* docs README*
 %license FTL.TXT GPLv2.TXT LICENSE.TXT
 
@@ -86,6 +83,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libfreetype.a
-
-
-%changelog

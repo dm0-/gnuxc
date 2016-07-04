@@ -1,0 +1,80 @@
+Move to the new ImageMagick API with version 7.
+
+--- configure
++++ configure
+@@ -11668,7 +11668,7 @@
+   if test "${with_imagemagick}" != "no"; then
+     ## 6.3.5 is the earliest version known to work; see Bug#17339.
+     ## 6.8.2 makes Emacs crash; see Bug#13867.
+-    IMAGEMAGICK_MODULE="Wand >= 6.3.5 Wand != 6.8.2"
++    IMAGEMAGICK_MODULE="MagickWand >= 6.3.5 MagickWand != 6.8.2"
+ 
+   succeeded=no
+ 
+--- src/image.c
++++ src/image.c
+@@ -7909,14 +7909,13 @@
+ /* The GIF library also defines DrawRectangle, but its never used in Emacs.
+    Therefore rename the function so it doesn't collide with ImageMagick.  */
+ #define DrawRectangle DrawRectangleGif
+-#include <wand/MagickWand.h>
++#include <MagickWand/MagickWand.h>
+ 
+ /* ImageMagick 6.5.3 through 6.6.5 hid PixelGetMagickColor for some reason.
+    Emacs seems to work fine with the hidden version, so unhide it.  */
+-#include <magick/version.h>
+ #if 0x653 <= MagickLibVersion && MagickLibVersion <= 0x665
+ extern WandExport void PixelGetMagickColor (const PixelWand *,
+-					    MagickPixelPacket *);
++					    PixelPacket *);
+ #endif
+ 
+ /* Log ImageMagick error message.
+@@ -8074,7 +8073,6 @@
+       PixelWand **source, **dest;
+       size_t source_width, source_height;
+       ssize_t source_left, source_top;
+-      MagickPixelPacket pixel;
+       DisposeType dispose;
+       ptrdiff_t lines = 0;
+ 
+@@ -8140,10 +8138,7 @@
+ 		 copy over all pixels.  */
+ 	      if (dispose == BackgroundDispose ||
+ 		  PixelGetAlpha (source[x]))
+-		{
+-		  PixelGetMagickColor (source[x], &pixel);
+-		  PixelSetMagickColor (dest[x + source_left], &pixel);
+-		}
++		PixelSetColorFromWand (dest[x + source_left], source[x]);
+ 	    }
+ 	  PixelSyncIterator (dest_iterator);
+ 	}
+@@ -8186,7 +8181,7 @@
+   MagickWand *image_wand;
+   PixelIterator *iterator;
+   PixelWand **pixels, *bg_wand = NULL;
+-  MagickPixelPacket  pixel;
++  PixelPacket pixel;
+   Lisp_Object image;
+   Lisp_Object value;
+   Lisp_Object crop;
+@@ -8563,14 +8558,14 @@
+ {
+   Lisp_Object typelist = Qnil;
+   size_t numf = 0;
+-  ExceptionInfo ex;
++  ExceptionInfo *ex;
+   char **imtypes;
+   size_t i;
+   Lisp_Object Qimagemagicktype;
+ 
+-  GetExceptionInfo(&ex);
+-  imtypes = GetMagickList ("*", &numf, &ex);
+-  DestroyExceptionInfo(&ex);
++  ex = AcquireExceptionInfo();
++  imtypes = GetMagickList ("*", &numf, ex);
++  DestroyExceptionInfo(ex);
+ 
+   for (i = 0; i < numf; i++)
+     {

@@ -2,17 +2,27 @@
 
 # This script builds and installs all the packages needed to cross-compile the
 # complete operating system.  Packages are built in a manually defined sequence
-# (see below), and retrying after build failures won't necessarily resume where
-# the script exits.
+# (see below) directly with rpmbuild commands, or with Mock when the "--mock"
+# option is given on the command line.
+#
+# When using "--mock", the "--srpm" argument will build the SRPM locally and
+# pass it to Mock (instead of Mock building the SRPM itself).  This will speed
+# up the script due entering the build environment less often.
+#
+# The "--tmpfs" argument can be given along with "--mock" to create the build
+# file system in RAM.  It needs at least 5GiB for the file system.
 #
 # Please try setup-sysroot.scm for a better alternative to this script.  It can
-# build the packages in parallel, and it resumes on any packages that failed.
+# build the packages in parallel, and it can be used to rebuild all packages
+# affected by spec file updates.
 
 set -ex
 shopt -s expand_aliases nullglob
 
+arch=$(rpm -E %_arch)
 specdir=$(rpm -E %_specdir)
 rpmdir=$(rpm -E %_rpmdir)
+
 
 dnf_opts="--repofrompath='gnuxc-local,$rpmdir' --enablerepo='gnuxc-local' \
 --setopt='gnuxc-local.name=gnuxc - Locally built cross-compiler packages' \
@@ -26,65 +36,119 @@ name=gnuxc - Locally built cross-compiler packages
 baseurl=file://$rpmdir
 include=gnuxc-*
 gpgcheck=0
-metadata_expire=0"
+metadata_expire=0
+enabled=0"
 dnf_opts="--config=/dev/stdin --enablerepo='gnuxc-local' \
 <<< \"\`cat /etc/dnf/dnf.conf ; echo '$repo_conf'\`\""
 
-alias dnf-builddep="sudo dnf $dnf_opts -y builddep \
-"'--define="_with$([ "$gnuxc_bootstrap" ] || echo out)_bootstrap 1"'
 alias dnf-install="sudo dnf --disablerepo='*' $dnf_opts -y install"
+alias rpmbuild="rpmbuild --clean --define='_disable_source_fetch 0' \
+"'--with$([ "$bootstrap" ] || echo out)=bootstrap'
 
-function build_pkg() {
-        local spec=$specdir/gnuxc-$1.spec
-        local pkg=gnuxc-${2:-$1}
-        rpm --quiet -q "$pkg" &&
-                echo "Skipping $pkg (installed)" && return 0 || :
-        dnf-builddep "$spec" ||
-                echo "Failed to install dependencies of $pkg (ignoring)" 1>&2
-        rpmbuild --clean --define='_disable_source_fetch 0' -ba "$spec" ||
-                { echo "Failed to build the $pkg package" 1>&2 ; exit 2 ; }
-        createrepo_c --no-database --simple-md-filenames "$rpmdir" ||
-                { echo "Failed to refresh the repo for $pkg" 1>&2 ; exit 3 ; }
-}
 
-: << '#ENDMOCK' # Comment out this line to build everything with mock.
-# This isn't quite ready.  In order to use it now, edit your mock configuration
-# file to append gnuxc-filesystem to 'chroot_setup_cmd', and append the repo as
-# defined in $dnf_opts to 'yum.conf'.  Also put actual copies of the patches in
-# the RPM sources directory, not symlinks.  Then this script should work.
-arch=$(rpm -E %_arch)
+# Aliases need to be defined outside the if-blocks due to the bash parser.
+
+# Non-mock definitions
+alias dnf-builddep="sudo dnf $dnf_opts -y builddep \
+"'--define="_with$([ "$bootstrap" ] || echo out)_bootstrap 1"'
+
+# Mock definitions
 distro=fedora-$(rpm -E %fedora)-$arch
 resultdir=/var/lib/mock/$distro/result
 sourcedir=$(rpm -E %_sourcedir)
-alias run_mock="sudo mock --root=$distro --dnf \
---define='_disable_source_fetch 0' \
-"'--with$([ "$gnuxc_bootstrap" ] || echo out)=bootstrap'
-function init_mock_repo() {
-        # Stupidly provide a non-mock filesystem RPM for 'chroot_setup_cmd'.
-        rpmbuild --clean -bb "$specdir/gnuxc-filesystem.spec"
-        mv "$rpmdir/noarch"/gnuxc-filesystem-*.noarch.rpm "$rpmdir/"
-        rmdir "$rpmdir/noarch" 2>/dev/null || : # Clean up.
-        createrepo_c --no-database --simple-md-filenames "$rpmdir"
+srpmdir=$(rpm -E %_srcrpmdir)
+[[ "$*" == *tmpfs* ]] && tmpfs_arg='--enable-plugin=tmpfs ' || tmpfs_arg=
+[[ "$*" == *srpm* ]] && local_srpm=yes || local_srpm=
+alias run_mock="sudo mock --root=$distro --dnf $tmpfs_arg\
+--enablerepo='gnuxc-local' --define='_disable_source_fetch 0' \
+"'--with$([ "$bootstrap" ] || echo out)=bootstrap'
+
+
+if [[ "$*" != *mock* ]] ; then
+
+function do_the_build() {
+        dnf-builddep "$1" ||
+                echo "Failed to install dependencies of $2 (ignoring)" 1>&2
+        rpmbuild -ba "$1" ||
+                { echo "Failed to build the $2 package" 1>&2 ; exit 1 ; }
 }
+
+else
+
+function install_user_mock_config() {
+        # There is no way to feed configuration to mock from a file descriptor.
+        test -s ~/.config/mock.cfg || cat << EOF > ~/.config/mock.cfg
+# Install the RPM macros in the base file system, and define the local repo.
+config_opts['chroot_setup_cmd'] += ' gnuxc-filesystem'
+config_opts['yum.conf'] += """
+$repo_conf
+"""
+
+# Configure the tmpfs plugin to use 5 GiB of RAM.  (Blame GCC.)
+config_opts['plugin_conf']['tmpfs_opts'] = {}
+config_opts['plugin_conf']['tmpfs_opts']['keep_mounted'] = False
+config_opts['plugin_conf']['tmpfs_opts']['max_fs_size'] = '5120m'
+config_opts['plugin_conf']['tmpfs_opts']['mode'] = '0755'
+config_opts['plugin_conf']['tmpfs_opts']['required_ram_mb'] = 0
+EOF
+}
+
+function init_repo() {
+        # Stupidly provide a non-mock filesystem RPM for 'chroot_setup_cmd'.
+        install_user_mock_config
+        run_mock --scrub=all
+        mkdir -p "$rpmdir/$arch" "$rpmdir/noarch" "$srpmdir"
+        rpmbuild -bb "$specdir/gnuxc-filesystem.spec"
+        createrepo_c --no-database --simple-md-filenames "$rpmdir"
+        [ -z "$local_srpm" ] || dnf-install gnuxc-filesystem
+}
+
+function mock_build_everything() {
+        run_mock --buildsrpm --symlink-dereference \
+            --sources "$sourcedir" --spec "$1" &&
+        run_mock --rebuild /dev/stdin < "$resultdir"/*.src.rpm
+}
+
+function mock_build_from_local_srpm() {
+        rm -fr "$srpmdir"/mocktmp
+        rpmbuild --define="_srcrpmdir $srpmdir/mocktmp" -bs "$1" &&
+        run_mock --rebuild /dev/stdin < "$srpmdir"/mocktmp/*.src.rpm &&
+        rm -fr "$srpmdir"/mocktmp
+}
+
+function do_the_build() {
+        [ "$2" != gnuxc-filesystem ] || init_repo
+        if [ -n "$local_srpm" ]
+        then mock_build_from_local_srpm "$1" "$2"
+        else mock_build_everything "$1" "$2"
+        fi ||
+                { echo "Failed to build the $2 package" 1>&2 ; exit 1 ; }
+        for x in "$resultdir"/*.{$arch,noarch,src}.rpm
+        do
+                case "$x" in
+                        *.$arch.rpm) cp -p "$x" "$rpmdir/$arch/" ;;
+                        *.noarch.rpm) cp -p "$x" "$rpmdir/noarch/" ;;
+                        *.src.rpm) cp -p "$x" "$srpmdir/" ;;
+                esac ||
+                        { echo "Failed to save ${x##*/}" 1>&2 ; exit 1 ; }
+        done
+}
+
+fi
+
 function build_pkg() {
         local spec=$specdir/gnuxc-$1.spec
         local pkg=gnuxc-${2:-$1}
-        for x in "$rpmdir/$pkg"-[0-9]*.{$arch,noarch}.rpm ; do ! ; done ||
+        for x in "$rpmdir"/{$arch,noarch}/"$pkg"-[0-9]*.rpm ; do ! ; done ||
                 { echo "Skipping $pkg (already exists)" ; return 0 ; }
-        [ "$1" != filesystem ] || init_mock_repo
-        run_mock --buildsrpm --sources "$sourcedir" --spec "$spec" ||
-                { echo "Failed to make a $pkg source package" 1>&2 ; exit 2 ; }
-        run_mock --rebuild /dev/stdin < "$resultdir"/*.src.rpm ||
-                { echo "Failed to build the $pkg package" 1>&2 ; exit 3 ; }
-        cp -p "$resultdir"/*.rpm "$rpmdir/" ||
-                { echo "Could not save the $pkg RPMs" 1>&2 ; exit 4 ; }
+        do_the_build "$spec" "$pkg"
         createrepo_c --no-database --simple-md-filenames "$rpmdir" ||
-                { echo "Failed to refresh the repo for $pkg" 1>&2 ; exit 5 ; }
+                { echo "Failed to refresh the repo for $pkg" 1>&2 ; exit 1 ; }
 }
-#ENDMOCK
+
 
 # Build every RPM using this example dependency chain.
-gnuxc_bootstrap=1
+bootstrap=1
 build_pkg filesystem
 build_pkg pkg-config
 build_pkg binutils
@@ -93,7 +157,7 @@ build_pkg gnumach       gnumach-headers
 build_pkg mig
 build_pkg hurd          hurd-headers
 build_pkg glibc
-unset gnuxc_bootstrap
+unset bootstrap
 build_pkg gcc           gcc-c++
 build_pkg ncurses
 build_pkg readline
@@ -117,7 +181,7 @@ build_pkg libffi
 build_pkg libatomic_ops
 build_pkg gc
 build_pkg libunistring
-build_pkg libtool       ltdl
+build_pkg libtool       libltdl
 build_pkg guile
 build_pkg glib
 build_pkg liboop
@@ -179,6 +243,8 @@ build_pkg jbigkit
 build_pkg tiff
 build_pkg gdk-pixbuf
 build_pkg librsvg
+build_pkg libwebp
+build_pkg ImageMagick
 # (mozilla
 build_pkg libepoxy
 build_pkg atk
@@ -187,11 +253,11 @@ build_pkg libevent
 build_pkg libvpx
 build_pkg nspr
 build_pkg nss
+build_pkg gtk2
 # mozilla)
-build_pkg gtk2 # old, compat
 
 # Install any remaining compilers and development packages.
 dnf-install \
-    'gnuxc-*-devel' 'gnuxc-*proto' gnuxc-{libpthread-stubs,spice-protocol} \
-    gnuxc-gcc-{gfortran,objc++} gnuxc-mig gnuxc-pkg-config \
+    'gnuxc-*-devel' gnuxc-gcc-{gfortran,objc++} gnuxc-mig gnuxc-pkg-config \
+    'gnuxc-*proto' gnuxc-{libpthread-stubs,spice-protocol,xorg-server,xtrans} \
     gnuxc-{bzip2,glibc,libuuid,parted,zlib}-static

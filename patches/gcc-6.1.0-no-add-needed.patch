@@ -28,7 +28,7 @@
  #define TARGET_INIT_LIBFUNCS ia64_soft_fp_init_libfuncs
 --- gcc/config/gnu-user.h.jj	2011-01-03 12:53:03.739057299 +0100
 +++ gcc/config/gnu-user.h	2011-01-04 18:14:10.932814884 +0100
-@@ -94,7 +94,7 @@ see the files COPYING3 and COPYING.RUNTI
+@@ -118,7 +118,7 @@ see the files COPYING3 and COPYING.RUNTI
  #define LIB_SPEC GNU_USER_TARGET_LIB_SPEC
  
  #if defined(HAVE_LD_EH_FRAME_HDR)
@@ -39,7 +39,7 @@
  #undef LINK_GCC_C_SEQUENCE_SPEC
 --- gcc/config/rs6000/sysv4.h.jj	2011-01-03 13:02:18.255994215 +0100
 +++ gcc/config/rs6000/sysv4.h	2011-01-04 18:14:10.933888871 +0100
-@@ -779,7 +779,7 @@ extern int fixuplabelno;
+@@ -789,7 +789,7 @@ extern int fixuplabelno;
    -dynamic-linker " GNU_USER_DYNAMIC_LINKER "}}"
  
  #if defined(HAVE_LD_EH_FRAME_HDR)

@@ -1,4 +1,5 @@
-grub                    := grub-2.02~beta2
+grub                    := grub-2.02~beta3
+grub_sha1               := 14a1f9239a9c974957e835dc706fc6a1e4819c83
 grub_url                := http://alpha.gnu.org/gnu/grub/$(grub).tar.xz
 
 ifeq ($(host),$(build))

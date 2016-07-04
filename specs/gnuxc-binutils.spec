@@ -1,4 +1,4 @@
-%if 0%{?_with_bootstrap:1}%{!?_without_bootstrap:%(rpm --quiet -q gnuxc-glibc ; echo ${gnuxc_bootstrap:-$?})}
+%if 0%{?_with_bootstrap:1}
 %global bootstrap 1
 %endif
 
@@ -9,12 +9,11 @@
 %endif
 
 Name:           gnuxc-binutils
-Version:        2.25.1
+Version:        2.26.1
 Release:        1.%{?bootstrap:0}%{!?bootstrap:1}%{?dist}
 Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
-Group:          Development/Tools
 URL:            http://www.gnu.org/software/binutils/
 Source0:        http://ftpmirror.gnu.org/binutils/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -46,7 +45,6 @@ GNU Hurd executables and libraries.
 %if ! 0%{?bootstrap}
 %package libs
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
-Group:          System Environment/Libraries
 BuildArch:      noarch
 
 %description libs
@@ -54,24 +52,22 @@ Cross-compiled version of %{gnuxc_name} for the GNU system.
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name}-libs = %{version}-%{release}
 BuildArch:      noarch
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
-applications or translators that use Hurd libraries on GNU systems.
+applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 BuildArch:      noarch
 
 %description static
-The %{name}-static package contains the static Hurd libraries for -static
-linking on GNU systems.  You don't need these, unless you link statically,
-which is highly discouraged.
+The %{name}-static package contains the %{gnuxc_name} static libraries for
+-static linking on GNU systems.  You don't need these, unless you link
+statically, which is highly discouraged.
 %endif
 
 
@@ -106,7 +102,7 @@ done
     --enable-plugins \\\
     --enable-shared \\\
     --enable-threads \\\
-    --with-zlib \\\
+    --with-system-zlib \\\
     --without-included-gettext \\\
     --without-newlib
 
@@ -204,9 +200,10 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 %{gnuxc_root}/bin/objcopy
 %{gnuxc_root}/bin/objdump
 %{gnuxc_root}/bin/ranlib
+%{gnuxc_root}/bin/readelf
 %{gnuxc_root}/bin/strip
 %{gnuxc_root}/lib/ldscripts
-%doc ChangeLog MAINTAINERS README
+%doc binutils/ChangeLog* binutils/MAINTAINERS binutils/NEWS binutils/README
 %license COPYING COPYING.LIB COPYING3 COPYING3.LIB
 
 %if ! 0%{?bootstrap}
@@ -241,6 +238,3 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 %{gnuxc_libdir}/libiberty.a
 %{gnuxc_libdir}/libopcodes.a
 %endif
-
-
-%changelog

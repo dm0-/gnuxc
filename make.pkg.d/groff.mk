@@ -1,4 +1,5 @@
 groff                   := groff-1.22.3
+groff_sha1              := 61a6808ea1ef715df9fa8e9b424e1f6b9fa8c091
 groff_url               := http://ftpmirror.gnu.org/groff/$(groff).tar.gz
 
 $(prepare-rule):

@@ -2,18 +2,17 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-videoproto
-Version:        2.3.2
+Version:        2.3.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          Development/System
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/proto/%{gnuxc_name}-%{version}.tar.bz2
 
-BuildRequires:  gnuxc-filesystem
+# This is not actually used; it's just for automatic pkg-config dependencies.
+BuildRequires:  gnuxc-xproto
 
-Requires:       gnuxc-xextproto
 Provides:       %{name}-devel = %{version}-%{release}
 
 %description
@@ -22,6 +21,9 @@ Provides:       %{name}-devel = %{version}-%{release}
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+
+# Installed headers include xproto headers.
+echo 'Requires: xproto' >> %{gnuxc_name}.pc.in
 
 %build
 %gnuxc_configure \
@@ -44,6 +46,3 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 %{gnuxc_libdir}/pkgconfig/videoproto.pc
 %doc ChangeLog README
 %license COPYING
-
-
-%changelog

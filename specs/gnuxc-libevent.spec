@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          System Environment/Libraries
 URL:            http://libevent.org/
 Source0:        http://prdownloads.sourceforge.net/levent/%{gnuxc_name}-%{version}-stable.tar.gz
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -87,6 +84,3 @@ rm -f %{buildroot}%{gnuxc_bindir}/event_rpcgen.py
 %{gnuxc_libdir}/libevent_core.a
 %{gnuxc_libdir}/libevent_extra.a
 %{gnuxc_libdir}/libevent_pthreads.a
-
-
-%changelog

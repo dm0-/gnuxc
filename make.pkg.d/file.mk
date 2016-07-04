@@ -1,13 +1,17 @@
-file                    := file-5.25
+file                    := file-5.28
+file_sha1               := 1b789a93bea54da3119d98986468cd90b1e571bf
 file_url                := ftp://ftp.astron.com/pub/file/$(file).tar.gz
 
 ifneq ($(host),$(build))
 $(call configure-rule,native): $(builddir)/configure
-	$(MKDIR) $(builddir)/native && cd $(builddir)/native && ../configure \
-		--disable-silent-rules CC=gcc
+	$(MKDIR) $(builddir)/native && cd $(builddir)/native && $(native) ../configure \
+		--disable-shared \
+		--disable-silent-rules \
+		--enable-static
 $(configure-rule): $(call configured,native)
 
 $(call build-rule,native): $(configured)
+	$(MAKE) -C $(builddir)/native/src magic.h
 	$(MAKE) -C $(builddir)/native/src file
 	$(EDIT) '/^FILE_COMPILE *=/s,=.*,= $(CURDIR)/$(builddir)/native/src/file,' $(builddir)/magic/Makefile
 $(build-rule): $(call built,native)

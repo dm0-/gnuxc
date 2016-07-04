@@ -1,14 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gtk+
-Version:        3.18.5
+Version:        3.20.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.gtk.org/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/gtk+/3.18/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/gtk+/3.20/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-atk-devel
 BuildRequires:  gnuxc-gdk-pixbuf-devel
@@ -27,15 +26,7 @@ BuildRequires:  gobject-introspection-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-atk-devel
-Requires:       gnuxc-gdk-pixbuf-devel
-Requires:       gnuxc-libXdamage-devel
-Requires:       gnuxc-libXi-devel
-Requires:       gnuxc-libXinerama-devel
-Requires:       gnuxc-libXrandr-devel
-Requires:       gnuxc-pango-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -43,7 +34,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -57,11 +47,6 @@ statically, which is highly discouraged.
 sed -i -e 's/ atk-bridge-2.0//' configure.ac
 sed -i -e '/atk[-_]bridge/d' gtk/a11y/gtkaccessibility.c
 autoreconf -fi
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' build-aux/ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -94,7 +79,7 @@ find %{buildroot}%{gnuxc_libdir} -type f -name '*.la' -delete
 
 # This functionality should be used from the system package.
 rm -rf \
-    %{buildroot}%{gnuxc_datadir}/{aclocal,applications,icons,themes} \
+    %{buildroot}%{gnuxc_datadir}/{aclocal,applications,gettext,icons,themes} \
     %{buildroot}%{gnuxc_datadir}/{glib-2.0,gtk-3.0} \
     %{buildroot}%{gnuxc_sysconfdir}/gtk-3.0
 
@@ -128,9 +113,9 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 %{gnuxc_libdir}/libgailutil-3.so.0
 %{gnuxc_libdir}/libgailutil-3.so.0.0.0
 %{gnuxc_libdir}/libgdk-3.so.0
-%{gnuxc_libdir}/libgdk-3.so.0.1800.5
+%{gnuxc_libdir}/libgdk-3.so.0.2000.6
 %{gnuxc_libdir}/libgtk-3.so.0
-%{gnuxc_libdir}/libgtk-3.so.0.1800.5
+%{gnuxc_libdir}/libgtk-3.so.0.2000.6
 %doc AUTHORS ChangeLog* HACKING INSTALL NEWS* README
 %license COPYING
 
@@ -164,6 +149,3 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 %{gnuxc_libdir}/libgailutil-3.a
 %{gnuxc_libdir}/libgdk-3.a
 %{gnuxc_libdir}/libgtk-3.a
-
-
-%changelog

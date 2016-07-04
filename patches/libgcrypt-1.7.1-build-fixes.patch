@@ -1,0 +1,24 @@
+This links -ldl onto libgcrypt so it doesn't rely on others providing it.
+
+--- src/Makefile.am
++++ src/Makefile.am
+@@ -122,7 +122,7 @@
+ 	../cipher/libcipher.la \
+ 	../random/librandom.la \
+ 	../mpi/libmpi.la \
+-	../compat/libcompat.la  $(GPG_ERROR_LIBS)
++	../compat/libcompat.la  $(GPG_ERROR_LIBS) $(DL_LIBS)
+ 
+ 
+ dumpsexp_SOURCES = dumpsexp.c
+--- src/Makefile.in
++++ src/Makefile.in
+@@ -499,7 +499,7 @@
+ 	../cipher/libcipher.la \
+ 	../random/librandom.la \
+ 	../mpi/libmpi.la \
+-	../compat/libcompat.la  $(GPG_ERROR_LIBS)
++	../compat/libcompat.la  $(GPG_ERROR_LIBS) $(DL_LIBS)
+ 
+ dumpsexp_SOURCES = dumpsexp.c
+ dumpsexp_CFLAGS = $(arch_gpg_error_cflags)

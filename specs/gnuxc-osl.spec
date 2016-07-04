@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          Development/Libraries
 URL:            http://icps.u-strasbg.fr/people/bastoul/public_html/development/openscop/
 Source0:        http://icps.u-strasbg.fr/people/bastoul/public_html/development/openscop/docs/%{gnuxc_name}-%{version}.tar.gz
 
@@ -64,6 +63,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/libosl.la
 
 %files static
 %{gnuxc_libdir}/libosl.a
-
-
-%changelog

@@ -1,4 +1,5 @@
 xrdb                    := xrdb-1.1.0
+xrdb_sha1               := b95ae53b767ee7b56baa55fc78eb9c0b9e5ccd29
 xrdb_url                := http://xorg.freedesktop.org/releases/individual/app/$(xrdb).tar.bz2
 
 $(configure-rule):

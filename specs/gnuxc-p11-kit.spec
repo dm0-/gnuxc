@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-p11-kit
-Version:        0.23.1
+Version:        0.23.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          System Environment/Libraries
 URL:            http://p11-glue.freedesktop.org/p11-kit.html
 Source0:        http://p11-glue.freedesktop.org/releases/%{gnuxc_name}-%{version}.tar.gz
 
@@ -19,7 +18,6 @@ BuildRequires:  gnuxc-pkg-config
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description devel
@@ -29,11 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' build/litter/ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -80,6 +73,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 %{gnuxc_includedir}/p11-kit-1
 %{gnuxc_libdir}/libp11-kit.so
 %{gnuxc_libdir}/pkgconfig/p11-kit-1.pc
-
-
-%changelog

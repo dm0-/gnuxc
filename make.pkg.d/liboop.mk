@@ -1,4 +1,5 @@
 liboop                  := liboop-1.0
+liboop_sha1             := 9c58eeb8b08ba455ac379970cd7df02c48d111d1
 liboop_url              := http://download.ofb.net/liboop/$(liboop).tar.bz2
 
 $(prepare-rule):

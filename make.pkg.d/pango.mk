@@ -1,8 +1,6 @@
-pango                   := pango-1.38.1
-pango_url               := http://ftp.gnome.org/pub/gnome/sources/pango/1.38/$(pango).tar.xz
-
-$(prepare-rule):
-	$(call drop-rpath,configure,ltmain.sh)
+pango                   := pango-1.40.1
+pango_sha1              := 4021b704c2da2ca5ebfc51c714053b7e1907282c
+pango_url               := http://ftp.gnome.org/pub/gnome/sources/pango/1.40/$(pango).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

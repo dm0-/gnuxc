@@ -1,14 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-icu4c
-Version:        56.1
+Version:        57.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT and UCD and Public Domain
-Group:          Development/Libraries
 URL:            http://www.icu-project.org/
-Source0:        http://download.icu-project.org/files/icu4c/%{version}/%{gnuxc_name}-56_1-src.tgz
+Source0:        http://download.icu-project.org/files/icu4c/%{version}/%{gnuxc_name}-57_1-src.tgz
 
 BuildRequires:  gnuxc-gcc-c++
 
@@ -49,12 +48,15 @@ make -C native %{?_smp_mflags} all VERBOSE=1
 (pushd source
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
+    --with-cross-build="${PWD%/*}/native" \
     \
     --disable-rpath \
     --enable-debug \
+    --enable-dyload \
+    --enable-plugins \
     --enable-static \
     --enable-strict \
-    --with-cross-build="${PWD%/*}/native" \
+    --enable-tracing \
     --with-data-packaging=library
 popd)
 
@@ -81,21 +83,21 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 
 %files
-%{gnuxc_libdir}/libicudata.so.56
+%{gnuxc_libdir}/libicudata.so.57
 %{gnuxc_libdir}/libicudata.so.%{version}
-%{gnuxc_libdir}/libicui18n.so.56
+%{gnuxc_libdir}/libicui18n.so.57
 %{gnuxc_libdir}/libicui18n.so.%{version}
-%{gnuxc_libdir}/libicuio.so.56
+%{gnuxc_libdir}/libicuio.so.57
 %{gnuxc_libdir}/libicuio.so.%{version}
-%{gnuxc_libdir}/libicule.so.56
+%{gnuxc_libdir}/libicule.so.57
 %{gnuxc_libdir}/libicule.so.%{version}
-%{gnuxc_libdir}/libiculx.so.56
+%{gnuxc_libdir}/libiculx.so.57
 %{gnuxc_libdir}/libiculx.so.%{version}
-%{gnuxc_libdir}/libicutest.so.56
+%{gnuxc_libdir}/libicutest.so.57
 %{gnuxc_libdir}/libicutest.so.%{version}
-%{gnuxc_libdir}/libicutu.so.56
+%{gnuxc_libdir}/libicutu.so.57
 %{gnuxc_libdir}/libicutu.so.%{version}
-%{gnuxc_libdir}/libicuuc.so.56
+%{gnuxc_libdir}/libicuuc.so.57
 %{gnuxc_libdir}/libicuuc.so.%{version}
 %doc APIChangeReport.html icu4c.css readme.html
 %license icu4c.css license.html
@@ -129,6 +131,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libicutest.a
 %{gnuxc_libdir}/libicutu.a
 %{gnuxc_libdir}/libicuuc.a
-
-
-%changelog

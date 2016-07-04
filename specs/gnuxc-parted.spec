@@ -6,12 +6,12 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+
-Group:          Applications/System
 URL:            http://www.gnu.org/software/parted/
 Source0:        http://ftpmirror.gnu.org/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-hurd-devel
 BuildRequires:  gnuxc-libuuid-devel
+BuildRequires:  gnuxc-ncurses-devel
 BuildRequires:  gnuxc-readline-devel
 
 %description
@@ -19,7 +19,6 @@ BuildRequires:  gnuxc-readline-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -29,7 +28,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -86,6 +84,3 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %files static
 %{gnuxc_libdir}/libparted.a
 %{gnuxc_libdir}/libparted-fs-resize.a
-
-
-%changelog

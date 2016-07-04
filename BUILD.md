@@ -19,7 +19,7 @@ commands call these external programs for their various operations.
     sudo dnf -y install \
         gcc-c++ guile libtool make \
         bzip2 gzip lzip tar xz-lzma-compat unzip \
-        cvs git wget
+        git wget
 
 **Abbreviate the virtual machine command.**  This alias starts `qemu` with a
 virtual hardware configuration that is known to work with Hurd.  It will use
@@ -29,7 +29,7 @@ KVM, if it's available and running on `x86`.
         echo -n qemu-kvm -enable-kvm -cpu host || echo -n qemu-system-i386
         echo '' -no-quit -nodefaults \
             -smp cores=1 -m 1G -vga qxl \
-            -netdev user,id=eth0 -device rtl8139,netdev=eth0 \
+            -netdev user,id=eth0 -device pcnet,netdev=eth0 \
             -device virtio-rng-pci )"
     sed -i -e '/^alias qemu-hurd=/d' ~/.bashrc
     alias qemu-hurd >> ~/.bashrc
@@ -50,6 +50,13 @@ Hurd system, add yourself to the `tty` group.  You can also remove the need for
 to log out after this for new groups to take effect.
 
     sudo usermod -a -G disk,tty "$USER"
+
+**Optionally, clean up Git output for project development.**  The build system
+creates a directory in the project sources which will show up in Git commands.
+This configuration will ignore that directory to make editing easier.
+
+    mkdir -p ~/.config/git
+    echo /.gnuxc/ >> ~/.config/git/ignore
 
 
 ## Sysroot and Cross-Tools
@@ -76,13 +83,18 @@ scripts to maximize CPU core usage.  You'll want to make it run at least as
 many parallel jobs as you have processor cores in your machine.  This command
 will let the RPM build settings decide that number for you.
 
+    make -f "${SOURCE_DIR:-.}/setup-sysroot.scm" $(rpm -E %_smp_mflags)
+
+If for some reason you don't have GNU Make version 4 or later built with Guile
+support, you can run this equivalent command instead.
+
     guile --no-auto-compile "${SOURCE_DIR:-.}/setup-sysroot.scm" |
     make -f- $(rpm -E %_smp_mflags)
 
-If you have GNU Make version 4 or later built with Guile support (which is
-currently only in Rawhide), you can run this equivalent command instead.
-
-    make -f "${SOURCE_DIR:-.}/setup-sysroot.scm" $(rpm -E %_smp_mflags)
+This command will take a long time to complete (potentially several hours on
+slower machines), but you can continue following this document while the
+sysroot builds in the background.  Wait for this command to successfully finish
+before proceeding with the *Building* section below.
 
 
 ## Target Disk
@@ -104,14 +116,15 @@ installing the bootloader) if traces of earlier GPT formatting remain on the
 device.  This will zero out the space before the first partition so there is no
 trouble.  (Be sure to set the `gnu_disk` variable to the path of your device.)
 
-    sudo dd bs=512 count=2048 if=/dev/zero of=${gnu_disk:?Set to a device.}
+    sudo dd bs=512 conv=nocreat,notrunc count=2048 if=/dev/zero \
+        of=${gnu_disk:?Set this variable the target disk device path.}
 
 **Define the partition layout.**  This example layout will create two primary
-partitions.  The first uses 100 MiB for an EFI system partition, so the disk
+partitions.  The first uses 260 MiB for an EFI system partition, so the disk
 can be booted on EFI-only systems.  The second partition uses all the remaining
 disk space for the operating system itself.
 
-    esp_megabytes=100
+    esp_megabytes=260
     esp_offset=2048
     sector_size=512
     ext2_offset=$(( esp_megabytes * 1048576 / sector_size + esp_offset ))
@@ -126,7 +139,7 @@ disk space for the operating system itself.
 
     loop_esp=$(sudo losetup --show --sizelimit $(( esp_megabytes * 1048576 )) \
         -fo $(( esp_offset * sector_size )) $gnu_disk)
-    sudo mkfs.fat -F 32 -n GNU-ESP $loop_esp
+    sudo mkfs.fat -F 32 -n GNUXCESP $loop_esp
 
 **Create the `ext2` file system.**  Only a few feature-support flags are usable
 on the file system, since they can make Linux write things to the disk that
@@ -136,7 +149,7 @@ Hurd won't be able to understand.
     sudo mke2fs -F -t ext2 -o hurd \
         -T hurd -b 4096 -I 128 \
         -O none,dir_index,ext_attr,sparse_super \
-        -L GNU -m 0 $loop
+        -L GNUXC -m 0 $loop
 
 
 ## Operating System
@@ -148,19 +161,22 @@ you built the sysroot packages on the same machine.
 
     sudo dnf -y install \
         bc bison ed flex{,-devel} gperf groff intltool nasm texinfo yasm \
-        {gnu-free-{mono,sans,serif},unifont}-fonts ImageMagick libicns-utils \
-        help2man perl-ExtUtils-MakeMaker perl-gettext perl-podlators \
+        {dejavu-sans,gnu-free-{mono,sans,serif},unifont}-fonts \
+        ImageMagick libicns-utils xorg-x11-xkb-utils \
+        help2man perl-ExtUtils-MakeMaker perl-Locale-gettext perl-podlators \
         {freetype,gdk-pixbuf2,gobject-introspection,guile,xorg-x11-proto}-devel
 
 The `hal` project requires a few native static libraries.
 
-    sudo dnf -y install {glib2,glibc,ncurses,zlib}-static
+    sudo dnf -y install {glib2,glibc,libstdc++,ncurses,pcre,zlib}-static
 
-**Download and patch all the sources.**  The `prepare` target refers to having
-a complete and patched source tree prepared to be built.  This `make` command
-should not use (many) parallel jobs as a courtesy to the hosting servers.
+**Download all of the project sources.**  This `make` command should not use
+(many) parallel jobs as a courtesy to the hosting servers.
 
-    gmake prepare
+    gmake download
+
+After this command ends successfully, you will need to stop and wait for all of
+the sysroot packages to build and install, if they haven't finished already.
 
 
 ### Building
@@ -245,7 +261,7 @@ Some points to note about this command are that it boots with a writable root
 file system and gives the `-f` argument to skip the file system check.  This is
 because the first boot will automatically run an initialization script to write
 translators etc. to the disk, as well as to install the bootloader.  When this
-script is finished, it will start GNU dmd as in a regular system boot.
+script is finished, it will start GNU Shepherd as in a regular system boot.
 
 When the initialization is complete, you should see a login prompt.  You can
 now explore the system, but don't forget to try the bootloader.  To shut down,
@@ -261,72 +277,23 @@ the now-redundant boot files in the build directory.
 
 ## Runtime
 
-The system is ready to be started and used normally with this command.
+The system is ready to be started normally, such as with this command.
 
     qemu-hurd $gnu_disk
 
-### Using the GNU System
-
-**Using GNU GRUB.**  When directly booting the disk as above, a graphical GRUB
-menu will be displayed with a few options.  A GRUB command line environment can
-be activated by pressing `c`, and menu entries can be customized or inspected
-by highlighting one and pressing `e`.
-
-The first/default menu item will boot Hurd in a standard fashion.  It uses GNU
-dmd to start system services, including the Hurd console client.
-
-To rescue or debug the OS, the next two bootloader options perform a minimal
-boot-to-shell with a writable and read-only root file system, respectively.
-
-The last option offers to start a virtual system.  It is intended to be used
-when booting the OS on physical hardware that is unsupported by Mach and Hurd.
-This option is effectively used automatically when EFI-booting the disk.  It
-boots Linux-libre, which runs the Hurd-based OS in QEMU for compatibility.
-
-**Using the GNU Hurd console.**  After selecting the default boot option, the
-system should display a login prompt.  Two usable accounts are provided, `root`
-and `gnu`.  The `gnu` account is a regular user account with `sudo` abilities.
-
-There are six virtual terminals by default.  With `Alt+Left` or `Alt+Right` you
-can switch to an adjacent terminal, and `Alt+n` will jump to the terminal
-numbered *n*.
-
-Pressing `Ctrl+Alt+Backspace` will terminate the Hurd console client and return
-to the GNU Mach console.  It is preferable to use the `console` service to stop
-and start the Hurd console, however.  This command will use GNU dmd to return
-to the more basic GNU Mach console.
-
-    sudo deco stop console
-
-Finally, a graphical desktop can be launched from the Hurd console.  Run the
-following while logged into the `gnu` account on one of the virtual terminals.
-
-    startx
-
-If instead of directly starting a user's desktop environment, you want to show
-a graphical login screen, start the XDM service.
-
-    sudo deco start xdm
-
-**Using GNU WindowMaker.**  The X environment is provided by `wmaker` by
-default.  Applications can be accessed easily from its right-click menu, as can
-adding new workspaces, etc.  Pressing `Alt+F2` will display a window prompting
-for a command to execute.
-
-The default key configuration is fairly consistent with the Hurd console.  Use
-`Alt+Left`, `Alt+Right`, and `Alt+n` to switch workspaces again.  X can be
-terminated with `Ctrl+Alt+Backspace` to return to the Hurd console.
+There are a few more steps to take below as the `root` user before the OS is
+finally ready for normal usage.  See the `RUNTIME.md` file for a more complete
+runtime usage and configuration manual.
 
 
 ### Tying up Loose Ends
 
-**Configure daemons to start on boot.**  The last line of `/etc/dmdconf.scm`
-contains a space-separated list of services (defined in `/etc/dmd.d`) to start
-automatically.  The provided configuration starts the Hurd console client and
-login programs by default.  Change `console` to `xdm` to boot to a graphical
-login prompt instead of the console, if desired.  You will probably want to add
-other services to start at boot, such as `cron` or `syslog`.  Use the `deco`
-command to start other services at runtime, e.g. `sudo deco start syslog`.
+**Configure daemons to start on boot.**  Near the end of `/etc/shepherd.scm`,
+there are space-separated lists of services (defined in `/etc/shepherd.d`) to
+start on boot depending on the selected runlevel.  The provided configuration
+starts an appropriate login prompt and enables swap partitions.  You might want
+to include more services, such as `dhclient` or `syslog`.  Services also can be
+started at runtime with the `herd` command, e.g. `sudo herd start cron`.
 
 **Preempt the cron jobs.**  There are some cache databases being regenerated at
 random times daily.  Run the cron commands manually if you don't want to wait
@@ -341,10 +308,10 @@ Install `perl` and its assorted modules.  They are required to run certain
 utilities such as `help2man` and `intltool`.
 
     gmake install-perl
-    gmake install-perl-gettext install-perl-XML-Parser
+    gmake install-perl-Locale-gettext install-perl-XML-Parser
 
-Emacs still needs to be installed properly since its binary is generated at
-runtime.  (Without running this step, the `emacs` command launches Zile.)
+Emacs still needs to be installed properly since its final binary is generated
+at runtime.  (Without running this step, the `emacs` command launches Zile.)
 
     gmake install-emacs
 

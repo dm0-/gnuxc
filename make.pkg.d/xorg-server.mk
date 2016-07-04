@@ -1,9 +1,10 @@
-xorg-server             := xorg-server-1.18.0
+xorg-server             := xorg-server-1.18.3
+xorg-server_sha1        := b3d8818bb3e1deeeb8f02d741c1223a72182e63c
 xorg-server_url         := http://xorg.freedesktop.org/releases/individual/xserver/$(xorg-server).tar.bz2
 
 $(prepare-rule):
-# Fix memory corruption (sometimes segfaults when client programs are started).
-	$(DOWNLOAD) 'http://bugs.freedesktop.org/attachment.cgi?id='117194 | $(PATCH) -d $(builddir) -p1
+# Place drop-in configuration files in the config dir, and use CLOCK_MONOTONIC.
+	$(EDIT) -e '/MONOTONIC_CLOCK=.*cross/s/=.*/=yes/' -e /sysconfigdir=/s/datadir/sysconfdir/ $(builddir)/configure
 # Fix the install-headers target.
 	$(ECHO) 'install-sdkHEADERS:' >> $(builddir)/Makefile.in
 
@@ -52,19 +53,22 @@ $(configure-rule):
 		--disable-screensaver \
 		--disable-selective-werror \
 		--disable-strict-compilation \
-		--disable-unit-tests \
-		CFLAGS='$(CFLAGS) -O0 -g3'
+		--disable-unit-tests
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,bigreqsproto damageproto fixesproto libpciaccess libXdmcp libXext libXfont libXinerama libxkbfile mesa nettle pixman presentproto randrproto renderproto resourceproto videoproto xcb-util-keysyms xcmiscproto xf86dgaproto)
+$(install-rule): $$(call installed,bigreqsproto damageproto fixesproto libpciaccess libXdmcp libXext libXfont libXinerama libxkbfile mesa pixman presentproto randrproto renderproto resourceproto videoproto xcb-util-keysyms xcmiscproto xf86dgaproto)
 	$(MAKE) -C $(builddir) install install-headers
 	$(INSTALL) -Dpm 644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/xorg-server.conf
 # Lazily work around --enable-install-setuid requiring root.
 	chmod 4755 $(DESTDIR)/usr/bin/Xorg
 
-# Provide the configuration to manage X's /tmp files as root.
+# Write inline files.
 $(call addon-file,tmpfiles.conf): | $$(@D)
-	$(ECHO) 'd /tmp/.X11-unix 1777' > $@
+	$(file >$@,$(contents))
 $(prepared): $(call addon-file,tmpfiles.conf)
+
+
+# Provide the configuration to manage X's /tmp files as root.
+$(call addon-file,tmpfiles.conf): private override contents := d /tmp/.X11-unix 1777

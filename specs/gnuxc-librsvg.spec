@@ -4,12 +4,11 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-librsvg
-Version:        2.40.11
+Version:        2.40.16
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://developer.gnome.org/rsvg/
 Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.40/%{gnuxc_name}-%{version}.tar.xz
 
@@ -28,9 +27,7 @@ Requires:       gnuxc-gdk-pixbuf
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-gdk-pixbuf-devel
 Requires:       gnuxc-libcroco-devel
 Requires:       gnuxc-pango-devel
 
@@ -40,7 +37,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -51,11 +47,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -95,6 +86,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %files static
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.a
 %{gnuxc_libdir}/librsvg-2.a
-
-
-%changelog

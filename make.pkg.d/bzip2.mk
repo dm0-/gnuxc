@@ -1,4 +1,5 @@
 bzip2                   := bzip2-1.0.6
+bzip2_sha1              := 3f89f861209ce81a6bab1fd1998c0ef311712002
 bzip2_url               := http://www.bzip.org/$(bzip2:bzip2-%=%)/$(bzip2).tar.gz
 
 $(build-rule):

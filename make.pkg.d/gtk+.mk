@@ -1,11 +1,11 @@
-gtk+                    := gtk+-3.18.5
-gtk+_url                := http://ftp.gnome.org/pub/gnome/sources/gtk+/3.18/$(gtk+).tar.xz
+gtk+                    := gtk+-3.20.6
+gtk+_sha1               := 36ddab46242eb2da5d716771fd6132582e5828cc
+gtk+_url                := http://ftp.gnome.org/pub/gnome/sources/gtk+/3.20/$(gtk+).tar.xz
 
 $(prepare-rule):
 	$(EDIT) 's/ atk-bridge-2.0//' $(builddir)/configure.ac
 	$(EDIT) '/atk[-_]bridge/d' $(builddir)/gtk/a11y/gtkaccessibility.c
-	$(AUTOGEN) $(builddir)
-	$(call drop-rpath,configure,build-aux/ltmain.sh)
+	$(RM) $(builddir)/configure
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

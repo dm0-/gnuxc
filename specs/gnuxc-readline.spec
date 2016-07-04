@@ -7,7 +7,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+
-Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/readline/
 Source0:        http://ftpmirror.gnu.org/readline/%{gnuxc_name}-%{basever}.tar.gz
 
@@ -29,9 +28,8 @@ BuildRequires:  gnuxc-ncurses-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-ncurses-devel
+Requires:       gnuxc-glibc-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -39,7 +37,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -95,6 +92,3 @@ rm -rf \
 %files static
 %{gnuxc_libdir}/libhistory.a
 %{gnuxc_libdir}/libreadline.a
-
-
-%changelog

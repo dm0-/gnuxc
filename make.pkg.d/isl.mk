@@ -1,4 +1,5 @@
-isl                     := isl-0.15
+isl                     := isl-0.17.1
+isl_sha1                := 62ff0dfb53cdae7c03bb769abb9e7ced075488db
 isl_url                 := http://isl.gforge.inria.fr/$(isl).tar.xz
 
 $(configure-rule):

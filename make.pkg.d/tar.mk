@@ -1,4 +1,5 @@
-tar                     := tar-1.28
+tar                     := tar-1.29
+tar_sha1                := 03851c34c90f0656177f2dd375cd61bd1204c51d
 tar_url                 := http://ftpmirror.gnu.org/tar/$(tar).tar.xz
 
 $(configure-rule):

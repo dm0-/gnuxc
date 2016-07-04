@@ -1,4 +1,5 @@
 mkfontscale             := mkfontscale-1.1.2
+mkfontscale_sha1        := da32fe297732355eea71d4a94ed003be93d1eae7
 mkfontscale_url         := http://xorg.freedesktop.org/releases/individual/app/$(mkfontscale).tar.bz2
 
 $(configure-rule):

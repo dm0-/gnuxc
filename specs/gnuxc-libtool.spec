@@ -6,50 +6,50 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+ and LGPLv2+ and GFDL
-Group:          Development/Tools
 URL:            http://www.gnu.org/software/libtool/
 Source0:        http://ftpmirror.gnu.org/libtool/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glibc-devel
 
+BuildRequires:  help2man
 BuildRequires:  m4
 
 %description
 %{summary}.
 
-%package -n gnuxc-ltdl
+%package -n gnuxc-libltdl
 Summary:        Cross-compiled version of libltdl for the GNU system
 License:        LGPLv2+
-Group:          System Environment/Libraries
 
-%description -n gnuxc-ltdl
+%description -n gnuxc-libltdl
 Cross-compiled version of libltdl for the GNU system.
 
-%package -n gnuxc-ltdl-devel
-Summary:        Development files for gnuxc-ltdl
+%package -n gnuxc-libltdl-devel
+Summary:        Development files for gnuxc-libltdl
 License:        LGPLv2+
-Group:          Development/Libraries
-Requires:       gnuxc-ltdl = %{version}-%{release}
+Requires:       gnuxc-libltdl = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
-%description -n gnuxc-ltdl-devel
-The gnuxc-ltdl-devel package contains libraries and header files for developing
-applications that use libltdl on GNU systems.
+%description -n gnuxc-libltdl-devel
+The gnuxc-libltdl-devel package contains libraries and header files for
+developing applications that use libltdl on GNU systems.
 
-%package -n gnuxc-ltdl-static
-Summary:        Static libraries of gnuxc-ltdl
+%package -n gnuxc-libltdl-static
+Summary:        Static libraries of gnuxc-libltdl
 License:        LGPLv2+
-Group:          Development/Libraries
-Requires:       gnuxc-ltdl-devel = %{version}-%{release}
+Requires:       gnuxc-libltdl-devel = %{version}-%{release}
 
-%description -n gnuxc-ltdl-static
-The gnuxc-ltdl-static package contains the libltdl static libraries for -static
-linking on GNU systems.  You don't need these, unless you link statically,
-which is highly discouraged.
+%description -n gnuxc-libltdl-static
+The gnuxc-libltdl-static package contains the libltdl static libraries for
+-static linking on GNU systems.  You don't need these, unless you link
+statically, which is highly discouraged.
 
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
+
+# Regenerate this to avoid edits by the anti-rpath scripts.
+rm -f build-aux/ltmain.sh
 
 %build
 %gnuxc_configure \
@@ -72,19 +72,16 @@ rm -rf \
 rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 
-%files -n gnuxc-ltdl
+%files -n gnuxc-libltdl
 %{gnuxc_libdir}/libltdl.so.7
 %{gnuxc_libdir}/libltdl.so.7.3.1
 %doc AUTHORS ChangeLog* NEWS README THANKS TODO
 %license COPYING
 
-%files -n gnuxc-ltdl-devel
+%files -n gnuxc-libltdl-devel
 %{gnuxc_includedir}/libltdl
 %{gnuxc_includedir}/ltdl.h
 %{gnuxc_libdir}/libltdl.so
 
-%files -n gnuxc-ltdl-static
+%files -n gnuxc-libltdl-static
 %{gnuxc_libdir}/libltdl.a
-
-
-%changelog

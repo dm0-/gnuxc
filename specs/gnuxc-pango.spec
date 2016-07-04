@@ -4,14 +4,13 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/pango/
 
 Name:           gnuxc-pango
-Version:        1.38.1
+Version:        1.40.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://developer.gnome.org/pango/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/1.38/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/1.40/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-cairo-devel
 BuildRequires:  gnuxc-harfbuzz-devel
@@ -25,11 +24,7 @@ BuildRequires:  glib2-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-cairo-devel
-Requires:       gnuxc-harfbuzz-devel
-Requires:       gnuxc-libXft-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -37,7 +32,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -48,11 +42,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -80,13 +69,13 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpango-1.0.so.0
-%{gnuxc_libdir}/libpango-1.0.so.0.3800.1
+%{gnuxc_libdir}/libpango-1.0.so.0.4000.1
 %{gnuxc_libdir}/libpangocairo-1.0.so.0
-%{gnuxc_libdir}/libpangocairo-1.0.so.0.3800.1
+%{gnuxc_libdir}/libpangocairo-1.0.so.0.4000.1
 %{gnuxc_libdir}/libpangoft2-1.0.so.0
-%{gnuxc_libdir}/libpangoft2-1.0.so.0.3800.1
+%{gnuxc_libdir}/libpangoft2-1.0.so.0.4000.1
 %{gnuxc_libdir}/libpangoxft-1.0.so.0
-%{gnuxc_libdir}/libpangoxft-1.0.so.0.3800.1
+%{gnuxc_libdir}/libpangoxft-1.0.so.0.4000.1
 %doc AUTHORS ChangeLog* HACKING MAINTAINERS NEWS README THANKS
 %license COPYING
 
@@ -106,6 +95,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libpangocairo-1.0.a
 %{gnuxc_libdir}/libpangoft2-1.0.a
 %{gnuxc_libdir}/libpangoxft-1.0.a
-
-
-%changelog

@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://savannah.nongnu.org/projects/attr
 Source0:        http://download.savannah.gnu.org/releases/attr/%{gnuxc_name}-%{version}.src.tar.gz
 
@@ -19,7 +18,6 @@ BuildRequires:  gettext
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -29,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -75,6 +72,3 @@ rm -f %{buildroot}%{gnuxc_datadir}/locale/??/LC_MESSAGES/attr.mo
 
 %files static
 %{gnuxc_libdir}/libattr.a
-
-
-%changelog

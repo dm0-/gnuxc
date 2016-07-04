@@ -1,5 +1,6 @@
-findutils               := findutils-4.5.14
-findutils_url           := http://alpha.gnu.org/gnu/findutils/$(findutils).tar.gz
+findutils               := findutils-4.6.0
+findutils_sha1          := f18e8aaee3f3d4173a1f598001003be8706d28b0
+findutils_url           := http://ftpmirror.gnu.org/findutils/$(findutils).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

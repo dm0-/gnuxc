@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gc
-Version:        7.4.2
+Version:        7.4.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          System Environment/Libraries
 URL:            http://www.hboehm.info/gc/
 Source0:        http://www.hboehm.info/gc/gc_source/%{gnuxc_name}-%{version}.tar.gz
 
@@ -19,7 +18,6 @@ BuildRequires:  gnuxc-pkg-config
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-gcc-c++
 Requires:       gnuxc-libatomic_ops-devel
@@ -30,7 +28,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -41,11 +38,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -80,7 +72,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gc
 %{gnuxc_libdir}/libgc.so.1.0.3
 %{gnuxc_libdir}/libgccpp.so.1
 %{gnuxc_libdir}/libgccpp.so.1.0.3
-%doc AUTHORS ChangeLog doc README* TODO
+%doc AUTHORS ChangeLog doc README*
 
 %files devel
 %{gnuxc_includedir}/gc
@@ -95,6 +87,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gc
 %{gnuxc_libdir}/libcord.a
 %{gnuxc_libdir}/libgc.a
 %{gnuxc_libdir}/libgccpp.a
-
-
-%changelog

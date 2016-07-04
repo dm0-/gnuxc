@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          Development/Tools
 URL:            http://flex.sourceforge.net/
 Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
 
@@ -21,7 +20,6 @@ Requires:       gnuxc-gcc-c++
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Provides:       %{name}-static = %{version}-%{release}
 Requires:       %{name} = %{version}-%{release}
 
@@ -73,6 +71,3 @@ rm -rf \
 %{gnuxc_libdir}/libfl.so
 %{gnuxc_libdir}/libfl_pic.a
 %{gnuxc_libdir}/libfl_pic.so
-
-
-%changelog

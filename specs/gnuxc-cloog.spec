@@ -5,8 +5,7 @@ Version:        0.18.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
-License:        LGPLv2.1+
-Group:          Development/Libraries
+License:        LGPLv2+
 URL:            http://www.cloog.org/
 Source0:        http://www.bastoul.net/cloog/pages/download/%{gnuxc_name}-%{version}.tar.gz
 Source1:        http://repo.or.cz/w/cloog.git/blob_plain/%{gnuxc_name}-%{version}:/LICENSE#/%{gnuxc_name}-%{version}-LICENSE
@@ -77,6 +76,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/{cloog-isl/cloog-isl,isl/isl}-config.cmake
 
 %files static
 %{gnuxc_libdir}/libcloog-isl.a
-
-
-%changelog

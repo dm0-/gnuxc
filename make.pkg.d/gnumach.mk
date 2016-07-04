@@ -1,6 +1,6 @@
-gnumach                 := gnumach-1.6-4c721d
+gnumach                 := gnumach-1.7-4bccd1
 gnumach_branch          := master
-gnumach_snap            := 4c721d8da43ebbe77da0a874cea170e7ba5a61ac
+gnumach_sha1            := 4bccd10cfeaf126382467dd90d7339a98989b9d2
 gnumach_url             := git://git.sv.gnu.org/hurd/gnumach.git
 
 $(configure-rule):
@@ -8,6 +8,7 @@ $(configure-rule):
 		--exec-prefix= \
 		\
 		--enable-kdb \
+		--enable-kernsample \
 		--enable-kmsg \
 		--enable-pae
 

@@ -2,12 +2,11 @@
 
 Name:           gnuxc-ncurses
 Version:        6.0
-%global snap    20151121
+%global snap    20160702
 Release:        1.%{snap}snap%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
-License:        GPLv3+
-Group:          Applications/System
+License:        MIT
 URL:            http://www.gnu.org/software/ncurses/
 Source0:        http://invisible-mirror.net/archives/ncurses/current/%{gnuxc_name}-%{version}-%{snap}.tgz
 
@@ -18,7 +17,6 @@ BuildRequires:  gnuxc-gcc-c++
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description devel
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -300,6 +297,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/terminfo
 %{gnuxc_libdir}/libtinfotw_g.a
 %{gnuxc_libdir}/libtinfow.a
 %{gnuxc_libdir}/libtinfow_g.a
-
-
-%changelog

@@ -1,5 +1,0 @@
-%__gnuxc_flags        exeonly
-%__gnuxc_magic        ^(setuid )?(setgid )?(sticky )?ELF 32-bit.*$
-%__gnuxc_path         ^%{gnuxc_sysroot}/
-%__gnuxc_provides     /bin/sh -c '%{__elf_provides} | sed "s/.*/gnuxc(&)/"'
-%__gnuxc_requires     /bin/sh -c '%{__elf_requires} | sed "s/.*/gnuxc(&)/"'

@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libtasn1
-Version:        4.7
+Version:        4.8
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+ and LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/libtasn1
 Source0:        http://ftpmirror.gnu.org/libtasn1/%{gnuxc_name}-%{version}.tar.gz
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -60,7 +57,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libtasn1.so.6
-%{gnuxc_libdir}/libtasn1.so.6.5.1
+%{gnuxc_libdir}/libtasn1.so.6.5.2
 %doc AUTHORS ChangeLog NEWS README THANKS doc/TODO
 %license COPYING COPYING.LIB
 
@@ -71,6 +68,3 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libtasn1.a
-
-
-%changelog

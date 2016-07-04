@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libatomic_ops
-Version:        7.4.2
+Version:        7.4.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD and MIT and GPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.hboehm.info/gc/
 Source0:        http://www.ivmaisoft.com/_bin/atomic_ops/%{gnuxc_name}-%{version}.tar.gz
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -61,7 +58,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/libatomic_ops
 %{gnuxc_libdir}/libatomic_ops.so.1.0.3
 %{gnuxc_libdir}/libatomic_ops_gpl.so.1
 %{gnuxc_libdir}/libatomic_ops_gpl.so.1.0.3
-%doc AUTHORS ChangeLog doc/*.txt README.md TODO
+%doc AUTHORS ChangeLog doc/*.txt README.md
 %license COPYING LICENSING.txt
 
 %files devel
@@ -76,6 +73,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/libatomic_ops
 %files static
 %{gnuxc_libdir}/libatomic_ops.a
 %{gnuxc_libdir}/libatomic_ops_gpl.a
-
-
-%changelog

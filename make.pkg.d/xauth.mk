@@ -1,4 +1,5 @@
 xauth                   := xauth-1.0.9
+xauth_sha1              := 5d1f9f59aea271af8fc098cedef469f7a9337747
 xauth_url               := http://xorg.freedesktop.org/releases/individual/app/$(xauth).tar.bz2
 
 export MCOOKIE = /usr/bin/mcookie

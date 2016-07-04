@@ -1,4 +1,5 @@
 xinit                   := xinit-1.3.4
+xinit_sha1              := de3469080d73ced1f7d7a1803e813bc6ea352072
 xinit_url               := http://xorg.freedesktop.org/releases/individual/app/$(xinit).tar.bz2
 
 $(prepare-rule):

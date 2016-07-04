@@ -1,4 +1,5 @@
 zile                    := zile-2.4.11
+zile_sha1               := ad2efb80031c3a406f8f83ac5d400a38bc297434
 zile_url                := http://ftpmirror.gnu.org/zile/$(zile).tar.gz
 
 ifneq ($(host),$(build))
@@ -14,7 +15,7 @@ $(configure-rule):
 		--with-ncursesw \
 		--with-perl='$(PERL)' \
 		--without-included-regex \
-		LIBS='-ltinfo'
+		LIBS='-ltinfow'
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all \

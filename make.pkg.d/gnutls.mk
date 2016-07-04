@@ -1,17 +1,21 @@
-gnutls                  := gnutls-3.4.7
-gnutls_url              := ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4/$(gnutls).tar.xz
+gnutls                  := gnutls-3.5.1
+gnutls_sha1             := 027df6cd692dfd5310441ef2c843def217986ece
+gnutls_url              := ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/$(gnutls).tar.xz
 
 $(prepare-rule):
-	$(call drop-rpath,configure,build-aux/ltmain.sh)
+# Cross-compiling wants to call libs.
+	$(EDIT) 's/GUILD=.*/GUILD=/' $(builddir)/configure
+# Fix the new header names.
+	$(EDIT) 's/gnutls_\(global\|errors\)/\1/' $(builddir)/extra/openssl_compat.c
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-openssl-compatibility \
 		--disable-rpath \
 		--disable-silent-rules \
 		--enable-cxx \
 		--enable-gcc-warnings \
 		--enable-guile \
+		--enable-openssl-compatibility \
 		--enable-static \
 		--with-default-trust-store-file=/etc/ssl/ca-bundle.pem \
 		--with-idn \
@@ -19,7 +23,6 @@ $(configure-rule):
 		--with-zlib \
 		--without-included-libtasn1 \
 		--without-nettle-mini \
-		GUILE_CONFIG='/usr/bin/$(GUILE_CONFIG)' \
 		\
 		--disable-libdane \
 		--without-tpm

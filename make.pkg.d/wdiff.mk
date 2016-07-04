@@ -1,4 +1,5 @@
 wdiff                   := wdiff-1.2.2
+wdiff_sha1              := c93b5cb593257d814212e15fc371ff6c6b952c3d
 wdiff_url               := http://ftpmirror.gnu.org/wdiff/$(wdiff).tar.gz
 
 $(configure-rule):

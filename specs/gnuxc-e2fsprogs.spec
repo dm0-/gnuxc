@@ -1,34 +1,30 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-e2fsprogs
-Version:        1.42.13
+Version:        1.43.1
 Release:        1%{?dist}
-Summary:        Utilities for managing ext2, ext3, and ext4 filesystems
+Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2 and LGPLv2 and BSD and MIT
-Group:          System Environment/Base
 URL:            http://e2fsprogs.sourceforge.net/
 Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-libs-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
 
 %description
-Linux programs and libraries for interacting with ext2-based file systems.
+%{summary}.
 
 %package -n gnuxc-libblkid
 Summary:        Cross-compiled version of libblkid for the GNU system
 License:        LGPLv2
-Group:          Development/Libraries
 
 %description -n gnuxc-libblkid
-Cross-compiled version of libblkid for the GNU system.
+%{summary}.
 
 %package -n gnuxc-libblkid-devel
 Summary:        Development files for gnuxc-libblkid
 License:        LGPLv2
-Group:          Development/Libraries
 Requires:       gnuxc-libblkid = %{version}-%{release}
-Requires:       gnuxc-libuuid-devel
 
 %description -n gnuxc-libblkid-devel
 The gnuxc-libblkid-devel package contains libraries and header files for
@@ -37,7 +33,6 @@ applications that use libblkid on GNU systems.
 %package -n gnuxc-libblkid-static
 Summary:        Static libraries of gnuxc-libblkid
 License:        LGPLv2
-Group:          Development/Libraries
 Requires:       gnuxc-libblkid-devel = %{version}-%{release}
 
 %description -n gnuxc-libblkid-static
@@ -48,15 +43,13 @@ statically, which is highly discouraged.
 %package -n gnuxc-libuuid
 Summary:        Cross-compiled version of libuuid for the GNU system
 License:        BSD
-Group:          Development/Libraries
 
 %description -n gnuxc-libuuid
-Cross-compiled version of libuuid for the GNU system.
+%{summary}.
 
 %package -n gnuxc-libuuid-devel
 Summary:        Development files for gnuxc-libuuid
 License:        BSD
-Group:          Development/Libraries
 Requires:       gnuxc-libuuid = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -67,7 +60,6 @@ applications that use libuuid on GNU systems.
 %package -n gnuxc-libuuid-static
 Summary:        Static libraries of gnuxc-libuuid
 License:        BSD
-Group:          Development/Libraries
 Requires:       gnuxc-libuuid-devel = %{version}-%{release}
 
 %description -n gnuxc-libuuid-static
@@ -84,12 +76,10 @@ ln lib/uuid/COPYING COPYING.uuid
 %gnuxc_configure \
     --disable-fsck \
     --disable-rpath \
-    --enable-blkid-debug \
-    --enable-compression \
+    --enable-{blkid,jbd,testio}-debug \
     --enable-elf-shlibs \
-    --enable-htree \
-    --enable-jbd-debug \
-    --enable-quota \
+    --enable-libblkid \
+    --enable-libuuid \
     --enable-threads=posix \
     --enable-verbose-makecmds \
     --without-included-gettext
@@ -112,7 +102,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libblkid.so.1
 %{gnuxc_libdir}/libblkid.so.1.0
 %doc doc/libblkid.txt
-%license COPYING
+%license NOTICE
 
 %files -n gnuxc-libblkid-devel
 %{gnuxc_includedir}/blkid
@@ -135,6 +125,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files -n gnuxc-libuuid-static
 %{gnuxc_libdir}/libuuid.a
-
-
-%changelog

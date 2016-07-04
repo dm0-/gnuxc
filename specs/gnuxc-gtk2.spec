@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gtk2
-Version:        2.24.28
+Version:        2.24.30
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.gtk.org/
 Source0:        http://ftp.gnome.org/pub/gnome/sources/gtk+/2.24/gtk+-%{version}.tar.xz
 
@@ -27,15 +26,7 @@ BuildRequires:  gettext
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-atk-devel
-Requires:       gnuxc-gdk-pixbuf-devel
-Requires:       gnuxc-libXdamage-devel
-Requires:       gnuxc-libXi-devel
-Requires:       gnuxc-libXinerama-devel
-Requires:       gnuxc-libXrandr-devel
-Requires:       gnuxc-pango-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -43,7 +34,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -54,11 +44,6 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n gtk+-%{version}
-
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
 
 %build
 %gnuxc_configure \
@@ -136,9 +121,9 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 %{gnuxc_libdir}/libgailutil.so.18
 %{gnuxc_libdir}/libgailutil.so.18.0.1
 %{gnuxc_libdir}/libgdk-x11-2.0.so.0
-%{gnuxc_libdir}/libgdk-x11-2.0.so.0.2400.28
+%{gnuxc_libdir}/libgdk-x11-2.0.so.0.2400.30
 %{gnuxc_libdir}/libgtk-x11-2.0.so.0
-%{gnuxc_libdir}/libgtk-x11-2.0.so.0.2400.28
+%{gnuxc_libdir}/libgtk-x11-2.0.so.0.2400.30
 %doc AUTHORS ChangeLog* HACKING INSTALL NEWS* README
 %license COPYING
 
@@ -177,6 +162,3 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 %{gnuxc_libdir}/libgailutil.a
 %{gnuxc_libdir}/libgdk-x11-2.0.a
 %{gnuxc_libdir}/libgtk-x11-2.0.a
-
-
-%changelog

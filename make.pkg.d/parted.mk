@@ -1,4 +1,5 @@
 parted                  := parted-3.2
+parted_sha1             := 78db6ca8dd6082c5367c8446bf6f7ae044091959
 parted_url              := http://ftpmirror.gnu.org/parted/$(parted).tar.xz
 
 $(configure-rule):

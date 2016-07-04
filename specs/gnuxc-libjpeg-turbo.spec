@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libjpeg-turbo
-Version:        1.4.2
+Version:        1.5.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        IJG
-Group:          System Environment/Libraries
 URL:            http://libjpeg-turbo.virtualgl.org/
 Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.gz
 
@@ -20,7 +19,6 @@ BuildRequires:  nasm
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -30,7 +28,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -41,10 +38,7 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-chmod -c 644 *.txt
-
-# Rewrite the old configure script.
-autoreconf -fi
+chmod -c 644 *.md
 
 %build
 %gnuxc_configure \
@@ -73,10 +67,11 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libjpeg.so.62
-%{gnuxc_libdir}/libjpeg.so.62.1.0
+%{gnuxc_libdir}/libjpeg.so.62.2.0
 %{gnuxc_libdir}/libturbojpeg.so.0
 %{gnuxc_libdir}/libturbojpeg.so.0.1.0
-%doc ChangeLog.txt README README-turbo.txt
+%doc ChangeLog.md README.ijg README.md
+%license LICENSE.md
 
 %files devel
 %{gnuxc_includedir}/jconfig.h
@@ -86,10 +81,9 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_includedir}/turbojpeg.h
 %{gnuxc_libdir}/libjpeg.so
 %{gnuxc_libdir}/libturbojpeg.so
+%{gnuxc_libdir}/pkgconfig/libjpeg.pc
+%{gnuxc_libdir}/pkgconfig/libturbojpeg.pc
 
 %files static
 %{gnuxc_libdir}/libjpeg.a
 %{gnuxc_libdir}/libturbojpeg.a
-
-
-%changelog

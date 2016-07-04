@@ -1,8 +1,9 @@
-sqlite                  := sqlite-3.9.2
-sqlite_branch           := sqlite-autoconf-3090200
-sqlite_url              := http://www.sqlite.org/2015/$(sqlite_branch).tar.gz
+sqlite                  := sqlite-3.13.0
+sqlite_branch           := sqlite-autoconf-3130000
+sqlite_sha1             := f6f76e310389e3f510b23826f805850449ae8653
+sqlite_url              := http://www.sqlite.org/2016/$(sqlite_branch).tar.gz
 
-$(call configure-rule,tea): $(prepared)
+$(call configure-rule,tea): $(builddir)/configure
 	cd $(builddir)/tea && ./$(configure) \
 		--disable-rpath \
 		--enable-symbols \
@@ -20,10 +21,15 @@ $(built): $(call built,tea)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
+		--disable-editline \
+		--disable-static-shell \
 		--enable-dynamic-extensions \
+		--enable-fts5 \
+		--enable-json1 \
 		--enable-readline \
 		--enable-threadsafe \
-		CPPFLAGS='-DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_SECURE_DELETE'
+		CPPFLAGS='-DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_SECURE_DELETE' \
+		ac_cv_search_tgetent=-ltinfow
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

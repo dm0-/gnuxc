@@ -1,4 +1,5 @@
 libvpx                  := libvpx-1.5.0
+libvpx_sha1             := 0baf76627eb08450eaf307347d1721f56a880c64
 libvpx_url              := http://storage.googleapis.com/downloads.webmproject.org/releases/webm/$(libvpx).tar.bz2
 
 $(configure-rule):

@@ -1,8 +1,6 @@
 tiff                    := tiff-4.0.6
+tiff_sha1               := 280e27704eaca5f592b82e71ac0c78b87395e2de
 tiff_url                := ftp://ftp.remotesensing.org/pub/libtiff/$(tiff).tar.gz
-
-$(prepare-rule):
-	$(call drop-rpath,configure,config/ltmain.sh)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

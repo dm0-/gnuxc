@@ -1,4 +1,4 @@
-%if 0%{?_with_bootstrap:1}%{!?_without_bootstrap:%(rpm --quiet -q gnuxc-glibc ; echo ${gnuxc_bootstrap:-$?})}
+%if 0%{?_with_bootstrap:1}
 %global bootstrap 1
 %endif
 
@@ -8,15 +8,15 @@
 %endif
 
 Name:           gnuxc-hurd
-Version:        0.7
-%global snap    226a9d
+Version:        0.8
+%global commit  bc170131016969f1d79409337833046ae1f4501b
+%global snap    %(c=%{commit} ; echo -n ${c:0:6})
 Release:        1.%{?bootstrap:0}%{!?bootstrap:1}.19700101git%{snap}%{?dist}
-Summary:        GNU Hurd kernel
+Summary:        GNU Hurd servers, libraries, and utilities
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
-Group:          System Environment/Kernel
 URL:            http://www.gnu.org/software/hurd/
-Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
+Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{commit}.tar.xz
 
 Patch101:       %{gnuxc_name}-%{version}-%{snap}-console-nocaps.patch
 Patch102:       %{gnuxc_name}-%{version}-%{snap}-fancy-motd.patch
@@ -46,7 +46,6 @@ subpackages are built from it to provide system libraries for cross-compiling.
 
 %package headers
 Summary:        System headers from GNU Hurd used for cross-compiling
-Group:          Development/System
 Requires:       gnuxc-gnumach-headers
 
 %description headers
@@ -56,14 +55,12 @@ use with cross-compilers.
 %if ! 0%{?bootstrap}
 %package libs
 Summary:        Cross-compiled versions of Hurd libraries for the GNU system
-Group:          System Environment/Libraries
 
 %description libs
 Cross-compiled versions of Hurd libraries for the GNU system.
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name}-libs = %{version}-%{release}
 Requires:       %{name}-headers = %{version}-%{release}
 
@@ -73,18 +70,17 @@ applications or translators that use Hurd libraries on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
-The %{name}-static package contains the static Hurd libraries for -static
-linking on GNU systems.  You don't need these, unless you link statically,
-which is highly discouraged.
+The %{name}-static package contains the %{gnuxc_name} static libraries for
+-static linking on GNU systems.  You don't need these, unless you link
+statically, which is highly discouraged.
 %endif
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{snap}
+%setup -q -n %{gnuxc_name}-%{commit}
 %patch101
 %patch102
 %patch103
@@ -191,6 +187,3 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 %{gnuxc_libdir}/libstore_task.a
 %{gnuxc_libdir}/libstore_zero.a
 %endif
-
-
-%changelog

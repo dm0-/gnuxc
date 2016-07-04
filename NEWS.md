@@ -1,5 +1,84 @@
 # GNU OS Cross-Compiler - News
 
+## 2016-07-04
+
+This snapshot is from around the release of Fedora 24.
+
+The following details highlight some of the bigger features that were added to
+the build system and OS.
+
+
+### Init system upgrade
+
+GNU dmd has been renamed to GNU Shepherd.  The command `dmd` is now `shepherd`,
+and `deco` is now `herd`.  The equivalent name changes have been made to system
+configuration and logging paths.  The relevant scripts and documentation have
+been updated to match.
+
+The system initialization script (now `/etc/shepherd.scm`) includes some fake
+runlevel support.  It allows keeping different lists of services to start on
+boot, and the boot command line can select which one to use.
+
+Some more of the existing projects have had services defined to be herded by
+Shepherd, including Git.
+
+
+### ImageMagick support
+
+The flexible image manipulation tools from ImageMagick are now installed.  This
+also enables support for many new image formats in existing packages; for
+example, Emacs and Window Maker can now render SVG files.
+
+
+### Networking improvements
+
+All of the documented QEMU configurations should now be safe to enable the DHCP
+client service, or start it with `sudo herd start dhclient`.  Its runtime
+configuration has also been updated to support read-only root file systems.
+
+The Linux-libre wrapper now includes some rudimentary wireless support.  Its
+virtual Hurd guest is still presented with an Ethernet device to ensure full
+hardware compatibility.  To make wireless configuration easier, you can hold
+`Ctrl` while the Linux-libre kernel is booting to be presented with a series of
+settings prompts.
+
+
+### Improved games
+
+Games with shared scores files will now write them under `/var/games` owned by
+the `games` group.
+
+XBoard, the graphical interface to GNU Chess, was updated to a Git snapshot in
+order to move to GTK+ 3.
+
+GNU Shogi was also updated to a Git snapshot in order to add XBoard support,
+which replaces the XShogi package.  GNU Mini-Shogi is now installed as well.
+
+GNU Go was integrated into Emacs, complete with a graphical board interface.
+
+The classic dungeon exploration game NetHack was added.
+
+
+### Build system upgrades
+
+A `download` step has been added before `prepare`.  It stops after downloading
+all files for the specified projects, allowing inspection before any patching
+etc. takes place from the `prepare` step.  The build system should not require
+network connectivity after the `gmake download` command successfully ends.
+
+All downloaded files have their SHA-1 sums verified.  If the SHA-1 sum of a
+downloaded file does not match its expected value, the project will fail before
+any of its code can be executed.  (This check has not yet been added for the
+sysroot package sources.)
+
+The sysroot packages now process dependencies from their `pkg-config` files.
+This defines most of the development packages' requirements automatically.  The
+automatic `Provides` shouldn't be used for `BuildRequires`, however, since they
+can't be known before building the packages, and that will break the dependency
+tree generation in the sysroot builder script.
+
+
+
 ## 2015-11-24
 
 This snapshot from around the Fedora 23 release is mostly about upgrades and
@@ -137,13 +216,13 @@ The GRUB theme has also been updated and will now display a Linux-libre logo
 when it detects that it is running in the included virtual environment.
 
 
-### Temporary filesystems
+### Temporary file systems
 
 Both `/tmp` and `/var/run` are now `tmpfs` by default.  This entails a few
 changes to earlier behavior.
 
-  * The system is more usable when started with a read-only root filesystem now
-    that services can write temporary files and run-time state information.
+  * The system is more usable when started with a read-only root file system
+    now that services can write temporary files and runtime state information.
 
   * The `tmpfs` translator will now start `mach-defpager` by itself if it's not
     already running to ensure files can actually be written.  This is for early
@@ -156,7 +235,7 @@ configuration.  It is first run by `/etc/dmdconf.scm`.
 
 ### Cross-compiling configure results
 
-The filesystem package installs a `config.site` file in the sysroot to provide
+The file system package installs a `config.site` file in the sysroot to provide
 the results of configure tests which can't be executed on the build system.
 
 

@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://savannah.nongnu.org/projects/acl
 Source0:        http://download.savannah.gnu.org/releases/acl/%{gnuxc_name}-%{version}.src.tar.gz
 
@@ -19,9 +18,8 @@ BuildRequires:  gettext
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-attr-devel
+Requires:       gnuxc-glibc-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -29,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -78,6 +75,3 @@ rm -f %{buildroot}%{gnuxc_datadir}/locale/??/LC_MESSAGES/acl.mo
 
 %files static
 %{gnuxc_libdir}/libacl.a
-
-
-%changelog

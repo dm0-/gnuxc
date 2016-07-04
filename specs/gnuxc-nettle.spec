@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nettle
-Version:        3.1.1
+Version:        3.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+ or LGPLv3+
-Group:          Development/Libraries
 URL:            http://www.gnu.org/software/nettle/
 Source0:        http://ftpmirror.gnu.org/nettle/%{gnuxc_name}-%{version}.tar.gz
 
@@ -61,9 +60,9 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib{hogweed,nettle}.so.*.*
 
 %files
 %{gnuxc_libdir}/libhogweed.so.4
-%{gnuxc_libdir}/libhogweed.so.4.1
+%{gnuxc_libdir}/libhogweed.so.4.2
 %{gnuxc_libdir}/libnettle.so.6
-%{gnuxc_libdir}/libnettle.so.6.1
+%{gnuxc_libdir}/libnettle.so.6.2
 %doc AUTHORS ChangeLog descore.README NEWS README TODO
 %license COPYING.LESSERv3 COPYINGv2 COPYINGv3
 
@@ -77,6 +76,3 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib{hogweed,nettle}.so.*.*
 %files static
 %{gnuxc_libdir}/libhogweed.a
 %{gnuxc_libdir}/libnettle.a
-
-
-%changelog

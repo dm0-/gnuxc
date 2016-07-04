@@ -1,5 +1,10 @@
 libidn                  := libidn-1.32
+libidn_sha1             := ddd018611b98af7c67d434aa42d15d39f45129f5
 libidn_url              := http://ftpmirror.gnu.org/libidn/$(libidn).tar.gz
+
+$(prepare-rule):
+# Work around bad prerequisites (due to anti-rpath scripts).
+	$(EDIT) '/gdoc:.*configure/s, [^ ]*/configure , ,' $(builddir)/doc/Makefile.in
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

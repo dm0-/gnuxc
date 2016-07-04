@@ -1,11 +1,12 @@
-nss                     := nss-3.21
+nss                     := nss-3.25
 nss_branch              := $(nss)/nss
+nss_sha1                := ffa55041a7904bb43afbc6821f479819d9802abf
 nss_url                 := http://ftp.mozilla.org/pub/security/nss/releases/NSS_$(subst .,_,$(nss:nss-%=%))_RTM/src/$(nss).tar.gz
 
 ifeq ($(host),$(build))
-export NSS_CONFIG = nss-config
+export NSS_CONFIG = /usr/bin/nss-config
 else
-export NSS_CONFIG = $(host)-nss-config
+export NSS_CONFIG = /usr/bin/$(host)-nss-config
 endif
 
 $(build-rule): private override configuration = \

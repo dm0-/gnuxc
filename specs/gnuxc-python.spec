@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-python
-Version:        3.5.0
+Version:        3.5.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        Python
-Group:          Development/Languages
 URL:            http://www.python.org/
 Source0:        http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.xz
 
@@ -26,7 +25,6 @@ BuildRequires:  gnuxc-zlib-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -106,7 +104,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %files
 %{gnuxc_libdir}/libpython3.5dm.so.1.0
 %{gnuxc_libdir}/python3.5
-%doc README
+%doc Misc/ACKS Misc/HISTORY Misc/NEWS README
 %license LICENSE
 
 %files devel
@@ -121,6 +119,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/pkgconfig/python3.pc
 %{gnuxc_libdir}/pkgconfig/python-3.5.pc
 %{gnuxc_libdir}/pkgconfig/python-3.5dm.pc
-
-
-%changelog

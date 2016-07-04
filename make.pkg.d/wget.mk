@@ -1,4 +1,5 @@
-wget                    := wget-1.17
+wget                    := wget-1.18
+wget_sha1               := 02d451e658f600ee519c42cbf4d3bfe4e49b6c4f
 wget_url                := http://ftpmirror.gnu.org/wget/$(wget).tar.xz
 
 $(configure-rule):

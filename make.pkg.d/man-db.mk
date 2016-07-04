@@ -1,9 +1,13 @@
 man-db                  := man-db-2.7.5
+man-db_sha1             := fd1314f616e055ddde0c02db219f5c9426a0ee5f
 man-db_url              := http://download.savannah.gnu.org/releases/man-db/$(man-db).tar.xz
 
 $(prepare-rule):
 # Since we use --disable-setuid, remove the "man" user from the tmpfiles conf.
 	$(EDIT) 's/ 2755 man / 0755 root /' $(builddir)/init/systemd/man-db.conf
+# Don't put libraries in a subdirectory.
+	$(EDIT) 's/^pkglib_/lib_/;s/ -rpath  *[^ ]* / /' $(builddir)/{lib,libdb}/Makefile.am
+	$(RM) $(builddir)/configure
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -14,6 +18,7 @@ $(configure-rule):
 		--enable-mb-groff \
 		--enable-static \
 		--enable-threads=posix \
+		--with-browser=icecat \
 		--without-included-regex
 
 $(build-rule):

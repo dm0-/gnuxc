@@ -1,8 +1,6 @@
-e2fsprogs               := e2fsprogs-1.42.13
+e2fsprogs               := e2fsprogs-1.43.1
+e2fsprogs_sha1          := 26b75c27ba434e72ef630b160782a01b4d992b7a
 e2fsprogs_url           := http://prdownloads.sourceforge.net/e2fsprogs/$(e2fsprogs).tar.gz
-
-$(prepare-rule):
-	$(EDIT) 's/ REBOOT LINUX / REBOOT GNU /' $(builddir)/e2fsck/unix.c
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -10,15 +8,15 @@ $(configure-rule):
 		\
 		--disable-fsck \
 		--disable-rpath \
-		--enable-blkid-debug \
-		--enable-compression \
+		--enable-{blkid,jbd,testio}-debug \
 		--enable-elf-shlibs \
-		--enable-htree \
-		--enable-jbd-debug \
-		--enable-quota \
+		--enable-libblkid \
+		--enable-libuuid \
 		--enable-threads=posix \
 		--enable-verbose-makecmds \
-		--without-included-gettext
+		--without-included-gettext \
+		\
+		CPPFLAGS=-DEUCLEAN=ED # Hurd doesn't define EUCLEAN.
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

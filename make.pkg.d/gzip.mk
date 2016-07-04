@@ -1,4 +1,5 @@
-gzip                    := gzip-1.6
+gzip                    := gzip-1.8
+gzip_sha1               := 224bc2af5202eccf47f22357023d222011f9de78
 gzip_url                := http://ftpmirror.gnu.org/gzip/$(gzip).tar.xz
 
 $(configure-rule):

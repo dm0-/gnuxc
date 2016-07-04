@@ -1,6 +1,6 @@
-hurd                    := hurd-0.7-226a9d
+hurd                    := hurd-0.8-bc1701
 hurd_branch             := master
-hurd_snap               := 226a9d9c34a2d187f978a25874488e5b07986d7c
+hurd_sha1               := bc170131016969f1d79409337833046ae1f4501b
 hurd_url                := git://git.sv.gnu.org/hurd/hurd.git
 
 $(prepare-rule):
@@ -20,7 +20,7 @@ $(configure-rule):
 		--without-libdaemon
 
 $(build-rule):
-	$(MAKE) -C $(builddir) -j1 all
+	$(MAKE) -C $(builddir) all
 	$(MAKE) -C $(builddir)/doc all
 	$(MAKE) -C $(builddir)/hurd hurd.msgids
 
@@ -34,9 +34,9 @@ $(install-rule): $$(call installed,gnumach unifont)
 	$(MOVE) $(DESTDIR)/hurd/tmpfs $(DESTDIR)/hurd/tmpfs.bin
 	$(INSTALL) -Dpm 0755 $(call addon-file,tmpfs.sh) $(DESTDIR)/hurd/tmpfs
 
-	$(INSTALL) -Dpm 0644 $(call addon-file,console.scm) $(DESTDIR)/etc/dmd.d/console.scm
-	$(INSTALL) -Dpm 0644 $(call addon-file,runttys.scm) $(DESTDIR)/etc/dmd.d/runttys.scm
-	$(INSTALL) -Dpm 0644 $(call addon-file,swap.scm) $(DESTDIR)/etc/dmd.d/swap.scm
+	$(INSTALL) -Dpm 0644 $(call addon-file,console.scm) $(DESTDIR)/etc/shepherd.d/console.scm
+	$(INSTALL) -Dpm 0644 $(call addon-file,runttys.scm) $(DESTDIR)/etc/shepherd.d/runttys.scm
+	$(INSTALL) -Dpm 0644 $(call addon-file,swap.scm) $(DESTDIR)/etc/shepherd.d/swap.scm
 	$(INSTALL) -Dpm 0600 $(call addon-file,random-seed) $(DESTDIR)/var/lib/hurd/random-seed
 	$(INSTALL) -Dpm 0644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/hurd.conf
 	$(INSTALL) -Dpm 0644 $(builddir)/console/motd.UTF8 $(DESTDIR)/etc/motd.UTF8
@@ -65,7 +65,7 @@ $(prepared): $(call addon-file,console.scm runttys.scm swap.scm tmpfiles.conf tm
 
 # Provide a seed for /dev/urandom since Hurd's /dev/random doesn't use entropy.
 $(call addon-file,random-seed): | $$(@D)
-	dd if=/dev/random of=$@ bs=1 count=600
+	dd if=/dev/urandom of=$@ bs=1 count=600
 $(built): $(call addon-file,random-seed)
 
 

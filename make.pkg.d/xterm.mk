@@ -1,4 +1,5 @@
-xterm                   := xterm-320
+xterm                   := xterm-325
+xterm_sha1              := 1775aec5db7be014d7ed367c8deb34d78376fc0e
 xterm_url               := http://invisible-mirror.net/archives/xterm/$(xterm).tgz
 
 $(configure-rule): configure := $(configure:--docdir%=)
@@ -37,7 +38,7 @@ $(configure-rule):
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,libXft libXaw ncurses)
+$(install-rule): $$(call installed,font-adobe-100dpi font-misc-misc libXft libXaw ncurses)
 	$(MAKE) -C $(builddir) install \
 		DESTDIR='$(DESTDIR)'
 # Manually create icon symlinks since they'd get installed in the wrong place.

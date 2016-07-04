@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgcrypt
-Version:        1.6.4
+Version:        1.7.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.gnu.org/software/libgcrypt/
 Source0:        ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -19,7 +18,6 @@ BuildRequires:  gnuxc-libgpg-error-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-libgpg-error-devel
 
@@ -29,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -49,9 +46,11 @@ statically, which is highly discouraged.
     --enable-hmac-binary-check \
     --enable-m-guard \
     --enable-static \
-    --enable-threads=posix \
+    GPG_ERROR_CONFIG=%{_bindir}/%{gnuxc_target}-gpg-error-config \
     \
-    --disable-asm
+    --disable-asm \
+    --disable-random-daemon \
+    --without-capabilities
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -77,7 +76,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libgcrypt.so.20
-%{gnuxc_libdir}/libgcrypt.so.20.0.4
+%{gnuxc_libdir}/libgcrypt.so.20.1.1
 %doc AUTHORS ChangeLog* NEWS README* THANKS TODO
 %license COPYING COPYING.LIB LICENSES
 
@@ -89,6 +88,3 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libgcrypt.a
-
-
-%changelog

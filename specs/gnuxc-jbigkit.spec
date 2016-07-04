@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.cl.cam.ac.uk/~mgk25/jbigkit/
 Source0:        http://www.cl.cam.ac.uk/~mgk25/download/%{gnuxc_name}-%{version}.tar.gz
 
@@ -20,7 +19,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -30,7 +28,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -82,6 +79,3 @@ install -Dpm 644 libjbig/jbig_ar.h %{buildroot}%{gnuxc_includedir}/jbig_ar.h
 %files static
 %{gnuxc_libdir}/libjbig.a
 %{gnuxc_libdir}/libjbig85.a
-
-
-%changelog

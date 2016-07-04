@@ -1,4 +1,5 @@
 libpipeline             := libpipeline-1.4.1
+libpipeline_sha1        := b31cc955f22b1aa4545dc8d00ddbde831936594f
 libpipeline_url         := http://download.savannah.gnu.org/releases/libpipeline/$(libpipeline).tar.gz
 
 $(configure-rule):

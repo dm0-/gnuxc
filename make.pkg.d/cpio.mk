@@ -1,4 +1,5 @@
 cpio                    := cpio-2.12
+cpio_sha1               := 60358408c76db354f6716724c4bcbcb6e18ab642
 cpio_url                := http://ftpmirror.gnu.org/cpio/$(cpio).tar.bz2
 
 $(configure-rule):

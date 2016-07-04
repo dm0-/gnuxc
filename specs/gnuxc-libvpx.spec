@@ -6,18 +6,18 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          System Environment/Libraries
 URL:            http://www.webmproject.org/
 Source0:        http://storage.googleapis.com/downloads.webmproject.org/releases/webm/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-gcc-c++
+
+BuildRequires:  perl-Getopt-Long
 
 %description
 %{summary}.
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -85,6 +84,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/libvpx.so.3.0
 
 %files static
 %{gnuxc_libdir}/libvpx.a
-
-
-%changelog

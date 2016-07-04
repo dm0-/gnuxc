@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+
-Group:          Development/Libraries
 URL:            http://libpipeline.nongnu.org/
 Source0:        http://download.savannah.gnu.org/releases/libpipeline/%{gnuxc_name}-%{version}.tar.gz
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-glibc-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-glibc-devel
 
@@ -27,7 +25,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -71,6 +68,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libpipeline.a
-
-
-%changelog

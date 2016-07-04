@@ -6,21 +6,19 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://www.x.org/
 Source0:        http://xorg.freedesktop.org/releases/individual/lib/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-libX11-devel
 BuildRequires:  gnuxc-pkg-config
+BuildRequires:  gnuxc-xextproto
 
 %description
 %{summary}.
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-libX11-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -28,7 +26,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -86,6 +83,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libXext.a
-
-
-%changelog

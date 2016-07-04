@@ -1,15 +1,17 @@
-dhcp                    := dhcp-4.3.3
-dhcp_url                := http://ftp.isc.org/isc/$(subst -,/,$(dhcp))/$(dhcp).tar.gz
+dhcp                    := dhcp-4.3.4
+dhcp_sha1               := eedd50d32c9ceb8b9feb414c84322a09d26f214b
+dhcp_url                := http://ftp.isc.org/isc/dhcp/$(dhcp:dhcp-%=%)/$(dhcp).tar.gz
 
 $(prepare-rule):
 	$(EDIT) "s,^DEFS=,&'-D_GNU_SOURCE -DUSE_LPF_HWADDR "-D_PATH_DHCLIENT_SCRIPT='\\"/usr/sbin/dhclient-script\\"'" '," $(builddir)/configure
 # Use the bundled BIND for now.
 	$(TAR) -C $(builddir)/bind -xf $(builddir)/bind/bind.tar.gz
-	$(EDIT) '/gen.c/s/CC/BUILD_&/' $(builddir)/bind/bind-[0-9]*/lib/export/dns/Makefile.in
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
+		--enable-binary-leases \
 		--enable-debug \
+		--enable-delayed-ack \
 		--enable-dhcpv6 \
 		--enable-execute \
 		--enable-failover \
@@ -17,30 +19,34 @@ $(configure-rule):
 		--enable-secs-byteorder \
 		--enable-tracing \
 		--enable-use-sockets \
+		--with-randomdev=/dev/random \
 		\
 		--without-ldap \
 #		--without-libbind
 	cd $(builddir)/bind/bind-[0-9]* && BUILD_CC=gcc CFLAGS="$$CFLAGS -D_GNU_SOURCE" ./$(configure) --disable-kqueue --disable-epoll --disable-devpoll --without-openssl --without-libxml2 --enable-exportlib --enable-threads=no --with-export-includedir=$(CURDIR)/$(builddir)/bind/include --with-export-libdir=$(CURDIR)/$(builddir)/bind/lib --with-gssapi=no --with-randomdev=/dev/random
 
 $(build-rule):
-	$(MAKE) -C $(builddir) all
+	$(MAKE) -C $(builddir) all \
+		BUILD_CC=gcc # The bundled libbind needs this for cross-compiling.
 
 $(install-rule): $$(call installed,setup)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,dhclient.scm) $(DESTDIR)/etc/dmd.d/dhclient.scm
+	$(INSTALL) -Dpm 644 $(call addon-file,dhclient.scm) $(DESTDIR)/etc/shepherd.d/dhclient.scm
 	$(INSTALL) -Dpm 755 $(call addon-file,dhclient-hurd.sh) $(DESTDIR)/usr/sbin/dhclient-script
+	$(INSTALL) -Dpm 644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/dhclient.conf
 
 # Write inline files.
-$(call addon-file,dhclient.scm dhclient-hurd.sh): | $$(@D)
+$(call addon-file,dhclient.scm dhclient-hurd.sh tmpfiles.conf): | $$(@D)
 	$(file >$@,$(contents))
-$(prepared): $(call addon-file,dhclient.scm dhclient-hurd.sh)
+$(prepared): $(call addon-file,dhclient.scm dhclient-hurd.sh tmpfiles.conf)
 
 
 # Provide a system service definition for "dhclient".
 override define contents
 (define dhclient-command
   '("/usr/sbin/dhclient"
-    "-d"))
+    "-d"
+    "-pf" "/run/dhclient/dhclient.pid"))
 (make <service>
   #:docstring "The dhclient service configures networking via DHCP."
   #:provides '(dhclient)
@@ -56,7 +62,8 @@ override define contents
 #!/bin/bash -e
 
 fsysopts=${FSYSOPTS:-fsysopts}
-resolv=/etc/resolv.conf.dhclient
+mkdir=${MKDIR:-mkdir -p}
+resolv=/run/dhclient/resolv.conf
 rm=${RM:-rm -f}
 settrans=${SETTRANS:-settrans}
 symlink=${SYMLINK:-/hurd/symlink}
@@ -70,6 +77,8 @@ preinit() {
             --address=0 --gateway=0 --netmask=0
 }
 bound() {
+        $mkdir ${resolv%/*}
+
         for router in $new_routers
         do
                 new_gateway=$router
@@ -112,3 +121,7 @@ case "$reason" in
 esac
 endef
 $(call addon-file,dhclient-hurd.sh): private override contents := $(subst ^,\,$(value contents))
+
+
+# Provide the configuration to create the location for temporary DHCP settings.
+$(call addon-file,tmpfiles.conf): private override contents := d /run/dhclient

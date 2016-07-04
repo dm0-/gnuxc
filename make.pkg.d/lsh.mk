@@ -1,10 +1,11 @@
-lsh                     := lsh-2.9.1
-lsh_snap                := 5bb9d9b0347219747317a1bbeda5b0e02b4c68ca
+lsh                     := lsh-2.9.2-e9bae3
+lsh_snap                := e9bae31bd385805b134f7424f99d68cd3faf137c
 lsh_branch              := lsh-$(lsh_snap)-$(lsh_snap)
+lsh_sha1                := 581421a4128ae469ce5dffbf9974ff78c1e66887
 lsh_url                 := http://git.lysator.liu.se/lsh/lsh/repository/archive.tar.bz2?ref=$(lsh_snap)&.tar.bz2
 
 $(prepare-rule):
-	$(call apply,update-nettle fhs)
+	$(call apply,fhs)
 	cd $(builddir) && ./.bootstrap links
 	$(AUTOGEN) $(builddir) $(builddir)/argp $(builddir)/sftp $(builddir)/spki
 # Take out obsolete man pages.
@@ -39,13 +40,13 @@ $(install-rule): $$(call installed,liboop libXau nettle)
 	$(INSTALL) -Dpm 755 $(call addon-file,scp.sh)          $(DESTDIR)/usr/bin/scp
 	$(INSTALL) -Dpm 755 $(call addon-file,sftp.sh)         $(DESTDIR)/usr/bin/sftp
 	$(INSTALL) -Dpm 755 $(call addon-file,ssh.sh)          $(DESTDIR)/usr/bin/ssh
-	$(INSTALL) -Dpm 644 $(call addon-file,dmd.scm)         $(DESTDIR)/etc/dmd.d/lshd.scm
+	$(INSTALL) -Dpm 644 $(call addon-file,lshd.scm)        $(DESTDIR)/etc/shepherd.d/lshd.scm
 	$(INSTALL) -Dpm 644 $(call addon-file,lshd.conf)       $(DESTDIR)/etc/lshd/lshd.conf
 	$(INSTALL) -Dpm 644 $(call addon-file,connection.conf) $(DESTDIR)/etc/lshd/lshd-connection.conf
 	$(INSTALL) -Dpm 644 $(call addon-file,userauth.conf)   $(DESTDIR)/etc/lshd/lshd-userauth.conf
 	$(INSTALL) -Dpm 644 $(call addon-file,syslog.conf)     $(DESTDIR)/etc/syslog.d/lsh.conf
-	$(INSTALL) -dm 755 $(DESTDIR)/var/lib/lsh $(DESTDIR)/var/log/lsh
-	$(INSTALL) -Dm 644 /dev/null $(DESTDIR)/var/log/syslog/lshd.log
+	$(INSTALL) -dm 755 $(DESTDIR)/var/lib/lsh
+	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/syslog/lshd.log
 # Manually install man pages.
 	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/man/man{1,5,8}
 	$(INSTALL) -pm 644 $(builddir)/doc/*.1 $(DESTDIR)/usr/share/man/man1/
@@ -53,9 +54,9 @@ $(install-rule): $$(call installed,liboop libXau nettle)
 	$(INSTALL) -pm 644 $(builddir)/doc/*.8 $(DESTDIR)/usr/share/man/man8/
 
 # Write inline files.
-$(call addon-file,connection.conf dmd.scm lshd.conf scp.sh sftp.sh ssh.sh syslog.conf userauth.conf): | $$(@D)
+$(call addon-file,connection.conf lshd.conf lshd.scm scp.sh sftp.sh ssh.sh syslog.conf userauth.conf): | $$(@D)
 	$(file >$@,$(contents))
-$(prepared): $(call addon-file,connection.conf dmd.scm lshd.conf scp.sh sftp.sh ssh.sh syslog.conf userauth.conf)
+$(prepared): $(call addon-file,connection.conf lshd.conf lshd.scm scp.sh sftp.sh ssh.sh syslog.conf userauth.conf)
 
 
 # Provide a default server configuration file.
@@ -69,8 +70,8 @@ port = 22
 service ssh-userauth = { lshd-userauth --session-id $(session_id) }
 
 # Choose logging destinations.
-use-syslog = no
-log-file = /var/log/lsh/lshd.log
+use-syslog = yes
+#log-file = /var/log/lshd.log
 
 # Choose logging output.
 quiet = no
@@ -91,8 +92,8 @@ allow-root-login = no
 service ssh-connection = { lshd-connection --helper-fd $(helper_fd) }
 
 # Choose logging destinations.
-use-syslog = no
-log-file = /var/log/lsh/lshd-userauth.log
+use-syslog = yes
+#log-file = /var/log/lshd-userauth.log
 
 # Choose logging output.
 quiet = no
@@ -116,8 +117,8 @@ allow-x11 = yes
 #subsystem NAME = { COMMAND }
 
 # Choose logging destinations.
-use-syslog = no
-log-file = /var/log/lsh/lshd-connection.log
+use-syslog = yes
+#log-file = /var/log/lshd-connection.log
 
 # Choose logging output.
 quiet = no
@@ -183,8 +184,8 @@ override define contents
 (make <service>
   #:docstring "The lshd service controls the GNU SSH server."
   #:provides '(lshd lsh ssh sshd)
-  #:requires '()
+  #:requires '(syslogd)
   #:start lshd-start
   #:stop (make-kill-destructor))
 endef
-$(call addon-file,dmd.scm): private override contents := $(value contents)
+$(call addon-file,lshd.scm): private override contents := $(value contents)

@@ -1,18 +1,16 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gettext
-Version:        0.19.6
+Version:        0.19.8.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+ and LGPLv2+
-Group:          Development/Tools
 URL:            http://www.gnu.org/software/gettext/
 Source0:        http://ftpmirror.gnu.org/gettext/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-acl-devel
-BuildRequires:  gnuxc-expat-devel
 BuildRequires:  gnuxc-libcroco-devel
 BuildRequires:  gnuxc-libunistring-devel
 BuildRequires:  gnuxc-ncurses-devel
@@ -22,7 +20,6 @@ BuildRequires:  gnuxc-ncurses-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-gcc-c++
 
@@ -32,7 +29,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -44,10 +40,8 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' build-aux/ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' gettext-tools/configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' gettext-tools/configure
+# Don't make even more data directories.
+sed -i -e '/^itsdir =/s/.(PACKAGE_SUFFIX)//' gettext-tools/its/Makefile.in
 
 %build
 %gnuxc_configure \
@@ -112,7 +106,7 @@ rm -rf %{buildroot}{%{gnuxc_docdir},%{gnuxc_infodir},%{gnuxc_mandir}}
 %{gnuxc_libdir}/libasprintf.so.0.0.0
 %{gnuxc_libdir}/libgettextlib-%{version}.so
 %{gnuxc_libdir}/libgettextpo.so.0
-%{gnuxc_libdir}/libgettextpo.so.0.5.3
+%{gnuxc_libdir}/libgettextpo.so.0.5.4
 %{gnuxc_libdir}/libgettextsrc-%{version}.so
 %doc AUTHORS* BUGS* ChangeLog* HACKING NEWS* PACKAGING README* THANKS
 %license COPYING*
@@ -129,6 +123,3 @@ rm -rf %{buildroot}{%{gnuxc_docdir},%{gnuxc_infodir},%{gnuxc_mandir}}
 %files static
 %{gnuxc_libdir}/libasprintf.a
 %{gnuxc_libdir}/libgettextpo.a
-
-
-%changelog

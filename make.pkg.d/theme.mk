@@ -1,12 +1,8 @@
 theme                   := theme-1
 
-$(builddir)/logo.png: | $$(@D)
-	$(DOWNLOAD) 'http://www.gnu.org/graphics/heckert_gnu.small.png' > $@
-$(builddir)/icon.png: | $$(@D)
-	$(DOWNLOAD) 'http://www.gnu.org/graphics/heckert_gnu.transparent.png' > $@
-$(builddir)/logovm.png: | $$(@D)
-	$(DOWNLOAD) 'http://www.fsfla.org/ikiwiki/selibre/linux-libre/freedo.png' > $@
-$(prepared): $(builddir)/icon.png $(builddir)/logo.png $(builddir)/logovm.png
+$(eval $(call verify-download,http://www.gnu.org/graphics/heckert_gnu.small.png,f85c9a4cffacc70dbd2c1bc87c32841467c0f373,logo.png))
+$(eval $(call verify-download,http://www.gnu.org/graphics/heckert_gnu.transparent.png,88d31092c4d3c54a3e8b0449304b3cae3e7b3a3d,icon.png))
+$(eval $(call verify-download,http://www.fsfla.org/ikiwiki/selibre/linux-libre/freedo.png,e8f8b42ca8e47e13018626442d79cab52f166743,logovm.png))
 
 $(builddir)/theme.txt: $(call addon-file,theme.txt.in)
 	$(SED) "s/@BUILD_DATE@/`date '+%Y-%m-%d'`/g" < $< > $@
@@ -22,7 +18,6 @@ $(built): $(builddir)/theme.txt-vm \
 	$(builddir)/FreeMono-14.pf2 $(builddir)/FreeSans-12.pf2 $(builddir)/FreeSans-14.pf2 $(builddir)/FreeSans-16.pf2 \
 	$(builddir)/FreeSans-Bold-16.pf2 $(builddir)/FreeSans-Bold-30.pf2 $(builddir)/FreeSans-Bold-40.pf2
 
-ifneq ($(host),$(build))
 # GRUB theme images
 $(builddir)/content.png24: | $$(@D)
 	$(CONVERT) -size 1x1 'canvas:#FFFFFF' -strip $@
@@ -34,9 +29,9 @@ $(builddir)/shadow_left.png24: | $$(@D)
 	$(CONVERT) -size 1x20 'gradient:#E7E9EB-#B9BCBF' -rotate 270 -strip $@
 $(builddir)/shadow_right.png24: | $$(@D)
 	$(CONVERT) -size 1x20 'gradient:#E7E9EB-#B9BCBF' -rotate 90 -strip $@
-$(builddir)/logo.png24: $(builddir)/logo.png
+$(builddir)/logo.png24: $(call addon-file,logo.png)
 	$(CONVERT) $< -crop 140x140+2+0 -scale 80x80 -strip $@
-$(builddir)/logovm.png24: $(builddir)/logovm.png
+$(builddir)/logovm.png24: $(call addon-file,logovm.png)
 	$(CONVERT) $< -gravity Center -trim -extent 220x220 -scale 80x80 -strip $@
 $(built): $(builddir)/content.png24 $(builddir)/label.png24 $(builddir)/selected.png24 \
 	$(builddir)/shadow_left.png24 $(builddir)/shadow_right.png24 $(builddir)/logo.png24 $(builddir)/logovm.png24
@@ -50,19 +45,22 @@ $(builddir)/label2x.gray: | $$(@D)
 		label:GNU -extent x24 -fill '#FEFEFE' -draw 'point 9,0' -draw 'point 9,23' -trim -border 2x -strip $@
 $(builddir)/%.vol: $(builddir)/%.gray $(call addon-file,gray2vol.sh)
 	$(BASH) $(call addon-file,gray2vol.sh) $< > $@
-$(builddir)/icon_opaque.png: $(builddir)/icon.png
+$(builddir)/icon_opaque.png: $(call addon-file,icon.png)
 	$(CONVERT) $< -fill '#FFFFFF' -draw 'line 0,0 0,500' +opaque '#000000' -monochrome -strip $@
 $(builddir)/icon.png32: $(builddir)/icon_opaque.png
-	$(CONVERT) $< -background none -fill none -draw 'color 0,0 floodfill' -draw 'image SrcOver 0,0 535,523 $(builddir)/icon.png' -gravity Center -extent 535x535 -strip $@
+	$(CONVERT) $< -background none -fill none -draw 'color 0,0 floodfill' -draw 'image SrcOver 0,0 535,523 $(call addon-file,icon.png)' -gravity Center -extent 535x535 -strip $@
 $(builddir)/icon-%.png32: $(builddir)/icon.png32
 	$(CONVERT) $< -scale $(*F)x$(*F) -strip $@
 $(builddir)/icon.icns: $(builddir)/icon-512.png32 $(builddir)/icon-256.png32 $(builddir)/icon-128.png32
+ifneq ($(host),$(build))
 	png2icns $@ $^
+else
+	: > $@
+endif
 $(built): $(builddir)/icon.icns $(builddir)/label.vol $(builddir)/label2x.vol
 
 # XDM theme images
 $(builddir)/login-logo.xpm: $(builddir)/icon-256.png32
-#	$(CONVERT) -size 535x535 'gradient:#FAFAFA-#6C6C6C' -draw 'image SrcOver 0,0 535,535 $<' -gravity Center -scale 256x256 -strip $@
 	$(CONVERT) $< -strip $@
 $(builddir)/login-logo-bw.xpm: $(builddir)/icon-256.png32
 	$(CONVERT) -size 256x256 'canvas:white' -draw 'image SrcOver 0,0 256x256 $<' -depth 8 -strip $@
@@ -104,7 +102,6 @@ $(install-rule):
 	$(INSTALL) -Dpm 644 $(builddir)/icon.icns $(DESTDIR)/boot/efi/.VolumeIcon.icns
 	$(INSTALL) -Dpm 644 $(builddir)/label.vol $(DESTDIR)/boot/efi/System/Library/CoreServices/.disk_label
 	$(INSTALL) -Dpm 644 $(builddir)/label2x.vol $(DESTDIR)/boot/efi/System/Library/CoreServices/.disk_label_2x
-endif
 
 # Write inline files.
 $(call addon-file,gray2vol.sh): | $$(@D)

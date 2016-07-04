@@ -4,7 +4,7 @@ Also also, fall back to a VGA text menu when we're in Linux-libre with no fb0.
 
 --- grub-core/osdep/unix/relpath.c
 +++ grub-core/osdep/unix/relpath.c
-@@ -93,6 +93,7 @@
+@@ -96,6 +96,7 @@
        if (stat (buf, &st) < 0)
  	grub_util_error (_("cannot stat `%s': %s"), buf, strerror (errno));
  
@@ -12,7 +12,7 @@ Also also, fall back to a VGA text menu when we're in Linux-libre with no fb0.
        /* buf is another filesystem; we found it.  */
        if (st.st_dev != num)
  	{
-@@ -112,6 +113,7 @@
+@@ -115,6 +116,7 @@
  	  else
  	    break;
  	}
@@ -65,7 +65,7 @@ Also also, fall back to a VGA text menu when we're in Linux-libre with no fb0.
    hurd_entry "$kernel" recovery
 +  hurd_entry "$kernel" readonly
  
-   kernels=`echo $kernels | tr ' ' '\n' | grep -vx $kernel | tr '\n' ' '`
+   kernels=`echo $kernels | tr ' ' '\n' | fgrep -vx "$kernel" | tr '\n' ' '`
  done
 --- util/grub.d/00_header.in
 +++ util/grub.d/00_header.in

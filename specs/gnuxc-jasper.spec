@@ -6,7 +6,6 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        JasPer
-Group:          System Environment/Libraries
 URL:            http://www.ece.uvic.ca/~frodo/jasper/
 Source0:        http://www.ece.uvic.ca/~frodo/jasper/software/%{gnuxc_name}-%{version}.zip
 
@@ -19,7 +18,6 @@ BuildRequires:  libtool
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-libjpeg-turbo-devel
 
@@ -29,7 +27,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -81,6 +78,3 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files static
 %{gnuxc_libdir}/libjasper.a
-
-
-%changelog

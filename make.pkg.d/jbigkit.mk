@@ -1,4 +1,5 @@
 jbigkit                 := jbigkit-2.1
+jbigkit_sha1            := 4864646df004e8331d19f2fa103ed731fdb6c099
 jbigkit_url             := http://www.cl.cam.ac.uk/~mgk25/download/$(jbigkit).tar.gz
 
 $(prepare-rule):

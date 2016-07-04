@@ -1,17 +1,17 @@
-%global bootstrap 1 # This does nothing other than flag this RPM as pre-glibc.
+%global bootstrap 1
 
 %global _docdir_fmt gnuxc/mig
 
 Name:           gnuxc-mig
-Version:        1.6
-%global snap    c01a23
+Version:        1.7
+%global commit  ae832c599fc25e9557200205a168989bae375489
+%global snap    %(c=%{commit} ; echo -n ${c:0:6})
 Release:        1.19700101git%{snap}%{?dist}
-Summary:        Cross-compiler version of GNU MIG for Hurd systems
+Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2
-Group:          Development/Languages
 URL:            http://www.gnu.org/software/mig/
-Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{snap}.tar.xz
+Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{commit}.tar.xz
 
 Patch101:       %{gnuxc_name}-%{version}-%{snap}-drop-perl.patch
 
@@ -31,7 +31,7 @@ which is used for building GNU Mach and GNU Hurd.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{snap}
+%setup -q -n %{gnuxc_name}-%{commit}
 %patch101
 autoreconf -fi
 
@@ -49,6 +49,11 @@ make %{?_smp_mflags} all \
 install -dm 755 %{buildroot}%{gnuxc_root}/bin
 ln %{buildroot}%{_bindir}/%{gnuxc_target}-mig %{buildroot}%{gnuxc_root}/bin/mig
 
+%if ! 0%{?bootstrap}
+%check
+make %{?_smp_mflags} check
+%endif
+
 
 %files
 %{_bindir}/%{gnuxc_target}-mig
@@ -56,6 +61,3 @@ ln %{buildroot}%{_bindir}/%{gnuxc_target}-mig %{buildroot}%{gnuxc_root}/bin/mig
 %{gnuxc_root}/bin/mig
 %doc =announce-* AUTHORS ChangeLog NEWS README
 %license COPYING
-
-
-%changelog

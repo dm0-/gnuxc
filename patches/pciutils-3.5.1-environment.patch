@@ -5,14 +5,14 @@ host detection in the configure script.
 --- Makefile
 +++ Makefile
 @@ -2,7 +2,7 @@
- # (c) 1998--2015 Martin Mares <mj@ucw.cz>
+ # (c) 1998--2016 Martin Mares <mj@ucw.cz>
  
  OPT=-O2
 -CFLAGS=$(OPT) -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes
 +CFLAGS ?= $(OPT) -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes
  
- VERSION=3.4.0
- DATE=2015-09-14
+ VERSION=3.5.1
+ DATE=2016-05-22
 @@ -19,7 +19,7 @@
  DNS=
  

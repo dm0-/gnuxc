@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-harfbuzz
-Version:        1.1.1
+Version:        1.2.7
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
-Group:          System Environment/Libraries
 URL:            http://harfbuzz.org/
 Source0:        http://www.freedesktop.org/software/%{gnuxc_name}/release/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -21,11 +20,8 @@ BuildRequires:  gnuxc-pkg-config
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gnuxc-freetype-devel
-Requires:       gnuxc-glib-devel
-Requires:       gnuxc-icu4c-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -33,7 +29,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -45,22 +40,19 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
-# Seriously disable rpaths.
-sed -i -e 's/\(need_relink\)=yes/\1=no/' ltmain.sh
-sed -i -e 's/\(hardcode_into_libs\)=yes/\1=no/' configure
-sed -i -e 's/\(hardcode_libdir_flag_spec[A-Za-z_]*\)=.*/\1=-D__BAD_LIBTOOL__/' configure
-
 %build
 %gnuxc_configure \
     --disable-silent-rules \
     --enable-static \
     --with-cairo \
+    --with-fontconfig \
     --with-freetype \
     --with-glib \
     --with-gobject \
     --with-icu \
     \
     --without-coretext \
+    --without-directwrite \
     --without-graphite2 \
     --without-uniscribe
 %gnuxc_make %{?_smp_mflags} all
@@ -80,11 +72,11 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 
 %files
 %{gnuxc_libdir}/libharfbuzz.so.0
-%{gnuxc_libdir}/libharfbuzz.so.0.10101.0
+%{gnuxc_libdir}/libharfbuzz.so.0.10200.7
 %{gnuxc_libdir}/libharfbuzz-gobject.so.0
-%{gnuxc_libdir}/libharfbuzz-gobject.so.0.10101.0
+%{gnuxc_libdir}/libharfbuzz-gobject.so.0.10200.7
 %{gnuxc_libdir}/libharfbuzz-icu.so.0
-%{gnuxc_libdir}/libharfbuzz-icu.so.0.10101.0
+%{gnuxc_libdir}/libharfbuzz-icu.so.0.10200.7
 %doc AUTHORS ChangeLog NEWS README THANKS TODO
 %license COPYING
 
@@ -101,6 +93,3 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 %{gnuxc_libdir}/libharfbuzz.a
 %{gnuxc_libdir}/libharfbuzz-gobject.a
 %{gnuxc_libdir}/libharfbuzz-icu.a
-
-
-%changelog

@@ -1,4 +1,5 @@
 xf86-video-qxl          := xf86-video-qxl-0.1.4
+xf86-video-qxl_sha1     := 14b8574a0066c15a627064d4986f0d82af8b993b
 xf86-video-qxl_url      := http://xorg.freedesktop.org/releases/individual/driver/$(xf86-video-qxl).tar.bz2
 
 $(configure-rule):

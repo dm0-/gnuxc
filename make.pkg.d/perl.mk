@@ -1,14 +1,12 @@
-perl                    := perl-5.22.0
-perl_url                := http://www.cpan.org/src/5.0/$(perl).tar.bz2
+perl                    := perl-5.24.0
+perl_sha1               := 9d5424ac2debe979d1f7255fe0c818aff0b41b4c
+perl_url                := http://www.cpan.org/src/5.0/$(perl).tar.xz
 
 export PERL = /usr/bin/perl
 
-$(prepare-rule):
-	$(SYMLINK) Configure $(builddir)/configure
-
 ifeq ($(host),$(build))
 $(configure-rule):
-	cd $(builddir) && ./configure -des \
+	cd $(builddir) && ./Configure -des \
 		-Dprefix=/usr \
 		-Darchlib=/usr/lib/perl5 \
 		-Dprivlib=/usr/share/perl5 \

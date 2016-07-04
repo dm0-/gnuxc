@@ -1,14 +1,13 @@
-%global bootstrap 1 # This does nothing other than flag this RPM as pre-glibc.
+%global bootstrap 1
 
 %global _docdir_fmt gnuxc/pkg-config
 
 Name:           gnuxc-pkg-config
-Version:        0.29
+Version:        0.29.1
 Release:        1%{?dist}
-Summary:        A tool for determining cross-compilation options to GNU systems
+Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+
-Group:          Development/Tools
 URL:            http://pkgconfig.freedesktop.org/
 Source0:        http://www.freedesktop.org/software/pkgconfig/releases/%{gnuxc_name}-%{version}.tar.gz
 
@@ -41,6 +40,9 @@ make %{?_smp_mflags} all
 %install
 %make_install
 
+# Claim ownership of the cross-compiling pkgconfig directories.
+install -dm 755 %{buildroot}{%{gnuxc_datadir},%{gnuxc_libdir}}/pkgconfig
+
 # Provide a copy of the binary in the cross-tools bin path.
 install -dm 755 %{buildroot}%{gnuxc_root}/bin
 ln %{buildroot}%{_bindir}/%{gnuxc_target}-pkg-config \
@@ -54,9 +56,8 @@ rm -f %{buildroot}%{_datadir}/doc/pkg-config/pkg-config-guide.html
 %files
 %{_bindir}/%{gnuxc_target}-pkg-config
 %{gnuxc_root}/bin/pkg-config
+%{gnuxc_datadir}/pkgconfig
+%{gnuxc_libdir}/pkgconfig
 %{_mandir}/man1/%{gnuxc_target}-pkg-config.1.gz
 %doc AUTHORS ChangeLog NEWS README pkg-config-guide.html
 %license COPYING
-
-
-%changelog

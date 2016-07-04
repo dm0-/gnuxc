@@ -1,9 +1,9 @@
-mesa                    := mesa-11.0.6
+mesa                    := mesa-11.2.2
+mesa_sha1               := c3805020be6fef77d3b96a5ddf4ddc256dee16ff
 mesa_url                := ftp://ftp.freedesktop.org/pub/$(subst -,/,$(mesa))/$(mesa).tar.xz
 
 $(prepare-rule):
 	$(call apply,hurd-port)
-	$(call drop-rpath,configure,bin/ltmain.sh)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -22,6 +22,7 @@ $(configure-rule):
 		--enable-shared-glapi \
 		--with-dri-drivers=swrast \
 		--with-gallium-drivers=swrast \
+		--with-sha1=libnettle \
 		\
 		$(if $(DEBUG),--enable-debug,--disable-debug) \
 		\
@@ -30,10 +31,11 @@ $(configure-rule):
 		--disable-selinux \
 		--disable-static \
 		--disable-sysfs \
-		--disable-xa
+		--disable-xa \
+		CPPFLAGS=-DPATH_MAX=4096
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,expat glproto libXdamage libXext)
+$(install-rule): $$(call installed,expat glproto libXdamage libXext nettle)
 	$(MAKE) -C $(builddir) install

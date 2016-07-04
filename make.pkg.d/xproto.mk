@@ -1,4 +1,5 @@
-xproto                  := xproto-7.0.28
+xproto                  := xproto-7.0.29
+xproto_sha1             := e2ea1d12235bfcd83dbc815fb69524ef0be5c1fb
 xproto_url              := http://xorg.freedesktop.org/releases/individual/proto/$(xproto).tar.bz2
 
 $(configure-rule):

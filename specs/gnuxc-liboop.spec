@@ -5,8 +5,7 @@ Version:        1.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
-License:        LGPLv2.1+
-Group:          System Environment/Libraries
+License:        LGPLv2+
 URL:            http://www.lysator.liu.se/liboop/
 Source0:        http://download.ofb.net/liboop/%{gnuxc_name}-%{version}.tar.bz2
 
@@ -22,9 +21,7 @@ BuildRequires:  libtool
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gnuxc-glib-devel
 
 %description devel
 The %{name}-devel package contains libraries and header files for developing
@@ -32,7 +29,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -95,6 +91,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/liboop{,-glib2,-rl,-tcl}.la
 %{gnuxc_libdir}/liboop-glib2.a
 %{gnuxc_libdir}/liboop-rl.a
 %{gnuxc_libdir}/liboop-tcl.a
-
-
-%changelog

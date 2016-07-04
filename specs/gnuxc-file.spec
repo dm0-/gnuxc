@@ -1,12 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-file
-Version:        5.25
+Version:        5.28
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-Group:          System Environment/Libraries
 URL:            http://www.darwinsys.com/file/
 Source0:        ftp://ftp.astron.com/pub/file/%{gnuxc_name}-%{version}.tar.gz
 
@@ -17,7 +16,6 @@ BuildRequires:  gnuxc-zlib-devel
 
 %package devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description devel
@@ -26,7 +24,6 @@ applications that use %{gnuxc_name} on GNU systems.
 
 %package static
 Summary:        Static libraries of %{name}
-Group:          Development/Libraries
 Requires:       %{name}-devel = %{version}-%{release}
 
 %description static
@@ -46,10 +43,12 @@ statically, which is highly discouraged.
     --enable-fsect-man5 \
     --enable-static \
     --enable-warnings
+%gnuxc_make -C src %{?_smp_mflags} magic.h
 %gnuxc_make -C src %{?_smp_mflags} libmagic.la
 
 %install
-%gnuxc_make -C src install-{includeHEADERS,libLTLIBRARIES} DESTDIR=%{buildroot}
+%gnuxc_make -C src install-{nodist_includeHEADERS,libLTLIBRARIES} \
+    DESTDIR=%{buildroot}
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libmagic.la
@@ -67,6 +66,3 @@ rm -f %{buildroot}%{gnuxc_libdir}/libmagic.la
 
 %files static
 %{gnuxc_libdir}/libmagic.a
-
-
-%changelog

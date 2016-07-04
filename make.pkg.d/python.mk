@@ -1,13 +1,14 @@
-python                  := python-3.5.0
+python                  := python-3.5.2
 python_branch           := $(python:p%=P%)
+python_sha1             := 4843aabacec5bc0cdd3e1f778faa926e532794d2
 python_url              := http://www.python.org/ftp/python/$(python:python-%=%)/$(python_branch).tar.xz
 
 export PYTHON = /usr/bin/python3
 
 ifneq ($(host),$(build))
 $(call configure-rule,native): $(builddir)/configure
-	$(MKDIR) $(builddir)/native && cd $(builddir)/native && env -i CFLAGS='$(CFLAGS)' PATH=/bin \
-		../configure --with-pydebug
+	$(MKDIR) $(builddir)/native && cd $(builddir)/native && $(native) ../configure \
+		--with-pydebug
 $(configure-rule): $(call configured,native)
 
 $(call build-rule,native): $(configured)

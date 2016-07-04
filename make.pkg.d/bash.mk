@@ -1,11 +1,14 @@
-bash                    := bash-4.3.42
+bash                    := bash-4.3.46
 bash_branch             := bash-4.3.30
+bash_sha1               := 33b1bcc5dca1b72f28b2baeca6efa0d422097964
 bash_url                := http://ftpmirror.gnu.org/bash/$(bash_branch).tar.gz
+
+$(eval $(call verify-download,$(foreach l,31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46,http://ftpmirror.gnu.org/bash/bash-4.3-patches/bash43-0$l),ad1dabb17a54131423ff88de0d6301cbf4856828,fixes.patch))
 
 export BASH = /bin/bash
 
 $(prepare-rule):
-	$(DOWNLOAD) 'http://ftpmirror.gnu.org/bash/bash-4.3-patches/'bash43-{031..0$(lastword $(subst ., ,$(bash)))} | $(PATCH) -d $(builddir)
+	$(PATCH) -d $(builddir) < $(call addon-file,fixes.patch)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
