@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nss
-Version:        3.25
+Version:        3.31
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -15,6 +15,8 @@ BuildRequires:  gnuxc-nspr-devel
 BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-sqlite-devel
 BuildRequires:  gnuxc-zlib-devel
+
+BuildRequires:  perl
 
 %description
 %{summary}.
@@ -51,8 +53,8 @@ chmod -c 644 *.txt
     CC='%{gnuxc_cc}' \\\
     MOZ_DEBUG_SYMBOLS=1 \\\
     NSPR_INCLUDE_DIR="`%{gnuxc_pkgconfig} --cflags-only-I nspr | sed s/^-I//`" \\\
-    NSS_DISABLE_DBM=1 \\\
     NSS_DISABLE_GTESTS=1 \\\
+    NSS_ENABLE_WERROR=0 \\\
     NSS_USE_SYSTEM_SQLITE=1 \\\
     OBJDIR_NAME=gnu \\\
     USE_PTHREADS=1 \\\
@@ -95,6 +97,8 @@ ln %{buildroot}%{gnuxc_root}/bin/nss-config \
 %{gnuxc_libdir}/libfreeblpriv3.so
 %{gnuxc_libdir}/libnss3.so
 %{gnuxc_libdir}/libnssckbi.so
+%{gnuxc_libdir}/libnssdbm3.chk
+%{gnuxc_libdir}/libnssdbm3.so
 %{gnuxc_libdir}/libnsssysinit.so
 %{gnuxc_libdir}/libnssutil3.so
 %{gnuxc_libdir}/libsmime3.so
@@ -114,11 +118,13 @@ ln %{buildroot}%{gnuxc_root}/bin/nss-config \
 %{gnuxc_libdir}/libcertdb.a
 %{gnuxc_libdir}/libcerthi.a
 %{gnuxc_libdir}/libcryptohi.a
+%{gnuxc_libdir}/libdbm.a
 %{gnuxc_libdir}/libfreebl.a
 %{gnuxc_libdir}/libjar.a
 %{gnuxc_libdir}/libnss.a
 %{gnuxc_libdir}/libnssb.a
 %{gnuxc_libdir}/libnssckfw.a
+%{gnuxc_libdir}/libnssdbm.a
 %{gnuxc_libdir}/libnssdev.a
 %{gnuxc_libdir}/libnsspki.a
 %{gnuxc_libdir}/libnsssysinit.a

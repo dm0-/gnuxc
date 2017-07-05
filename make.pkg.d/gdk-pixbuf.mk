@@ -1,6 +1,10 @@
-gdk-pixbuf              := gdk-pixbuf-2.34.0
-gdk-pixbuf_sha1         := 240018b35da047500e43caac7e32a4482edd3852
-gdk-pixbuf_url          := http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.34/$(gdk-pixbuf).tar.xz
+gdk-pixbuf              := gdk-pixbuf-2.36.6
+gdk-pixbuf_sha1         := 8caa99dbbb143cddbb896bf35e01da717bb1479f
+gdk-pixbuf_url          := http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.36/$(gdk-pixbuf).tar.xz
+
+$(prepare-rule):
+# Drop a bad prerequisite.
+	$(EDIT) 's, [^ ]*/loaders.cache$$,,' $(builddir)/thumbnailer/Makefile.in
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

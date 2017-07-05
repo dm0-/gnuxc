@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Copyright (C) 2013,2014,2015,2016 David Michael <fedora.dm0@gmail.com>
+# Copyright (C) 2013,2014,2015,2016,2017 David Michael <fedora.dm0@gmail.com>
 #
 # This file is part of gnuxc.
 #
@@ -65,7 +65,6 @@ RM       := rm --force
 RMDIR    := rmdir
 TAR      := tar --no-same-owner --numeric-owner --overwrite --owner=0 --group=0
 TOUCH    := touch
-UNZIP    := unzip -q
 
 # Define the template for configuring packages.
 configure = configure \
@@ -94,6 +93,7 @@ targ_bz2  := --bzip2
 targ_gz   := --gzip
 targ_lz   := --lzip
 targ_lzma := --lzma
+targ_tbz2 := $(targ_bz2)
 targ_tgz  := $(targ_gz)
 targ_xz   := --xz
 
@@ -123,6 +123,8 @@ builddir = $(firstword $(subst /, ,$(or $@,$($(self)))))
 addon-file = $(1:%=$(builddir)/.gnuxc/%)
 apply = $(1:%=$(PATCH) --directory=$(builddir) \
 	< $(patchdir)/$(builddir)-%.patch &&) :
+enable-service = $(foreach r,$2,$(MKDIR) $(DESTDIR)/etc/rc$r.d && \
+	$(SYMLINK) ../shepherd.d/$1.scm $(DESTDIR)/etc/rc$r.d/ &&) :
 define verify-download =
 $(call addon-file,$(or $3,$(lastword $(subst /, ,$1)))): | $$$$(@D)
 	$(DOWNLOAD) $(1:%='%') | tee '$$@' | \
@@ -154,14 +156,10 @@ $$($1):
 ifeq ($$(firstword $$(subst ://, ,$$($1_url))),git)
 	$$(GIT) clone $$($1_branch:%=--branch=%) -n '$$($1_url)' $$@
 	$$(GIT) -C $$@ reset --hard $$($1_sha1)
-else ifneq ($$(filter tar tgz zip,$$(subst ., ,$$($1_url))),)
+else ifneq ($$(filter tar tbz2 tgz,$$(subst ., ,$$($1_url))),)
 	$$(DOWNLOAD) '$$($1_url)' | tee >( \
-$$(if $$(filter zip,$$(lastword $$(subst ., ,$$($1_url)))), \
-	$$(MKDIR) $$@ ; cat > $$@/.zip ; $$(UNZIP) $$@/.zip ; $$(RM) $$@/.zip \
-, \
 	$$(TAR) $$($1_branch:%=--transform='s,^/*%/*,$$@/,') \
 		$$(targ_$$(lastword $$(subst ., ,$$($1_url)))) -x \
-) \
 	) | sha1sum | (read s x ; test "$$$$s" = '$$($1_sha1)') || \
 	$$(if $$(skip_verify),$$(ECHO) Bad SHA1 sum,! $$(RM) --recursive $$@)
 else

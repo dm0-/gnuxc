@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libcroco
-Version:        0.6.11
+Version:        0.6.12
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

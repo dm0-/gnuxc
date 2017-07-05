@@ -1,5 +1,5 @@
-sessreg                 := sessreg-1.1.0
-sessreg_sha1            := a27a476f7f39ae30a16dfa25ca07c12378cff7f0
+sessreg                 := sessreg-1.1.1
+sessreg_sha1            := 09437d9da0b88acde6ca67e231870899023cc3d2
 sessreg_url             := http://xorg.freedesktop.org/releases/individual/app/$(sessreg).tar.bz2
 
 $(configure-rule):

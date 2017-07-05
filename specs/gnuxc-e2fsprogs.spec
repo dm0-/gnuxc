@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-e2fsprogs
-Version:        1.43.1
+Version:        1.43.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

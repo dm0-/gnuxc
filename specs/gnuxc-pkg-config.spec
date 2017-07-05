@@ -3,7 +3,7 @@
 %global _docdir_fmt gnuxc/pkg-config
 
 Name:           gnuxc-pkg-config
-Version:        0.29.1
+Version:        0.29.2
 Release:        1%{?dist}
 Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 

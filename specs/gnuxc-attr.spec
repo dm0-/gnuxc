@@ -39,7 +39,8 @@ statically, which is highly discouraged.
 %setup -q -n %{gnuxc_name}-%{version}
 
 %build
-%gnuxc_configure
+%gnuxc_configure \
+    PLATFORM=gnu
 %gnuxc_make %{?_smp_mflags}
 
 %install

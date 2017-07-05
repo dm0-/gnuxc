@@ -1,5 +1,5 @@
-expat                   := expat-2.2.0
-expat_sha1              := 8453bc52324be4c796fd38742ec48470eef358b3
+expat                   := expat-2.2.1
+expat_sha1              := f45eb724f182776a9cacec9ed70d549e87198987
 expat_url               := http://prdownloads.sourceforge.net/expat/$(expat).tar.bz2
 
 $(configure-rule):

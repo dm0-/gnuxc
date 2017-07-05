@@ -1,5 +1,5 @@
-harfbuzz                := harfbuzz-1.2.7
-harfbuzz_sha1           := d8a1ee20de9e792e17c11b2c2c14ccc643aaeda1
+harfbuzz                := harfbuzz-1.4.6
+harfbuzz_sha1           := a296d9f7a82d5db1984d3b6efc4186c5dbcd7947
 harfbuzz_url            := http://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz).tar.bz2
 
 $(configure-rule):

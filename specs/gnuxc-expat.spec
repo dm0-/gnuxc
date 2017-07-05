@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-expat
-Version:        2.2.0
+Version:        2.2.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -55,7 +55,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libexpat.so.1
-%{gnuxc_libdir}/libexpat.so.1.6.2
+%{gnuxc_libdir}/libexpat.so.1.6.3
 %doc Changes README
 %license COPYING
 

@@ -1,11 +1,11 @@
-glibc                   := glibc-2.19-2032cc
+glibc                   := glibc-2.23-8be94e
 glibc_branch            := tschwinge/Roger_Whittaker
-glibc_sha1              := 2032cc261fc6434899a689ddec1b9230bcc774ac
+glibc_sha1              := 8be94e33d413e8c9685270b804c899f85389927a
 glibc_url               := git://git.sv.gnu.org/hurd/glibc.git
 
-glibc-libpthread        := libpthread-0.3-610622
+glibc-libpthread        := libpthread-0.3-44873d
 glibc-libpthread_branch := master
-glibc-libpthread_sha1   := 6106225fdc09f013ec4f7b1d7ec82780061c8a14
+glibc-libpthread_sha1   := 44873df420d128972644ef3901c7d917ca3b7dd7
 glibc-libpthread_url    := git://git.sv.gnu.org/hurd/libpthread.git
 
 $(builddir)/libpthread: | $$(@D)
@@ -16,6 +16,8 @@ $(downloaded): | $(builddir)/libpthread
 $(prepare-rule):
 # Avoid race conditions regenerating this with an incompatible bison version.
 	$(TOUCH) $(builddir)/intl/plural.c
+# This static library does not exist.
+	$(EDIT) 's/ [^ ]*mvec_nonshared[^ ]* / /g' $(builddir)/math/Makefile
 
 $(configure-rule): CFLAGS := $(CFLAGS:-O2=-O3)
 $(configure-rule): CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=)
@@ -25,10 +27,13 @@ $(configure-rule):
 	$(MKDIR) $(builddir)/build && cd $(builddir)/build && ../$(configure) \
 		--disable-multi-arch \
 		--disable-pt_chown \
+		--disable-werror \
 		--enable-all-warnings \
 		--enable-lock-elision \
+		--enable-mathvec \
 		--enable-obsolete-rpc \
 		--enable-stackguard-randomization \
+		--enable-timezone-tools \
 		--without-selinux \
 		BASH_SHELL='$(BASH)' \
 		\
@@ -42,8 +47,6 @@ $(build-rule):
 # Do the real build.
 	$(MAKE) -C $(builddir)/build all info \
 		CFLAGS-clock_gettime.c='-DSYSDEP_GETTIME="case CLOCK_MONOTONIC:"'
-# This target seems to break parallel builds when given in the above command.
-#	$(MAKE) -C $(builddir)/build info
 
 $(install-rule): $$(call installed,hurd)
 	$(MAKE) -C $(builddir)/build install

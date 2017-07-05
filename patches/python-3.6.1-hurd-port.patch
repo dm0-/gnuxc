@@ -1,0 +1,30 @@
+Support cross-compiling for Hurd.
+
+--- Lib/cgi.py
++++ Lib/cgi.py
+@@ -1,4 +1,4 @@
+-#! /usr/local/bin/python
++#!/usr/bin/env python3
+ 
+ # NOTE: the above "/usr/local/bin/python" is NOT a mistake.  It is
+ # intentionally NOT "/usr/bin/env python".  On many systems
+--- configure.ac
++++ configure.ac
+@@ -421,7 +421,7 @@ fi
+ AC_SUBST(_PYTHON_HOST_PLATFORM)
+ if test "$cross_compiling" = yes; then
+ 	case "$host" in
+-	*-*-linux*)
++	*-*-linux* | *-*-gnu)
+ 		case "$host_cpu" in
+ 		arm*)
+ 			_host_cpu=arm
+@@ -2806,7 +2806,7 @@
+ esac
+ 
+ if test "$with_system_ffi" = "yes" && test -n "$PKG_CONFIG"; then
+-    LIBFFI_INCLUDEDIR="`"$PKG_CONFIG" libffi --cflags-only-I 2>/dev/null | sed -e 's/^-I//;s/ *$//'`"
++    LIBFFI_INCLUDEDIR="`$PKG_CONFIG libffi --cflags-only-I 2>/dev/null | sed -e 's/^-I//;s/ *$//'`"
+ else
+     LIBFFI_INCLUDEDIR=""
+ fi

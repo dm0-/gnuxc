@@ -1,5 +1,5 @@
-binutils                := binutils-2.26.1
-binutils_sha1           := 624cd377e3a8eef3db83a56ce289a60f556b3ec2
+binutils                := binutils-2.28
+binutils_sha1           := f8b033731f6baa437d429c60e2623570f1ef9d6b
 binutils_url            := http://ftpmirror.gnu.org/binutils/$(binutils).tar.bz2
 
 ifeq ($(host),$(build))

@@ -1,6 +1,6 @@
-mesa                    := mesa-11.2.2
-mesa_sha1               := c3805020be6fef77d3b96a5ddf4ddc256dee16ff
-mesa_url                := ftp://ftp.freedesktop.org/pub/$(subst -,/,$(mesa))/$(mesa).tar.xz
+mesa                    := mesa-17.1.4
+mesa_sha1               := 70a6c971125f754b78e502ade668bd02e46074d6
+mesa_url                := ftp://ftp.freedesktop.org/pub/mesa/$(mesa).tar.xz
 
 $(prepare-rule):
 	$(call apply,hurd-port)
@@ -9,9 +9,8 @@ $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
 		--disable-texture-float \
-		--disable-xlib-glx \
 		--enable-asm \
-		--enable-dri --enable-dri3 \
+		--enable-dri \
 		--enable-egl \
 		--enable-gallium-osmesa \
 		--enable-gles1 \
@@ -22,20 +21,20 @@ $(configure-rule):
 		--enable-shared-glapi \
 		--with-dri-drivers=swrast \
 		--with-gallium-drivers=swrast \
-		--with-sha1=libnettle \
+		--with-platforms=x11 \
 		\
 		$(if $(DEBUG),--enable-debug,--disable-debug) \
 		\
+		--disable-dri3 \
 		--disable-gbm \
 		--disable-nine \
 		--disable-selinux \
 		--disable-static \
-		--disable-sysfs \
 		--disable-xa \
 		CPPFLAGS=-DPATH_MAX=4096
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,expat glproto libXdamage libXext nettle)
+$(install-rule): $$(call installed,expat glproto libXdamage libXext zlib)
 	$(MAKE) -C $(builddir) install

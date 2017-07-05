@@ -1,17 +1,16 @@
 %?gnuxc_package_header
 
+# Modifying libtool makes the native guile explode.
+%global gnuxc_drop_rpath :
+
 Name:           gnuxc-guile
-Version:        2.0.11
+Version:        2.2.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv3+
 URL:            http://www.gnu.org/software/guile/
 Source0:        http://ftpmirror.gnu.org/guile/%{gnuxc_name}-%{version}.tar.xz
-
-Patch001:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=3a3316e200ac49f0e8e9004c233747efd9f54a04#/%{gnuxc_name}-%{version}-fix-readline-startup.patch
-Patch002:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=ead362f8d144e7d76af4fd127c024c62b74562fb#/%{gnuxc_name}-%{version}-add-linux-defs.patch
-Patch003:       http://git.savannah.gnu.org/cgit/guile.git/patch?id=1be3063bf60fb1b9e540a3d35ecc3f00002ec0fd#/%{gnuxc_name}-%{version}-add-hurd-defs.patch
 
 BuildRequires:  gnuxc-gc-devel
 BuildRequires:  gnuxc-gmp-devel
@@ -21,8 +20,11 @@ BuildRequires:  gnuxc-libunistring-devel
 BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-readline-devel
 
-BuildRequires:  gettext-devel
-BuildRequires:  guile
+BuildRequires:  gc-devel
+BuildRequires:  gmp-devel
+BuildRequires:  libffi-devel
+BuildRequires:  libtool-ltdl-devel
+BuildRequires:  libunistring-devel
 
 %description
 %{summary}.
@@ -48,27 +50,35 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-%patch001 -p1
-%patch002 -p1
-%patch003 -p1
 
 # Call the native guile for guile-config.
 sed -i -e 's,@bindir@/,%{_bindir}/,' meta/Makefile.in
 
 %build
+%global _configure ../configure
+mkdir native && (pushd native
+%configure --disable-shared --disable-silent-rules
+popd)
+make -C native %{?_smp_mflags} all
+
+%global _configure ./configure
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
+    GUILE_FOR_BUILD="$PWD/native/meta/guile" \
     \
     --disable-rpath \
     --disable-silent-rules \
     --enable-debug-malloc \
     --enable-guile-debug \
+    --with-bdw-gc=bdw-gc \
     --with-threads \
     --without-included-regex
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make %{?_smp_mflags} all \
+    ELISP_SOURCES= # Drop this elisp file since it won't cross-compile.
 
 %install
-%gnuxc_make_install
+%gnuxc_make_install \
+    ELISP_SOURCES= # Drop this elisp file since it won't cross-compile.
 install -dm 755 %{buildroot}%{gnuxc_datadir}/guile/site
 
 # Provide cross-tools versions of the config script.
@@ -80,7 +90,9 @@ ln %{buildroot}%{gnuxc_root}/bin/guile-config \
 rm -f %{buildroot}%{gnuxc_root}/bin/{guild,guile,guile-{snarf,tools}}
 
 # We don't need libtool's help.
-rm -f %{buildroot}%{gnuxc_libdir}/lib{guile-2.0,guilereadline-v-18}.la
+rm -f \
+    %{buildroot}%{gnuxc_libdir}/guile/2.2/extensions/guile-readline.la \
+    %{buildroot}%{gnuxc_libdir}/libguile-2.2.la
 
 # This functionality should be used from the system package.
 rm -rf %{buildroot}%{gnuxc_datadir}/aclocal
@@ -91,23 +103,26 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_datadir}/guile
-%{gnuxc_libdir}/guile
-%{gnuxc_libdir}/libguile-2.0.so.22
-%{gnuxc_libdir}/libguile-2.0.so.22.7.2
-%{gnuxc_libdir}/libguilereadline-v-18.so.18
-%{gnuxc_libdir}/libguilereadline-v-18.so.18.0.0
-%doc AUTHORS ChangeLog* HACKING NEWS README THANKS
+%dir %{gnuxc_libdir}/guile
+%dir %{gnuxc_libdir}/guile/2.2
+%{gnuxc_libdir}/guile/2.2/ccache
+%dir %{gnuxc_libdir}/guile/2.2/extensions
+%{gnuxc_libdir}/guile/2.2/extensions/guile-readline.so.0
+%{gnuxc_libdir}/guile/2.2/extensions/guile-readline.so.0.0.0
+%{gnuxc_libdir}/libguile-2.2.so.1
+%{gnuxc_libdir}/libguile-2.2.so.1.2.0
+%doc AUTHORS ChangeLog* HACKING NEWS README THANKS TODO
 %license COPYING COPYING.LESSER LICENSE
 
 %files devel
 %{_bindir}/%{gnuxc_target}-guile-config
 %{gnuxc_root}/bin/guile-config
 %{gnuxc_includedir}/guile
-%{gnuxc_libdir}/libguile-2.0.so
-%{gnuxc_libdir}/libguile-2.0.so.22.7.2-gdb.scm
-%{gnuxc_libdir}/libguilereadline-v-18.so
-%{gnuxc_libdir}/pkgconfig/guile-2.0.pc
+%{gnuxc_libdir}/guile/2.2/extensions/guile-readline.so
+%{gnuxc_libdir}/libguile-2.2.so
+%{gnuxc_libdir}/libguile-2.2.so.1.2.0-gdb.scm
+%{gnuxc_libdir}/pkgconfig/guile-2.2.pc
 
 %files static
-%{gnuxc_libdir}/libguile-2.0.a
-%{gnuxc_libdir}/libguilereadline-v-18.a
+%{gnuxc_libdir}/guile/2.2/extensions/guile-readline.a
+%{gnuxc_libdir}/libguile-2.2.a

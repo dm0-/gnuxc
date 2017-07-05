@@ -1,10 +1,10 @@
 setup                   := setup-1
 
-$(install-rule): $$(call installed,grep grub iana theme)
+setup-protocols_url     := http://www.iana.org/assignments/protocol-numbers/protocol-numbers-1.csv
+setup-services_url      := http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv
+
+$(install-rule): $$(call installed,grep grub theme tzdb)
 	$(INSTALL) -dm 750 $(DESTDIR)/root
-# Install a systemd-tmpfiles replacement.
-	$(INSTALL) -Dpm 755 $(builddir)/tmpfiles.sh       $(DESTDIR)/sbin/tmpfiles
-	$(INSTALL) -dm  755                               $(DESTDIR)/etc/tmpfiles.d
 # Use an initialization script first as the system init to finish the install.
 	$(INSTALL) -Dpm 755 $(builddir)/setup.sh          $(DESTDIR)/hurd/setup.sh
 	$(SYMLINK) ../hurd/setup.sh                       $(DESTDIR)/sbin/init
@@ -20,7 +20,9 @@ $(install-rule): $$(call installed,grep grub iana theme)
 	$(INSTALL) -Dpm 644 $(builddir)/passwd            $(DESTDIR)/etc/passwd
 	$(INSTALL) -Dpm 644 $(builddir)/profile           $(DESTDIR)/etc/profile
 	$(INSTALL) -dm  755                               $(DESTDIR)/etc/profile.d
+	$(INSTALL) -Dpm 644 $(builddir)/protocols         $(DESTDIR)/etc/protocols
 	$(INSTALL) -Dpm 644 $(builddir)/resolv.conf       $(DESTDIR)/etc/resolv.conf
+	$(INSTALL) -Dpm 644 $(builddir)/services          $(DESTDIR)/etc/services
 	$(INSTALL) -Dpm 000 $(builddir)/shadow            $(DESTDIR)/etc/shadow
 	$(INSTALL) -Dpm 644 $(builddir)/shells            $(DESTDIR)/etc/shells
 	$(INSTALL) -Dpm 644 $(builddir)/bash_profile      $(DESTDIR)/etc/skel/.bash_profile
@@ -32,7 +34,7 @@ $(install-rule): $$(call installed,grep grub iana theme)
 # Tack on a copy of the build system tailored for rebuilding system components.
 	$(INSTALL) -Dpm 644 $(dir $(makefile))RUNTIME.md $(DESTDIR)/root/README
 	$(INSTALL) -Dpm 644 $(builddir)/user-bashrc $(DESTDIR)/root/.bashrc
-	$(ECHO) "alias gmake='make -C ~/wd.gnuxc -f /usr/share/gnuxc/GNUmakefile'" >> $(DESTDIR)/root/.bashrc
+	$(ECHO) "alias gmake='make -C ~/wd.gnuxc -f /usr/share/gnuxc/GNUmakefile -k'" >> $(DESTDIR)/root/.bashrc
 	$(INSTALL) -dm 755 $(DESTDIR)/root/.config/git
 	$(ECHO) '/.gnuxc/' >> $(DESTDIR)/root/.config/git/ignore
 	$(INSTALL) -dm 755 $(DESTDIR)/root/wd.gnuxc
@@ -46,19 +48,28 @@ $(install-rule): $$(call installed,grep grub iana theme)
 		-e 's/^\(installed *:\?=\).*/\1/'
 
 # Write inline files.
-$(patsubst %,$(builddir)/%,bash_profile bashrc fstab group hostname hosts nsswitch.conf passwd profile resolv.conf shadow shells user-bashrc Xdefaults xinitrc xsession): | $$(@D)
+$(patsubst %,$(builddir)/%,bash_profile bashrc convert-protocols.sh convert-services.sh fstab group hostname hosts nsswitch.conf passwd profile resolv.conf shadow shells user-bashrc Xdefaults xinitrc xsession): | $$(@D)
 	$(file >$@,$(contents))
-$(prepared): $(patsubst %,$(builddir)/%,bash_profile bashrc fstab group hostname hosts nsswitch.conf passwd profile resolv.conf shadow shells user-bashrc Xdefaults xinitrc xsession)
+$(prepared): $(patsubst %,$(builddir)/%,bash_profile bashrc convert-protocols.sh convert-services.sh fstab group hostname hosts nsswitch.conf passwd profile resolv.conf shadow shells user-bashrc Xdefaults xinitrc xsession)
+
+# Fetch the current lists of registered protocols and services in CSV format.
+$(builddir)/protocols.csv: | $$(@D)
+	$(DOWNLOAD) '$(setup-protocols_url)' > $@
+$(builddir)/services.csv: | $$(@D)
+	$(DOWNLOAD) '$(setup-services_url)' > $@
+$(downloaded): $(patsubst %,$(builddir)/%.csv,protocols services)
+
+# Convert the lists into a format that can be installed into /etc.
+$(builddir)/protocols: $(patsubst %,$(builddir)/%,protocols.csv convert-protocols.sh)
+	$(BASH) < $^ > $@
+$(builddir)/services: $(patsubst %,$(builddir)/%,services.csv convert-services.sh)
+	$(BASH) < $^ > $@
+$(built): $(patsubst %,$(builddir)/%,protocols services)
 
 # Provide a post-installation OS initialization script.
 $(builddir)/setup.sh: $(patchdir)/$(setup)-setup.sh | $$(@D)
 	$(COPY) $< $@
 $(prepared): $(builddir)/setup.sh
-
-# Provide a program to create a skeleton file structure in tmpfs directories.
-$(builddir)/tmpfiles.sh: $(patchdir)/$(setup)-tmpfiles.sh | $$(@D)
-	$(COPY) $< $@
-$(prepared): $(builddir)/tmpfiles.sh
 
 
 # Provide a script that makes login sessions load interactive session settings.
@@ -86,6 +97,66 @@ export PS1
 for conf in /etc/bashrc.d/*.sh ; do . "$conf" ; done
 endef
 $(builddir)/bashrc: private override contents := $(value contents)
+
+
+# Provide a script to convert the protocols CSV file to glibc's format.
+override define contents
+#!/bin/bash
+
+echo -n '# Automatically generated from IANA protocols registry on '
+date -u '+%Y-%m-%d.'
+
+tr '\n\r' ' \n' |
+sed 's/^ *//;s/,,/,-,/' |
+while IFS=, read -rs decimal keyword protocol reference
+do
+        [[ $decimal =~ ^[0-9]+$ ]] || continue
+
+        keyword=${keyword// /-}
+        [[ $keyword =~ ^-|Reserved$ ]] && continue
+        (( ${#keyword} < 8 )) && keyword+='\t'
+
+        protocol=$(echo -n $protocol | sed 's/[ \t]\+/ /g;s/^ *" *//;s/ *" *$//;s/""/"/g')
+
+        echo -e "${keyword,,}\t$decimal\t$keyword\t# $protocol"
+done
+endef
+$(builddir)/convert-protocols.sh: private override contents := $(value contents)
+
+
+# Provide a script to convert the services CSV file to glibc's format.
+override define contents
+#!/bin/bash
+
+echo -n '# Automatically generated from IANA services registry on '
+date -u '+%Y-%m-%d.'
+
+cat - <(echo -n END,65536,,,) |
+tr '\n\r' ' \n' |
+sed 's/^ *//;s/,,/,-,/' |
+LC_ALL=C sort -t, -k2n,2 -k3,3 |
+while IFS=, read -rs name port transport description assignee
+do
+        [ "$name" == END ] && echo -e "${alt:-\t}# $olddesc" && continue
+
+        name=${name##*\(} name=${name%%\)*} name=${name//\ /-}
+        [ -n "$name" ] || continue
+
+        [[ $port =~ ^[0-9]+$ ]] && [ "$transport" != - ] || continue
+        (( ${#port} + ${#transport} < 7 )) && transport+='\t'
+
+        [ "$oldport" == "$port/$transport" ] && alt+="${alt:+ }$name" && continue
+        (( ${#name} <  8 )) && name+='\t'
+        (( ${#alt}  >= 8 )) && alt+=' '
+        (( ${#alt}  <  8 )) && alt+='\t'
+        echo -en "${olddesc:+$alt# $olddesc\n}$name\t$port/$transport\t"
+
+        alt=
+        olddesc=$(echo -n $description | sed 's/[ \t]\+/ /g;s/^ *" *//;s/ *" *$//;s/""/"/g')
+        oldport="$port/$transport"
+done
+endef
+$(builddir)/convert-services.sh: private override contents := $(value contents)
 
 
 # Provide a default file system table for fsck, etc.

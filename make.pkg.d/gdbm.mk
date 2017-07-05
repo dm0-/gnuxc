@@ -1,15 +1,17 @@
-gdbm                    := gdbm-1.12
-gdbm_sha1               := 86513e8871bb376bc014e9e5a2d18a8e0a8ea2f5
+gdbm                    := gdbm-1.13
+gdbm_sha1               := 7f2a8301497bbcac91808b011ca533380914fd21
 gdbm_url                := http://ftpmirror.gnu.org/gdbm/$(gdbm).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-silent-rules \
-		--enable-libgdbm-compat
+		--enable-debug \
+		--enable-libgdbm-compat \
+		--with-readline
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,glibc)
+$(install-rule): $$(call installed,readline)
 	$(MAKE) -C $(builddir) install

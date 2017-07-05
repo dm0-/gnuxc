@@ -8,15 +8,16 @@
 %endif
 
 Name:           gnuxc-hurd
-Version:        0.8
-%global commit  bc170131016969f1d79409337833046ae1f4501b
+Version:        0.9
+%global commit  3c0094e1244b649ca49482fadb850a2dfc2d4442
 %global snap    %(c=%{commit} ; echo -n ${c:0:6})
-Release:        1.%{?bootstrap:0}%{!?bootstrap:1}.19700101git%{snap}%{?dist}
+Release:        1.%{?bootstrap:0}%{!?bootstrap:1}.git%{snap}%{?dist}
 Summary:        GNU Hurd servers, libraries, and utilities
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
 URL:            http://www.gnu.org/software/hurd/
 Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{commit}.tar.xz
+Source1:        http://raw.githubusercontent.com/dm0-/hurd-rump-audio/master/audio.h#/%{gnuxc_name}-%{version}-audio.h
 
 Patch101:       %{gnuxc_name}-%{version}-%{snap}-console-nocaps.patch
 Patch102:       %{gnuxc_name}-%{version}-%{snap}-fancy-motd.patch
@@ -100,7 +101,8 @@ autoreconf -fi
 
 %if ! 0%{?bootstrap}
 %gnuxc_make %{?_smp_mflags} \
-    lib{fshelp,ihash,iohelp,netfs,ports,ps,shouldbeinlibc,store}
+    lib{diskfs,fshelp,ihash,iohelp,netfs,pager} \
+    lib{ports,ps,shouldbeinlibc,store,trivfs}
 %endif
 
 %install
@@ -108,9 +110,12 @@ autoreconf -fi
     includedir=%{buildroot}%{gnuxc_includedir} \
     no_deps=t
 
+install -Dpm 0644 %{SOURCE1} %{buildroot}%{gnuxc_includedir}/sys/audio.h
+
 %if ! 0%{?bootstrap}
 %gnuxc_make \
-    lib{fshelp,ihash,iohelp,netfs,ports,ps,shouldbeinlibc,store}-install \
+    lib{diskfs,fshelp,ihash,iohelp,netfs,pager}-install \
+    lib{ports,ps,shouldbeinlibc,store,trivfs}-install \
     includedir=%{buildroot}%{gnuxc_includedir} \
     libdir=%{buildroot}%{gnuxc_libdir}
 
@@ -121,6 +126,7 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 
 %files headers
 %{gnuxc_includedir}/hurd
+%{gnuxc_includedir}/sys/audio.h
 %{gnuxc_includedir}/sys/procfs.h
 %{gnuxc_includedir}/*.h
 %doc BUGS ChangeLog INSTALL* NEWS README* tasks TODO
@@ -128,26 +134,35 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 
 %if ! 0%{?bootstrap}
 %files libs
+%{gnuxc_libdir}/libdiskfs.so.0.3
 %{gnuxc_libdir}/libfshelp.so.0.3
 %{gnuxc_libdir}/libihash.so.0.3
 %{gnuxc_libdir}/libiohelp.so.0.3
 %{gnuxc_libdir}/libnetfs.so.0.3
+%{gnuxc_libdir}/libpager.so.0.3
 %{gnuxc_libdir}/libports.so.0.3
 %{gnuxc_libdir}/libps.so.0.3
 %{gnuxc_libdir}/libshouldbeinlibc.so.0.3
 %{gnuxc_libdir}/libstore.so.0.3
+%{gnuxc_libdir}/libtrivfs.so.0.3
 
 %files devel
+%{gnuxc_libdir}/libdiskfs.so
 %{gnuxc_libdir}/libfshelp.so
 %{gnuxc_libdir}/libihash.so
 %{gnuxc_libdir}/libiohelp.so
 %{gnuxc_libdir}/libnetfs.so
+%{gnuxc_libdir}/libpager.so
 %{gnuxc_libdir}/libports.so
 %{gnuxc_libdir}/libps.so
 %{gnuxc_libdir}/libshouldbeinlibc.so
 %{gnuxc_libdir}/libstore.so
+%{gnuxc_libdir}/libtrivfs.so
 
 %files static
+%{gnuxc_libdir}/libdiskfs.a
+%{gnuxc_libdir}/libdiskfs_p.a
+%{gnuxc_libdir}/libdiskfs_pic.a
 %{gnuxc_libdir}/libfshelp.a
 %{gnuxc_libdir}/libfshelp_p.a
 %{gnuxc_libdir}/libfshelp_pic.a
@@ -160,6 +175,9 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 %{gnuxc_libdir}/libnetfs.a
 %{gnuxc_libdir}/libnetfs_p.a
 %{gnuxc_libdir}/libnetfs_pic.a
+%{gnuxc_libdir}/libpager.a
+%{gnuxc_libdir}/libpager_p.a
+%{gnuxc_libdir}/libpager_pic.a
 %{gnuxc_libdir}/libports.a
 %{gnuxc_libdir}/libports_p.a
 %{gnuxc_libdir}/libports_pic.a
@@ -186,4 +204,7 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 %{gnuxc_libdir}/libstore_remap.a
 %{gnuxc_libdir}/libstore_task.a
 %{gnuxc_libdir}/libstore_zero.a
+%{gnuxc_libdir}/libtrivfs.a
+%{gnuxc_libdir}/libtrivfs_p.a
+%{gnuxc_libdir}/libtrivfs_pic.a
 %endif

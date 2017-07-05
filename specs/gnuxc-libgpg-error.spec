@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgpg-error
-Version:        1.23
+Version:        1.27
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -50,6 +50,7 @@ sed 's/i686-pc-gnu/%{gnuxc_target}/g' \
     --bindir=%{gnuxc_root}/bin \
     --disable-doc \
     --disable-nls \
+    --disable-tests \
     \
     --disable-rpath \
     --enable-languages \
@@ -77,7 +78,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/{aclocal,common-lisp}
 
 %files
 %{gnuxc_libdir}/libgpg-error.so.0
-%{gnuxc_libdir}/libgpg-error.so.0.19.0
+%{gnuxc_libdir}/libgpg-error.so.0.22.0
 %doc AUTHORS ChangeLog* NEWS README THANKS
 %license COPYING COPYING.LIB
 
@@ -85,6 +86,7 @@ rm -rf %{buildroot}%{gnuxc_datadir}/{aclocal,common-lisp}
 %{_bindir}/%{gnuxc_target}-gpg-error-config
 %{gnuxc_root}/bin/gpg-error-config
 %{gnuxc_includedir}/gpg-error.h
+%{gnuxc_includedir}/gpgrt.h
 %{gnuxc_libdir}/libgpg-error.so
 
 %files static

@@ -1,5 +1,5 @@
-libXi                   := libXi-1.7.6
-libXi_sha1              := 0bf1c2b8279915d8c94e45cd0b9ec064f7a177a9
+libXi                   := libXi-1.7.9
+libXi_sha1              := 70d1148c39c0eaa7d7c18370f20709383271f669
 libXi_url               := http://xorg.freedesktop.org/releases/individual/lib/$(libXi).tar.bz2
 
 $(configure-rule):

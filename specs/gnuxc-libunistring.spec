@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libunistring
-Version:        0.9.6
+Version:        0.9.7
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -40,6 +40,7 @@ statically, which is highly discouraged.
 %gnuxc_configure \
     --disable-rpath \
     --enable-threads=posix \
+    PACKAGE_TARNAME=libunistring \
     \
     --disable-relocatable # This results in undefined symbols when linking.
 %gnuxc_make %{?_smp_mflags} all

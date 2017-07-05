@@ -1,6 +1,6 @@
-nspr                    := nspr-4.12
+nspr                    := nspr-4.15
 nspr_branch             := $(nspr)/nspr
-nspr_sha1               := 14fb67a0e686a5c662f92e7f59dfd10053f327dd
+nspr_sha1               := 56030e0177849034ba3027a23ae2a7f8ed41f379
 nspr_url                := http://ftp.mozilla.org/pub/nspr/releases/v$(nspr:nspr-%=%)/src/$(nspr).tar.gz
 
 ifeq ($(host),$(build))

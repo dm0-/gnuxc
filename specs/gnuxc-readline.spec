@@ -1,8 +1,8 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-readline
-Version:        6.3.8
-%global basever 6.3
+Version:        7.0.3
+%global basever 7.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,14 +10,9 @@ License:        GPLv3+
 URL:            http://www.gnu.org/software/readline/
 Source0:        http://ftpmirror.gnu.org/readline/%{gnuxc_name}-%{basever}.tar.gz
 
-Patch001:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline63-001
-Patch002:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline63-002
-Patch003:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline63-003
-Patch004:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline63-004
-Patch005:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline63-005
-Patch006:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline63-006
-Patch007:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline63-007
-Patch008:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline63-008
+Patch001:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline70-001
+Patch002:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline70-002
+Patch003:       http://ftpmirror.gnu.org/readline/readline-%{basever}-patches/readline70-003
 Patch101:       %{gnuxc_name}-%{version}-shlib.patch
 
 BuildRequires:  gnuxc-gcc
@@ -48,18 +43,12 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{basever}
 %patch001
-%patch002
-%patch003
-%patch004
-%patch005
-%patch006
-%patch007
-%patch008
 %patch101
 
 %build
 %gnuxc_configure \
-    --enable-multibyte
+    --enable-multibyte \
+    --with-curses
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -77,10 +66,10 @@ rm -rf \
 
 
 %files
-%{gnuxc_libdir}/libhistory.so.6
-%{gnuxc_libdir}/libhistory.so.6.3
-%{gnuxc_libdir}/libreadline.so.6
-%{gnuxc_libdir}/libreadline.so.6.3
+%{gnuxc_libdir}/libhistory.so.7
+%{gnuxc_libdir}/libhistory.so.7.0
+%{gnuxc_libdir}/libreadline.so.7
+%{gnuxc_libdir}/libreadline.so.7.0
 %doc CHANGELOG CHANGES INSTALL NEWS README USAGE
 %license COPYING
 

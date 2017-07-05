@@ -1,5 +1,5 @@
-file                    := file-5.28
-file_sha1               := 1b789a93bea54da3119d98986468cd90b1e571bf
+file                    := file-5.31
+file_sha1               := d66f71fb29ec0e9cecbefe9d7433d7a315f3302c
 file_url                := ftp://ftp.astron.com/pub/file/$(file).tar.gz
 
 ifneq ($(host),$(build))

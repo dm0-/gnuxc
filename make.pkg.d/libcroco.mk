@@ -1,5 +1,5 @@
-libcroco                := libcroco-0.6.11
-libcroco_sha1           := 35203ccb3c30ae1d0956a362c6aabe6109e582f3
+libcroco                := libcroco-0.6.12
+libcroco_sha1           := f34287280cbf44d6c9628d15fa8a16347753a1d5
 libcroco_url            := http://ftp.gnome.org/pub/gnome/sources/libcroco/0.6/$(libcroco).tar.xz
 
 $(configure-rule):

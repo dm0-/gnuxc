@@ -1,5 +1,5 @@
-spice-protocol          := spice-protocol-0.12.11
-spice-protocol_sha1     := 322177b3b7b8676a7349265319d4ed7ff31bc098
+spice-protocol          := spice-protocol-0.12.13
+spice-protocol_sha1     := df1eab603490ccc3275718dccc7c68a7732a4524
 spice-protocol_url      := http://www.spice-space.org/download/releases/$(spice-protocol).tar.bz2
 
 $(configure-rule):

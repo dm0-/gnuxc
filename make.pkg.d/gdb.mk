@@ -1,8 +1,9 @@
-gdb                     := gdb-7.11.1
-gdb_sha1                := df23fde077df1b8555949281bc963596f70de3ec
+gdb                     := gdb-8.0
+gdb_sha1                := 148c8e783ebf9b281241d0566db59961191ec64d
 gdb_url                 := http://ftpmirror.gnu.org/gdb/$(gdb).tar.xz
 
 $(prepare-rule):
+	$(call apply,update-hurd)
 # Don't look for weird TCL header locations.
 	$(EDIT) 's,/\(tcl\|tk\)-private/generic,,g' $(builddir)/gdb/configure
 # Specify Python settings without requiring a python executable.
@@ -10,8 +11,8 @@ $(prepare-rule):
 		-e 's,\(python_includes\)=.*,\1=`$(PKG_CONFIG) --cflags python3`,' \
 		-e 's,\(python_libs\)=.*,\1=`$(PKG_CONFIG) --libs python3`,' \
 		-e 's,\(python_prefix\)=.*,\1=`$(PKG_CONFIG) --variable=exec_prefix python3`,'
-# Fix missed rename.
-	$(EDIT) 's/ thread_id_to_pid/ global_thread_id_to_ptid/' $(builddir)/gdb/gnu-nat.c
+# Avoid dumb name clashes.
+	$(EDIT) '1i#define _mach_user_' $(builddir)/gdb/{python/py-record-btrace,thread}.c
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -29,6 +30,7 @@ $(configure-rule):
 		--enable-objc-gc \
 		--enable-plugins \
 		--enable-tui \
+		--enable-vtable-verify \
 		--with-curses \
 		--with-cloog \
 		--with-expat \
@@ -47,7 +49,8 @@ $(configure-rule):
 		--with-x \
 		--without-included-regex \
 		\
-		--disable-gdbtk # This isn't part of the distribution ... maybe integrate it.
+		--disable-gdbtk \
+		--without-guile # Disable this until Guile 2.2 works.
 
 $(build-rule): private override export ac_cv_guild_program_name = /usr/bin/guild
 $(build-rule): private override export ac_cv_path_pkg_config_prog_path = $(PKG_CONFIG)

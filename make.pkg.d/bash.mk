@@ -1,9 +1,9 @@
-bash                    := bash-4.3.46
-bash_branch             := bash-4.3.30
-bash_sha1               := 33b1bcc5dca1b72f28b2baeca6efa0d422097964
+bash                    := bash-4.4.12
+bash_branch             := bash-4.4
+bash_sha1               := 8de012df1e4f3e91f571c3eb8ec45b43d7c747eb
 bash_url                := http://ftpmirror.gnu.org/bash/$(bash_branch).tar.gz
 
-$(eval $(call verify-download,$(foreach l,31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46,http://ftpmirror.gnu.org/bash/bash-4.3-patches/bash43-0$l),ad1dabb17a54131423ff88de0d6301cbf4856828,fixes.patch))
+$(eval $(call verify-download,$(foreach l,01 02 03 04 05 06 07 08 09 10 11 12,http://ftpmirror.gnu.org/bash/$(bash_branch)-patches/bash44-0$l),7803db5ed29c547bddb2326afc20eb618ec5ef42,fixes.patch))
 
 export BASH = /bin/bash
 
@@ -31,6 +31,8 @@ $(configure-rule):
 		--enable-dparen-arithmetic \
 		--enable-extended-glob \
 		--enable-extended-glob-default \
+		--enable-function-import \
+		--enable-glob-asciiranges-default \
 		--enable-help-builtin \
 		--enable-history \
 		--enable-job-control \
@@ -39,15 +41,17 @@ $(configure-rule):
 		--enable-net-redirections \
 		--enable-process-substitution \
 		--enable-progcomp \
+		--enable-prompt-string-decoding \
 		--enable-readline \
 		--enable-restricted \
 		--enable-select \
+		--with-curses \
 		--with-installed-readline \
-		--without-included-gettext
+		--without-included-gettext \
+		CPPFLAGS=-DRECYCLES_PIDS
 
 $(build-rule):
-	$(MAKE) -C $(builddir) all \
-		CPPFLAGS=-DRECYCLES_PIDS
+	$(MAKE) -C $(builddir) all
 
 $(install-rule): $$(call installed,readline)
 	$(MAKE) -C $(builddir) install \

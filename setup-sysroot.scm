@@ -4,7 +4,7 @@ define UNUSED_CHUNK_SWITCHING_GUILE_BLOCK_COMMENTS_TO_CONFORM_TO_BEST_PRACTICES
 #|
 endef
 
-# Copyright (C) 2014,2015,2016 David Michael <fedora.dm0@gmail.com>
+# Copyright (C) 2014,2015,2016,2017 David Michael <fedora.dm0@gmail.com>
 #
 # This file is part of gnuxc.
 #
@@ -214,7 +214,7 @@ repo_name := gnuxc-local
 dnf_opts := --repofrompath='$(repo_name),$(rpmdir)' \
 --enablerepo='$(repo_name)' \
 --setopt='$(repo_name).name=gnuxc - Locally built cross-compiler packages' \
---setopt='$(repo_name).include=gnuxc-*' \
+--setopt='$(repo_name).includepkgs=gnuxc-*' \
 --setopt='$(repo_name).gpgcheck=0' \
 --setopt='$(repo_name).metadata_expire=0'
 
@@ -222,7 +222,7 @@ dnf_opts := --repofrompath='$(repo_name),$(rpmdir)' \
 dnf_opts := --config=/dev/stdin --enablerepo='$(repo_name)' \
 <<< \"`cat /etc/dnf/dnf.conf ; echo '[$(repo_name)]' ; \
 echo 'name=gnuxc - Locally built cross-compiler packages' ; \
-echo 'baseurl=file://$(rpmdir)' ; echo 'include=gnuxc-*' ; \
+echo 'baseurl=file://$(rpmdir)' ; echo 'includepkgs=gnuxc-*' ; \
 echo gpgcheck=0 ; echo metadata_expire=0`\"
 
 # Define common command options.
@@ -258,7 +258,8 @@ override unlock = rm --force '$(rpmdir)/repodata/$1.lock'
 %.src.rpm: private override repomd = $(rpmdir)/repodata/$(basename $(<F))
 %.src.rpm:
 	-mkdir --parents '$(repomd)' && \
-$(createrepo) --baseurl '$(rpmdir)' --outputdir '$(repomd)' '$(rpmdir)' && \
+$(createrepo) \
+--baseurl='file://$(rpmdir)' --outputdir='$(repomd)' '$(rpmdir)' && \
 $(call lock,builddep) ; \
 $(dnf-builddep) $(bs) --setopt='$(repo_name).baseurl=file://$(repomd)' '$<' ; \
 $(call unlock,builddep) ; \

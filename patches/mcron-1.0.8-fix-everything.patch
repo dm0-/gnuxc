@@ -2,6 +2,17 @@ This removes the installation's root requirement, compiles guile modules, adds
 support for a drop-in system cron directory, and allows the cron daemon to run
 in the foreground by default for Shepherd.
 
+--- configure.ac
++++ configure.ac
+@@ -44,7 +44,7 @@
+ AC_PROG_EGREP
+ AM_PROG_CC_C_O
+ 
+-PKG_CHECK_MODULES(GUILE, guile-2.0)
++PKG_CHECK_MODULES(GUILE, guile-2.2)
+ 
+ # Checks for programs.
+   
 --- makefile.am
 +++ makefile.am
 @@ -55,15 +55,12 @@

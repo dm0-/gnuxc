@@ -1,6 +1,6 @@
-liboop                  := liboop-1.0
-liboop_sha1             := 9c58eeb8b08ba455ac379970cd7df02c48d111d1
-liboop_url              := http://download.ofb.net/liboop/$(liboop).tar.bz2
+liboop                  := liboop-1.0.1
+liboop_sha1             := 538be0d7a9fb7e9d88eb89bb15b65d6d7d9dcaa3
+liboop_url              := http://ftp.lysator.liu.se/pub/liboop/$(liboop).tar.gz
 
 $(prepare-rule):
 # Rewrite the old configure script to support a newer TCL version.

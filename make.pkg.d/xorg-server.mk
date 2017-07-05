@@ -1,5 +1,5 @@
-xorg-server             := xorg-server-1.18.3
-xorg-server_sha1        := b3d8818bb3e1deeeb8f02d741c1223a72182e63c
+xorg-server             := xorg-server-1.19.3
+xorg-server_sha1        := 77f580ffa22a8bbcc3536e74e19114e446417a9c
 xorg-server_url         := http://xorg.freedesktop.org/releases/individual/xserver/$(xorg-server).tar.bz2
 
 $(prepare-rule):
@@ -16,12 +16,14 @@ $(configure-rule):
 		--enable-dga \
 		--enable-dpms \
 		--enable-glx \
+		--enable-input-thread \
 		--enable-int10-module \
 		--enable-ipv6 \
 		--enable-local-transport \
 		--enable-mitshm \
 		--enable-pciaccess \
 		--enable-present \
+		--enable-record \
 		--enable-secure-rpc \
 		--enable-static \
 		--enable-tcp-transport \
@@ -37,19 +39,19 @@ $(configure-rule):
 		--enable-xnest \
 		--enable-xorg \
 		--enable-xres \
+		--enable-xshmfence \
 		--enable-xv \
 		--enable-xvfb \
 		--with-sha1=libnettle \
 		--with-xkb-output='$${sharedstatedir}/X11/xkb' \
 		\
-		--disable-aiglx \
 		--disable-composite \
 		--disable-dri \
 		--disable-dri2 \
 		--disable-dri3 \
+		--disable-glamor \
 		--disable-libdrm \
 		--disable-libunwind \
-		--disable-record \
 		--disable-screensaver \
 		--disable-selective-werror \
 		--disable-strict-compilation \
@@ -58,7 +60,7 @@ $(configure-rule):
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,bigreqsproto damageproto fixesproto libpciaccess libXdmcp libXext libXfont libXinerama libxkbfile mesa pixman presentproto randrproto renderproto resourceproto videoproto xcb-util-keysyms xcmiscproto xf86dgaproto)
+$(install-rule): $$(call installed,bigreqsproto damageproto fixesproto libpciaccess libXdmcp libXext libXfont2 libXinerama libxkbfile libxshmfence mesa pixman presentproto randrproto recordproto renderproto resourceproto videoproto xcb-util-keysyms xcmiscproto xf86dgaproto)
 	$(MAKE) -C $(builddir) install install-headers
 	$(INSTALL) -Dpm 644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/xorg-server.conf
 # Lazily work around --enable-install-setuid requiring root.

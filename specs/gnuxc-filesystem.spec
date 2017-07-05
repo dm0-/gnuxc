@@ -67,11 +67,13 @@ cat << 'EOF' > expand-pc-flags.sh && touch -r macros.gnuxc expand-pc-flags.sh
 #!/bin/bash
 [ "${RPM_BUILD_ROOT:-/}" = / ] && exit 0 || cd "$RPM_BUILD_ROOT"
 shopt -s nullglob
+pkgconfig=$(rpm -E %%gnuxc_pkgconfig) &&
+type -P "$pkgconfig" &>/dev/null || pkgconfig=pkg-config
 for pc in .{$(rpm -E %%gnuxc_datadir),$(rpm -E %%gnuxc_libdir)}/pkgconfig/*.pc
 do
         for var in $(sed -n '/^[^=]*:/s/[^}]*\${\([^}]*\)}[^$]*/\1\n/gp' "$pc")
         do
-                val=$(pkg-config --variable="$var" "$pc")
+                val=$($pkgconfig --variable="$var" "$pc")
                 sed -i -e '/^\(Cflag\|Lib\)s[^=]*:/s,\$'"{$var},$val,g" "$pc"
         done
 done

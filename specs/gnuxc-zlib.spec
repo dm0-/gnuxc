@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-zlib
-Version:        1.2.8
+Version:        1.2.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -59,7 +59,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libz.so.1
-%{gnuxc_libdir}/libz.so.1.2.8
+%{gnuxc_libdir}/libz.so.%{version}
 %doc ChangeLog doc FAQ README
 
 %files devel

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXfixes
-Version:        5.0.2
+Version:        5.0.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

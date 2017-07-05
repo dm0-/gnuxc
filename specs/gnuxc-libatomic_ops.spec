@@ -1,7 +1,9 @@
+%global bootstrap 1
+
 %?gnuxc_package_header
 
 Name:           gnuxc-libatomic_ops
-Version:        7.4.4
+Version:        7.6.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -9,6 +11,7 @@ License:        BSD and MIT and GPLv2+
 URL:            http://www.hboehm.info/gc/
 Source0:        http://www.ivmaisoft.com/_bin/atomic_ops/%{gnuxc_name}-%{version}.tar.gz
 
+BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-glibc-devel
 
 %description
@@ -39,6 +42,7 @@ statically, which is highly discouraged.
 %build
 %gnuxc_configure \
     --enable-assertions \
+    --enable-atomic-intrinsics \
     --enable-shared
 %gnuxc_make %{?_smp_mflags} all
 
@@ -50,14 +54,14 @@ mv doc/LICENSING.txt .
 rm -f %{buildroot}%{gnuxc_libdir}/libatomic_ops{,_gpl}.la
 
 # Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_datadir}/libatomic_ops
+rm -rf %{buildroot}%{gnuxc_docdir}/libatomic_ops
 
 
 %files
 %{gnuxc_libdir}/libatomic_ops.so.1
-%{gnuxc_libdir}/libatomic_ops.so.1.0.3
+%{gnuxc_libdir}/libatomic_ops.so.1.1.1
 %{gnuxc_libdir}/libatomic_ops_gpl.so.1
-%{gnuxc_libdir}/libatomic_ops_gpl.so.1.0.3
+%{gnuxc_libdir}/libatomic_ops_gpl.so.1.1.1
 %doc AUTHORS ChangeLog doc/*.txt README.md
 %license COPYING LICENSING.txt
 

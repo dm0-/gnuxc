@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-fontconfig
-Version:        2.12.0
+Version:        2.12.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -45,8 +45,7 @@ statically, which is highly discouraged.
     --disable-silent-rules \
     --enable-iconv \
     --enable-libxml2 \
-    --enable-static \
-    CPPFLAGS=-DPATH_MAX=4096
+    --enable-static
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -63,7 +62,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/libfontconfig.la
 %{gnuxc_datadir}/fontconfig
 %{gnuxc_datadir}/xml/fontconfig
 %{gnuxc_libdir}/libfontconfig.so.1
-%{gnuxc_libdir}/libfontconfig.so.1.9.1
+%{gnuxc_libdir}/libfontconfig.so.1.9.3
 %{gnuxc_sysconfdir}/fonts
 %doc AUTHORS ChangeLog NEWS README
 %license COPYING

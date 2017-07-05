@@ -1,5 +1,5 @@
-ed                      := ed-1.13
-ed_sha1                 := 31fc89eeaa99d6505bc7367651166e925d8fa430
+ed                      := ed-1.14.2
+ed_sha1                 := 3e8aa331ffbc929884107ff3f8fbd76d01252277
 ed_url                  := http://ftpmirror.gnu.org/ed/$(ed).tar.lz
 
 $(configure-rule):

@@ -1,5 +1,5 @@
-xterm                   := xterm-325
-xterm_sha1              := 1775aec5db7be014d7ed367c8deb34d78376fc0e
+xterm                   := xterm-330
+xterm_sha1              := 0b648aaba45715c156a25e7ff629c82eb9836bc0
 xterm_url               := http://invisible-mirror.net/archives/xterm/$(xterm).tgz
 
 $(configure-rule): configure := $(configure:--docdir%=)
@@ -8,6 +8,7 @@ $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-rpath-hack \
 		--enable-{16,88,256,ansi}-color \
+		--enable-dabbrev \
 		--enable-double-buffer \
 		--enable-exec-xterm \
 		--enable-freetype \
@@ -18,15 +19,18 @@ $(configure-rule):
 		--enable-luit \
 		--enable-narrowproto \
 		--enable-readline-mouse \
+		--enable-rectangles \
 		--enable-regex \
-		--enable-sixel-graphics \
+		--enable-{regis,sixel}-graphics \
+		--enable-screen-dumps \
 		--enable-toolbar \
 		--enable-warnings \
 		--enable-{wide,16bit}-chars \
+		--with-freetype-config=auto \
 		--with-icon-theme \
 		--with-icondir=/usr/share/icons \
 		--with-pcre \
-		--with-pkg-config \
+		--with-pkg-config='$(firstword $(PKG_CONFIG))' \
 		--with-x \
 		--with-xpm \
 		LIBS=-ltinfo \

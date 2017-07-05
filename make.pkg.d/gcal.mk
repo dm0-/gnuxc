@@ -1,5 +1,5 @@
-gcal                    := gcal-4
-gcal_sha1               := 10415242747812a4c05dc618d59eb2b156b9fa74
+gcal                    := gcal-4.1
+gcal_sha1               := 8ced243f2cca3910986a4649234fea5e40e80477
 gcal_url                := http://ftpmirror.gnu.org/gcal/$(gcal).tar.xz
 
 $(configure-rule):

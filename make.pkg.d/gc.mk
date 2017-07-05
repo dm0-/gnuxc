@@ -1,5 +1,5 @@
-gc                      := gc-7.4.4
-gc_sha1                 := 52adf4e7779c0a890ec70d0a41671eefdcc4181a
+gc                      := gc-7.6.0
+gc_sha1                 := bae6b3754ff8d3845b5171346bf924e13be6c693
 gc_url                  := http://www.hboehm.info/gc/gc_source/$(gc).tar.gz
 
 $(configure-rule):

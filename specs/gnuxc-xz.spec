@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-xz
-Version:        5.2.2
+Version:        5.2.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

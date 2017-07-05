@@ -1,6 +1,6 @@
-icu4c                   := icu4c-57.1
+icu4c                   := icu4c-59.1
 icu4c_branch            := icu
-icu4c_sha1              := ca5f5cc584f45e87bf56bf8b7f9244d12a5ada67
+icu4c_sha1              := e86189f53c0a01cecf093a555e1ebbd14abf5b82
 icu4c_url               := http://download.icu-project.org/files/$(subst -,/,$(icu4c))/$(subst .,_,$(icu4c))-src.tgz
 
 ifeq ($(host),$(build))
@@ -26,6 +26,8 @@ $(configure-rule):
 		--disable-rpath \
 		--enable-debug \
 		--enable-dyload \
+		--enable-extras \
+		--enable-icuio \
 		--enable-plugins \
 		--enable-static \
 		--enable-strict \

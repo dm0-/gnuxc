@@ -1,5 +1,5 @@
-gcc                     := gcc-6.1.0
-gcc_sha1                := e0cdec515a54ce979ad52f9c784d3e142c76553a
+gcc                     := gcc-7.1.0
+gcc_sha1                := 9f1e907f27eadefe7d5f7567c09e17805d9c8837
 gcc_url                 := http://ftpmirror.gnu.org/gcc/$(gcc)/$(gcc).tar.bz2
 
 ifeq ($(host),$(build))
@@ -23,8 +23,10 @@ endif
 $(prepare-rule):
 	$(call apply,no-add-needed)
 	$(EDIT) '/^ *target_header_dir=/s,=.*,=$(sysroot)/usr/include,' $(builddir)/gcc/configure
+# Work around a bad hard-coded setting that breaks all cross-compiling.
+	$(EDIT) '/system_bdw_gc_found=no/s/=no/=yes/g' $(builddir)/libobjc/configure{.ac,}
 
-$(configure-rule): CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=)
+$(configure-rule): CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=) -Wno-error=format-security
 $(configure-rule):
 	$(MKDIR) $(builddir)/build && cd $(builddir)/build && ../$(configure) \
 		--disable-libcilkrts \

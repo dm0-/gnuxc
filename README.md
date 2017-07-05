@@ -31,7 +31,7 @@ at runtime, especially the aspects that are unique to the `gnuxc` project.
 
 ## Requirements
 
-*Operating system*:  Fedora 24 is the current release targeted by this code.
+*Operating system*:  Fedora 26 is the current release targeted by this code.
 
 *Disk space*:  At least 20 GiB of total available storage is required when
 building everything on the same machine, plus however much space is desired for
@@ -42,10 +42,10 @@ directories will greatly improve build times.
     half a gigabyte.  This is the default action of the sysroot builder script.
 
   * The sysroot builder script leaves RPMs, SRPMs, and source archives on the
-    disk after it finishes, requiring almost 2 GiB of disk space.  (This space
+    disk after it finishes, requiring about 2 GiB of disk space.  (This space
     can be reclaimed by removing the RPM build environment after installation.)
 
-  * The main working directory will use a bit over 16 GiB after compilation.
+  * The main working directory will use around 17 GiB after compilation.
 
 *Memory*:  The build is usually tested on systems with at least 8 GiB of RAM.
 
@@ -116,5 +116,5 @@ once before this will work.  See `BUILD.md` for complete instructions.
 `gnu-root` beforehand.  Don't forget to run the ownership correction step after
 installation.
 
-    time make -f "${SOURCE_DIR:-.}/setup-sysroot.scm" $(rpm -E %_smp_mflags)
+    time make -f "${SOURCE_DIR:-.}/setup-sysroot.scm" $(rpm -E %_smp_mflags) -k
     time ( gmake download && gmake $(rpm -E %_smp_mflags) && gmake install )

@@ -1,5 +1,5 @@
-libwebp                 := libwebp-0.5.0
-libwebp_sha1            := d3de815b272fcf88fc4f2dc1ab65d176bcb8df68
+libwebp                 := libwebp-0.6.0
+libwebp_sha1            := 156d24fff454bfccd1f44434e226a10d9eb38186
 libwebp_url             := http://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(libwebp).tar.gz
 
 $(configure-rule):

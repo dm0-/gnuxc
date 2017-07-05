@@ -1,5 +1,5 @@
-libX11                  := libX11-1.6.3
-libX11_sha1             := 6f2aadf8346ee00b7419bd338461c6986e274733
+libX11                  := libX11-1.6.5
+libX11_sha1             := c32155467508dfe783f9296ef22ee6ed53cae7df
 libX11_url              := http://xorg.freedesktop.org/releases/individual/lib/$(libX11).tar.bz2
 
 $(configure-rule):
@@ -9,7 +9,6 @@ $(configure-rule):
 		--enable-loadable-i18n \
 		--enable-loadable-xcursor \
 		--enable-local-transport \
-		--enable-secure-rpc \
 		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
 		--enable-tcp-transport \
 		--enable-unix-transport \

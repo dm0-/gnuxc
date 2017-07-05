@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-jasper
-Version:        1.900.1
+Version:        1.900.31
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        JasPer
 URL:            http://www.ece.uvic.ca/~frodo/jasper/
-Source0:        http://www.ece.uvic.ca/~frodo/jasper/software/%{gnuxc_name}-%{version}.zip
+Source0:        http://github.com/mdadams/%{gnuxc_name}/archive/version-%{version}.tar.gz
 
 BuildRequires:  gnuxc-libjpeg-turbo-devel
 
@@ -36,17 +36,13 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-chmod -R go-w .
-
-# Rewrite the old configure script.
+%setup -q -n %{gnuxc_name}-version-%{version}
 autoreconf -fi
 
 %build
 %gnuxc_configure \
     --enable-debug \
     --enable-libjpeg \
-    --enable-shared \
     --with-x \
     EXTRACFLAGS="$CFLAGS" \
     \
@@ -67,14 +63,15 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 
 %files
-%{gnuxc_libdir}/libjasper.so.1
-%{gnuxc_libdir}/libjasper.so.1.0.0
-%doc doc/*.pdf NEWS README
+%{gnuxc_libdir}/libjasper.so.4
+%{gnuxc_libdir}/libjasper.so.4.0.0
+%doc ChangeLog doc/*.pdf NEWS README
 %license LICENSE
 
 %files devel
 %{gnuxc_includedir}/jasper
 %{gnuxc_libdir}/libjasper.so
+%{gnuxc_libdir}/pkgconfig/jasper.pc
 
 %files static
 %{gnuxc_libdir}/libjasper.a

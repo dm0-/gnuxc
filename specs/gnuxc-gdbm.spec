@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gdbm
-Version:        1.12
+Version:        1.13
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -9,7 +9,7 @@ License:        GPLv3+
 URL:            http://www.gnu.org/software/gdbm/
 Source0:        http://ftpmirror.gnu.org/gdbm/%{gnuxc_name}-%{version}.tar.gz
 
-BuildRequires:  gnuxc-glibc-devel
+BuildRequires:  gnuxc-readline-devel
 
 BuildRequires:  texinfo
 
@@ -44,7 +44,9 @@ statically, which is highly discouraged.
     \
     --disable-rpath \
     --disable-silent-rules \
-    --enable-libgdbm-compat
+    --enable-debug \
+    --enable-libgdbm-compat \
+    --with-readline
 %gnuxc_make %{?_smp_mflags} all
 
 %install

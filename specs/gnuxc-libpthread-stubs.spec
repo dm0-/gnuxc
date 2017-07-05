@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-libpthread-stubs
-Version:        0.3
+Version:        0.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

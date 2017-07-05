@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-file
-Version:        5.28
+Version:        5.31
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

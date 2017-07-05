@@ -1,0 +1,55 @@
+Set the defaults to work with PulseAudio.
+
+--- lisp/emms.el
++++ lisp/emms.el
+@@ -62,7 +62,7 @@
+   :prefix "emms-source-"
+   :group 'emms)
+ 
+-(defcustom emms-player-list nil
++(defcustom emms-player-list '(emms-player-paplay)
+   "*List of players that EMMS can use.  You need to set this!"
+   :group 'emms
+   :type '(repeat (symbol :tag "Player")))
+--- lisp/emms-player-simple.el
++++ lisp/emms-player-simple.el
+@@ -159,6 +159,7 @@
+                      "\\|")
+           "\\)\\'"))
+ 
++(define-emms-simple-player paplay '(file) "" "paplay")
+ (define-emms-simple-player mpg321 '(file url)
+   (emms-player-simple-regexp "mp3" "mp2")
+   "mpg321")
+--- lisp/emms-setup.el
++++ lisp/emms-setup.el
+@@ -48,7 +48,8 @@
+   :group 'multimedia)
+ 
+ (defcustom emms-setup-default-player-list
+-  '(emms-player-mpg321
++  '(emms-player-paplay
++    emms-player-mpg321
+     emms-player-ogg123
+     emms-player-mplayer-playlist
+     emms-player-mplayer
+--- lisp/emms-volume.el
++++ lisp/emms-volume.el
+@@ -48,7 +48,7 @@
+ 
+ (require 'emms)
+ (require 'emms-playlist-mode)
+-(require 'emms-volume-amixer)
++(require 'emms-volume-pulse)
+ 
+ ;; Customize group
+ (defgroup emms-volume nil
+@@ -56,7 +56,7 @@
+   :group 'emms)
+ 
+ ;; General volume setting related code.
+-(defcustom emms-volume-change-function 'emms-volume-amixer-change
++(defcustom emms-volume-change-function 'emms-volume-pulse-change
+   "*The function to use to change the volume.
+ If you have your own functions for changing volume, set this."
+   :type '(choice (const :tag "Amixer" emms-volume-amixer-change)

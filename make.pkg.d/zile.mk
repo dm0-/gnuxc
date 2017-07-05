@@ -1,5 +1,5 @@
-zile                    := zile-2.4.11
-zile_sha1               := ad2efb80031c3a406f8f83ac5d400a38bc297434
+zile                    := zile-2.4.13
+zile_sha1               := 1df9637c69b6115df946ee82dd2c0cd47c0778f3
 zile_url                := http://ftpmirror.gnu.org/zile/$(zile).tar.gz
 
 ifneq ($(host),$(build))

@@ -1,5 +1,5 @@
-fontconfig              := fontconfig-2.12.0
-fontconfig_sha1         := 4170b4d11816b10ff739e1b8ce35fae15a45894b
+fontconfig              := fontconfig-2.12.3
+fontconfig_sha1         := 408f933548bdc9ad912bc66d0fba22a8a4612d8b
 fontconfig_url          := http://www.freedesktop.org/software/fontconfig/release/$(fontconfig).tar.bz2
 
 $(configure-rule):
@@ -7,8 +7,7 @@ $(configure-rule):
 		--disable-silent-rules \
 		--enable-iconv \
 		--enable-libxml2 \
-		--enable-static \
-		CPPFLAGS=-DPATH_MAX=4096
+		--enable-static
 ifneq ($(host),$(build))
 	$(EDIT) 's,$(sysroot),,g' $(builddir)/fontconfig.pc
 endif

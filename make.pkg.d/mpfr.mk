@@ -1,5 +1,5 @@
-mpfr                    := mpfr-3.1.4
-mpfr_sha1               := cedc0055d55b6ee4cd17e1e6119ed412520ff81a
+mpfr                    := mpfr-3.1.5
+mpfr_sha1               := c0fab77c6da4cb710c81cc04092fb9bea11a9403
 mpfr_url                := http://ftpmirror.gnu.org/mpfr/$(mpfr).tar.xz
 
 $(configure-rule):

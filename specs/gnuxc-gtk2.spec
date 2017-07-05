@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gtk2
-Version:        2.24.30
+Version:        2.24.31
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -121,9 +121,9 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 %{gnuxc_libdir}/libgailutil.so.18
 %{gnuxc_libdir}/libgailutil.so.18.0.1
 %{gnuxc_libdir}/libgdk-x11-2.0.so.0
-%{gnuxc_libdir}/libgdk-x11-2.0.so.0.2400.30
+%{gnuxc_libdir}/libgdk-x11-2.0.so.0.2400.31
 %{gnuxc_libdir}/libgtk-x11-2.0.so.0
-%{gnuxc_libdir}/libgtk-x11-2.0.so.0.2400.30
+%{gnuxc_libdir}/libgtk-x11-2.0.so.0.2400.31
 %doc AUTHORS ChangeLog* HACKING INSTALL NEWS* README
 %license COPYING
 

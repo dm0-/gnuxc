@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-tiff
-Version:        4.0.6
+Version:        4.0.8
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        libtiff
-URL:            http://www.remotesensing.org/libtiff/
-Source0:        ftp://ftp.remotesensing.org/pub/libtiff/%{gnuxc_name}-%{version}.tar.gz
+URL:            http://www.simplesystems.org/libtiff/
+Source0:        http://download.osgeo.org/libtiff/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-jbigkit-devel
@@ -84,9 +84,9 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libtiff.so.5
-%{gnuxc_libdir}/libtiff.so.5.2.4
+%{gnuxc_libdir}/libtiff.so.5.2.6
 %{gnuxc_libdir}/libtiffxx.so.5
-%{gnuxc_libdir}/libtiffxx.so.5.2.4
+%{gnuxc_libdir}/libtiffxx.so.5.2.6
 %doc ChangeLog README TODO
 %license COPYRIGHT
 

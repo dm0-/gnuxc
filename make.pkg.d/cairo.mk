@@ -1,5 +1,5 @@
-cairo                   := cairo-1.14.6
-cairo_sha1              := 0a59324e6cbe031b5b898ff8b9e2ffceb9d114f5
+cairo                   := cairo-1.14.10
+cairo_sha1              := 28c59d85d6b790c21b8b59ece73a6a1dda28d69a
 cairo_url               := http://cairographics.org/releases/$(cairo).tar.xz
 
 $(configure-rule):

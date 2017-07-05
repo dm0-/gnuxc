@@ -3,14 +3,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-glibc
-Version:        2.19
-%global commit  2032cc261fc6434899a689ddec1b9230bcc774ac
+Version:        2.23
+%global commit  8be94e33d413e8c9685270b804c899f85389927a
 %global snap    %(c=%{commit} ; echo -n ${c:0:6})
-Release:        1.19700101git%{snap}%{?dist}
+Release:        1.git%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 %global lpname  libpthread
-%global lpcomm  6106225fdc09f013ec4f7b1d7ec82780061c8a14
+%global lpcomm  44873df420d128972644ef3901c7d917ca3b7dd7
 
 License:        LGPLv2+ and LGPLv2+ with exceptions and GPLv2+
 URL:            http://www.gnu.org/software/glibc/
@@ -54,9 +54,6 @@ statically, which is highly discouraged.
 %setup -q -D -T -a 1 -n %{gnuxc_name}-%{commit}
 mv %{lpname}-%{lpcomm} libpthread
 
-echo hurd > libpthread/Depend
-echo mach > hurd/Depend
-
 %if 0%{?bootstrap}
 # Don't require a real libihash for linking libpthread.
 sed -i -e 's/^LDLIBS-pthread.so[ :=].*/LDFLAGS-pthread.so = -Wl,--defsym=hurd_ihash_{add,create,find,free,remove}=0/' libpthread/Makefile
@@ -65,6 +62,9 @@ sed -i -e 's/^LDLIBS-pthread.so[ :=].*/LDFLAGS-pthread.so = -Wl,--defsym=hurd_ih
 # Avoid race conditions regenerating this with an incompatible bison version.
 touch intl/plural.c
 
+# This static library does not exist.
+sed -i -e 's/ [^ ]*mvec_nonshared[^ ]* / /g' math/Makefile
+
 %build
 %global gnuxc_optflags %(echo %gnuxc_optflags | sed 's/-O2/-O3/;s/-Wp,-D_FORTIFY_SOURCE[^ ]*//;s/-fstack-protector[^ ]*/-fasynchronous-unwind-tables/')
 %global _configure ../configure
@@ -72,10 +72,13 @@ mkdir -p build && pushd build
 %gnuxc_configure \
     --disable-multi-arch \
     --disable-pt_chown \
+    --disable-werror \
     --enable-all-warnings \
     --enable-lock-elision \
+    --enable-mathvec \
     --enable-obsolete-rpc \
     --enable-stackguard-randomization \
+    --enable-timezone-tools \
     --without-selinux \
     BASH_SHELL=/bin/bash \
     \
@@ -135,6 +138,8 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libm-%{version}.so
 %{gnuxc_libdir}/libmachuser.so.1
 %{gnuxc_libdir}/libmachuser-%{version}.so
+%{gnuxc_libdir}/libmvec.so.1
+%{gnuxc_libdir}/libmvec-%{version}.so
 %{gnuxc_libdir}/libnsl.so.1
 %{gnuxc_libdir}/libnsl-%{version}.so
 %{gnuxc_libdir}/libnss_compat.so.2
@@ -247,6 +252,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libieee.a
 %{gnuxc_libdir}/libm.so
 %{gnuxc_libdir}/libmachuser.so
+%{gnuxc_libdir}/libmvec.so
 %{gnuxc_libdir}/libmcheck.a
 %{gnuxc_libdir}/libnsl.so
 %{gnuxc_libdir}/libnss_compat.so
@@ -257,6 +263,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libnss_nis.so
 %{gnuxc_libdir}/libnss_nisplus.so
 %{gnuxc_libdir}/libpthread.so
+%{gnuxc_libdir}/libpthread_nonshared.a
 %{gnuxc_libdir}/libresolv.so
 %{gnuxc_libdir}/librpcsvc.a
 %{gnuxc_libdir}/librt.so
@@ -271,6 +278,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < libc.lang
 %{gnuxc_libdir}/libhurduser.a
 %{gnuxc_libdir}/libm.a
 %{gnuxc_libdir}/libmachuser.a
+%{gnuxc_libdir}/libmvec.a
 %{gnuxc_libdir}/libnsl.a
 %{gnuxc_libdir}/libpthread.a
 %{gnuxc_libdir}/libpthread2.a

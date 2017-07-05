@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-librsvg
-Version:        2.40.16
+Version:        2.40.17
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -66,6 +66,9 @@ rm -f %{buildroot}%{gnuxc_bindir}/rsvg-{convert,view-3}
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/librsvg-2.la \
  %{buildroot}%{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-*.la
+
+# This functionality should be used from the system package.
+rm -rf %{buildroot}%{gnuxc_datadir}/thumbnailers
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}

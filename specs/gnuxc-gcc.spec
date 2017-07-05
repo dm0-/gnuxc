@@ -13,7 +13,7 @@
 %global gcc_libdir %{_prefix}/lib
 
 Name:           gnuxc-gcc
-Version:        6.1.0
+Version:        7.1.0
 Release:        1.%{?bootstrap:0}%{!?bootstrap:1}%{?dist}
 Summary:        Cross-compiler for C for pure GNU systems
 
@@ -25,7 +25,7 @@ Patch101:       %{gnuxc_name}-%{version}-no-add-needed.patch
 
 BuildRequires:  gnuxc-binutils
 %if ! 0%{?bootstrap}
-BuildRequires:  gnuxc-glibc-devel
+BuildRequires:  gnuxc-gc-devel
 %endif
 
 BuildRequires:  bison
@@ -213,6 +213,9 @@ Cross-compiled version of libstdc++ for the GNU system.
 %setup -q -n %{gnuxc_name}-%{version}
 %patch101
 
+# Work around a bad hard-coded setting that breaks all cross-compiling.
+sed -i -e '/system_bdw_gc_found=no/s/=no/=yes/g' libobjc/configure{.ac,}
+
 # Provide non-conflicting internationalized messages.
 sed -i -e 's/"gcc"/"gnuxc-gcc"/' gcc/intl.c
 sed -i -e 's,/gcc.mo,/gnuxc-gcc.mo,' gcc/Makefile.in
@@ -223,6 +226,9 @@ sed -i -e 's,/\$(PACKAGE).mo,/gnuxc-$(PACKAGE).mo,' libcpp/Makefile.in
 %global _configure ../configure
 %global _program_prefix %{gnuxc_target}-
 export C{,XX}FLAGS_FOR_TARGET='%{gnuxc_optflags}'
+flags='%{optflags}'
+export C{,XX}FLAGS="${flags/ -Werror=format-security / }"
+unset flags
 mkdir -p build && pushd build
 %configure \
     --target=%{gnuxc_target} \
@@ -313,6 +319,7 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %{_bindir}/%{gnuxc_target}-gcc-nm
 %{_bindir}/%{gnuxc_target}-gcc-ranlib
 %{_bindir}/%{gnuxc_target}-gcov
+%{_bindir}/%{gnuxc_target}-gcov-dump
 %{_bindir}/%{gnuxc_target}-gcov-tool
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/crtbegin.o
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/crtbeginS.o
@@ -328,6 +335,7 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/include/cpuid.h
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/include/cross-stdarg.h
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/include/float.h
+%{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/include/gcov.h
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/include/iso646.h
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/include/mm3dnow.h
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/include/mm_malloc.h
@@ -355,6 +363,8 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %{_libexecdir}/gcc/%{gnuxc_target}/%{version}/lto1
 %{_mandir}/man1/%{gnuxc_target}-gcc.1.gz
 %{_mandir}/man1/%{gnuxc_target}-gcov.1.gz
+%{_mandir}/man1/%{gnuxc_target}-gcov-dump.1.gz
+%{_mandir}/man1/%{gnuxc_target}-gcov-tool.1.gz
 %if ! 0%{?bootstrap}
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/libgcc_eh.a
 %{gnuxc_root}/lib/libgomp.spec
@@ -436,8 +446,8 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %doc libgcc/ChangeLog
 
 %files -n gnuxc-libgfortran
-%{gnuxc_root}/lib/libgfortran.so.3
-%{gnuxc_root}/lib/libgfortran.so.3.0.0
+%{gnuxc_root}/lib/libgfortran.so.4
+%{gnuxc_root}/lib/libgfortran.so.4.0.0
 %doc libgfortran/ChangeLog*
 
 %files -n gnuxc-libgomp
@@ -463,7 +473,6 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %files -n gnuxc-libobjc_gc
 %{gnuxc_root}/lib/libobjc_gc.so.4
 %{gnuxc_root}/lib/libobjc_gc.so.4.0.0
-%doc boehm-gc/ChangeLog boehm-gc/doc/README*
 
 %files -n gnuxc-libobjc_gc-devel
 %{gnuxc_root}/lib/libobjc_gc.a
@@ -488,10 +497,10 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 
 %files -n gnuxc-libstdc++
 %{gnuxc_root}/lib/libstdc++.so.6
-%{gnuxc_root}/lib/libstdc++.so.6.0.22
-%{gnuxc_root}/lib/libstdc++.so.6.0.22-gdb.py
-%{gnuxc_root}/lib/libstdc++.so.6.0.22-gdb.pyc
-%{gnuxc_root}/lib/libstdc++.so.6.0.22-gdb.pyo
+%{gnuxc_root}/lib/libstdc++.so.6.0.23
+%{gnuxc_root}/lib/libstdc++.so.6.0.23-gdb.py
+%{gnuxc_root}/lib/libstdc++.so.6.0.23-gdb.pyc
+%{gnuxc_root}/lib/libstdc++.so.6.0.23-gdb.pyo
 %{gnuxc_libdir}/libstdc++.so.6
 %doc libstdc++-v3/ChangeLog* libstdc++-v3/README
 %endif

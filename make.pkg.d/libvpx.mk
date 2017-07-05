@@ -1,5 +1,5 @@
-libvpx                  := libvpx-1.5.0
-libvpx_sha1             := 0baf76627eb08450eaf307347d1721f56a880c64
+libvpx                  := libvpx-1.6.1
+libvpx_sha1             := a8bd0596915489d3bd8eded98d408ab8705e2f5d
 libvpx_url              := http://storage.googleapis.com/downloads.webmproject.org/releases/webm/$(libvpx).tar.bz2
 
 $(configure-rule):
@@ -20,8 +20,7 @@ $(configure-rule):
 		--enable-webm-io \
 		\
 		--disable-libyuv \
-		--disable-unit-tests \
-		--disable-vp10
+		--disable-unit-tests
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all V=1

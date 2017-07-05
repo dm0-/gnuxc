@@ -1,8 +1,8 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-ImageMagick
-Version:        7.0.2
-%global snap    2
+Version:        7.0.6
+%global snap    0
 %global flavor  7.Q16HDRI
 Release:        1.%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
@@ -114,10 +114,10 @@ rm -f %{buildroot}%{gnuxc_libdir}/ImageMagick-%{version}/modules-Q16HDRI/*/*.la
 %files
 %{gnuxc_datadir}/ImageMagick-7
 %{gnuxc_libdir}/ImageMagick-%{version}
-%{gnuxc_libdir}/libMagick++-%{flavor}.so.0
-%{gnuxc_libdir}/libMagick++-%{flavor}.so.0.0.0
-%{gnuxc_libdir}/libMagickCore-%{flavor}.so.0
-%{gnuxc_libdir}/libMagickCore-%{flavor}.so.0.0.0
+%{gnuxc_libdir}/libMagick++-%{flavor}.so.2
+%{gnuxc_libdir}/libMagick++-%{flavor}.so.2.0.0
+%{gnuxc_libdir}/libMagickCore-%{flavor}.so.2
+%{gnuxc_libdir}/libMagickCore-%{flavor}.so.2.0.0
 %{gnuxc_libdir}/libMagickWand-%{flavor}.so.0
 %{gnuxc_libdir}/libMagickWand-%{flavor}.so.0.0.0
 %{gnuxc_sysconfdir}/ImageMagick-7

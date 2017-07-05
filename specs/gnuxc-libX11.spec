@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/X11/locale/common/
 
 Name:           gnuxc-libX11
-Version:        1.6.3
+Version:        1.6.5
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -19,6 +19,7 @@ BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-xextproto
 BuildRequires:  gnuxc-xtrans
 
+BuildRequires:  perl
 BuildRequires:  xorg-x11-proto-devel
 
 %description
@@ -54,7 +55,6 @@ statically, which is highly discouraged.
     --enable-loadable-i18n \
     --enable-loadable-xcursor \
     --enable-local-transport \
-    --enable-secure-rpc \
     --enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
     --enable-tcp-transport \
     --enable-unix-transport \

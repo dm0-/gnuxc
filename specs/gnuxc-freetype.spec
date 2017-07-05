@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-freetype
-Version:        2.6.3
+Version:        2.8
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -70,7 +70,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libfreetype.so.6
-%{gnuxc_libdir}/libfreetype.so.6.12.3
+%{gnuxc_libdir}/libfreetype.so.6.14.0
 %doc ChangeLog* docs README*
 %license FTL.TXT GPLv2.TXT LICENSE.TXT
 

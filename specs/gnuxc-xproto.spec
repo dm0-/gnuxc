@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-xproto
-Version:        7.0.29
+Version:        7.0.31
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

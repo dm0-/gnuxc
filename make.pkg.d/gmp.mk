@@ -1,5 +1,5 @@
-gmp                     := gmp-6.1.1
-gmp_sha1                := 4da491d63ef850a7662f41da27ad1ba99c2dbaa1
+gmp                     := gmp-6.1.2
+gmp_sha1                := 9dc6981197a7d92f339192eea974f5eca48fcffe
 gmp_url                 := http://ftpmirror.gnu.org/gmp/$(gmp).tar.xz
 
 $(configure-rule):

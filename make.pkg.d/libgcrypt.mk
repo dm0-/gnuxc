@@ -1,5 +1,5 @@
-libgcrypt               := libgcrypt-1.7.1
-libgcrypt_sha1          := b688add52b622bb96bbd823ba21aa05a116d442f
+libgcrypt               := libgcrypt-1.7.8
+libgcrypt_sha1          := 65a4a495aa858483e66868199eaa8238572ca6cd
 libgcrypt_url           := ftp://ftp.gnupg.org/gcrypt/libgcrypt/$(libgcrypt).tar.bz2
 
 ifeq ($(host),$(build))

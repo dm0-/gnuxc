@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libevent
-Version:        2.0.22
+Version:        2.1.8
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
 URL:            http://libevent.org/
-Source0:        http://prdownloads.sourceforge.net/levent/%{gnuxc_name}-%{version}-stable.tar.gz
+Source0:        http://github.com/libevent/libevent/releases/download/release-%{version}-stable/%{gnuxc_name}-%{version}-stable.tar.gz
 
 BuildRequires:  gnuxc-glibc-devel
 
@@ -38,10 +38,13 @@ statically, which is highly discouraged.
 
 %build
 %gnuxc_configure \
+    --disable-silent-rules \
+    --enable-clock-gettime \
     --enable-debug-mode \
     --enable-function-sections \
-    --enable-gcc-warnings \
-    --enable-thread-support
+    --enable-thread-support \
+    \
+    --disable-gcc-warnings
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -54,15 +57,15 @@ rm -f %{buildroot}%{gnuxc_libdir}/libevent{,_core,_extra,_pthreads}.la
 rm -f %{buildroot}%{gnuxc_bindir}/event_rpcgen.py
 
 %files
-%{gnuxc_libdir}/libevent-2.0.so.5
-%{gnuxc_libdir}/libevent-2.0.so.5.1.9
-%{gnuxc_libdir}/libevent_core-2.0.so.5
-%{gnuxc_libdir}/libevent_core-2.0.so.5.1.9
-%{gnuxc_libdir}/libevent_extra-2.0.so.5
-%{gnuxc_libdir}/libevent_extra-2.0.so.5.1.9
-%{gnuxc_libdir}/libevent_pthreads-2.0.so.5
-%{gnuxc_libdir}/libevent_pthreads-2.0.so.5.1.9
-%doc ChangeLog README
+%{gnuxc_libdir}/libevent-2.1.so.6
+%{gnuxc_libdir}/libevent-2.1.so.6.0.2
+%{gnuxc_libdir}/libevent_core-2.1.so.6
+%{gnuxc_libdir}/libevent_core-2.1.so.6.0.2
+%{gnuxc_libdir}/libevent_extra-2.1.so.6
+%{gnuxc_libdir}/libevent_extra-2.1.so.6.0.2
+%{gnuxc_libdir}/libevent_pthreads-2.1.so.6
+%{gnuxc_libdir}/libevent_pthreads-2.1.so.6.0.2
+%doc ChangeLog*
 %license LICENSE
 
 %files devel
@@ -77,6 +80,8 @@ rm -f %{buildroot}%{gnuxc_bindir}/event_rpcgen.py
 %{gnuxc_libdir}/libevent_extra.so
 %{gnuxc_libdir}/libevent_pthreads.so
 %{gnuxc_libdir}/pkgconfig/libevent.pc
+%{gnuxc_libdir}/pkgconfig/libevent_core.pc
+%{gnuxc_libdir}/pkgconfig/libevent_extra.pc
 %{gnuxc_libdir}/pkgconfig/libevent_pthreads.pc
 
 %files static

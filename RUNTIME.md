@@ -261,14 +261,14 @@ create any temporary file system structures needed by installed packages.
 Note that the default GRUB menu item has `--readonly` on the root file system
 program.  This is for `/etc/shepherd.scm` to be able to call `fsck` on it
 without the file system being modified in the process.  Once `fsck` finishes
-its validation, it remounts the file system as writeable for regular usage.
+its validation, it remounts the file system as writable for regular usage.
 
-Near the end of `/etc/shepherd.scm`, the variable `default-runlevel` is
+At the beginning of `/etc/shepherd.scm`, the variable `default-runlevel` is
 defined.  This can be changed to `1`, `3`, or `5` to choose a preferred set of
-services to start automatically on boot.  These sets of services are defined at
-the end of the file for further customization.  A typical service set for
-runlevel `3` could be `console cron dhclient ssh swap syslog`, where `console`
-is the service that starts all the virtual consoles with their login prompts.
+services to start automatically on boot.  These sets of services are defined by
+adding links in the directories `/etc/rc3.d`, `/etc/rc5.d`, etc.  The contents
+of the files in these directories is not currently used; their file names are
+collected to define the list of services.
 
 #### Service Definitions
 
@@ -341,10 +341,10 @@ to return to the more basic GNU Mach console.
 ### Configuration
 
 The Hurd console's configuration is mostly handled by changing command line
-arguments for the server and client.  The server should be started by a passive
-translator on `/dev/vcs`, and the client command is defined as a Shepherd
-service in `/etc/shepherd.d/console.scm`.  See also `/etc/ttys` for the list of
-all virtual consoles that get started by the `runttys` service.
+arguments for the server and client.  The server is started by a translator
+record on `/dev/vcs`, and the client command is defined as a Shepherd service
+in `/etc/shepherd.d/console.scm`.  See also `/etc/ttys` for the list of all
+virtual consoles that get started by the `runttys` service.
 
 #### Keymaps
 
@@ -370,7 +370,7 @@ be preferable to omit some of them to improve the console startup time.
 #### Colors
 
 The default colors can be changed with translator options on `/dev/vcs`.  To
-change them persistently, alter the passive translator.  For example, this will
+change them persistently, alter the translator record.  For example, this will
 make the Hurd console appear as a black-on-white display.
 
     sudo settrans -acfgp /dev/vcs \

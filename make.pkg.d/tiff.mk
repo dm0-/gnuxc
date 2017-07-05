@@ -1,6 +1,6 @@
-tiff                    := tiff-4.0.6
-tiff_sha1               := 280e27704eaca5f592b82e71ac0c78b87395e2de
-tiff_url                := ftp://ftp.remotesensing.org/pub/libtiff/$(tiff).tar.gz
+tiff                    := tiff-4.0.8
+tiff_sha1               := 88717c97480a7976c94d23b6d9ed4ac74715267f
+tiff_url                := http://download.osgeo.org/libtiff/$(tiff).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

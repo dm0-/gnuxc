@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gmp
-Version:        6.1.1
+Version:        6.1.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -58,9 +58,9 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 
 %files
 %{gnuxc_libdir}/libgmp.so.10
-%{gnuxc_libdir}/libgmp.so.10.3.1
+%{gnuxc_libdir}/libgmp.so.10.3.2
 %{gnuxc_libdir}/libgmpxx.so.4
-%{gnuxc_libdir}/libgmpxx.so.4.5.1
+%{gnuxc_libdir}/libgmpxx.so.4.5.2
 %doc AUTHORS ChangeLog NEWS README
 %license COPYING COPYING.LESSERv3 COPYINGv2 COPYINGv3
 

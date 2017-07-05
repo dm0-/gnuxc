@@ -11,8 +11,8 @@ License:        MIT
 URL:            http://xcb.freedesktop.org/
 Source0:        http://xcb.freedesktop.org/dist/%{gnuxc_name}-%{version}.tar.bz2
 
-Patch001:       https://cgit.freedesktop.org/xcb/proto/patch/?id=ea7a3ac6c658164690e0febb55f4467cb9e0bcac#/%{gnuxc_name}-%{version}-fix-tabs.patch
-Patch002:       https://cgit.freedesktop.org/xcb/proto/patch/?id=bea5e1c85bdc0950913790364e18228f20395a3d#/%{gnuxc_name}-%{version}-fix-print.patch
+Patch001:       http://cgit.freedesktop.org/xcb/proto/patch/?id=ea7a3ac6c658164690e0febb55f4467cb9e0bcac#/%{gnuxc_name}-%{version}-fix-tabs.patch
+Patch002:       http://cgit.freedesktop.org/xcb/proto/patch/?id=bea5e1c85bdc0950913790364e18228f20395a3d#/%{gnuxc_name}-%{version}-fix-print.patch
 
 Requires:       gnuxc-python
 Provides:       %{name}-devel = %{version}-%{release}

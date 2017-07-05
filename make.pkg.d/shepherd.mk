@@ -1,9 +1,10 @@
-shepherd                := shepherd-0.3.1
-shepherd_sha1           := 702b264487968ab524b542520abcd7e2b8954ff3
+shepherd                := shepherd-0.3.2
+shepherd_sha1           := fc3a8a0b5a3b208b45470e222809c31277f9df73
 shepherd_url            := http://alpha.gnu.org/gnu/shepherd/$(shepherd).tar.gz
 
 $(prepare-rule):
 	$(call apply,delay-logging)
+	$(EDIT) '/ development files /s/as_fn_error/echo/' $(builddir)/configure
 # Don't regenerate man pages with help2man.
 	$(TOUCH) $(builddir)/doc/shepherd.1
 
@@ -19,6 +20,7 @@ $(install-rule): $$(call installed,guile)
 	$(INSTALL) -Dpm 755 $(call addon-file,service.sh) $(DESTDIR)/usr/sbin/service
 	$(INSTALL) -Dpm 644 $(call addon-file,shepherd.scm) $(DESTDIR)/etc/shepherd.scm
 	$(INSTALL) -dm 755 $(DESTDIR)/etc/shepherd.d
+	$(INSTALL) -Dm 644 /dev/null $(DESTDIR)/var/log/shepherd.log
 
 # Write inline files.
 $(call addon-file,service.sh): | $$(@D)

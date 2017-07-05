@@ -27,8 +27,8 @@
 
 # Build settings
 %gnuxc_name             %(name='%{name}' ; echo -n "${name#gnuxc-}")
-%gnuxc_ldflags          %{__global_ldflags}
-%gnuxc_optflags         %{__global_cflags}
+%gnuxc_ldflags          -Wl,-z,relro
+%gnuxc_optflags         -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches
 
 %gnuxc_drop_rpath       find . -type f '(' \\\
         -name ltmain.sh -exec %{__sed} -i \\\

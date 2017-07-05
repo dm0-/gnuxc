@@ -4,7 +4,8 @@ acl_url                 := http://download.savannah.gnu.org/releases/acl/$(acl).
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--exec-prefix=
+		--exec-prefix= \
+		PLATFORM=gnu
 
 $(build-rule):
 	$(MAKE) -C $(builddir) \

@@ -148,7 +148,7 @@ qemu-system-x86_64 -nodefaults \
     -monitor /dev/tty2 -serial /dev/tty3 \
     ${kvm:+-machine accel=kvm -enable-kvm -cpu host} \
     -smp cores="${cores:-1}" -m "${memory:-256}"M \
-    -display "${display:=curses}" -vga std \
+    -display "${display:=curses}" -vga std -soundhw ac97 \
     -netdev user,id=eth0 -device pcnet,netdev=eth0 \
     -device virtio-rng-pci \
     -drive media=disk,if=ide,format=raw,file="${disk:-/dev/sda}" \

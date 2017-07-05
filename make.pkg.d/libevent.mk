@@ -1,14 +1,17 @@
-libevent                := libevent-2.0.22
-libevent_branch         := libevent-2.0.22-stable
-libevent_sha1           := a586882bc93a208318c70fc7077ed8fca9862864
-libevent_url            := http://prdownloads.sourceforge.net/levent/$(libevent_branch).tar.gz
+libevent                := libevent-2.1.8
+libevent_branch         := $(libevent)-stable
+libevent_sha1           := 2a1b8bb7a262d3fd0ed6a080a20991a6eed675ec
+libevent_url            := http://github.com/libevent/libevent/releases/download/$(libevent_branch:libevent-%=release-%)/$(libevent_branch).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
+		--disable-silent-rules \
+		--enable-clock-gettime \
 		--enable-debug-mode \
 		--enable-function-sections \
-		--enable-gcc-warnings \
-		--enable-thread-support
+		--enable-thread-support \
+		\
+		--disable-gcc-warnings
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

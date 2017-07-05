@@ -1,5 +1,5 @@
-automake                := automake-1.15
-automake_sha1           := c279b35ca6c410809dac8ade143b805fb48b7655
+automake                := automake-1.15.1
+automake_sha1           := 45632d466c16ecf18d9c18dc4be883cde59acb59
 automake_url            := http://ftpmirror.gnu.org/automake/$(automake).tar.xz
 
 $(configure-rule):

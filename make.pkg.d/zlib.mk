@@ -1,5 +1,5 @@
-zlib                    := zlib-1.2.8
-zlib_sha1               := a4d316c404ff54ca545ea71a27af7dbc29817088
+zlib                    := zlib-1.2.11
+zlib_sha1               := e6d119755acdf9104d7ba236b1242696940ed6dd
 zlib_url                := http://zlib.net/$(zlib).tar.gz
 
 $(prepare-rule):

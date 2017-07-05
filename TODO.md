@@ -6,6 +6,10 @@ just note the terrible hacks in place to get a functioning system.
 
 ## Projects
 
+### dhcp
+
+Unbundle BIND.
+
 ### glibc
 
 Since glib has a hard dependency on `CLOCK_MONOTONIC`, glibc now pretends to
@@ -21,6 +25,10 @@ Figure out what dependencies broke to build librt before libpthread.
 The default trusted CA file is `/etc/ssl/ca-bundle.pem`, but this file is not
 provided at the moment.  Try stealing `/etc/pki/tls/cert.pem`, if you trust it.
 
+### guile
+
+Fix cross-compilation of everything that uses Guile for 2.2.
+
 ### GTK+
 
 Figure out if IceCat cat run without GTK+ 2, and fix Emacs to run with GTK+ 3
@@ -31,6 +39,8 @@ so GTK+ 2 can be removed.
 The Linux-libre configuration only builds support for some of the hardware in
 my immediate vicinity, so it's really not that portable without tweaking.
 
+Audio passthrough was not yet tested on non-QEMU host platforms.
+
 Add more wireless options in addition to WPA2 (WPA-PSK) and unencrypted.
 
 It seems pointless to statically link both `qemu` and `wpa_supplicant` binaries
@@ -39,18 +49,25 @@ for the Linux target, so this won't rely on pre-built static libraries anymore.
 
 ### hurd
 
-There is no entropy behind `/dev/random`.
-
-There is no audio support.
+Get xattr translators working and use a Linux-compatible ext2 file system.
 
 ### icecat
 
 It's a flaky, slow, experimental Hurd port.  Using Emacs to browse the web will
 probably be more enjoyable.
 
-### lsh
+### inetutils
 
-Seed files are currently just generated from Hurd's entropy-free `/dev/random`.
+Add support for libidn2, since its features had to be disabled for the upgrade.
+
+### libXfont2
+
+Figure out how to implement bdftopcf without libXfont to restore support for
+natively building the font packages.
+
+### rump
+
+The programs in `/usr/bin` have `RPATH`s.
 
 ### shepherd
 

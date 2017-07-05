@@ -1,5 +1,5 @@
-pango                   := pango-1.40.1
-pango_sha1              := 4021b704c2da2ca5ebfc51c714053b7e1907282c
+pango                   := pango-1.40.6
+pango_sha1              := 83125850255f78f2130aa373d3fe46f61d064dab
 pango_url               := http://ftp.gnome.org/pub/gnome/sources/pango/1.40/$(pango).tar.xz
 
 $(configure-rule):

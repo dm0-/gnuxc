@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-harfbuzz
-Version:        1.2.7
+Version:        1.4.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -72,11 +72,11 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 
 %files
 %{gnuxc_libdir}/libharfbuzz.so.0
-%{gnuxc_libdir}/libharfbuzz.so.0.10200.7
+%{gnuxc_libdir}/libharfbuzz.so.0.10400.6
 %{gnuxc_libdir}/libharfbuzz-gobject.so.0
-%{gnuxc_libdir}/libharfbuzz-gobject.so.0.10200.7
+%{gnuxc_libdir}/libharfbuzz-gobject.so.0.10400.6
 %{gnuxc_libdir}/libharfbuzz-icu.so.0
-%{gnuxc_libdir}/libharfbuzz-icu.so.0.10200.7
+%{gnuxc_libdir}/libharfbuzz-icu.so.0.10400.6
 %doc AUTHORS ChangeLog NEWS README THANKS TODO
 %license COPYING
 

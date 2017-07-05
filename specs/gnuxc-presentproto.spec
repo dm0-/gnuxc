@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-presentproto
-Version:        1.0
+Version:        1.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

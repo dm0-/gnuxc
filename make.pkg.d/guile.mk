@@ -1,9 +1,6 @@
-guile                   := guile-2.0.11
-guile_sha1              := ae86544b39048a160f4db1c0653a79b40b6c1ee6
+guile                   := guile-2.2.2
+guile_sha1              := 34463df17bf4dbd75fd01cb19819ccae858f1914
 guile_url               := http://ftpmirror.gnu.org/guile/$(guile).tar.xz
-
-$(eval $(call verify-download,http://git.savannah.gnu.org/cgit/guile.git/patch?id=3a3316e200ac49f0e8e9004c233747efd9f54a04,3e6ec6b9f5458dba7a7cbd05974327693fc41ca5,undefined-home.patch))
-$(eval $(call verify-download,http://git.savannah.gnu.org/cgit/guile.git/patch?id=ead362f8d144e7d76af4fd127c024c62b74562fb http://git.savannah.gnu.org/cgit/guile.git/patch?id=1be3063bf60fb1b9e540a3d35ecc3f00002ec0fd,cec47a5e6a468250631bd86b5fdc405c741adc15,new-signals.patch))
 
 export GUILE = /usr/bin/guile
 ifeq ($(host),$(build))
@@ -12,11 +9,20 @@ else
 export GUILE_CONFIG = /usr/bin/$(host)-guile-config
 endif
 
-$(prepare-rule):
-# Fix readline startup when HOME is undefined.
-	$(PATCH) -d $(builddir) -p1 < $(call addon-file,undefined-home.patch)
-# Add new signal definitions.
-	$(PATCH) -d $(builddir) -p1 < $(call addon-file,new-signals.patch)
+ifneq ($(host),$(build))
+$(call configure-rule,native): $(builddir)/configure
+	$(MKDIR) $(builddir)/native && cd $(builddir)/native && $(native) ../configure \
+		--disable-shared \
+		--disable-silent-rules
+$(call build-rule,native): $(call configured,native)
+	$(MAKE) -C $(builddir)/native all
+$(configure-rule): $(call built,native)
+$(configure-rule): private override export GUILE_FOR_BUILD := $(CURDIR)/$(builddir)/native/meta/guile
+
+$(builddir)/meta/guile-config: $(configured)
+	$(MAKE) -C $(builddir)/meta guile-config PKG_CONFIG=/usr/bin/pkg-config
+$(build-rule): $(builddir)/meta/guile-config
+endif
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -24,17 +30,19 @@ $(configure-rule):
 		--disable-silent-rules \
 		--enable-debug-malloc \
 		--enable-guile-debug \
+		--with-bdw-gc=bdw-gc \
 		--with-threads \
-		--without-included-regex
+		--without-included-regex \
+		LT_SYS_LIBRARY_PATH=/usr/lib # Work around rpath nonsense.
 
 $(build-rule):
-ifneq ($(host),$(build))
-	$(MAKE) -C $(builddir)/meta guile-config PKG_CONFIG=/usr/bin/pkg-config
-endif
-	$(MAKE) -C $(builddir) all
+	$(MAKE) -C $(builddir) all \
+		ELISP_SOURCES= # Drop this elisp file since it won't cross-compile.
 
 $(install-rule): $$(call installed,gc libffi libtool libunistring readline)
-	$(MAKE) -C $(builddir) install
+	$(MAKE) -C $(builddir) install \
+		ELISP_SOURCES= # Drop this elisp file since it won't cross-compile.
+	$(SYMLINK) guile $(DESTDIR)/usr/bin/guile2.2
 	$(INSTALL) -Dpm 644 $(call addon-file,user.scm) $(DESTDIR)/etc/skel/.guile
 
 # Write inline files.

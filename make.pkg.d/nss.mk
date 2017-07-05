@@ -1,6 +1,6 @@
-nss                     := nss-3.25
+nss                     := nss-3.31
 nss_branch              := $(nss)/nss
-nss_sha1                := ffa55041a7904bb43afbc6821f479819d9802abf
+nss_sha1                := 006a13a5e52867c49ea1e7d986b7c02a3cd8ebfb
 nss_url                 := http://ftp.mozilla.org/pub/security/nss/releases/NSS_$(subst .,_,$(nss:nss-%=%))_RTM/src/$(nss).tar.gz
 
 ifeq ($(host),$(build))
@@ -16,8 +16,8 @@ $(build-rule): private override configuration = \
 	CC='$(CC)' \
 	MOZ_DEBUG_SYMBOLS=1 \
 	NSPR_INCLUDE_DIR="`$(PKG_CONFIG) --cflags-only-I nspr | $(SED) s/^-I//`" \
-	NSS_DISABLE_DBM=1 \
 	NSS_DISABLE_GTESTS=1 \
+	NSS_ENABLE_WERROR=0 \
 	NSS_USE_SYSTEM_SQLITE=1 \
 	OBJDIR_NAME=gnu \
 	USE_PTHREADS=1 \

@@ -1,6 +1,6 @@
-flex                    := flex-2.6.0
-flex_sha1               := 684c927c9f1b170e9627338de12e99cf2c224b91
-flex_url                := http://prdownloads.sourceforge.net/flex/$(flex).tar.xz
+flex                    := flex-2.6.4
+flex_sha1               := ec5653f673ec8f6e3f07d5e730008cee54d2ce02
+flex_url                := http://github.com/westes/flex/releases/download/$(flex:flex-%=v%)/$(flex).tar.lz
 
 $(prepare-rule):
 # Skip tests.
@@ -8,7 +8,9 @@ $(prepare-rule):
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-rpath
+		--disable-rpath \
+		--enable-libfl \
+		--enable-warnings
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

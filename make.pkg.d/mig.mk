@@ -1,6 +1,6 @@
-mig                     := mig-1.7-ae832c
+mig                     := mig-1.8-b88740
 mig_branch              := master
-mig_sha1                := ae832c599fc25e9557200205a168989bae375489
+mig_sha1                := b8874015bd1d09b1b72293c0b5be422fd375e04b
 mig_url                 := git://git.sv.gnu.org/hurd/mig.git
 
 ifeq ($(host),$(build))

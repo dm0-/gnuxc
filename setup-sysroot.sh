@@ -26,7 +26,7 @@ rpmdir=$(rpm -E %_rpmdir)
 
 dnf_opts="--repofrompath='gnuxc-local,$rpmdir' --enablerepo='gnuxc-local' \
 --setopt='gnuxc-local.name=gnuxc - Locally built cross-compiler packages' \
---setopt='gnuxc-local.include=gnuxc-*' \
+--setopt='gnuxc-local.includepkgs=gnuxc-*' \
 --setopt='gnuxc-local.gpgcheck=0' \
 --setopt='gnuxc-local.metadata_expire=0'"
 
@@ -34,7 +34,7 @@ dnf_opts="--repofrompath='gnuxc-local,$rpmdir' --enablerepo='gnuxc-local' \
 repo_conf="[gnuxc-local]
 name=gnuxc - Locally built cross-compiler packages
 baseurl=file://$rpmdir
-include=gnuxc-*
+includepkgs=gnuxc-*
 gpgcheck=0
 metadata_expire=0
 enabled=0"
@@ -59,7 +59,7 @@ sourcedir=$(rpm -E %_sourcedir)
 srpmdir=$(rpm -E %_srcrpmdir)
 [[ "$*" == *tmpfs* ]] && tmpfs_arg='--enable-plugin=tmpfs ' || tmpfs_arg=
 [[ "$*" == *srpm* ]] && local_srpm=yes || local_srpm=
-alias run_mock="sudo mock --root=$distro --dnf $tmpfs_arg\
+alias run_mock="mock --root=$distro $tmpfs_arg\
 --enablerepo='gnuxc-local' --define='_disable_source_fetch 0' \
 "'--with$([ "$bootstrap" ] || echo out)=bootstrap'
 
@@ -157,10 +157,13 @@ build_pkg gnumach       gnumach-headers
 build_pkg mig
 build_pkg hurd          hurd-headers
 build_pkg glibc
+build_pkg libatomic_ops
+build_pkg gc
 unset bootstrap
 build_pkg gcc           gcc-c++
 build_pkg ncurses
 build_pkg readline
+build_pkg sqlite
 build_pkg expat
 build_pkg zlib
 build_pkg bzip2
@@ -170,22 +173,28 @@ build_pkg parted
 build_pkg binutils      binutils-libs
 build_pkg tcl
 build_pkg file
+build_pkg json-c
 build_pkg attr
 build_pkg acl
 build_pkg xz
 build_pkg pcre
+build_pkg libogg
+build_pkg libvorbis
+build_pkg flac
+build_pkg speexdsp
+build_pkg speex
+build_pkg libsndfile
 build_pkg gmp
 build_pkg mpfr
 build_pkg mpc
 build_pkg libffi
-build_pkg libatomic_ops
 build_pkg gc
 build_pkg libunistring
 build_pkg libtool       libltdl
 build_pkg guile
 build_pkg glib
 build_pkg liboop
-build_pkg libidn
+build_pkg libidn2
 build_pkg libtasn1
 build_pkg nettle
 build_pkg p11-kit
@@ -201,7 +210,6 @@ build_pkg flex
 build_pkg gdbm
 build_pkg icu4c
 build_pkg libpipeline
-build_pkg sqlite
 build_pkg python
 build_pkg libxml2
 build_pkg libcroco
@@ -220,12 +228,14 @@ build_pkg kbproto       ; build_pkg inputproto       ; build_pkg libX11
 build_pkg libxkbfile
 build_pkg libXext       ; build_pkg libXt
 build_pkg libXmu        ; build_pkg libXpm           ; build_pkg libXaw
-build_pkg fontsproto    ; build_pkg libfontenc       ; build_pkg libXfont
+build_pkg fontsproto    ; build_pkg libfontenc       ; build_pkg libXfont2
 build_pkg renderproto   ; build_pkg libXrender       ; build_pkg libXft
 build_pkg fixesproto    ; build_pkg libXfixes        ; build_pkg libXi
 build_pkg damageproto   ; build_pkg libXdamage
 build_pkg randrproto    ; build_pkg libXrandr
+build_pkg recordproto   ; build_pkg libXtst
 build_pkg xineramaproto ; build_pkg libXinerama
+build_pkg libxshmfence
 build_pkg glproto       ; build_pkg mesa
 build_pkg bigreqsproto  ; build_pkg presentproto     ; build_pkg resourceproto
 build_pkg videoproto    ; build_pkg xcmiscproto      ; build_pkg xf86dgaproto
@@ -249,6 +259,7 @@ build_pkg ImageMagick
 build_pkg libepoxy
 build_pkg atk
 build_pkg gtk+
+build_pkg pulseaudio
 build_pkg libevent
 build_pkg libvpx
 build_pkg nspr

@@ -1,5 +1,5 @@
-libXfixes               := libXfixes-5.0.2
-libXfixes_sha1          := 56ad5e27f2cb7dcc61af4bab813464415ff0b25b
+libXfixes               := libXfixes-5.0.3
+libXfixes_sha1          := ca86342d129c02435a9ee46e38fdf1a04d6b4b91
 libXfixes_url           := http://xorg.freedesktop.org/releases/individual/lib/$(libXfixes).tar.bz2
 
 $(configure-rule):

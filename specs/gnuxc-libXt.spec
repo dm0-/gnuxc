@@ -14,6 +14,8 @@ BuildRequires:  gnuxc-libSM-devel
 BuildRequires:  gnuxc-libX11-devel
 BuildRequires:  gnuxc-pkg-config
 
+BuildRequires:  perl
+
 %description
 %{summary}.
 

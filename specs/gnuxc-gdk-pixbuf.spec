@@ -4,13 +4,13 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-gdk-pixbuf
-Version:        2.34.0
+Version:        2.36.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 URL:            http://developer.gnome.org/gdk-pixbuf/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.34/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.36/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-jasper-devel
@@ -48,6 +48,9 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
+# Drop a bad prerequisite.
+sed -i -e 's, [^ ]*/loaders.cache$,,' thumbnailer/Makefile.in
+
 %build
 %gnuxc_configure \
     --disable-nls \
@@ -73,11 +76,15 @@ statically, which is highly discouraged.
 %gnuxc_make_install
 
 # There is no need to install binary programs in the sysroot.
-rm -f %{buildroot}%{gnuxc_bindir}/gdk-pixbuf-{csource,pixdata,query-loaders}
+rm -f %{buildroot}%{gnuxc_bindir}/gdk-pixbuf-{csource,pixdata} \
+    %{buildroot}%{gnuxc_bindir}/gdk-pixbuf-{query-loaders,thumbnailer}
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libgdk_pixbuf{,_xlib}-2.0.la \
  %{buildroot}%{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-*.la
+
+# This functionality should be used from the system package.
+rm -rf %{buildroot}%{gnuxc_datadir}/thumbnailers
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
@@ -102,9 +109,9 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xbm.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xpm.so
 %{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0
-%{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0.3400.0
+%{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0.3600.6
 %{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0
-%{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0.3400.0
+%{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0.3600.6
 %doc AUTHORS NEWS README
 %license COPYING
 

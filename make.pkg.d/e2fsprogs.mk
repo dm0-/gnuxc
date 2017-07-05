@@ -1,5 +1,5 @@
-e2fsprogs               := e2fsprogs-1.43.1
-e2fsprogs_sha1          := 26b75c27ba434e72ef630b160782a01b4d992b7a
+e2fsprogs               := e2fsprogs-1.43.4
+e2fsprogs_sha1          := f7cf8c82805103b53f89ad5da641e1085281d411
 e2fsprogs_url           := http://prdownloads.sourceforge.net/e2fsprogs/$(e2fsprogs).tar.gz
 
 $(configure-rule):

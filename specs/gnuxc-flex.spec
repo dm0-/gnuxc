@@ -1,16 +1,17 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-flex
-Version:        2.6.0
+Version:        2.6.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
-URL:            http://flex.sourceforge.net/
-Source0:        http://prdownloads.sourceforge.net/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
+URL:            http://github.com/westes/flex
+Source0:        http://github.com/westes/flex/releases/download/v%{version}/%{gnuxc_name}-%{version}.tar.lz
 
 BuildRequires:  gnuxc-glibc-devel
 
+BuildRequires:  lzip
 BuildRequires:  m4
 
 Requires:       gnuxc-gcc-c++
@@ -38,7 +39,9 @@ sed -i -e '/^SUBDIRS *=/,/^$/{/tests/d;}' Makefile.in
 %gnuxc_configure \
     --disable-nls \
     \
-    --disable-rpath
+    --disable-rpath \
+    --enable-libfl \
+    --enable-warnings
 %gnuxc_make %{?_smp_mflags} all
 
 %install
@@ -60,14 +63,10 @@ rm -rf \
 %files
 %{gnuxc_libdir}/libfl.so.2
 %{gnuxc_libdir}/libfl.so.2.0.0
-%{gnuxc_libdir}/libfl_pic.so.2
-%{gnuxc_libdir}/libfl_pic.so.2.0.0
-%doc AUTHORS ChangeLog NEWS ONEWS README THANKS TODO
+%doc AUTHORS ChangeLog NEWS ONEWS README.md THANKS
 %license COPYING
 
 %files devel
 %{gnuxc_includedir}/FlexLexer.h
 %{gnuxc_libdir}/libfl.a
 %{gnuxc_libdir}/libfl.so
-%{gnuxc_libdir}/libfl_pic.a
-%{gnuxc_libdir}/libfl_pic.so

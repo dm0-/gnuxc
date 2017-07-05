@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libwebp
-Version:        0.5.0
+Version:        0.6.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -60,7 +60,7 @@ statically, which is highly discouraged.
 %gnuxc_make_install
 
 # There is no need to install binary programs in the sysroot.
-rm -f %{buildroot}%{gnuxc_bindir}/{cwebp,dwebp,gif2webp,webpmux}
+rm -f %{buildroot}%{gnuxc_bindir}/{cwebp,dwebp,gif2webp,img2webp,webpmux}
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libwebp{,decoder,demux,extras,mux}.la
@@ -70,16 +70,14 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 
 %files
-%{gnuxc_libdir}/libwebp.so.6
-%{gnuxc_libdir}/libwebp.so.6.0.0
-%{gnuxc_libdir}/libwebpdecoder.so.2
-%{gnuxc_libdir}/libwebpdecoder.so.2.0.0
+%{gnuxc_libdir}/libwebp.so.7
+%{gnuxc_libdir}/libwebp.so.7.0.0
+%{gnuxc_libdir}/libwebpdecoder.so.3
+%{gnuxc_libdir}/libwebpdecoder.so.3.0.0
 %{gnuxc_libdir}/libwebpdemux.so.2
-%{gnuxc_libdir}/libwebpdemux.so.2.0.0
-%{gnuxc_libdir}/libwebpextras.so.0
-%{gnuxc_libdir}/libwebpextras.so.0.0.0
-%{gnuxc_libdir}/libwebpmux.so.2
-%{gnuxc_libdir}/libwebpmux.so.2.0.0
+%{gnuxc_libdir}/libwebpdemux.so.2.0.2
+%{gnuxc_libdir}/libwebpmux.so.3
+%{gnuxc_libdir}/libwebpmux.so.3.0.0
 %doc AUTHORS ChangeLog NEWS README README.mux
 %license COPYING PATENTS
 
@@ -88,17 +86,14 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/libwebp.so
 %{gnuxc_libdir}/libwebpdecoder.so
 %{gnuxc_libdir}/libwebpdemux.so
-%{gnuxc_libdir}/libwebpextras.so
 %{gnuxc_libdir}/libwebpmux.so
 %{gnuxc_libdir}/pkgconfig/libwebp.pc
 %{gnuxc_libdir}/pkgconfig/libwebpdecoder.pc
 %{gnuxc_libdir}/pkgconfig/libwebpdemux.pc
-%{gnuxc_libdir}/pkgconfig/libwebpextras.pc
 %{gnuxc_libdir}/pkgconfig/libwebpmux.pc
 
 %files static
 %{gnuxc_libdir}/libwebp.a
 %{gnuxc_libdir}/libwebpdecoder.a
 %{gnuxc_libdir}/libwebpdemux.a
-%{gnuxc_libdir}/libwebpextras.a
 %{gnuxc_libdir}/libwebpmux.a

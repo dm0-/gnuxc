@@ -1,5 +1,5 @@
-perl                    := perl-5.24.0
-perl_sha1               := 9d5424ac2debe979d1f7255fe0c818aff0b41b4c
+perl                    := perl-5.26.0
+perl_sha1               := 50f14ebdaa509ff5ef9b32ad388a1e6237c882dd
 perl_url                := http://www.cpan.org/src/5.0/$(perl).tar.xz
 
 export PERL = /usr/bin/perl

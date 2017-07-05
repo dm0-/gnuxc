@@ -1,38 +1,47 @@
-icecat                  := icecat-38.8.0
-icecat_sha1             := 8607b22381360fc3673803897b37fd2ba6afeeb6
-icecat_url              := http://ftpmirror.gnu.org/$(subst -,/,$(icecat))-gnu2/$(icecat)-gnu2.tar.bz2
+icecat                  := icecat-52.1.0
+icecat_sha1             := f4d2e5ed5846a675f7d96f2f9220b724bd9a5b58
+icecat_url              := http://ftpmirror.gnu.org/$(subst -,/,$(icecat))/$(icecat)-gnu1.tar.bz2
 
 $(prepare-rule):
 	$(call apply,hurd-port)
-# Our GTK+ 3 doesn't use this.
-	$(EDIT) 's/ atk-bridge-2.0//' $(builddir)/configure
 # Ensure system extension files can be read by all users when installed.
 	chmod -R go+r $(builddir)/extensions/gnu
 
 ifneq ($(host),$(build))
-$(configure-rule): configure := $(configure:--docdir%=)
-$(configure-rule): configure := $(configure:--localedir%=)
+$(configure-rule): configure := $(configure:--host%=)
+$(configure-rule): configure := $(configure:--build%=--host%)
+$(configure-rule): configure := $(configure:--bindir%=)
 $(configure-rule): configure := $(subst datarootdir,datadir,$(configure:--datadir%=))
+$(configure-rule): configure := $(configure:--docdir%=)
+$(configure-rule): configure := $(configure:--exec-prefix%=)
+$(configure-rule): configure := $(configure:--infodir%=)
+$(configure-rule): configure := $(configure:--libexecdir%=)
+$(configure-rule): configure := $(configure:--localedir%=)
+$(configure-rule): configure := $(configure:--localstatedir%=)
+$(configure-rule): configure := $(configure:--mandir%=)
+$(configure-rule): configure := $(configure:--oldincludedir%=)
+$(configure-rule): configure := $(configure:--program-prefix%=)
+$(configure-rule): configure := $(configure:--sbindir%=)
+$(configure-rule): configure := $(configure:--sharedstatedir%=)
+$(configure-rule): configure := $(configure:--sysconfdir%=)
 $(configure-rule): private override export PYTHON := python
+$(configure-rule): private override export PKG_CONFIG := $(PKG_CONFIG:--%=)
 $(configure-rule):
 	$(MKDIR) $(builddir)/hurd && cd $(builddir)/hurd && \
 	CROSS_COMPILE=1 HOST_AR=gcc-ar HOST_CC=gcc HOST_CXX=g++ HOST_RANLIB=gcc-ranlib ../$(configure) \
-		--disable-official-branding \
 		--disable-strip --disable-install-strip \
-		--disable-tree-freetype \
 		--enable-debug-symbols \
 		--enable-default-toolkit=cairo-gtk3 \
-		--enable-opus \
+		--enable-official-branding \
+		--enable-pulseaudio \
 		--enable-readline \
 		--enable-system-cairo \
 		--enable-system-extension-dirs \
-		--enable-system-ffi \
 		--enable-system-pixman \
 		--enable-system-sqlite \
-		--enable-webgl \
-		--enable-webm \
 		--with-pthreads \
 		--with-system-bz2 \
+		--with-system-ffi \
 		--with-system-icu \
 		--with-system-jpeg \
 		--with-system-libevent \
@@ -48,13 +57,11 @@ $(configure-rule):
 		--disable-shared-js \
 		--disable-system-hunspell \
 		--disable-updater \
-		--without-system-libxul \
 		\
 		--disable-callgrind \
 		--disable-jprof \
 		--disable-instruments \
 		--disable-profiling \
-		--disable-shark \
 		--disable-tests \
 		--disable-valgrind \
 		--disable-vtune \
@@ -63,15 +70,12 @@ $(configure-rule):
 		--disable-alsa \
 		--disable-dbus \
 		--disable-gamepad \
-		--disable-gstreamer \
-		--disable-media-plugins \
+		--disable-gconf \
 		--disable-necko-wifi \
 		--disable-omx-plugin \
 		--disable-printing \
-		--disable-pulseaudio \
 		--disable-raw \
 		--disable-skia \
-		--disable-wave \
 		--disable-webrtc \
 		--disable-webspeech \
 		--disable-wmf
@@ -79,7 +83,7 @@ $(configure-rule):
 $(build-rule):
 	$(MAKE) -C $(builddir)/hurd all
 
-$(install-rule): $$(call installed,gtk+ icu4c libevent libvpx nss)
+$(install-rule): $$(call installed,gtk+ icu4c libevent libvpx nss pulseaudio)
 	$(MAKE) -C $(builddir)/hurd install
 	$(INSTALL) -Dpm 644 $(call addon-file,local-settings.js) $(DESTDIR)/usr/lib/$(icecat)/defaults/pref/local-settings.js
 	$(INSTALL) -Dpm 644 $(call addon-file,mozilla.cfg) $(DESTDIR)/usr/lib/$(icecat)/mozilla.cfg
@@ -91,6 +95,8 @@ $(install-rule): $$(call installed,gtk+ icu4c libevent libvpx nss)
 	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/content/icon64.png $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/icecat.png
 	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/mozicon128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/icecat.png
 	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default256.png $(DESTDIR)/usr/share/icons/hicolor/256x256/apps/icecat.png
+# Save nearly a gigabyte of disk space from a duplicate library.
+	$(LINK) $(DESTDIR)/usr/lib/$(icecat)/libxul.so $(DESTDIR)/usr/lib/$(icecat:icecat-%=icecat-devel-%/sdk/lib)/libxul.so
 endif
 
 # Write inline files.

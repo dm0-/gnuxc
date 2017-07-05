@@ -4,13 +4,13 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/dri/
 
 Name:           gnuxc-mesa
-Version:        11.2.2
+Version:        17.1.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
 URL:            http://www.mesa3d.org/
-Source0:        ftp://ftp.freedesktop.org/pub/%{gnuxc_name}/%{version}/%{gnuxc_name}-%{version}.tar.xz
+Source0:        ftp://ftp.freedesktop.org/pub/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.xz
 
 Patch101:       %{gnuxc_name}-%{version}-hurd-port.patch
 
@@ -19,8 +19,8 @@ BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-glproto
 BuildRequires:  gnuxc-libXdamage-devel
 BuildRequires:  gnuxc-libXext-devel
-BuildRequires:  gnuxc-nettle-devel
 BuildRequires:  gnuxc-pkg-config
+BuildRequires:  gnuxc-zlib-devel
 
 BuildRequires:  bison
 BuildRequires:  flex
@@ -45,9 +45,8 @@ applications that use %{gnuxc_name} on GNU systems.
 %gnuxc_configure \
     --disable-silent-rules \
     --disable-texture-float \
-    --disable-xlib-glx \
     --enable-asm \
-    --enable-dri --enable-dri3 \
+    --enable-dri \
     --enable-egl \
     --enable-gallium-osmesa \
     --enable-gles1 \
@@ -58,15 +57,15 @@ applications that use %{gnuxc_name} on GNU systems.
     --enable-shared-glapi \
     --with-dri-drivers=swrast \
     --with-gallium-drivers=swrast \
-    --with-sha1=libnettle \
+    --with-platforms=x11 \
     \
     --enable-debug \
     \
+    --disable-dri3 \
     --disable-gbm \
     --disable-nine \
     --disable-selinux \
     --disable-static \
-    --disable-sysfs \
     --disable-xa \
     CPPFLAGS=-DPATH_MAX=4096
 %gnuxc_make %{?_smp_mflags} all
@@ -93,8 +92,8 @@ rm -f %{buildroot}%{gnuxc_libdir}/lib{EGL,GL,GLESv1_CM,GLESv2,OSMesa,glapi}.la
 %{gnuxc_libdir}/libglapi.so.0
 %{gnuxc_libdir}/libglapi.so.0.0.0
 %{gnuxc_sysconfdir}/drirc
-%doc docs/GL3.txt docs/libGL.txt docs/VERSIONS
-%license docs/COPYING
+%doc docs/libGL.txt docs/VERSIONS
+%license docs/license.html
 
 %files devel
 %{gnuxc_includedir}/EGL
@@ -110,7 +109,6 @@ rm -f %{buildroot}%{gnuxc_libdir}/lib{EGL,GL,GLESv1_CM,GLESv2,OSMesa,glapi}.la
 %{gnuxc_includedir}/GL/glxext.h
 %{gnuxc_includedir}/GL/internal/dri_interface.h
 %{gnuxc_includedir}/GL/osmesa.h
-%{gnuxc_includedir}/GL/wglext.h
 %{gnuxc_includedir}/KHR
 %{gnuxc_libdir}/libEGL.so
 %{gnuxc_libdir}/libGL.so

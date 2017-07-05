@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libepoxy
-Version:        1.3.1
+Version:        1.4.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT
 URL:            http://github.com/anholt/libepoxy
-Source0:        http://github.com/anholt/%{gnuxc_name}/releases/download/v%{version}/%{gnuxc_name}-%{version}.tar.bz2
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/1.4/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-mesa-devel
 BuildRequires:  gnuxc-pkg-config
@@ -41,6 +41,7 @@ statically, which is highly discouraged.
 %build
 %gnuxc_configure \
     --disable-silent-rules \
+    --enable-glx \
     --enable-static \
     \
     --disable-strict-compilation
@@ -56,7 +57,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/libepoxy.la
 %files
 %{gnuxc_libdir}/libepoxy.so.0
 %{gnuxc_libdir}/libepoxy.so.0.0.0
-%doc README.md
+%doc ChangeLog README.md
 %license COPYING
 
 %files devel

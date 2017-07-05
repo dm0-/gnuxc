@@ -1,6 +1,6 @@
-hurd                    := hurd-0.8-bc1701
+hurd                    := hurd-0.9-3c0094
 hurd_branch             := master
-hurd_sha1               := bc170131016969f1d79409337833046ae1f4501b
+hurd_sha1               := 3c0094e1244b649ca49482fadb850a2dfc2d4442
 hurd_url                := git://git.sv.gnu.org/hurd/hurd.git
 
 $(prepare-rule):
@@ -53,17 +53,22 @@ $(install-rule): $$(call installed,gnumach unifont)
 
 	$(INSTALL) -dm 0755 $(DESTDIR)/home
 	$(INSTALL) -dm 0755 $(DESTDIR)/run
-	$(INSTALL) -dm 0755 $(DESTDIR)/var/{cache,lib/misc,log,spool}
+	$(INSTALL) -dm 0755 $(DESTDIR)/var/{cache,crash,lib/misc,log,spool}
 	$(INSTALL) -dm 1777 $(DESTDIR){,/var}/tmp
 	$(SYMLINK) run/lock $(DESTDIR)/var/lock
 	$(SYMLINK) ../run $(DESTDIR)/var/run
+
+	$(INSTALL) -dm 0755 $(DESTDIR)/etc/rc{1,3,5}.d
+	$(SYMLINK) rc1.d $(DESTDIR)/etc/rc2.d
+	$(SYMLINK) rc3.d $(DESTDIR)/etc/rc4.d
+	$(call enable-service,swap,1 3 5)
 
 # Write inline files.
 $(call addon-file,console.scm runttys.scm swap.scm tmpfiles.conf tmpfs.sh): | $$(@D)
 	$(file >$@,$(contents))
 $(prepared): $(call addon-file,console.scm runttys.scm swap.scm tmpfiles.conf tmpfs.sh)
 
-# Provide a seed for /dev/urandom since Hurd's /dev/random doesn't use entropy.
+# Provide a seed for /dev/random.
 $(call addon-file,random-seed): | $$(@D)
 	dd if=/dev/urandom of=$@ bs=1 count=600
 $(built): $(call addon-file,random-seed)
@@ -95,7 +100,7 @@ override define contents
     (for-each
       (lambda (signum) (sigaction signum (lambda (sig) (kill pid sig))))
       (list SIGTERM SIGINT SIGHUP SIGTSTP))
-    (usleep 250000) ; Wait a quarter of a second for login programs to start.
+    (usleep 250000)  ; Wait a quarter of a second for login programs to start.
     pid))
 (make <service>
   #:docstring "The runttys service reads /etc/ttys and starts those programs."

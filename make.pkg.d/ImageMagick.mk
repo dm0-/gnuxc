@@ -1,5 +1,5 @@
-ImageMagick             := ImageMagick-7.0.2-2
-ImageMagick_sha1        := b407a9033dd2a017a421d90bef1cbb2a1e96621e
+ImageMagick             := ImageMagick-7.0.6-0
+ImageMagick_sha1        := e9c6009b2b4139893ff76a0aa58d3b8e07a9084a
 ImageMagick_url         := http://www.imagemagick.org/download/releases/$(ImageMagick).tar.xz
 
 $(configure-rule):

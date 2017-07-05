@@ -1,5 +1,65 @@
 # GNU OS Cross-Compiler - News
 
+## 2017-07-04
+
+This snapshot is from around the release of Fedora 26.
+
+The following details highlight some of the bigger features that were added to
+the build system and OS.
+
+
+### Rump kernel servers
+
+The rump kernel's user space components, including the `rump_server` command
+and driver libraries, are now installed.  They can be used to run NetBSD kernel
+instances as regular processes, gaining support for additional hardware and
+file systems, among other features.
+
+
+### Audio support
+
+A Shepherd service file `/etc/shepherd.d/rump.scm` is provided to start a rump
+kernel server with a default configuration that drives PCI AC97 sound cards.  A
+translator at `/dev/audio` is defined to convert Solaris audio device calls on
+Hurd to NetBSD's audio device calls on this rump server.
+
+PulseAudio is now installed, configured to use the Solaris backend.  Programs
+such as IceCat and XBoard use it to play sounds.  Its `paplay` command can play
+audio files directly.  EMMS has been added to use Emacs as a music player.
+
+Codecs for a variety of free audio formats are installed, notably WAV, RAW,
+FLAC, Speex, and Ogg/Vorbis.
+
+Transparent audio passthrough has been added to the HAL project, by enabling
+OSS emulation in the Linux-libre kernel and building QEMU's OSS audio driver.
+
+
+### Runlevel service set changes
+
+The set of enabled services is now defined by files present in `/etc/rcX.d`,
+where *X* is the runlevel number.  This allows drop-in configuration, so each
+package can enable itself on installation without editing files.
+
+New services are enabled by default: DHCP networking, a cron daemon, syslog,
+and a rump kernel server for audio support.
+
+
+### Central core dump storage
+
+The Hurd `crash` server has been updated to save all core files to `/var/crash`
+whenever a program crashes.  The file names in this directory contain the time
+when the crash occurred followed by the crashed PID.  This can be customized by
+changing the translator at `/servers/crash`.
+
+
+### New tmpfiles program
+
+The `tmpfiles` program has been replaced by the POSIX shell implementation from
+OpenRC, opentmpfiles.  It should support all functionality used by the previous
+version as well as better conform to the systemd specification.
+
+
+
 ## 2016-07-04
 
 This snapshot is from around the release of Fedora 24.

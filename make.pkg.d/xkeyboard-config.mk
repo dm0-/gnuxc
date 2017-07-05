@@ -1,5 +1,5 @@
-xkeyboard-config        := xkeyboard-config-2.18
-xkeyboard-config_sha1   := d41335ec37b363ddaf2f0dcb121436dfc627ced5
+xkeyboard-config        := xkeyboard-config-2.21
+xkeyboard-config_sha1   := ccdc53ad0ff6bbabda19ef30a47c2cbe014d42ec
 xkeyboard-config_url    := http://xorg.freedesktop.org/releases/individual/data/xkeyboard-config/$(xkeyboard-config).tar.bz2
 
 $(configure-rule):

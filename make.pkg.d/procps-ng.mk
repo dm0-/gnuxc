@@ -1,9 +1,6 @@
-procps-ng               := procps-ng-3.3.11
-procps-ng_sha1          := 1bdca65547df9ed019bd83649b0f8b8eaa017e25
+procps-ng               := procps-ng-3.3.12
+procps-ng_sha1          := 82c0745f150f1385ca01fe7d24f05f74e31c94c6
 procps-ng_url           := http://prdownloads.sourceforge.net/procps-ng/$(procps-ng).tar.xz
-
-$(prepare-rule):
-	$(call apply,drop-proc-self)
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -11,7 +8,6 @@ $(configure-rule):
 		--disable-rpath \
 		--disable-silent-rules \
 		--enable-{kill,pidof,skill} \
-		--enable-oomem \
 		--enable-modern-top \
 		--enable-numa \
 		--enable-sigwinch \
@@ -19,6 +15,7 @@ $(configure-rule):
 		--enable-watch8bit \
 		--enable-wide-{memory,percent} \
 		--with-ncurses \
+		CPPFLAGS=-DHOST_NAME_MAX=_POSIX_HOST_NAME_MAX \
 		\
 		--disable-libselinux \
 		--without-systemd
@@ -26,8 +23,6 @@ $(configure-rule):
 $(build-rule):
 # Avoid broken includes.
 	$(MAKE) -C $(builddir) slabtop.o top/top.o CPPFLAGS='$$(NCURSES_CFLAGS)'
-# Avoid non-portable code.
-	$(MAKE) -C $(builddir) lib/nsutils.o && $(TOUCH) $(builddir)/lib/test_process{.o,}
 # Build everything else normally.
 	$(MAKE) -C $(builddir) all
 

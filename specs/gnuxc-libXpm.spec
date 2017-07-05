@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXpm
-Version:        3.5.11
+Version:        3.5.12
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

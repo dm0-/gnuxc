@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-atk
-Version:        2.20.0
+Version:        2.24.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 URL:            http://developer.gnome.org/atk/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.20/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.24/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-pkg-config
@@ -61,7 +61,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < %{gnuxc_name}10.lang
 
 %files
 %{gnuxc_libdir}/libatk-1.0.so.0
-%{gnuxc_libdir}/libatk-1.0.so.0.22009.1
+%{gnuxc_libdir}/libatk-1.0.so.0.22409.1
 %doc AUTHORS ChangeLog MAINTAINERS NEWS README
 %license COPYING
 

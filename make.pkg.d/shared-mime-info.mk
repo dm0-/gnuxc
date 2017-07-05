@@ -1,5 +1,5 @@
-shared-mime-info        := shared-mime-info-1.6
-shared-mime-info_sha1   := 9860e569b4ac31423539f4cccfb5e54e2d28f8ab
+shared-mime-info        := shared-mime-info-1.8
+shared-mime-info_sha1   := d7ea6a4e7537065de5d0766148be804eb4729cb7
 shared-mime-info_url    := http://freedesktop.org/~hadess/$(shared-mime-info).tar.xz
 
 $(configure-rule):

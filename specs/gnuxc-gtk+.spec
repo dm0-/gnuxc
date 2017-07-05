@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gtk+
-Version:        3.20.6
+Version:        3.22.16
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 URL:            http://www.gtk.org/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/gtk+/3.20/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/3.22/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-atk-devel
 BuildRequires:  gnuxc-gdk-pixbuf-devel
@@ -18,7 +18,7 @@ BuildRequires:  gnuxc-libXrandr-devel
 BuildRequires:  gnuxc-pango-devel
 BuildRequires:  gnuxc-pkg-config
 
-BuildRequires:  gettext
+BuildRequires:  gettext-devel
 BuildRequires:  gobject-introspection-devel
 
 %description
@@ -113,9 +113,9 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 %{gnuxc_libdir}/libgailutil-3.so.0
 %{gnuxc_libdir}/libgailutil-3.so.0.0.0
 %{gnuxc_libdir}/libgdk-3.so.0
-%{gnuxc_libdir}/libgdk-3.so.0.2000.6
+%{gnuxc_libdir}/libgdk-3.so.0.2200.16
 %{gnuxc_libdir}/libgtk-3.so.0
-%{gnuxc_libdir}/libgtk-3.so.0.2000.6
+%{gnuxc_libdir}/libgtk-3.so.0.2200.16
 %doc AUTHORS ChangeLog* HACKING INSTALL NEWS* README
 %license COPYING
 

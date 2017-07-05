@@ -18,7 +18,7 @@ commands call these external programs for their various operations.
 
     sudo dnf -y install \
         gcc-c++ guile libtool make \
-        bzip2 gzip lzip tar xz-lzma-compat unzip \
+        bzip2 gzip lzip tar xz-lzma-compat \
         git wget
 
 **Abbreviate the virtual machine command.**  This alias starts `qemu` with a
@@ -28,7 +28,7 @@ KVM, if it's available and running on `x86`.
     alias qemu-hurd="$(test -e /dev/kvm -a "$(uname -m)" = x86_64 &&
         echo -n qemu-kvm -enable-kvm -cpu host || echo -n qemu-system-i386
         echo '' -no-quit -nodefaults \
-            -smp cores=1 -m 1G -vga qxl \
+            -smp cores=1 -m 1G -vga qxl -soundhw ac97 \
             -netdev user,id=eth0 -device pcnet,netdev=eth0 \
             -device virtio-rng-pci )"
     sed -i -e '/^alias qemu-hurd=/d' ~/.bashrc
@@ -39,17 +39,18 @@ separate from the source directory, use this alias to call the `make` system.
 This alias is also where you can append tuning settings such as `tune=pentium`
 or `exclude='hal icecat'` to omit projects.
 
-    alias gmake="make -f ${SOURCE_DIR:-$PWD}/GNUmakefile"
+    alias gmake="make -f ${SOURCE_DIR:-$PWD}/GNUmakefile -k"
     sed -i -e '/^alias gmake=/d' ~/.bashrc
     alias gmake >> ~/.bashrc
 
 **Optionally, configure account groups.**  If you build the bundled Linux-libre
 virtual machine and want its console to use consistent key bindings with the
 Hurd system, add yourself to the `tty` group.  You can also remove the need for
-`sudo` while working with loop devices by adding yourself to `disk`.  Remember
+`sudo` while working with loop devices by adding yourself to `disk`.  Including
+the `mock` group will allow Mock RPM builds without `sudo` as well.  Remember
 to log out after this for new groups to take effect.
 
-    sudo usermod -a -G disk,tty "$USER"
+    sudo usermod -a -G disk,mock,tty "$USER"
 
 **Optionally, clean up Git output for project development.**  The build system
 creates a directory in the project sources which will show up in Git commands.
@@ -83,13 +84,13 @@ scripts to maximize CPU core usage.  You'll want to make it run at least as
 many parallel jobs as you have processor cores in your machine.  This command
 will let the RPM build settings decide that number for you.
 
-    make -f "${SOURCE_DIR:-.}/setup-sysroot.scm" $(rpm -E %_smp_mflags)
+    make -f "${SOURCE_DIR:-.}/setup-sysroot.scm" $(rpm -E %_smp_mflags) -k
 
 If for some reason you don't have GNU Make version 4 or later built with Guile
 support, you can run this equivalent command instead.
 
     guile --no-auto-compile "${SOURCE_DIR:-.}/setup-sysroot.scm" |
-    make -f- $(rpm -E %_smp_mflags)
+    make -f- $(rpm -E %_smp_mflags) -k
 
 This command will take a long time to complete (potentially several hours on
 slower machines), but you can continue following this document while the
@@ -160,11 +161,12 @@ Hurd won't be able to understand.
 you built the sysroot packages on the same machine.
 
     sudo dnf -y install \
-        bc bison ed flex{,-devel} gperf groff intltool nasm texinfo yasm \
+        autoconf213 bc bison ed flex gperf groff intltool nasm texinfo yasm \
         {dejavu-sans,gnu-free-{mono,sans,serif},unifont}-fonts \
         ImageMagick libicns-utils xorg-x11-xkb-utils \
         help2man perl-ExtUtils-MakeMaker perl-Locale-gettext perl-podlators \
-        {freetype,gdk-pixbuf2,gobject-introspection,guile,xorg-x11-proto}-devel
+        {flex,freetype,gdk-pixbuf2,gobject-introspection,guile{,22}}-devel \
+        {libffi,libtool-ltdl,libunistring,xorg-x11-proto}-devel
 
 The `hal` project requires a few native static libraries.
 

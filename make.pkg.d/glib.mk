@@ -1,6 +1,6 @@
-glib                    := glib-2.48.1
-glib_sha1               := d59b6daf51dff21c6327734a99f1fb6c5328bcf9
-glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.48/$(glib).tar.xz
+glib                    := glib-2.52.3
+glib_sha1               := 9e31cce788d018894e6e0b1350263bc11b41cff8
+glib_url                := http://ftp.gnome.org/pub/gnome/sources/glib/2.52/$(glib).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

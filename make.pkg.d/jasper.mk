@@ -1,16 +1,12 @@
-jasper                  := jasper-1.900.1
-jasper_sha1             := 9c5735f773922e580bf98c7c7dfda9bbed4c5191
-jasper_url              := http://www.ece.uvic.ca/~frodo/jasper/software/$(jasper).zip
-
-$(prepare-rule):
-	$(RM) $(builddir)/configure
-	chmod -R go-w $(builddir)
+jasper                  := jasper-1.900.31
+jasper_branch           := $(jasper:jasper-%=jasper-version-%)
+jasper_sha1             := a5cbbfa763f8b66a46f8f964afe4beb117a1d8a0
+jasper_url              := http://github.com/mdadams/jasper/archive/$(jasper_branch:jasper-%=%).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--enable-debug \
 		--enable-libjpeg \
-		--enable-shared \
 		--with-x \
 		EXTRACFLAGS='$(CFLAGS)' \
 		\

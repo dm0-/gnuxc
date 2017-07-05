@@ -1,5 +1,5 @@
-gtk2                    := gtk+-2.24.30
-gtk2_sha1               := aa5bc6dca583cf2bff137606dc2014f6ea559da7
+gtk2                    := gtk+-2.24.31
+gtk2_sha1               := c3d828135994a52cc9428a60175bd2b294656611
 gtk2_url                := http://ftp.gnome.org/pub/gnome/sources/gtk+/2.24/$(gtk2).tar.xz
 
 $(configure-rule):
@@ -33,3 +33,18 @@ $(build-rule):
 
 $(install-rule): $$(call installed,atk gdk-pixbuf libXdamage libXi libXinerama libXrandr pango)
 	$(MAKE) -C $(builddir) install
+	$(INSTALL) -Dpm 644 $(call addon-file,gtkrc) $(DESTDIR)/etc/gtk-2.0/gtkrc
+
+# Write inline files.
+$(call addon-file,gtkrc): | $$(@D)
+	$(file >$@,$(contents))
+$(prepared): $(call addon-file,gtkrc)
+
+
+# Provide a default configuration to use the correct key bindings, etc.
+override define contents
+gtk-button-images = 1
+gtk-key-theme-name = "Emacs"
+gtk-menu-images = 1
+endef
+$(call addon-file,gtkrc): private override contents := $(value contents)

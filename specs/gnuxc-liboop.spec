@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-liboop
-Version:        1.0
+Version:        1.0.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 URL:            http://www.lysator.liu.se/liboop/
-Source0:        http://download.ofb.net/liboop/%{gnuxc_name}-%{version}.tar.bz2
+Source0:        http://ftp.lysator.liu.se/pub/liboop/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-pkg-config
@@ -62,7 +62,7 @@ rm -f %{buildroot}%{gnuxc_libdir}/liboop{,-glib2,-rl,-tcl}.la
 
 %files
 %{gnuxc_libdir}/liboop.so.4
-%{gnuxc_libdir}/liboop.so.4.0.1
+%{gnuxc_libdir}/liboop.so.4.1.0
 %{gnuxc_libdir}/liboop-glib2.so.0
 %{gnuxc_libdir}/liboop-glib2.so.0.0.0
 %{gnuxc_libdir}/liboop-rl.so.0

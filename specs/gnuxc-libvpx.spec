@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libvpx
-Version:        1.5.0
+Version:        1.6.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -60,20 +60,19 @@ CROSS='%{gnuxc_host}-' ./configure \
     --enable-webm-io \
     \
     --disable-libyuv \
-    --disable-unit-tests \
-    --disable-vp10
+    --disable-unit-tests
 %gnuxc_make %{?_smp_mflags} all V=1
 
 %install
 %gnuxc_make_install V=1
 
 # This link is overkill.
-rm -f %{buildroot}%{gnuxc_libdir}/libvpx.so.3.0
+rm -f %{buildroot}%{gnuxc_libdir}/libvpx.so.4.1
 
 
 %files
-%{gnuxc_libdir}/libvpx.so.3
-%{gnuxc_libdir}/libvpx.so.3.0.0
+%{gnuxc_libdir}/libvpx.so.4
+%{gnuxc_libdir}/libvpx.so.4.1.0
 %doc AUTHORS CHANGELOG README
 %license LICENSE PATENTS
 

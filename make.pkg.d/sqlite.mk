@@ -1,7 +1,7 @@
-sqlite                  := sqlite-3.13.0
-sqlite_branch           := sqlite-autoconf-3130000
-sqlite_sha1             := f6f76e310389e3f510b23826f805850449ae8653
-sqlite_url              := http://www.sqlite.org/2016/$(sqlite_branch).tar.gz
+sqlite                  := sqlite-3.19.3
+sqlite_branch           := sqlite-autoconf-3190300
+sqlite_sha1             := 58f2cabffb3ff4761a3ac7f834d9db7b46307c1f
+sqlite_url              := http://www.sqlite.org/2017/$(sqlite_branch).tar.gz
 
 $(call configure-rule,tea): $(builddir)/configure
 	cd $(builddir)/tea && ./$(configure) \
@@ -28,7 +28,7 @@ $(configure-rule):
 		--enable-json1 \
 		--enable-readline \
 		--enable-threadsafe \
-		CPPFLAGS='-DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_SECURE_DELETE' \
+		CPPFLAGS='-DSQLITE_ENABLE_DBSTAT_VTAB -DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_SECURE_DELETE' \
 		ac_cv_search_tgetent=-ltinfow
 
 $(build-rule):

@@ -1,5 +1,5 @@
-libunistring            := libunistring-0.9.6
-libunistring_sha1       := d34dd5371c4b34863a880f2206e2d00532effdd6
+libunistring            := libunistring-0.9.7
+libunistring_sha1       := 7d92687a50fea7702e8052486dfa25ffc361c9f3
 libunistring_url        := http://ftpmirror.gnu.org/libunistring/$(libunistring).tar.xz
 
 $(configure-rule):

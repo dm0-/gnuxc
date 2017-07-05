@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpng
-Version:        1.6.23
+Version:        1.6.30
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -67,7 +67,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpng16.so.16
-%{gnuxc_libdir}/libpng16.so.16.23.0
+%{gnuxc_libdir}/libpng16.so.16.30.0
 %doc ANNOUNCE CHANGES INSTALL README TODO
 %license LICENSE
 

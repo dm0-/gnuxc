@@ -1,0 +1,52 @@
+The function pthread_setname_np is only provided by nptl, so restrict it to
+Linux.  Also, use the same page-related functions as Linux.
+
+--- src/gallium/auxiliary/os/os_misc.c
++++ src/gallium/auxiliary/os/os_misc.c
+@@ -47,7 +47,7 @@
+ #endif
+ 
+ 
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SOLARIS)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_HURD)
+ #  include <unistd.h>
+ #elif defined(PIPE_OS_APPLE) || defined(PIPE_OS_BSD)
+ #  include <sys/sysctl.h>
+@@ -56,7 +56,7 @@
+ #elif defined(PIPE_OS_WINDOWS)
+ #  include <windows.h>
+ #else
+-#error unexpected platform in os_sysinfo.c
++#error unexpected platform in os_misc.c
+ #endif
+ 
+ 
+@@ -124,7 +124,7 @@
+ bool
+ os_get_total_physical_memory(uint64_t *size)
+ {
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SOLARIS)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_HURD)
+    const long phys_pages = sysconf(_SC_PHYS_PAGES);
+    const long page_size = sysconf(_SC_PAGE_SIZE);
+ 
+@@ -170,7 +170,7 @@
+    *size = status.ullTotalPhys;
+    return (ret == TRUE);
+ #else
+-#error unexpected platform in os_sysinfo.c
++#error unexpected platform in os_misc.c
+    return false;
+ #endif
+ }
+--- src/util/u_thread.h
++++ src/util/u_thread.h
+@@ -61,7 +61,7 @@
+ {
+ #if defined(HAVE_PTHREAD)
+ #  if defined(__GNU_LIBRARY__) && defined(__GLIBC__) && defined(__GLIBC_MINOR__) && \
+-      (__GLIBC__ >= 3 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 12))
++      (__GLIBC__ >= 3 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 12)) && defined(__linux__)
+    pthread_setname_np(pthread_self(), name);
+ #  endif
+ #endif

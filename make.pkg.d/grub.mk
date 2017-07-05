@@ -1,6 +1,6 @@
-grub                    := grub-2.02~beta3
-grub_sha1               := 14a1f9239a9c974957e835dc706fc6a1e4819c83
-grub_url                := http://alpha.gnu.org/gnu/grub/$(grub).tar.xz
+grub                    := grub-2.02
+grub_sha1               := 3d7eb6eaab28b88cb969ba9ab24af959f4d1b178
+grub_url                := http://ftpmirror.gnu.org/grub/$(grub).tar.xz
 
 ifeq ($(host),$(build))
 export MKFONT := grub-mkfont --force-autohint
@@ -10,6 +10,7 @@ endif
 
 $(call configure-rule,bios efi): CFLAGS := $(CFLAGS:-fstack-protector%=)
 $(call configure-rule,bios efi): private override configuration := --libdir=/usr/lib \
+	SYSROOT='$(sysroot)' \
 	\
 	--disable-rpath \
 	--disable-werror \

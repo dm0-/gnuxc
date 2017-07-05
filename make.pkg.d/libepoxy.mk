@@ -1,10 +1,11 @@
-libepoxy                := libepoxy-1.3.1
-libepoxy_sha1           := 878599a610403d4d8732e7e61e382dfca8076ab6
-libepoxy_url            := http://github.com/anholt/$(subst -,/releases/download/v,$(libepoxy))/$(libepoxy).tar.bz2
+libepoxy                := libepoxy-1.4.3
+libepoxy_sha1           := e29ebdba0d1d4601431639331d2e6f39f180972d
+libepoxy_url            := http://ftp.gnome.org/pub/gnome/sources/libepoxy/1.4/$(libepoxy).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-silent-rules \
+		--enable-glx \
 		--enable-static \
 		\
 		--disable-strict-compilation

@@ -9,7 +9,7 @@
 %endif
 
 Name:           gnuxc-binutils
-Version:        2.26.1
+Version:        2.28
 Release:        1.%{?bootstrap:0}%{!?bootstrap:1}%{?dist}
 Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 

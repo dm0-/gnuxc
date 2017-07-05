@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gnutls
-Version:        3.5.1
+Version:        3.5.14
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -10,8 +10,9 @@ URL:            http://www.gnutls.org/
 Source0:        ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-guile-devel
-BuildRequires:  gnuxc-libidn-devel
+BuildRequires:  gnuxc-libidn2-devel
 BuildRequires:  gnuxc-libtasn1-devel
+BuildRequires:  gnuxc-libunistring-devel
 BuildRequires:  gnuxc-nettle-devel
 BuildRequires:  gnuxc-p11-kit-devel
 BuildRequires:  gnuxc-pkg-config
@@ -43,8 +44,9 @@ statically, which is highly discouraged.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
-sed -i -e 's/GUILD=.*/GUILD=/' configure # Cross-compiling wants to call libs.
-sed -i -e 's/gnutls_\(global\|errors\)/\1/' extra/openssl_compat.c
+
+# Cross-compiling wants to call libs.
+sed -i -e 's/GUILD=.*/GUILD=/' configure
 
 %build
 %gnuxc_configure \
@@ -61,9 +63,11 @@ sed -i -e 's/gnutls_\(global\|errors\)/\1/' extra/openssl_compat.c
     --enable-static \
     --with-default-trust-store-file=%{gnuxc_sysconfdir}/ssl/ca-bundle.pem \
     --with-idn \
+    --with-libidn2 \
     --with-p11-kit \
     --with-zlib \
     --without-included-libtasn1 \
+    --without-included-unistring \
     --without-nettle-mini \
     GUILE_CONFIG=%{_bindir}/%{gnuxc_target}-guile-config \
     \
@@ -86,7 +90,7 @@ rm -f \
 %{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so.0
 %{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so.0.0.0
 %{gnuxc_libdir}/libgnutls.so.30
-%{gnuxc_libdir}/libgnutls.so.30.8.0
+%{gnuxc_libdir}/libgnutls.so.30.14.6
 %{gnuxc_libdir}/libgnutls-openssl.so.27
 %{gnuxc_libdir}/libgnutls-openssl.so.27.0.2
 %{gnuxc_libdir}/libgnutlsxx.so.28

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-tcl
-Version:        8.6.5
+Version:        8.6.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

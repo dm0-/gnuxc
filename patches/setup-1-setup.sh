@@ -11,14 +11,15 @@ settrans -acfgp /servers/socket/1 /hurd/pflocal
 # Create useful devices.
 (cd /dev && MAKEDEV -k com0 hd{0..3}{,s{1..4}} ptyp std tty{1..6} vcs)
 
+# Set up a Solaris audio device for PulseAudio to use.
+settrans -cfgp /dev/audio /hurd/audio --url=unix:///run/rump.sock
+
 # Make the Hurd console store a lot more scrollback lines.
 settrans -acfgp /dev/vcs /hurd/console --lines=10000
 
 # Write core files on crashes for debugging.
-settrans -acfgp /servers/crash /hurd/crash --dump-core
-
-# Use only pseudo-random devices for now, until there is entropy gathering.
-ln -ns urandom /dev/random
+settrans -acfgp /servers/crash \
+    /hurd/crash --core-file --core-file-name='/var/crash/core-%t-%p'
 
 # Prepare default input devices for running X.
 ln -st /dev cons/kbd cons/mouse
@@ -52,6 +53,7 @@ LANG=en_US.UTF-8 grub-mkconfig -o /boot/grub/grub.cfg
 # Initialize some caches.
 gdk-pixbuf-query-loaders > \
     $(pkg-config --variable=gdk_pixbuf_binarydir gdk-pixbuf-2.0)/loaders.cache
+glib-compile-schemas /usr/share/glib-2.0/schemas
 update-mime-database /usr/share/mime
 
 # Set up permissions for shared game state files.

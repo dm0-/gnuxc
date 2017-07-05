@@ -3,10 +3,10 @@
 %global _docdir_fmt gnuxc/mig
 
 Name:           gnuxc-mig
-Version:        1.7
-%global commit  ae832c599fc25e9557200205a168989bae375489
+Version:        1.8
+%global commit  b8874015bd1d09b1b72293c0b5be422fd375e04b
 %global snap    %(c=%{commit} ; echo -n ${c:0:6})
-Release:        1.19700101git%{snap}%{?dist}
+Release:        1.git%{snap}%{?dist}
 Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2

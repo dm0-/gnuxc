@@ -1,5 +1,5 @@
-libXrender              := libXrender-0.9.9
-libXrender_sha1         := 31bf63dfb4fcb82a6db73abe98df87cb50c17176
+libXrender              := libXrender-0.9.10
+libXrender_sha1         := d55106de9260c2377c19d271d9b677744a6c7e81
 libXrender_url          := http://xorg.freedesktop.org/releases/individual/lib/$(libXrender).tar.bz2
 
 $(configure-rule):

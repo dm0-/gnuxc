@@ -29,6 +29,7 @@ $(install-rule): $$(call installed,guile)
 	$(INSTALL) -Dpm 644 $(call addon-file,mcron.scm) $(DESTDIR)/etc/shepherd.d/mcron.scm
 	$(INSTALL) -Dm 644 /dev/null $(DESTDIR)/etc/crontab
 	$(INSTALL) -dm 755 $(DESTDIR)/etc/cron.d
+	$(call enable-service,mcron,3 5)
 
 # Write inline files.
 $(call addon-file,mcron.scm): | $$(@D)

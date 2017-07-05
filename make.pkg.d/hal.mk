@@ -1,25 +1,25 @@
 hal                     := hal-1
 
-hal-busybox             := busybox-1.25.0
-hal-busybox_sha1        := c6c759bf4c4f24b37f52e136e2b15d921a8d44cb
+hal-busybox             := busybox-1.27.0
+hal-busybox_sha1        := 02a0ff43e46bdcd4f040f1ef7897b3fb53c43ca6
 hal-busybox_url         := http://www.busybox.net/downloads/$(hal-busybox).tar.bz2
 
-hal-linux-libre         := linux-libre-4.6.3
+hal-linux-libre         := linux-libre-4.12
 hal-linux-libre_branch  := $(hal-linux-libre:linux-libre-%=linux-%)
-hal-linux-libre_sha1    := 8c83ef9309a51750892b35bd78c4891f68320b06
-hal-linux-libre_url     := http://linux-libre.fsfla.org/pub/linux-libre/releases/$(hal-linux-libre:linux-libre-%=%)-gnu/$(hal-linux-libre)-gnu.tar.xz
+hal-linux-libre_sha1    := ed8bcd44aec626e3eb56ae7ecf9b6de10e1f1d52
+hal-linux-libre_url     := http://ftpmirror.gnu.org/linux-libre/4.x/$(hal-linux-libre:linux-libre-%=%)-gnu/$(hal-linux-libre)-gnu.tar.lz
 
-hal-qemu                := qemu-2.6.0
-hal-qemu_sha1           := d558a11d681dd095b1d7cb03c5b723c9d3045020
-hal-qemu_url            := http://qemu-project.org/download/$(hal-qemu).tar.bz2
+hal-qemu                := qemu-2.9.0
+hal-qemu_sha1           := 5cc63c6cababaaa7d0685e8b32bacf5022873ebc
+hal-qemu_url            := http://download.qemu.org/$(hal-qemu).tar.xz
 
-hal-wpa_supplicant      := wpa_supplicant-2.5
-hal-wpa_supplicant_sha1 := f82281c719d2536ec4783d9442c42ff956aa39ed
+hal-wpa_supplicant      := wpa_supplicant-2.6
+hal-wpa_supplicant_sha1 := 8189704e257c3e9f8300c49dc6e49a381b1d6299
 hal-wpa_supplicant_url  := http://w1.fi/releases/$(hal-wpa_supplicant).tar.gz
 
 # Download all the sub-project sources.
 $(eval $(call verify-download,$(hal-busybox_url),$(hal-busybox_sha1)))
-$(eval $(call verify-download,$(hal-linux-libre_url),$(hal-linux-libre_sha1),$(hal-linux-libre).tar.xz))
+$(eval $(call verify-download,$(hal-linux-libre_url),$(hal-linux-libre_sha1),$(hal-linux-libre).tar.lz))
 $(eval $(call verify-download,$(hal-qemu_url),$(hal-qemu_sha1)))
 $(eval $(call verify-download,$(hal-wpa_supplicant_url),$(hal-wpa_supplicant_sha1)))
 
@@ -103,7 +103,7 @@ $(prepared): $(call addon-file,init.sh)
 
 
 $(builddir)/$(hal-busybox): | $(call addon-file,$(hal-busybox).tar.bz2)
-	$(TAR) -C $(builddir) -xjf $|
+	$(TAR) -C $(builddir) -xf $|
 
 $(call prepare-rule,busybox): $(call addon-file,busybox.config ctrl_is_down.c) | $(builddir)/$(hal-busybox)
 	$(MAKE) -C $(builddir)/$(hal-busybox) mrproper V=1
@@ -120,12 +120,12 @@ $(call configure-rule,busybox): $(call prepared,busybox)
 
 $(call build-rule,busybox): $(call configured,busybox)
 	$(MAKE) -C $(builddir)/$(hal-busybox) all V=1 \
-		CFLAGS_{dump,fflush_stdout_and_exit,wfopen,xfuncs_printf,ash,mount}.o=-Wno-error=format-security
+		CFLAGS_{dump,fflush_stdout_and_exit,wfopen,xfuncs_printf,ash,mount,decompress_gunzip}.o=-Wno-error=format-security
 
 
 
-$(builddir)/$(hal-linux-libre): | $(call addon-file,$(hal-linux-libre).tar.xz)
-	$(TAR) --transform='s,^$(hal-linux-libre_branch),$@,' -Jxf $|
+$(builddir)/$(hal-linux-libre): | $(call addon-file,$(hal-linux-libre).tar.lz)
+	$(TAR) --transform='s,^$(hal-linux-libre_branch),$@,' -xf $|
 
 $(call prepare-rule,linux-libre): $(call addon-file,linux.config) | $(builddir)/$(hal-linux-libre)
 	$(MAKE) -C $(builddir)/$(hal-linux-libre) mrproper V=1
@@ -144,12 +144,14 @@ $(call addon-file,linux.config): $(patchdir)/$(hal)-linux.config | $$(@D)
 
 
 
-$(builddir)/$(hal-qemu): | $(call addon-file,$(hal-qemu).tar.bz2)
-	$(TAR) -C $(builddir) -xjf $|
+$(builddir)/$(hal-qemu): | $(call addon-file,$(hal-qemu).tar.xz)
+	$(TAR) -C $(builddir) -xf $|
 
 $(call prepare-rule,qemu): | $(builddir)/$(hal-qemu)
 	$(PATCH) -d $(builddir)/$(hal-qemu) < $(patchdir)/$(hal-qemu)-fbdev.patch
 	$(AUTOGEN) $(builddir)/$(hal-qemu)/pixman
+# Work around the ncurses pkgconfig file.
+	$(EDIT) 's/ --libs ncursesw [^:]*/& -ldl/' $(builddir)/$(hal-qemu)/configure
 
 $(call configure-rule,qemu): $(call prepared,qemu)
 	cd $(builddir)/$(hal-qemu) && $(native) ./configure \
@@ -158,12 +160,12 @@ $(call configure-rule,qemu): $(call prepared,qemu)
 		--enable-kvm \
 		--enable-system --target-list=x86_64-softmmu \
 		--static \
-		--audio-drv-list= \
+		--audio-drv-list=oss \
 		--disable-{gtk,sdl,spice,vnc} \
 		--disable-{blobs,docs,guest-agent,user,werror,xen} \
 		--disable-{glusterfs,libssh2,virtfs} \
 		--disable-{gcrypt,gnutls,nettle} \
-		--disable-{attr,bluez,brlapi,cap-ng,curl,linux-aio,uuid} \
+		--disable-{attr,bluez,brlapi,cap-ng,curl,linux-aio} \
 		--disable-{libiscsi,libusb,smartcard,usb-redir} \
 		--disable-{fdt,rdma,seccomp,vde,vhost-net,vhost-scsi} \
 		\
@@ -182,7 +184,7 @@ $(call build-rule,qemu): $(call configured,qemu)
 
 
 $(builddir)/$(hal-wpa_supplicant): | $(call addon-file,$(hal-wpa_supplicant).tar.gz)
-	$(TAR) -C $(builddir) -xzf $|
+	$(TAR) -C $(builddir) -xf $|
 
 $(call prepare-rule,wpa_supplicant): $(call addon-file,wpa_supplicant.config) | $(builddir)/$(hal-wpa_supplicant)
 	$(COPY) $< $(builddir)/$(hal-wpa_supplicant)/wpa_supplicant/.config
@@ -204,7 +206,8 @@ CONFIG_FEATURE_FANCY_ECHO=y
 CONFIG_SLEEP=y
 CONFIG_CTRL_IS_DOWN=y
 CONFIG_LOADKMAP=y
-CONFIG_HALT=y
+CONFIG_POWEROFF=y
+CONFIG_REBOOT=y
 CONFIG_FINDFS=y
 CONFIG_MOUNT=y
 CONFIG_VOLUMEID=y
@@ -216,11 +219,11 @@ CONFIG_UDHCPC=y
 CONFIG_UDHCPC_DEFAULT_SCRIPT="/usr/share/udhcpc/default.script"
 CONFIG_ASH=y
 CONFIG_ASH_BASH_COMPAT=y
-CONFIG_ASH_BUILTIN_ECHO=y
-CONFIG_ASH_BUILTIN_TEST=y
+CONFIG_ASH_ECHO=y
+CONFIG_ASH_TEST=y
 CONFIG_ASH_OPTIMIZE_FOR_SIZE=y
-CONFIG_FEATURE_SH_IS_NONE=y
-CONFIG_SH_MATH_SUPPORT=y
+CONFIG_FEATURE_SH_MATH=y
+CONFIG_SH_IS_NONE=y
 endef
 $(call addon-file,busybox.config): private override contents := $(contents)
 
@@ -231,7 +234,6 @@ LDFLAGS+=-static
 # Use the wireless extensions driver to avoid needing libnl.
 CONFIG_DRIVER_WEXT=y
 # Don't require an external TLS library.
-CONFIG_CRYPTO=internal
 CONFIG_INTERNAL_LIBTOMMATH=y
 CONFIG_INTERNAL_LIBTOMMATH_FAST=y
 CONFIG_TLS=internal

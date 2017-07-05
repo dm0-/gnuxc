@@ -1,5 +1,5 @@
-man-db                  := man-db-2.7.5
-man-db_sha1             := fd1314f616e055ddde0c02db219f5c9426a0ee5f
+man-db                  := man-db-2.7.6.1
+man-db_sha1             := 919dcb34d604faac9b18a38ead07f457d0dab501
 man-db_url              := http://download.savannah.gnu.org/releases/man-db/$(man-db).tar.xz
 
 $(prepare-rule):

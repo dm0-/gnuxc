@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-spice-protocol
-Version:        0.12.11
+Version:        0.12.13
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

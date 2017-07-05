@@ -1,8 +1,8 @@
-git                     := git-2.9.0
-git_sha1                := 7ac21a1ff58f57e7d40452a4aa8ec6c0d71ec709
+git                     := git-2.13.2
+git_sha1                := 2eb5d02274b63be803afec791143deaa4b8ad45a
 git_url                 := http://www.kernel.org/pub/software/scm/git/$(git).tar.xz
 
-$(eval $(call verify-download,$(git_url:$(git).tar.xz=$(git:git-%=git-manpages-%).tar.xz),3add521632a9e9f85d0d2f2e70fdee30039f1ab9,manpages.tar.xz))
+$(eval $(call verify-download,$(git_url:$(git).tar.xz=$(git:git-%=git-manpages-%).tar.xz),69eb1b35df0c1ce71bf5e6fc39592970693491bd,manpages.tar.xz))
 
 $(build-rule) $(install-rule): private override configuration = V=1 \
 	prefix=/usr \
@@ -29,7 +29,7 @@ $(build-rule) $(install-rule): private override configuration = V=1 \
 	NO_PERL_MAKEMAKER=YesPlease \
 	SANE_TEXT_GREP=-a \
 	USE_LIBPCRE=YesPlease \
-	$(if $(filter-out $(host),$(build)),UNAME_M=i686-AT386 UNAME_O=GNU UNAME_R=0.7 UNAME_S=GNU UNAME_V='GNU-Mach 1.6/Hurd-0.7')
+	$(if $(filter-out $(host),$(build)),UNAME_M=i686-AT386 UNAME_O=GNU UNAME_R=0.9 UNAME_S=GNU UNAME_V='GNU-Mach 1.8/Hurd-0.9')
 
 $(prepare-rule):
 # Bypass asciidoc requirement for man pages.
@@ -71,7 +71,7 @@ override define contents
 (define git-daemon-command
   '("/usr/bin/git" "daemon"
     "--base-path=/var/lib/git"
-;   "--export-all" ; Don't require git-daemon-export-ok files in repos.
+;   "--export-all"  ; Don't require git-daemon-export-ok files in repos.
     "--pid-file=/run/git-daemon.pid"
     "--reuseaddr"
     "--syslog"

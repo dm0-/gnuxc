@@ -1,5 +1,5 @@
-dhcp                    := dhcp-4.3.4
-dhcp_sha1               := eedd50d32c9ceb8b9feb414c84322a09d26f214b
+dhcp                    := dhcp-4.3.5
+dhcp_sha1               := 6140a0cf6b3385057d76c14278294284ba19e5a5
 dhcp_url                := http://ftp.isc.org/isc/dhcp/$(dhcp:dhcp-%=%)/$(dhcp).tar.gz
 
 $(prepare-rule):
@@ -26,14 +26,14 @@ $(configure-rule):
 	cd $(builddir)/bind/bind-[0-9]* && BUILD_CC=gcc CFLAGS="$$CFLAGS -D_GNU_SOURCE" ./$(configure) --disable-kqueue --disable-epoll --disable-devpoll --without-openssl --without-libxml2 --enable-exportlib --enable-threads=no --with-export-includedir=$(CURDIR)/$(builddir)/bind/include --with-export-libdir=$(CURDIR)/$(builddir)/bind/lib --with-gssapi=no --with-randomdev=/dev/random
 
 $(build-rule):
-	$(MAKE) -C $(builddir) all \
-		BUILD_CC=gcc # The bundled libbind needs this for cross-compiling.
+	$(MAKE) -C $(builddir) all
 
 $(install-rule): $$(call installed,setup)
 	$(MAKE) -C $(builddir) install
 	$(INSTALL) -Dpm 644 $(call addon-file,dhclient.scm) $(DESTDIR)/etc/shepherd.d/dhclient.scm
 	$(INSTALL) -Dpm 755 $(call addon-file,dhclient-hurd.sh) $(DESTDIR)/usr/sbin/dhclient-script
 	$(INSTALL) -Dpm 644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/dhclient.conf
+	$(call enable-service,dhclient,3 5)
 
 # Write inline files.
 $(call addon-file,dhclient.scm dhclient-hurd.sh tmpfiles.conf): | $$(@D)

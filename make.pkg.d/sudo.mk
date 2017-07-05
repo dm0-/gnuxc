@@ -1,5 +1,5 @@
-sudo                    := sudo-1.8.17p1
-sudo_sha1               := e9bb729513cd15e99def42019c35917bc9a73536
+sudo                    := sudo-1.8.20p2
+sudo_sha1               := 7aa187518735312a82c5fcb3d253ed700cb8c68e
 sudo_url                := http://www.sudo.ws/sudo/dist/$(sudo).tar.gz
 
 $(prepare-rule):
@@ -35,7 +35,7 @@ $(configure-rule):
 		--without-sendmail \
 		\
 		--disable-shared-libutil --enable-static-sudoers \
-		CPPFLAGS='-DAT_FDCWD=0 -DUTIME_NOW=0 -DUTIME_OMIT=0'
+		CPPFLAGS='-DAT_FDCWD=0 -DUTIME_NOW=0 -DUTIME_OMIT=0 -DWCONTINUED=0'
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

@@ -17,10 +17,10 @@ $(configure-rule):
 		--enable-readline \
 		--enable-servers \
 		--enable-threads=posix \
-		--with-idn \
 		--with-ncurses-include-dir="`$(NCURSES_CONFIG) --includedir`" \
 		--without-included-regex \
 		\
+		--without-idn \
 		--without-pam \
 		--without-wrap
 #		--disable-authentication \
@@ -30,7 +30,7 @@ $(build-rule):
 	$(MAKE) -C $(builddir) all \
 		inetdaemondir='$$(sbindir)'
 
-$(install-rule): $$(call installed,libidn readline)
+$(install-rule): $$(call installed,readline)
 	$(MAKE) -C $(builddir) install \
 		inetdaemondir='$$(sbindir)'
 	chmod 4755 $(DESTDIR)/usr/bin/ping $(DESTDIR)/usr/bin/ping6
@@ -39,6 +39,7 @@ $(install-rule): $$(call installed,libidn readline)
 	$(INSTALL) -dm 755 $(DESTDIR)/etc/syslog.d
 	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/messages
 	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/secure
+	$(call enable-service,syslogd,3 5)
 # Create the syslog socket in /run until /dev is a special tmpfs.
 	$(INSTALL) -dm 755 $(DESTDIR)/dev
 	$(SYMLINK) ../run/log $(DESTDIR)/dev/log

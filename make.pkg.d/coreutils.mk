@@ -1,15 +1,8 @@
-coreutils               := coreutils-8.25
-coreutils_sha1          := 301f186c24afb882a3ca73d19a102a2ce6f456c3
+coreutils               := coreutils-8.27
+coreutils_sha1          := ee054c8a4c0c924de49e4f03266733f27f986fbb
 coreutils_url           := http://ftpmirror.gnu.org/coreutils/$(coreutils).tar.xz
 
 export SORT = /bin/sort
-
-ifneq ($(host),$(build))
-$(prepare-rule):
-	$(EDIT) $(builddir)/Makefile.in \
-		-e '/run_help2man/{/SHELL/s/^@[^@]*@//;/PERL/s/^@[^@]*@/#/;}' \
-		-e '/^[ \t]*--output=/{h;d};/^[ \t]*--info-page=/G'
-endif
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -33,10 +26,12 @@ $(configure-rule):
 		--without-selinux
 
 $(build-rule):
-	$(MAKE) -C $(builddir) all
+	$(MAKE) -C $(builddir) all \
+		$(and $(filter-out $(host),$(build)),man1_MANS=)
 
 $(install-rule): $$(call installed,acl gmp)
-	$(MAKE) -C $(builddir) install
+	$(MAKE) -C $(builddir) install \
+		$(and $(filter-out $(host),$(build)),INSTALL=install man1_MANS=)
 	$(INSTALL) -dm 755 $(DESTDIR)/usr/bin
 	$(SYMLINK) ../../bin/env $(DESTDIR)/usr/bin/env
 	$(INSTALL) -Dpm 644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/coreutils.sh

@@ -1,5 +1,5 @@
-ncurses                 := ncurses-6.0-20160702
-ncurses_sha1            := a4b5801dc66fff5cb800609023944e8c423bfbd9
+ncurses                 := ncurses-6.0-20170701
+ncurses_sha1            := b1b74af8befc1f64cee7f3acfb07b3a5fac371bc
 ncurses_url             := http://invisible-mirror.net/archives/ncurses/current/$(ncurses).tgz
 
 ifeq ($(host),$(build))

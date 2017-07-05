@@ -1,6 +1,6 @@
-atk                     := atk-2.20.0
-atk_sha1                := 5d4d699721fee8bcecd3edf1361e89af1db06148
-atk_url                 := http://ftp.gnome.org/pub/gnome/sources/atk/2.20/$(atk).tar.xz
+atk                     := atk-2.24.0
+atk_sha1                := 499fa622ea7c12ba15bef1b270a95d14607e3b67
+atk_url                 := http://ftp.gnome.org/pub/gnome/sources/atk/2.24/$(atk).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

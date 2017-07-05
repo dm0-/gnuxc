@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libtasn1
-Version:        4.8
+Version:        4.12
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -57,7 +57,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libtasn1.so.6
-%{gnuxc_libdir}/libtasn1.so.6.5.2
+%{gnuxc_libdir}/libtasn1.so.6.5.4
 %doc AUTHORS ChangeLog NEWS README THANKS doc/TODO
 %license COPYING COPYING.LIB
 

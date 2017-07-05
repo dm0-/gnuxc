@@ -1,5 +1,5 @@
-pcre                    := pcre-8.39
-pcre_sha1               := 5e38289fd1b4ef3e8426f31a01e34b6924d80b90
+pcre                    := pcre-8.40
+pcre_sha1               := 12f338719b8b028a2eecbf9192fcc00a13fc04f6
 pcre_url                := ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/$(pcre).tar.bz2
 
 $(configure-rule):

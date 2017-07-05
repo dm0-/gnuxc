@@ -1,18 +1,27 @@
 %global bootstrap 1
+%global dde 1
+
+%if 0%{?_without_dde:1}
+%undefine dde
+%endif
 
 %?gnuxc_package_header
 %global debug_package %{nil}
 
 Name:           gnuxc-gnumach
-Version:        1.7
-%global commit  4bccd10cfeaf126382467dd90d7339a98989b9d2
+Version:        1.8
+%global commit  fac0a603f8c3280720dc7e6adc16a8b34026508a
 %global snap    %(c=%{commit} ; echo -n ${c:0:6})
-Release:        1.19700101git%{snap}%{?dist}
+Release:        1.git%{snap}%{?dist}
 Summary:        GNU Mach microkernel
 
 License:        MIT and GPLv2
 URL:            http://www.gnu.org/software/gnumach/
 Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{commit}.tar.xz
+
+%if 0%{?dde}
+Patch001:       http://git.savannah.gnu.org/cgit/hurd/gnumach.git/rawdiff/?id=457323ebb293739802c6a2e1307cb04a95debe9d&id2=941d462425fb2692fd9ffea1ab03e927697fcfb0#/%{gnuxc_name}-%{version}-dde.patch
+%endif
 
 BuildRequires:  gnuxc-gcc
 
@@ -34,6 +43,7 @@ use with cross-compilers.
 
 %prep
 %setup -q -n %{gnuxc_name}-%{commit}
+%{?dde:%patch001 -p1}
 autoreconf -fi
 
 %build

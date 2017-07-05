@@ -1,5 +1,5 @@
-libgpg-error            := libgpg-error-1.23
-libgpg-error_sha1       := c6a0c49211955e924593527b32e4b2736cafcda5
+libgpg-error            := libgpg-error-1.27
+libgpg-error_sha1       := a428758999ff573e62d06892e3d2c0b0f335787c
 libgpg-error_url        := ftp://ftp.gnupg.org/gcrypt/libgpg-error/$(libgpg-error).tar.bz2
 
 ifeq ($(host),$(build))

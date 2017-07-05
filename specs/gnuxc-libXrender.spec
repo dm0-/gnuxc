@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXrender
-Version:        0.9.9
+Version:        0.9.10
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

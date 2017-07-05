@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-xorg-server
-Version:        1.18.3
+Version:        1.19.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -18,15 +18,17 @@ BuildRequires:  gnuxc-glproto
 BuildRequires:  gnuxc-inputproto
 BuildRequires:  gnuxc-libpciaccess-devel
 BuildRequires:  gnuxc-xcb-util-keysyms-devel
-BuildRequires:  gnuxc-libXfont-devel
+BuildRequires:  gnuxc-libXfont2-devel
 BuildRequires:  gnuxc-libXinerama-devel
 BuildRequires:  gnuxc-libxkbfile-devel
+BuildRequires:  gnuxc-libxshmfence-devel
 BuildRequires:  gnuxc-mesa-devel
 BuildRequires:  gnuxc-nettle-devel
 BuildRequires:  gnuxc-pixman-devel
 BuildRequires:  gnuxc-pkg-config
 BuildRequires:  gnuxc-presentproto
 BuildRequires:  gnuxc-randrproto
+BuildRequires:  gnuxc-recordproto
 BuildRequires:  gnuxc-renderproto
 BuildRequires:  gnuxc-resourceproto
 BuildRequires:  gnuxc-videoproto
@@ -55,12 +57,14 @@ echo 'install-sdkHEADERS:' >> Makefile.in
     --enable-dga \
     --enable-dpms \
     --enable-glx \
+    --enable-input-thread \
     --enable-int10-module \
     --enable-ipv6 \
     --enable-local-transport \
     --enable-mitshm \
     --enable-pciaccess \
     --enable-present \
+    --enable-record \
     --enable-secure-rpc \
     --enable-static \
     --enable-tcp-transport \
@@ -76,19 +80,19 @@ echo 'install-sdkHEADERS:' >> Makefile.in
     --enable-xnest \
     --enable-xorg \
     --enable-xres \
+    --enable-xshmfence \
     --enable-xv \
     --enable-xvfb \
     --with-sha1=libnettle \
     --with-xkb-output='${sharedstatedir}/X11/xkb' \
     \
-    --disable-aiglx \
     --disable-composite \
     --disable-dri \
     --disable-dri2 \
     --disable-dri3 \
+    --disable-glamor \
     --disable-libdrm \
     --disable-libunwind \
-    --disable-record \
     --disable-screensaver \
     --disable-selective-werror \
     --disable-strict-compilation \

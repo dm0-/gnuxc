@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nspr
-Version:        4.12
+Version:        4.15
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 

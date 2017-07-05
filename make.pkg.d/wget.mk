@@ -1,10 +1,13 @@
-wget                    := wget-1.18
-wget_sha1               := 02d451e658f600ee519c42cbf4d3bfe4e49b6c4f
+wget                    := wget-1.19.1
+wget_sha1               := cde25e99c144191644406793cbd1c69c102c6970
 wget_url                := http://ftpmirror.gnu.org/wget/$(wget).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
+		--exec-prefix= \
+		\
 		--disable-rpath \
+		--disable-silent-rules \
 		--enable-assert \
 		--enable-debug \
 		--enable-digest \
@@ -14,12 +17,15 @@ $(configure-rule):
 		--enable-opie \
 		--enable-pcre \
 		--enable-threads=posix \
+		--enable-xattr \
 		--with-libidn \
 		--with-libuuid \
 		--with-ssl=gnutls \
 		--with-zlib \
+		--without-included-libunistring \
 		--without-included-regex \
 		\
+		--without-cares \
 		--without-libpsl \
 		--without-metalink
 
