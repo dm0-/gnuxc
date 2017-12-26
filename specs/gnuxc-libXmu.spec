@@ -35,19 +35,18 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     --disable-docs \
     \
-    --disable-silent-rules \
     --enable-ipv6 \
     --enable-local-transport \
     --enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
     --enable-tcp-transport \
     --enable-unix-transport
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

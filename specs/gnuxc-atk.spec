@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-atk
-Version:        2.24.0
+Version:        2.26.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 URL:            http://developer.gnome.org/atk/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.24/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.26/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-glib-devel
 BuildRequires:  gnuxc-pkg-config
@@ -37,14 +37,13 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     --disable-rpath \
-    --disable-silent-rules \
     --enable-static
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -61,8 +60,8 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < %{gnuxc_name}10.lang
 
 %files
 %{gnuxc_libdir}/libatk-1.0.so.0
-%{gnuxc_libdir}/libatk-1.0.so.0.22409.1
-%doc AUTHORS ChangeLog MAINTAINERS NEWS README
+%{gnuxc_libdir}/libatk-1.0.so.0.22610.1
+%doc AUTHORS MAINTAINERS NEWS README
 %license COPYING
 
 %files devel

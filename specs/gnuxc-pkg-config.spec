@@ -1,4 +1,4 @@
-%global bootstrap 1
+%global with_bootstrap 1
 
 %global _docdir_fmt gnuxc/pkg-config
 
@@ -24,27 +24,26 @@ flags.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %global _program_prefix %{gnuxc_target}-
 %configure \
     --disable-host-tool \
-    --disable-silent-rules \
     --with-pc-path=%{gnuxc_libdir}/pkgconfig:%{gnuxc_datadir}/pkgconfig \
     --with-system-include-path=%{gnuxc_includedir} \
     --with-system-library-path=%{gnuxc_libdir}:%{gnuxc_sysroot}/lib \
     --without-internal-glib
-make %{?_smp_mflags} all
+%make_build all
 
 %install
 %make_install
 
 # Claim ownership of the cross-compiling pkgconfig directories.
-install -dm 755 %{buildroot}{%{gnuxc_datadir},%{gnuxc_libdir}}/pkgconfig
+install -dm 0755 %{buildroot}{%{gnuxc_datadir},%{gnuxc_libdir}}/pkgconfig
 
 # Provide a copy of the binary in the cross-tools bin path.
-install -dm 755 %{buildroot}%{gnuxc_root}/bin
+install -dm 0755 %{buildroot}%{gnuxc_root}/bin
 ln %{buildroot}%{_bindir}/%{gnuxc_target}-pkg-config \
     %{buildroot}%{gnuxc_root}/bin/pkg-config
 

@@ -29,10 +29,9 @@ provided at the moment.  Try stealing `/etc/pki/tls/cert.pem`, if you trust it.
 
 Fix cross-compilation of everything that uses Guile for 2.2.
 
-### GTK+
+### gtk+
 
-Figure out if IceCat cat run without GTK+ 2, and fix Emacs to run with GTK+ 3
-so GTK+ 2 can be removed.
+Build IceCat without GTK+ 2, and fix Emacs to run with GTK+ 3 to remove GTK+ 2.
 
 ### hal
 
@@ -51,6 +50,8 @@ for the Linux target, so this won't rely on pre-built static libraries anymore.
 
 Get xattr translators working and use a Linux-compatible ext2 file system.
 
+Try switching to lwIP.
+
 ### icecat
 
 It's a flaky, slow, experimental Hurd port.  Using Emacs to browse the web will
@@ -60,14 +61,14 @@ probably be more enjoyable.
 
 Add support for libidn2, since its features had to be disabled for the upgrade.
 
-### libXfont2
+### pcre
 
-Figure out how to implement bdftopcf without libXfont to restore support for
-natively building the font packages.
+Drop PCRE in favor of PCRE2.  This requires porting grep, less, wget, and glib.
+Alternatively, wget could be replaced by wget2 to gain support for PCRE2.
 
 ### rump
 
-The programs in `/usr/bin` have `RPATH`s.
+Hook up NetBSD drivers to the Hurd PCI arbiter.
 
 ### shepherd
 
@@ -88,7 +89,7 @@ font rendering slightly.  Run `sudo herd restart console` to correct it.
 
 ### sysroot
 
-Maybe prepend `%global bootstrap 1` to some specs that don't require a complete
+Maybe prepend `%global with_bootstrap 1` to specs that don't require a complete
 GCC so there are more parallel builds happening during the bootstrap phase.
 
 I need to write an autoconf file to run on the final OS image to regenerate the
@@ -98,15 +99,12 @@ There are some issues where a few GCC libraries in the tools libdir can't be
 found during linking.  This is temporarily solved by symlinking them into the
 regular sysroot libdir.  Maybe just put it all in the sysroot by default.
 
-Add the GPG verification step in `%prep` if the Fedora guidelines standardize
-that step (and allow it as an alternative to bare checksums in the Makefiles).
-
 ### setup-sysroot.scm
 
 This thing is still a "well, it works" hack.  I really should learn Guile.
 
-DNF's locking doesn't work, so you can't run several installs in parallel and
-expect it to wait properly.  To work around this, a big ugly locking mechanism
+DNF can have `Transaction check error` failures when installing overlapping
+package sets in parallel.  To work around this, a big ugly locking mechanism
 was added to force the builddep phase to run one-at-a-time.  Use the fallback
 `setup-sysroot.sh` script if problems arise with this.
 

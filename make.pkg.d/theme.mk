@@ -1,8 +1,8 @@
 theme                   := theme-1
 
-$(eval $(call verify-download,http://www.gnu.org/graphics/heckert_gnu.small.png,f85c9a4cffacc70dbd2c1bc87c32841467c0f373,logo.png))
-$(eval $(call verify-download,http://www.gnu.org/graphics/heckert_gnu.transparent.png,88d31092c4d3c54a3e8b0449304b3cae3e7b3a3d,icon.png))
-$(eval $(call verify-download,http://www.fsfla.org/ikiwiki/selibre/linux-libre/freedo.png,e8f8b42ca8e47e13018626442d79cab52f166743,logovm.png))
+$(eval $(call verify-download,logo.png,http://www.gnu.org/graphics/heckert_gnu.small.png,f85c9a4cffacc70dbd2c1bc87c32841467c0f373))
+$(eval $(call verify-download,icon.png,http://www.gnu.org/graphics/heckert_gnu.transparent.png,88d31092c4d3c54a3e8b0449304b3cae3e7b3a3d))
+$(eval $(call verify-download,logovm.png,http://www.fsfla.org/ikiwiki/selibre/linux-libre/freedo.png,e8f8b42ca8e47e13018626442d79cab52f166743))
 
 $(builddir)/theme.txt: $(call addon-file,theme.txt.in)
 	$(SED) "s/@BUILD_DATE@/`date '+%Y-%m-%d'`/g" < $< > $@
@@ -67,41 +67,41 @@ $(builddir)/login-logo-bw.xpm: $(builddir)/icon-256.png32
 $(built): $(builddir)/login-logo.xpm $(builddir)/login-logo-bw.xpm
 
 $(install-rule):
-	$(INSTALL) -Dpm 644 $(builddir)/icon.icns $(DESTDIR)/usr/share/themes/gnu/efi/volume.icns
-	$(INSTALL) -Dpm 644 $(builddir)/label.vol $(DESTDIR)/usr/share/themes/gnu/efi/label.vol
-	$(INSTALL) -Dpm 644 $(builddir)/label2x.vol $(DESTDIR)/usr/share/themes/gnu/efi/label2x.vol
+	$(INSTALL) -Dpm 0644 $(builddir)/icon.icns $(DESTDIR)/usr/share/themes/gnu/efi/volume.icns
+	$(INSTALL) -Dpm 0644 $(builddir)/label.vol $(DESTDIR)/usr/share/themes/gnu/efi/label.vol
+	$(INSTALL) -Dpm 0644 $(builddir)/label2x.vol $(DESTDIR)/usr/share/themes/gnu/efi/label2x.vol
 
-	$(INSTALL) -Dpm 644 $(builddir)/theme.txt $(DESTDIR)/usr/share/themes/gnu/grub/theme.txt
-	$(INSTALL) -Dpm 644 $(builddir)/theme.txt-vm $(DESTDIR)/usr/share/themes/gnu/grub/theme.txt-vm
-	$(INSTALL) -Dpm 644 $(builddir)/logo.png24 $(DESTDIR)/usr/share/themes/gnu/grub/logo.png
-	$(INSTALL) -Dpm 644 $(builddir)/logovm.png24 $(DESTDIR)/usr/share/themes/gnu/grub/logovm.png
-	$(INSTALL) -Dpm 644 $(builddir)/content.png24 $(DESTDIR)/usr/share/themes/gnu/grub/content.png
-	$(INSTALL) -Dpm 644 $(builddir)/label.png24 $(DESTDIR)/usr/share/themes/gnu/grub/label.png
-	$(INSTALL) -Dpm 644 $(builddir)/selected.png24 $(DESTDIR)/usr/share/themes/gnu/grub/selected_c.png
-	$(INSTALL) -Dpm 644 $(builddir)/shadow_left.png24 $(DESTDIR)/usr/share/themes/gnu/grub/shadow_left.png
-	$(INSTALL) -Dpm 644 $(builddir)/shadow_right.png24 $(DESTDIR)/usr/share/themes/gnu/grub/shadow_right.png
-	$(INSTALL) -Dpm 644 $(builddir)/FreeMono-14.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeMono-14.pf2
-	$(INSTALL) -Dpm 644 $(builddir)/FreeSans-12.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-12.pf2
-	$(INSTALL) -Dpm 644 $(builddir)/FreeSans-14.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-14.pf2
-	$(INSTALL) -Dpm 644 $(builddir)/FreeSans-16.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-16.pf2
-	$(INSTALL) -Dpm 644 $(builddir)/FreeSans-Bold-16.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-Bold-16.pf2
-	$(INSTALL) -Dpm 644 $(builddir)/FreeSans-Bold-30.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-Bold-30.pf2
-	$(INSTALL) -Dpm 644 $(builddir)/FreeSans-Bold-40.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-Bold-40.pf2
+	$(INSTALL) -Dpm 0644 $(builddir)/theme.txt $(DESTDIR)/usr/share/themes/gnu/grub/theme.txt
+	$(INSTALL) -Dpm 0644 $(builddir)/theme.txt-vm $(DESTDIR)/usr/share/themes/gnu/grub/theme.txt-vm
+	$(INSTALL) -Dpm 0644 $(builddir)/logo.png24 $(DESTDIR)/usr/share/themes/gnu/grub/logo.png
+	$(INSTALL) -Dpm 0644 $(builddir)/logovm.png24 $(DESTDIR)/usr/share/themes/gnu/grub/logovm.png
+	$(INSTALL) -Dpm 0644 $(builddir)/content.png24 $(DESTDIR)/usr/share/themes/gnu/grub/content.png
+	$(INSTALL) -Dpm 0644 $(builddir)/label.png24 $(DESTDIR)/usr/share/themes/gnu/grub/label.png
+	$(INSTALL) -Dpm 0644 $(builddir)/selected.png24 $(DESTDIR)/usr/share/themes/gnu/grub/selected_c.png
+	$(INSTALL) -Dpm 0644 $(builddir)/shadow_left.png24 $(DESTDIR)/usr/share/themes/gnu/grub/shadow_left.png
+	$(INSTALL) -Dpm 0644 $(builddir)/shadow_right.png24 $(DESTDIR)/usr/share/themes/gnu/grub/shadow_right.png
+	$(INSTALL) -Dpm 0644 $(builddir)/FreeMono-14.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeMono-14.pf2
+	$(INSTALL) -Dpm 0644 $(builddir)/FreeSans-12.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-12.pf2
+	$(INSTALL) -Dpm 0644 $(builddir)/FreeSans-14.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-14.pf2
+	$(INSTALL) -Dpm 0644 $(builddir)/FreeSans-16.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-16.pf2
+	$(INSTALL) -Dpm 0644 $(builddir)/FreeSans-Bold-16.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-Bold-16.pf2
+	$(INSTALL) -Dpm 0644 $(builddir)/FreeSans-Bold-30.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-Bold-30.pf2
+	$(INSTALL) -Dpm 0644 $(builddir)/FreeSans-Bold-40.pf2 $(DESTDIR)/usr/share/themes/gnu/grub/FreeSans-Bold-40.pf2
 
-	$(INSTALL) -Dpm 644 $(builddir)/login-logo.xpm $(DESTDIR)/usr/share/themes/gnu/xdm/login-logo.xpm
-	$(INSTALL) -Dpm 644 $(builddir)/login-logo-bw.xpm $(DESTDIR)/usr/share/themes/gnu/xdm/login-logo-bw.xpm
+	$(INSTALL) -Dpm 0644 $(builddir)/login-logo.xpm $(DESTDIR)/usr/share/themes/gnu/xdm/login-logo.xpm
+	$(INSTALL) -Dpm 0644 $(builddir)/login-logo-bw.xpm $(DESTDIR)/usr/share/themes/gnu/xdm/login-logo-bw.xpm
 
 # Install the theme files in the "active" locations.
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/grub/themes
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/share/grub/themes
 	$(SYMLINK) ../../themes/gnu/grub $(DESTDIR)/usr/share/grub/themes/gnu
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/pixmaps
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/share/pixmaps
 	$(SYMLINK) ../themes/gnu/xdm/login-logo.xpm $(DESTDIR)/usr/share/pixmaps/
 	$(SYMLINK) ../themes/gnu/xdm/login-logo-bw.xpm $(DESTDIR)/usr/share/pixmaps/
 # The EFI directory needs its own copies since it's a different file system.
-	$(INSTALL) -dm 755 $(DESTDIR)/boot/efi/System/Library/CoreServices
-	$(INSTALL) -Dpm 644 $(builddir)/icon.icns $(DESTDIR)/boot/efi/.VolumeIcon.icns
-	$(INSTALL) -Dpm 644 $(builddir)/label.vol $(DESTDIR)/boot/efi/System/Library/CoreServices/.disk_label
-	$(INSTALL) -Dpm 644 $(builddir)/label2x.vol $(DESTDIR)/boot/efi/System/Library/CoreServices/.disk_label_2x
+	$(INSTALL) -dm 0755 $(DESTDIR)/boot/efi/System/Library/CoreServices
+	$(INSTALL) -Dpm 0644 $(builddir)/icon.icns $(DESTDIR)/boot/efi/.VolumeIcon.icns
+	$(INSTALL) -Dpm 0644 $(builddir)/label.vol $(DESTDIR)/boot/efi/System/Library/CoreServices/.disk_label
+	$(INSTALL) -Dpm 0644 $(builddir)/label2x.vol $(DESTDIR)/boot/efi/System/Library/CoreServices/.disk_label_2x
 
 # Write inline files.
 $(call addon-file,gray2vol.sh): | $$(@D)

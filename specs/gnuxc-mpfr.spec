@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-mpfr
-Version:        3.1.5
+Version:        4.0.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -34,14 +34,15 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     --enable-assert \
+    --enable-shared-cache \
     --enable-thread-safe \
     --enable-warnings
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -54,8 +55,8 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_infodir}
 
 
 %files
-%{gnuxc_libdir}/libmpfr.so.4
-%{gnuxc_libdir}/libmpfr.so.4.1.5
+%{gnuxc_libdir}/libmpfr.so.6
+%{gnuxc_libdir}/libmpfr.so.6.0.0
 %doc AUTHORS BUGS ChangeLog NEWS README TODO
 %license COPYING COPYING.LESSER
 
@@ -63,6 +64,7 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_infodir}
 %{gnuxc_includedir}/mpf2mpfr.h
 %{gnuxc_includedir}/mpfr.h
 %{gnuxc_libdir}/libmpfr.so
+%{gnuxc_libdir}/pkgconfig/mpfr.pc
 
 %files static
 %{gnuxc_libdir}/libmpfr.a

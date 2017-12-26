@@ -37,11 +37,10 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --disable-werror \
     --enable-cpu-clip \
     --enable-external-libs \
@@ -52,7 +51,7 @@ statically, which is highly discouraged.
     \
     --disable-alsa \
     --disable-octave
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

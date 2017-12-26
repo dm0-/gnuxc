@@ -38,15 +38,15 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
 --- configure
 +++ configure
-@@ -207,6 +207,7 @@
- pixman=""
- sdl=""
- sdlabi=""
+@@ -295,6 +295,7 @@
+ curl=""
+ curses=""
+ docs=""
 +fbdev="no"
- virtfs=""
- vnc="yes"
- sparse="no"
-@@ -692,6 +693,7 @@
+ fdt=""
+ netmap="no"
+ sdl=""
+@@ -788,6 +789,7 @@
    vhost_net="yes"
    vhost_scsi="yes"
    vhost_vsock="yes"
@@ -54,7 +54,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
    QEMU_INCLUDES="-I\$(SRC_PATH)/linux-headers -I$(pwd)/linux-headers $QEMU_INCLUDES"
    supported_os="yes"
  ;;
-@@ -860,6 +862,10 @@
+@@ -948,6 +950,10 @@
    ;;
    --enable-qom-cast-debug) qom_cast_debug="yes"
    ;;
@@ -65,7 +65,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
    --disable-virtfs) virtfs="no"
    ;;
    --enable-virtfs) virtfs="yes"
-@@ -1379,6 +1385,7 @@
+@@ -1507,6 +1513,7 @@
    gtk             gtk UI
    --with-gtkabi     select preferred GTK ABI 2.0 or 3.0
    vte             vte support for the gtk UI
@@ -73,7 +73,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
    curses          curses UI
    vnc             VNC UI support
    vnc-sasl        SASL encryption for VNC server
-@@ -5065,6 +5072,7 @@
+@@ -5463,6 +5470,7 @@
  echo "nettle            $nettle $(echo_version $nettle $nettle_version)"
  echo "nettle kdf        $nettle_kdf"
  echo "libtasn1          $tasn1"
@@ -81,9 +81,9 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
  echo "curses support    $curses"
  echo "virgl support     $virglrenderer"
  echo "curl support      $curl"
-@@ -5342,6 +5350,9 @@
-   echo "CONFIG_SDLABI=$sdlabi" >> $config_host_mak
+@@ -5759,6 +5767,9 @@
    echo "SDL_CFLAGS=$sdl_cflags" >> $config_host_mak
+   echo "SDL_LIBS=$sdl_libs" >> $config_host_mak
  fi
 +if test "$fbdev" = "yes" ; then
 +  echo "CONFIG_FBDEV=y" >> $config_host_mak
@@ -93,7 +93,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
  fi
 --- include/ui/console.h
 +++ include/ui/console.h
-@@ -449,6 +449,25 @@
+@@ -453,6 +453,25 @@
  }
  #endif
  
@@ -121,7 +121,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
  void cocoa_display_init(DisplayState *ds, int full_screen);
 --- qemu-options.hx
 +++ qemu-options.hx
-@@ -977,6 +977,7 @@
+@@ -1256,6 +1256,7 @@
      "            [,window_close=on|off][,gl=on|off]\n"
      "-display gtk[,grab_on_hover=on|off][,gl=on|off]|\n"
      "-display vnc=<display>[,<optargs>]\n"
@@ -129,7 +129,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
      "-display curses\n"
      "-display none"
      "                select display type\n"
-@@ -1008,6 +1009,8 @@
+@@ -1287,6 +1288,8 @@
  curses/ncurses interface. Nothing is displayed when the graphics
  device is in graphical mode or if the graphics device does not support
  a text mode. Generally only the VGA device models support text mode.
@@ -1776,7 +1776,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
  gd_update(const char *tab, int x, int y, int w, int h) "tab=%s, x=%d, y=%d, w=%d, h=%d"
 --- vl.c
 +++ vl.c
-@@ -2046,6 +2046,7 @@
+@@ -2145,6 +2145,7 @@
  typedef enum DisplayType {
      DT_DEFAULT,
      DT_CURSES,
@@ -1784,7 +1784,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
      DT_SDL,
      DT_COCOA,
      DT_GTK,
-@@ -2133,6 +2134,13 @@
+@@ -2242,6 +2243,13 @@
          error_report("curses support is disabled");
          exit(1);
  #endif
@@ -1798,7 +1798,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
      } else if (strstart(p, "gtk", &opts)) {
  #ifdef CONFIG_GTK
          display = DT_GTK;
-@@ -2168,6 +2176,13 @@
+@@ -2277,6 +2285,13 @@
          error_report("GTK support is disabled");
          exit(1);
  #endif
@@ -1812,7 +1812,7 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
      } else if (strstart(p, "none", &opts)) {
          display = DT_NONE;
      } else {
-@@ -4628,6 +4643,9 @@
+@@ -4822,6 +4837,9 @@
      case DT_CURSES:
          curses_display_init(ds, full_screen);
          break;

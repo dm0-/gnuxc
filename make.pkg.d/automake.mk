@@ -1,10 +1,9 @@
 automake                := automake-1.15.1
-automake_sha1           := 45632d466c16ecf18d9c18dc4be883cde59acb59
+automake_key            := F2A38D7EEB2B66405761070D0ADEE10094604D37
 automake_url            := http://ftpmirror.gnu.org/automake/$(automake).tar.xz
 
 $(configure-rule):
-	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules
+	cd $(builddir) && ./$(configure)
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

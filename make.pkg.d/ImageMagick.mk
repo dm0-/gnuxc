@@ -1,6 +1,7 @@
-ImageMagick             := ImageMagick-7.0.6-0
-ImageMagick_sha1        := e9c6009b2b4139893ff76a0aa58d3b8e07a9084a
+ImageMagick             := ImageMagick-7.0.7-15
+ImageMagick_key         := D8272EF51DA223E4D05B466989AB63D48277377A
 ImageMagick_url         := http://www.imagemagick.org/download/releases/$(ImageMagick).tar.xz
+ImageMagick_sig         := $(ImageMagick_url).asc
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -8,7 +9,6 @@ $(configure-rule):
 		--enable-hdri \
 		--enable-hugepages \
 		--enable-openmp \
-		--disable-silent-rules \
 		--with-bzlib \
 		--with-fontconfig \
 		--with-freetype \

@@ -1,6 +1,6 @@
-sqlite                  := sqlite-3.19.3
-sqlite_branch           := sqlite-autoconf-3190300
-sqlite_sha1             := 58f2cabffb3ff4761a3ac7f834d9db7b46307c1f
+sqlite                  := sqlite-3.21.0
+sqlite_branch           := sqlite-autoconf-3210000
+sqlite_sha1             := f56fe3407d8297fc0a68a058f4c9e6b77e83575c
 sqlite_url              := http://www.sqlite.org/2017/$(sqlite_branch).tar.gz
 
 $(call configure-rule,tea): $(builddir)/configure

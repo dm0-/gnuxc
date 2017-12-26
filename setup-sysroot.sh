@@ -43,6 +43,7 @@ dnf_opts="--config=/dev/stdin --enablerepo='gnuxc-local' \
 
 alias dnf-install="sudo dnf --disablerepo='*' $dnf_opts -y install"
 alias rpmbuild="rpmbuild --clean --define='_disable_source_fetch 0' \
+--define='_configure_disable_silent_rules 1' \
 "'--with$([ "$bootstrap" ] || echo out)=bootstrap'
 
 
@@ -61,6 +62,7 @@ srpmdir=$(rpm -E %_srcrpmdir)
 [[ "$*" == *srpm* ]] && local_srpm=yes || local_srpm=
 alias run_mock="mock --root=$distro $tmpfs_arg\
 --enablerepo='gnuxc-local' --define='_disable_source_fetch 0' \
+--define='_configure_disable_silent_rules 1' \
 "'--with$([ "$bootstrap" ] || echo out)=bootstrap'
 
 
@@ -161,6 +163,7 @@ build_pkg libatomic_ops
 build_pkg gc
 unset bootstrap
 build_pkg gcc           gcc-c++
+build_pkg rust          rust-std-static
 build_pkg ncurses
 build_pkg readline
 build_pkg sqlite
@@ -178,6 +181,7 @@ build_pkg attr
 build_pkg acl
 build_pkg xz
 build_pkg pcre
+build_pkg pcre2
 build_pkg libogg
 build_pkg libvorbis
 build_pkg flac
@@ -201,6 +205,9 @@ build_pkg p11-kit
 build_pkg gnutls
 build_pkg libgpg-error
 build_pkg libgcrypt
+build_pkg npth
+build_pkg libassuan
+build_pkg libksba
 build_pkg osl
 build_pkg isl
 build_pkg cloog
@@ -251,6 +258,7 @@ build_pkg jasper
 build_pkg giflib
 build_pkg jbigkit
 build_pkg tiff
+build_pkg shared-mime-info
 build_pkg gdk-pixbuf
 build_pkg librsvg
 build_pkg libwebp
@@ -269,6 +277,7 @@ build_pkg gtk2
 
 # Install any remaining compilers and development packages.
 dnf-install \
-    'gnuxc-*-devel' gnuxc-gcc-{gfortran,objc++} gnuxc-mig gnuxc-pkg-config \
+    'gnuxc-*-devel' gnuxc-gcc-{gfortran,objc++} gnuxc-mig \
     'gnuxc-*proto' gnuxc-{libpthread-stubs,spice-protocol,xorg-server,xtrans} \
-    gnuxc-{bzip2,glibc,libuuid,parted,zlib}-static
+    gnuxc-shared-mime-info \
+    gnuxc-{bzip2,glibc,libuuid,parted,rust-std,zlib}-static

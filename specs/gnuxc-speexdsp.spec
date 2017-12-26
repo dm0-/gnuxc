@@ -35,15 +35,14 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}%{snap}
+%autosetup -n %{gnuxc_name}-%{version}%{snap}
 
 %build
 %gnuxc_configure \
     --disable-examples \
-    --disable-silent-rules \
     --enable-sse \
     --with-fft=smallft
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

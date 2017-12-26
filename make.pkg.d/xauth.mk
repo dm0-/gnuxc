@@ -1,12 +1,11 @@
 xauth                   := xauth-1.0.10
-xauth_sha1              := 87946b2af3ff13705d8eb60adae5c0bcdf839967
+xauth_key               := 3BB639E56F861FA2E86505690FDD682D974CA72A
 xauth_url               := http://xorg.freedesktop.org/releases/individual/app/$(xauth).tar.bz2
 
 export MCOOKIE = /usr/bin/mcookie
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-ipv6 \
 		--enable-local-transport \
 		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
@@ -18,7 +17,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,libXmu)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 755 $(call addon-file,mcookie.sh) $(DESTDIR)/usr/bin/mcookie
+	$(INSTALL) -Dpm 0755 $(call addon-file,mcookie.sh) $(DESTDIR)/usr/bin/mcookie
 
 # Write inline files.
 $(call addon-file,mcookie.sh): | $$(@D)

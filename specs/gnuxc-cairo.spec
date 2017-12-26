@@ -1,19 +1,19 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-cairo
-Version:        1.14.10
+Version:        1.15.10
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2 or MPLv1.1
 URL:            http://cairographics.org/
-Source0:        http://cairographics.org/releases/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://cairographics.org/snapshots/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-binutils-devel
 BuildRequires:  gnuxc-fontconfig-devel
 BuildRequires:  gnuxc-glib-devel
-BuildRequires:  gnuxc-libXext-devel
 BuildRequires:  gnuxc-libXrender-devel
+BuildRequires:  gnuxc-mesa-devel
 BuildRequires:  gnuxc-pixman-devel
 BuildRequires:  gnuxc-pkg-config
 
@@ -40,13 +40,16 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
+    --enable-atomic \
+    --enable-egl \
     --enable-fc \
     --enable-ft \
+    --enable-gl --disable-glesv2 \
+    --enable-glx \
     --enable-gobject \
     --enable-interpreter \
     --enable-pdf \
@@ -66,13 +69,15 @@ statically, which is highly discouraged.
     --enable-xlib-xrender \
     --enable-xml \
     --with-x \
-    CPPFLAGS='-DMAP_NORESERVE=0' \
     \
+    --disable-cogl \
+    --disable-directfb \
     --disable-drm \
     --disable-gallium \
     --disable-qt \
-    --disable-vg
-%gnuxc_make %{?_smp_mflags} all
+    --disable-vg \
+    --disable-wgl
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -91,18 +96,15 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 
 %files
 %dir %{gnuxc_libdir}/cairo
-%{gnuxc_libdir}/cairo/cairo-fdr.so.0
-%{gnuxc_libdir}/cairo/cairo-fdr.so.0.0.0
-%{gnuxc_libdir}/cairo/cairo-sphinx.so.0
-%{gnuxc_libdir}/cairo/cairo-sphinx.so.0.0.0
-%{gnuxc_libdir}/cairo/libcairo-trace.so.0
-%{gnuxc_libdir}/cairo/libcairo-trace.so.0.0.0
+%{gnuxc_libdir}/cairo/cairo-fdr.so
+%{gnuxc_libdir}/cairo/cairo-sphinx.so
+%{gnuxc_libdir}/cairo/libcairo-trace.so
 %{gnuxc_libdir}/libcairo.so.2
-%{gnuxc_libdir}/libcairo.so.2.11400.10
+%{gnuxc_libdir}/libcairo.so.2.11510.0
 %{gnuxc_libdir}/libcairo-gobject.so.2
-%{gnuxc_libdir}/libcairo-gobject.so.2.11400.10
+%{gnuxc_libdir}/libcairo-gobject.so.2.11510.0
 %{gnuxc_libdir}/libcairo-script-interpreter.so.2
-%{gnuxc_libdir}/libcairo-script-interpreter.so.2.11400.10
+%{gnuxc_libdir}/libcairo-script-interpreter.so.2.11510.0
 %doc AUTHORS BIBLIOGRAPHY BUGS ChangeLog* CODING_STYLE HACKING
 %doc KNOWN_ISSUES NEWS PORTING_GUIDE README RELEASING
 %license COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1
@@ -115,8 +117,11 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 %{gnuxc_libdir}/libcairo.so
 %{gnuxc_libdir}/libcairo-gobject.so
 %{gnuxc_libdir}/libcairo-script-interpreter.so
+%{gnuxc_libdir}/pkgconfig/cairo-egl.pc
 %{gnuxc_libdir}/pkgconfig/cairo-fc.pc
 %{gnuxc_libdir}/pkgconfig/cairo-ft.pc
+%{gnuxc_libdir}/pkgconfig/cairo-gl.pc
+%{gnuxc_libdir}/pkgconfig/cairo-glx.pc
 %{gnuxc_libdir}/pkgconfig/cairo-gobject.pc
 %{gnuxc_libdir}/pkgconfig/cairo.pc
 %{gnuxc_libdir}/pkgconfig/cairo-pdf.pc

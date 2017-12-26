@@ -46,16 +46,15 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Regenerate this to avoid edits by the anti-rpath scripts.
 rm -f build-aux/ltmain.sh
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-ltdl-install
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

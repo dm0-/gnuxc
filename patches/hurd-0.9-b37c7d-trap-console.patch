@@ -25,7 +25,7 @@ Support stopping the console client with a SIGTERM.
  /* Signal an error to the user.  */
  void console_error (const wchar_t *const err_msg)
  {
-@@ -744,6 +753,9 @@
+@@ -743,6 +752,9 @@
    if (console_node)
      console_setup_node (console_node);
  

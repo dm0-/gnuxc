@@ -1,5 +1,5 @@
-help2man                := help2man-1.47.4
-help2man_sha1           := 5bc859694eb7b8f7196514bf42c449b7dd6cfc27
+help2man                := help2man-1.47.5
+help2man_key            := 87EA44D150D89615E39A3FEEF0DC8E00B28C5995
 help2man_url            := http://ftpmirror.gnu.org/help2man/$(help2man).tar.xz
 
 $(configure-rule):

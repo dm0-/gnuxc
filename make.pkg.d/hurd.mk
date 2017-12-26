@@ -1,6 +1,6 @@
-hurd                    := hurd-0.9-3c0094
+hurd                    := hurd-0.9-b37c7d
 hurd_branch             := master
-hurd_sha1               := 3c0094e1244b649ca49482fadb850a2dfc2d4442
+hurd_sha1               := b37c7dd4dd0de064b7ae2c9ad5687ebb635677c8
 hurd_url                := git://git.sv.gnu.org/hurd/hurd.git
 
 $(prepare-rule):
@@ -14,8 +14,10 @@ $(configure-rule):
 		--libexecdir='$${prefix}/sbin' \
 		--localstatedir='$${prefix}/var' \
 		--sysconfdir='$${prefix}/etc' \
+		--enable-ncursesw \
 		--with-libbz2 \
 		--with-libz \
+		--with-ncursesw-include-dir="`$(NCURSESW_CONFIG) --includedir`" \
 		\
 		--without-libdaemon
 
@@ -51,6 +53,7 @@ $(install-rule): $$(call installed,gnumach unifont)
 	$(INSTALL) -Dm 0644 /dev/null $(DESTDIR)/servers/startup
 	$(INSTALL) -Dm 0644 /dev/null $(DESTDIR)/servers/socket/1
 
+	$(SYMLINK) ../proc/mounts $(DESTDIR)/etc/mtab
 	$(INSTALL) -dm 0755 $(DESTDIR)/home
 	$(INSTALL) -dm 0755 $(DESTDIR)/run
 	$(INSTALL) -dm 0755 $(DESTDIR)/var/{cache,crash,lib/misc,log,spool}

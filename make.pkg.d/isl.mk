@@ -4,7 +4,6 @@ isl_url                 := http://isl.gforge.inria.fr/$(isl).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-portable-binary \
 		--with-gcc-arch=$(arch) \
 		--with-gmp=system \

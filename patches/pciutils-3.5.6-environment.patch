@@ -11,8 +11,8 @@ host detection in the configure script.
 -CFLAGS=$(OPT) -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes
 +CFLAGS ?= $(OPT) -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes
  
- VERSION=3.5.4
- DATE=2017-02-25
+ VERSION=3.5.6
+ DATE=2017-11-17
 @@ -19,7 +19,7 @@
  DNS=
  
@@ -54,7 +54,7 @@ host detection in the configure script.
  LIBNAME=libpci
 --- lib/configure
 +++ lib/configure
-@@ -44,9 +44,9 @@
+@@ -39,9 +39,9 @@
  fi
  [ -n "$RELEASE" ] && rel="${RELEASE}"
  # CAVEAT: tr on Solaris is a bit weird and the extra [] is otherwise harmless.

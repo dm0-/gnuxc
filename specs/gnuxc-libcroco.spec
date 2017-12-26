@@ -35,7 +35,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 sed -i -e 's/@\(GLIB\|LIBXML\)2_\(CFLAG\|LIB\)S@//g' croco-config.in
 
@@ -43,15 +43,14 @@ sed -i -e 's/@\(GLIB\|LIBXML\)2_\(CFLAG\|LIB\)S@//g' croco-config.in
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
     \
-    --disable-silent-rules \
     --enable-checks
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/croco-0.6-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-croco-0.6-config
 

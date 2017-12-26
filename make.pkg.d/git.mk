@@ -1,8 +1,8 @@
-git                     := git-2.13.2
-git_sha1                := 2eb5d02274b63be803afec791143deaa4b8ad45a
+git                     := git-2.15.1
+git_sha1                := 0ff2d0c64621f92e15759b2ca07838858bef8ff0
 git_url                 := http://www.kernel.org/pub/software/scm/git/$(git).tar.xz
 
-$(eval $(call verify-download,$(git_url:$(git).tar.xz=$(git:git-%=git-manpages-%).tar.xz),69eb1b35df0c1ce71bf5e6fc39592970693491bd,manpages.tar.xz))
+$(eval $(call verify-download,manpages.tar.xz,$(git_url:$(git).tar.xz=$(git:git-%=git-manpages-%).tar.xz),d891d57fdd2e9303a49c838ea9265e2e1ff9a6e9))
 
 $(build-rule) $(install-rule): private override configuration = V=1 \
 	prefix=/usr \
@@ -28,7 +28,7 @@ $(build-rule) $(install-rule): private override configuration = V=1 \
 	NO_OPENSSL=YesPlease \
 	NO_PERL_MAKEMAKER=YesPlease \
 	SANE_TEXT_GREP=-a \
-	USE_LIBPCRE=YesPlease \
+	USE_LIBPCRE2=YesPlease \
 	$(if $(filter-out $(host),$(build)),UNAME_M=i686-AT386 UNAME_O=GNU UNAME_R=0.9 UNAME_S=GNU UNAME_V='GNU-Mach 1.8/Hurd-0.9')
 
 $(prepare-rule):
@@ -40,17 +40,17 @@ $(prepare-rule):
 $(build-rule):
 	$(MAKE) -C $(builddir) all $(configuration)
 
-$(install-rule): $$(call installed,less pcre python tk)
+$(install-rule): $$(call installed,less pcre2 python tk)
 	$(MAKE) -C $(builddir) install $(configuration)
-	$(INSTALL) -Dpm 644 $(call addon-file,git-daemon.scm) $(DESTDIR)/etc/shepherd.d/git-daemon.scm
-	$(INSTALL) -Dpm 644 $(call addon-file,syslog.conf) $(DESTDIR)/etc/syslog.d/git-daemon.conf
-	$(INSTALL) -dm 755 $(DESTDIR)/var/lib/git
-	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/syslog/git-daemon.log
+	$(INSTALL) -Dpm 0644 $(call addon-file,git-daemon.scm) $(DESTDIR)/etc/shepherd.d/git-daemon.scm
+	$(INSTALL) -Dpm 0644 $(call addon-file,syslog.conf) $(DESTDIR)/etc/syslog.d/git-daemon.conf
+	$(INSTALL) -dm 0755 $(DESTDIR)/var/lib/git
+	$(INSTALL) -Dm 0600 /dev/null $(DESTDIR)/var/log/syslog/git-daemon.log
 # Bypass asciidoc requirement for man pages.
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/man/man{1,5,7}
-	$(INSTALL) -pm 644 $(builddir)/Documentation/man1/* $(DESTDIR)/usr/share/man/man1/
-	$(INSTALL) -pm 644 $(builddir)/Documentation/man5/* $(DESTDIR)/usr/share/man/man5/
-	$(INSTALL) -pm 644 $(builddir)/Documentation/man7/* $(DESTDIR)/usr/share/man/man7/
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/share/man/man{1,5,7}
+	$(INSTALL) -pm 0644 $(builddir)/Documentation/man1/* $(DESTDIR)/usr/share/man/man1/
+	$(INSTALL) -pm 0644 $(builddir)/Documentation/man5/* $(DESTDIR)/usr/share/man/man5/
+	$(INSTALL) -pm 0644 $(builddir)/Documentation/man7/* $(DESTDIR)/usr/share/man/man7/
 
 # Write inline files.
 $(call addon-file,git-daemon.scm syslog.conf): | $$(@D)

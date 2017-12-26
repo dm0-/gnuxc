@@ -1,5 +1,5 @@
 xz                      := xz-5.2.3
-xz_sha1                 := a2975d12e0905daec48ec87c0098602e0669d195
+xz_key                  := 3690C240CE51B4670D30AD1C38EE757D69184620
 xz_url                  := http://tukaani.org/xz/$(xz).tar.xz
 
 $(configure-rule):

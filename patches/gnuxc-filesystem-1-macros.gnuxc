@@ -2,9 +2,11 @@
 
 # System information
 %gnuxc_arch             i686
-%gnuxc_host             %{gnuxc_arch}-pc-gnu
-%gnuxc_target           %{gnuxc_host}
 %gnuxc_tune             generic
+%gnuxc_vendor           pc
+%gnuxc_os               gnu
+%gnuxc_host             %{gnuxc_arch}-%{gnuxc_vendor}-%{gnuxc_os}
+%gnuxc_target           %{gnuxc_host}
 
 # Directory structure
 %gnuxc_root             %{_prefix}/%{gnuxc_target}
@@ -27,65 +29,74 @@
 
 # Build settings
 %gnuxc_name             %(name='%{name}' ; echo -n "${name#gnuxc-}")
-%gnuxc_ldflags          -Wl,-z,relro
-%gnuxc_optflags         -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches
+%gnuxc_optflags         -march=%{gnuxc_arch} -mtune=%{gnuxc_tune} %{__global_compiler_flags}
+%gnuxc_global_cflags    %{gnuxc_optflags}
+%gnuxc_global_cxxflags  %{gnuxc_optflags}
+%gnuxc_global_fflags    %{gnuxc_optflags} -I%{_fmoddir}
+%gnuxc_global_fcflags   %{gnuxc_optflags} -I%{_fmoddir}
+%gnuxc_global_ldflags   %{__global_ldflags}
 
 %gnuxc_drop_rpath       find . -type f '(' \\\
-        -name ltmain.sh -exec %{__sed} -i \\\
-        -e 's/\\(need_relink\\)=yes/\\1=no/' '{}' + -o \\\
-        -name configure -exec %{__sed} -i -e \\\
-        's/\\(hardcode_libdir_flag_spec[A-Za-z_]*\\)=.*/\\1=-DBAD_LIBTOOL/' \\\
-        -e 's/\\(hardcode_into_libs\\)=yes/\\1=no/' '{}' + ')'
+    -name ltmain.sh -exec %{__sed} -i \\\
+    -e 's/\\(need_relink\\)=yes/\\1=no/' '{}' + -o \\\
+    -name configure -exec %{__sed} -i -e \\\
+    's/\\(hardcode_libdir_flag_spec[A-Za-z_]*\\)=.*/\\1=-DBAD_LIBTOOL/' \\\
+    -e 's/\\(hardcode_into_libs\\)=yes/\\1=no/' '{}' + ')'
 
-%gnuxc_env              \
-        export AR="%{gnuxc_ar}" ; \
-        export NM="%{gnuxc_nm}" ; \
-        export RANLIB="%{gnuxc_ranlib}" ; \
-        export CC="%{gnuxc_cc} -march=%{gnuxc_arch} -mtune=%{gnuxc_tune}" ; \
-        export CFLAGS="${CFLAGS:-%{gnuxc_optflags}}" ; \
-        export CXX="%{gnuxc_cxx} -march=%{gnuxc_arch} -mtune=%{gnuxc_tune}" ; \
-        export CXXFLAGS="${CXXFLAGS:-%{gnuxc_optflags}}" ; \
-        export FFLAGS="${FFLAGS:-%{gnuxc_optflags} -I%{_fmoddir}}" ; \
-        export LDFLAGS="${LDFLAGS:-%{gnuxc_ldflags}}" ; \
-        export CONFIG_SITE="%{gnuxc_datadir}/config.site" ; \
-        unset PKG_CONFIG_PATH ; \
-        unset PKG_CONFIG_LIBDIR
+%gnuxc_env              unset PKG_CONFIG_LIBDIR PKG_CONFIG_PATH ;\
+export AR="${AR:-%{gnuxc_ar}}" ;\
+export CC="${CC:-%{gnuxc_cc}}" ;\
+export CXX="${CXX:-%{gnuxc_cxx}}" ;\
+export NM="${NM:-%{gnuxc_nm}}" ;\
+export RANLIB="${RANLIB:-%{gnuxc_ranlib}}" ;\
+export CFLAGS="${CFLAGS:-%{gnuxc_global_cflags}}" ;\
+export CXXFLAGS="${CXXFLAGS:-%{gnuxc_global_cxxflags}}" ;\
+export FFLAGS="${FFLAGS:-%{gnuxc_global_fflags}}" ;\
+export FCFLAGS="${FCFLAGS:-%{gnuxc_global_fcflags}}" ;\
+export LDFLAGS="${LDFLAGS:-%{gnuxc_global_ldflags}}" ;\
+export CFLAGS_FOR_BUILD="${CFLAGS_FOR_BUILD:-%{__global_cflags}}" ;\
+export CXXFLAGS_FOR_BUILD="${CXXFLAGS_FOR_BUILD:-%{__global_cxxflags}}" ;\
+export FFLAGS_FOR_BUILD="${FFLAGS_FOR_BUILD:-%{__global_fflags}}" ;\
+export FCFLAGS_FOR_BUILD="${FCFLAGS_FOR_BUILD:-%{__global_fcflags}}" ;\
+export LDFLAGS_FOR_BUILD="${LDFLAGS_FOR_BUILD:-%{__global_ldflags}}" ;\
+export RUST_TARGET_PATH="%{_prefix}/lib/rustlib/%{gnuxc_target}" ;\
+export CONFIG_SITE="%{gnuxc_datadir}/config.site"
 
-%gnuxc_configure        %{gnuxc_env} ; \
-        %{_configure} \\\
-        --build=%{_build} --host=%{gnuxc_host} --target=%{gnuxc_target} \\\
-        --program-prefix=%{?_program_prefix} \\\
-        --prefix='%{gnuxc_prefix}' \\\
-        --exec-prefix='${prefix}' \\\
-        --bindir='${exec_prefix}/bin' \\\
-        --datadir='${datarootdir}' \\\
-        --datarootdir='${prefix}/share' \\\
-        --includedir='${prefix}/include' \\\
-        --infodir='${datarootdir}/info' \\\
-        --libdir='${exec_prefix}/lib' \\\
-        --libexecdir='${exec_prefix}/libexec' \\\
-        --localstatedir='%{gnuxc_localstatedir}' \\\
-        --mandir='${datarootdir}/man' \\\
-        --oldincludedir='${includedir}' \\\
-        --sbindir='${exec_prefix}/sbin' \\\
-        --sharedstatedir='${localstatedir}/lib' \\\
-        --sysconfdir='%{gnuxc_sysconfdir}'
+%gnuxc_configure        %{gnuxc_env} ;\
+%{_configure} \\\
+    --build=%{_build} --host=%{gnuxc_host} --target=%{gnuxc_target} \\\
+    --program-prefix=%{?_program_prefix} \\\
+    %{?_configure_disable_silent_rules:--disable-silent-rules} \\\
+    --prefix='%{gnuxc_prefix}' \\\
+    --exec-prefix='${prefix}' \\\
+    --bindir='${exec_prefix}/bin' \\\
+    --datadir='${datarootdir}' \\\
+    --datarootdir='${prefix}/share' \\\
+    --includedir='${prefix}/include' \\\
+    --infodir='${datarootdir}/info' \\\
+    --libdir='${exec_prefix}/lib' \\\
+    --libexecdir='${exec_prefix}/libexec' \\\
+    --localstatedir='%{gnuxc_localstatedir}' \\\
+    --mandir='${datarootdir}/man' \\\
+    --oldincludedir='${includedir}' \\\
+    --sbindir='${exec_prefix}/sbin' \\\
+    --sharedstatedir='${localstatedir}/lib' \\\
+    --sysconfdir='%{gnuxc_sysconfdir}'
 
 %gnuxc_make             %{__make} \\\
-        .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
+    .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
 
-%gnuxc_make_build       %{__make} %{?_smp_mflags} \\\
-        .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
+%gnuxc_make_build       %{__make} -O %{?_smp_mflags} \\\
+    .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
 
 %gnuxc_make_install     %{__make} install DESTDIR='%{buildroot}' \\\
-        .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
+    .LIBPATTERNS='%{gnuxc_libdir}/lib%.so %{gnuxc_libdir}/lib%.a'
 
 # Cross commands
 %gnuxc_ar               %{gnuxc_target}-gcc-ar
-%gnuxc_cc               %{gnuxc_gcc}
+%gnuxc_cc               %{gnuxc_target}-gcc
 %gnuxc_cpp              %{gnuxc_target}-cpp
 %gnuxc_cxx              %{gnuxc_target}-g++
-%gnuxc_gcc              %{gnuxc_target}-gcc
 %gnuxc_ld               %{gnuxc_target}-ld
 %gnuxc_mig              %{gnuxc_target}-mig
 %gnuxc_nm               %{gnuxc_target}-gcc-nm
@@ -98,45 +109,58 @@
 
 # RPM modifications
 %gnuxc_package_header   \
-%global __filter_GLIBC_PRIVATE 1 \
-%global __strip %{gnuxc_strip} \
-%global __objdump %{gnuxc_objdump} \
-%global __debug_install_post %%{gnuxc_debug_install_post} \
-%global debug_package %%{gnuxc_debug_package} \
-%undefine _binaries_in_noarch_packages_terminate_build \
-%undefine _python_bytecompile_errors_terminate_build \
-%global _docdir_fmt gnuxc/%%{gnuxc_name} \
-%global _pkgdocdir %{_docdir}/gnuxc/%%{gnuxc_name} \
-%global __elf_exclude_path ^(%{?__elf_exclude_path}|%{gnuxc_sysroot}/.*)$ \
-%global __libsymlink_exclude_path ^(%{?__libsymlink_exclude_path}|%{gnuxc_sysroot}/.*)$ \
+%undefine _binaries_in_noarch_packages_terminate_build\
+%undefine _python_bytecompile_errors_terminate_build\
+%global __filter_GLIBC_PRIVATE 1\
+%global __strip %{gnuxc_strip}\
+%global __objdump %{gnuxc_objdump}\
+%global __debug_install_post %%{gnuxc_debug_install_post}\
+%global debug_package %%{gnuxc_debug_package}\
+%global _docdir_fmt gnuxc/%%{gnuxc_name}\
+%global _pkgdocdir %{_docdir}/gnuxc/%%{gnuxc_name}\
+%global __elf_exclude_path ^(%{?__elf_exclude_path}|%{gnuxc_sysroot}/.*)$\
+%global __libsymlink_exclude_path ^(%{?__libsymlink_exclude_path}|%{gnuxc_sysroot}/.*)$\
 %global __arch_install_post %{__arch_install_post} \\\
-%{_rpmconfigdir}/gnuxc-expand-pc-flags.sh \
-%global __spec_prep_post %%{gnuxc_drop_rpath} ; %{___build_post} \
-%if ! 0%{?bootstrap} \
-BuildRequires:  gnuxc(bootstrapped) \
-%endif \
-BuildArch:      noarch \
+%{_rpmconfigdir}/gnuxc-expand-pc-flags.sh\
+%global __spec_prep_post %%{gnuxc_drop_rpath} ; %{___build_post}\
+%if %{without bootstrap}\
+BuildRequires:  gnuxc(bootstrapped)\
+%endif\
+BuildArch:      noarch\
 %{nil}
 
-# (same as debug_package without the ifnarch)
+# (same as _debuginfo_template with a new name to prevent RPM from skipping it)
+%gnuxc_debuginfo_template \
+%package debug\
+Summary: Debug information for package %{name}\
+Group: Development/Debug\
+AutoReq: 0\
+AutoProv: 1\
+%description debug\
+This package provides debug information for package %{name}.\
+Debug information is useful when developing applications that use this\
+package or when debugging this package.\
+%files debug -f debugfiles.list\
+%{nil}
+
+# (same as debug_package without the ifnarch and with the new template)
 %gnuxc_debug_package    \
-%global __debug_package 1 \
-%package debuginfo \
-Summary: Debug information for package %{name} \
-Group: Development/Debug \
-AutoReqProv: 0 \
-%description debuginfo \
-This package provides debug information for package %{name}. \
-Debug information is useful when developing applications that use this \
-package or when debugging this package. \
-%files debuginfo -f debugfiles.list \
-%defattr(-,root,root) \
+%global __debug_package 1\
+%gnuxc_debuginfo_template\
+%{?_debugsource_packages:%_debugsource_template}\
 %{nil}
 
-# (same as __debug_install_post with a new file name)
+# (same as __debug_install_post with a different script)
 %gnuxc_debug_install_post %{_rpmconfigdir}/gnuxc-find-debuginfo.sh \\\
+    %{?_smp_mflags} \\\
     %{?_missing_build_ids_terminate_build:--strict-build-id} \\\
+    %{?_no_recompute_build_ids:-n} \\\
     %{?_include_minidebuginfo:-m} \\\
+    %{?_include_gdb_index:-i} \\\
+    %{?_unique_build_ids:--build-id-seed "%{VERSION}-%{RELEASE}"} \\\
+    %{?_unique_debug_names:--unique-debug-suffix "-%{VERSION}-%{RELEASE}.%{_arch}"} \\\
+    %{?_unique_debug_srcs:--unique-debug-src-base "%{name}-%{VERSION}-%{RELEASE}.%{_arch}"} \\\
     %{?_find_debuginfo_dwz_opts} \\\
     %{?_find_debuginfo_opts} \\\
+    %{?_debugsource_packages:-S debugsourcefiles.list} \\\
     "%{_builddir}/%{?buildsubdir}"

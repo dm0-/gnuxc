@@ -1,5 +1,5 @@
 flex                    := flex-2.6.4
-flex_sha1               := ec5653f673ec8f6e3f07d5e730008cee54d2ce02
+flex_key                := 56C67868E93390AA1039AD1CE4B29C8D64885307
 flex_url                := http://github.com/westes/flex/releases/download/$(flex:flex-%=v%)/$(flex).tar.lz
 
 $(prepare-rule):

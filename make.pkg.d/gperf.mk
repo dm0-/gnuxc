@@ -1,5 +1,5 @@
 gperf                   := gperf-3.1
-gperf_sha1              := e3c0618c2d2e5586eda9498c867d5e4858a3b0e2
+gperf_key               := EDEB87A500CC0A211677FBFD93C08C88471097CD
 gperf_url               := http://ftpmirror.gnu.org/gperf/$(gperf).tar.gz
 
 $(configure-rule):

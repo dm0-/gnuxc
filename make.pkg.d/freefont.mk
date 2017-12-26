@@ -1,5 +1,5 @@
 freefont                := freefont-20120503
-freefont_sha1           := dad7600fa9eed4116c2aaa561228e3879565f7aa
+freefont_key            := A0156C139D2DAA3B352E42CD506361DBA36FDD52
 freefont_url            := http://ftpmirror.gnu.org/freefont/$(subst -,-otf-,$(freefont)).tar.gz
 
 ifeq ($(host),$(build))
@@ -9,5 +9,5 @@ FREEFONTDIR = /usr/share/fonts/gnu-free
 endif
 
 $(install-rule):
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/fonts/freefont
-	$(INSTALL) -pm 644 -t $(DESTDIR)/usr/share/fonts/freefont $(builddir)/*.otf
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/share/fonts/freefont
+	$(INSTALL) -pm 0644 -t $(DESTDIR)/usr/share/fonts/freefont $(builddir)/*.otf

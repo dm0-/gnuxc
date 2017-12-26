@@ -1,7 +1,8 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-pulseaudio
-Version:        10.0
+Version:        11.1
+%global apiver  %(v=%{version} ; IFS=. ; v=($v) ; echo -n "${v[*]:0:2}")
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -45,16 +46,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-
-# Don't expect Solaris headers.
-sed -i -e 's,<sys/conf.h>,<sys/poll.h>,' src/modules/module-solaris.c
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     --disable-legacy-database-entry-format \
     --disable-rpath \
-    --disable-silent-rules \
     --disable-static-bins \
     --enable-glib2 \
     --enable-gtk3 \
@@ -66,7 +63,7 @@ sed -i -e 's,<sys/conf.h>,<sys/poll.h>,' src/modules/module-solaris.c
     --with-speex \
     \
     --disable-oss-{output,wrapper}
-%gnuxc_make %{?_smp_mflags} all \
+%gnuxc_make_build all \
     pkglibdir=%{gnuxc_libdir}
 
 %install
@@ -82,7 +79,7 @@ rm -f \
 # We don't need libtool's help.
 rm -f \
     %{buildroot}%{gnuxc_libdir}/libpulse{,-mainloop-glib,-simple}.la \
-    %{buildroot}%{gnuxc_libdir}/libpulse{common,core}-%{version}.la
+    %{buildroot}%{gnuxc_libdir}/libpulse{common,core}-%{apiver}.la
 
 # This functionality should be used from the system package.
 rm -rf \
@@ -99,17 +96,17 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < %{gnuxc_name}.lang
 
 %files
 %{gnuxc_libdir}/libpulse.so.0
-%{gnuxc_libdir}/libpulse.so.0.20.1
+%{gnuxc_libdir}/libpulse.so.0.20.2
 %{gnuxc_libdir}/libpulse-mainloop-glib.so.0
 %{gnuxc_libdir}/libpulse-mainloop-glib.so.0.0.5
 %{gnuxc_libdir}/libpulse-simple.so.0
-%{gnuxc_libdir}/libpulse-simple.so.0.1.0
-%{gnuxc_libdir}/libpulsecommon-%{version}.so
-%{gnuxc_libdir}/libpulsecore-%{version}.so
-%dir %{gnuxc_libdir}/pulse-%{version}
-%dir %{gnuxc_libdir}/pulse-%{version}/modules
-%{gnuxc_libdir}/pulse-%{version}/modules/lib*.so
-%{gnuxc_libdir}/pulse-%{version}/modules/module-*.so
+%{gnuxc_libdir}/libpulse-simple.so.0.1.1
+%{gnuxc_libdir}/libpulsecommon-%{apiver}.so
+%{gnuxc_libdir}/libpulsecore-%{apiver}.so
+%dir %{gnuxc_libdir}/pulse-%{apiver}
+%dir %{gnuxc_libdir}/pulse-%{apiver}/modules
+%{gnuxc_libdir}/pulse-%{apiver}/modules/lib*.so
+%{gnuxc_libdir}/pulse-%{apiver}/modules/module-*.so
 %{gnuxc_sysconfdir}/pulse
 %doc NEWS PROTOCOL README todo
 %license GPL LGPL LICENSE
@@ -127,7 +124,7 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < %{gnuxc_name}.lang
 %{gnuxc_libdir}/libpulse.a
 %{gnuxc_libdir}/libpulse-mainloop-glib.a
 %{gnuxc_libdir}/libpulse-simple.a
-%{gnuxc_libdir}/libpulsecommon-%{version}.a
-%{gnuxc_libdir}/libpulsecore-%{version}.a
-%{gnuxc_libdir}/pulse-%{version}/modules/lib*.a
-%{gnuxc_libdir}/pulse-%{version}/modules/module-*.a
+%{gnuxc_libdir}/libpulsecommon-%{apiver}.a
+%{gnuxc_libdir}/libpulsecore-%{apiver}.a
+%{gnuxc_libdir}/pulse-%{apiver}/modules/lib*.a
+%{gnuxc_libdir}/pulse-%{apiver}/modules/module-*.a

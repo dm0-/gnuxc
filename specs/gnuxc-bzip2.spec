@@ -34,22 +34,22 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_env
-%gnuxc_make %{?_smp_mflags} libbz2.a \
-    AR='%{gnuxc_ar}' CC='%{gnuxc_cc}' RANLIB='%{gnuxc_ranlib}' \
-    CFLAGS='%{gnuxc_optflags}' LDFLAGS='%{gnuxc_ldflags}' \
+%gnuxc_make_build libbz2.a \
+    AR="$AR" CC="$CC" RANLIB="$RANLIB" \
+    CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS" \
     PREFIX='%{gnuxc_prefix}'
-%gnuxc_make %{?_smp_mflags} -f Makefile-libbz2_so all \
-    CC='%{gnuxc_cc}' \
-    CFLAGS='%{gnuxc_optflags}'
+%gnuxc_make_build -f Makefile-libbz2_so all \
+    CC="$CC" \
+    CFLAGS="$CFLAGS"
 
 %install
-install -Dpm 644 bzlib.h %{buildroot}%{gnuxc_includedir}/bzlib.h
-install -Dpm 644 libbz2.a %{buildroot}%{gnuxc_libdir}/libbz2.a
-install -Dpm 755 -t %{buildroot}%{gnuxc_libdir} libbz2.so.%{version}
+install -Dpm 0644 bzlib.h %{buildroot}%{gnuxc_includedir}/bzlib.h
+install -Dpm 0644 libbz2.a %{buildroot}%{gnuxc_libdir}/libbz2.a
+install -Dpm 0755 -t %{buildroot}%{gnuxc_libdir} libbz2.so.%{version}
 ln -fs libbz2.so.%{version} %{buildroot}%{gnuxc_libdir}/libbz2.so.1.0
 ln -fs libbz2.so.1.0 %{buildroot}%{gnuxc_libdir}/libbz2.so
 

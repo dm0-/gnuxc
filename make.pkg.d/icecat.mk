@@ -1,5 +1,5 @@
-icecat                  := icecat-52.1.0
-icecat_sha1             := f4d2e5ed5846a675f7d96f2f9220b724bd9a5b58
+icecat                  := icecat-52.3.0
+icecat_key              := A57369A8BABC2542B5A0368C3C76EED7D7E04784
 icecat_url              := http://ftpmirror.gnu.org/$(subst -,/,$(icecat))/$(icecat)-gnu1.tar.bz2
 
 $(prepare-rule):
@@ -10,6 +10,7 @@ $(prepare-rule):
 ifneq ($(host),$(build))
 $(configure-rule): configure := $(configure:--host%=)
 $(configure-rule): configure := $(configure:--build%=--host%)
+$(configure-rule): configure := $(configure:--disable-silent-rules%=)
 $(configure-rule): configure := $(configure:--bindir%=)
 $(configure-rule): configure := $(subst datarootdir,datadir,$(configure:--datadir%=))
 $(configure-rule): configure := $(configure:--docdir%=)
@@ -25,10 +26,9 @@ $(configure-rule): configure := $(configure:--sbindir%=)
 $(configure-rule): configure := $(configure:--sharedstatedir%=)
 $(configure-rule): configure := $(configure:--sysconfdir%=)
 $(configure-rule): private override export PYTHON := python
-$(configure-rule): private override export PKG_CONFIG := $(PKG_CONFIG:--%=)
 $(configure-rule):
 	$(MKDIR) $(builddir)/hurd && cd $(builddir)/hurd && \
-	CROSS_COMPILE=1 HOST_AR=gcc-ar HOST_CC=gcc HOST_CXX=g++ HOST_RANLIB=gcc-ranlib ../$(configure) \
+	CROSS_COMPILE=1 HOST_AR=gcc-ar HOST_CC=gcc HOST_CXX=g++ HOST_RANLIB=gcc-ranlib PKG_CONFIG=$(firstword $(PKG_CONFIG)) ../$(configure) \
 		--disable-strip --disable-install-strip \
 		--enable-debug-symbols \
 		--enable-default-toolkit=cairo-gtk3 \
@@ -85,16 +85,16 @@ $(build-rule):
 
 $(install-rule): $$(call installed,gtk+ icu4c libevent libvpx nss pulseaudio)
 	$(MAKE) -C $(builddir)/hurd install
-	$(INSTALL) -Dpm 644 $(call addon-file,local-settings.js) $(DESTDIR)/usr/lib/$(icecat)/defaults/pref/local-settings.js
-	$(INSTALL) -Dpm 644 $(call addon-file,mozilla.cfg) $(DESTDIR)/usr/lib/$(icecat)/mozilla.cfg
-	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default16.png $(DESTDIR)/usr/share/icons/hicolor/16x16/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default22.png $(DESTDIR)/usr/share/icons/hicolor/22x22/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default24.png $(DESTDIR)/usr/share/icons/hicolor/24x24/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/content/icon48.png $(DESTDIR)/usr/share/icons/hicolor/48x48/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/content/icon64.png $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/mozicon128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/icecat.png
-	$(INSTALL) -Dpm 644 $(builddir)/browser/branding/official/default256.png $(DESTDIR)/usr/share/icons/hicolor/256x256/apps/icecat.png
+	$(INSTALL) -Dpm 0644 $(call addon-file,local-settings.js) $(DESTDIR)/usr/lib/$(icecat)/defaults/pref/local-settings.js
+	$(INSTALL) -Dpm 0644 $(call addon-file,mozilla.cfg) $(DESTDIR)/usr/lib/$(icecat)/mozilla.cfg
+	$(INSTALL) -Dpm 0644 $(builddir)/browser/branding/official/default16.png $(DESTDIR)/usr/share/icons/hicolor/16x16/apps/icecat.png
+	$(INSTALL) -Dpm 0644 $(builddir)/browser/branding/official/default22.png $(DESTDIR)/usr/share/icons/hicolor/22x22/apps/icecat.png
+	$(INSTALL) -Dpm 0644 $(builddir)/browser/branding/official/default24.png $(DESTDIR)/usr/share/icons/hicolor/24x24/apps/icecat.png
+	$(INSTALL) -Dpm 0644 $(builddir)/browser/branding/official/default32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/icecat.png
+	$(INSTALL) -Dpm 0644 $(builddir)/browser/branding/official/content/icon48.png $(DESTDIR)/usr/share/icons/hicolor/48x48/apps/icecat.png
+	$(INSTALL) -Dpm 0644 $(builddir)/browser/branding/official/content/icon64.png $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/icecat.png
+	$(INSTALL) -Dpm 0644 $(builddir)/browser/branding/official/mozicon128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/icecat.png
+	$(INSTALL) -Dpm 0644 $(builddir)/browser/branding/official/default256.png $(DESTDIR)/usr/share/icons/hicolor/256x256/apps/icecat.png
 # Save nearly a gigabyte of disk space from a duplicate library.
 	$(LINK) $(DESTDIR)/usr/lib/$(icecat)/libxul.so $(DESTDIR)/usr/lib/$(icecat:icecat-%=icecat-devel-%/sdk/lib)/libxul.so
 endif

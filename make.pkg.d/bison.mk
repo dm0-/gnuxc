@@ -1,11 +1,10 @@
 bison                   := bison-3.0.4
-bison_sha1              := 8270497aad88c7dd4f2c317298c50513fb0c3c8e
+bison_key               := 7DF84374B1EE1F9764BBE25D0DDCAA3278D5264E
 bison_url               := http://ftpmirror.gnu.org/bison/$(bison).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-assert \
 		--enable-gcc-warnings \
 		--enable-threads=posix \

@@ -1,15 +1,14 @@
-gtk+                    := gtk+-3.22.16
-gtk+_sha1               := 7cfc2e024d1a09f5d2a2518335b62884570d429b
+gtk+                    := gtk+-3.22.26
+gtk+_sha1               := aa6730ac00ea2352c522c3971f63b708b971bc5f
 gtk+_url                := http://ftp.gnome.org/pub/gnome/sources/gtk+/3.22/$(gtk+).tar.xz
 
 $(prepare-rule):
-	$(EDIT) 's/ atk-bridge-2.0//' $(builddir)/configure.ac
+	$(SED) -i.orig 's/ atk-bridge-2.0//' $(builddir)/configure.ac $(builddir)/configure
+	for f in $(builddir)/configure{.ac,} ; do $(TOUCH) --reference=$$f.orig $$f ; done
 	$(EDIT) '/atk[-_]bridge/d' $(builddir)/gtk/a11y/gtkaccessibility.c
-	$(RM) $(builddir)/configure
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-debug \
 		--enable-modules \
 		--enable-static \
@@ -31,7 +30,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,adwaita-icon-theme atk gdk-pixbuf libXi libXinerama libXrandr mesa pango)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,settings.ini) $(DESTDIR)/etc/gtk-3.0/settings.ini
+	$(INSTALL) -Dpm 0644 $(call addon-file,settings.ini) $(DESTDIR)/etc/gtk-3.0/settings.ini
 
 # Write inline files.
 $(call addon-file,settings.ini): | $$(@D)

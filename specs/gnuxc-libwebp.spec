@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libwebp
-Version:        0.6.0
+Version:        0.6.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -37,11 +37,10 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-everything \
     --enable-experimental \
     --enable-{gif,jpeg,png,tiff} \
@@ -54,13 +53,13 @@ statically, which is highly discouraged.
     \
     --disable-wic \
     --disable-gl # This wants GLUT, not GL.
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # There is no need to install binary programs in the sysroot.
-rm -f %{buildroot}%{gnuxc_bindir}/{cwebp,dwebp,gif2webp,img2webp,webpmux}
+rm -f %{buildroot}%{gnuxc_bindir}/{cwebp,dwebp,{gif,img}2webp,webp{info,mux}}
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libwebp{,decoder,demux,extras,mux}.la
@@ -71,13 +70,13 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libwebp.so.7
-%{gnuxc_libdir}/libwebp.so.7.0.0
+%{gnuxc_libdir}/libwebp.so.7.0.1
 %{gnuxc_libdir}/libwebpdecoder.so.3
-%{gnuxc_libdir}/libwebpdecoder.so.3.0.0
+%{gnuxc_libdir}/libwebpdecoder.so.3.0.1
 %{gnuxc_libdir}/libwebpdemux.so.2
-%{gnuxc_libdir}/libwebpdemux.so.2.0.2
+%{gnuxc_libdir}/libwebpdemux.so.2.0.3
 %{gnuxc_libdir}/libwebpmux.so.3
-%{gnuxc_libdir}/libwebpmux.so.3.0.0
+%{gnuxc_libdir}/libwebpmux.so.3.0.1
 %doc AUTHORS ChangeLog NEWS README README.mux
 %license COPYING PATENTS
 

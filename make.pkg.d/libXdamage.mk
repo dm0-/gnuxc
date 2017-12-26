@@ -4,7 +4,6 @@ libXdamage_url          := http://xorg.freedesktop.org/releases/individual/lib/$
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-strict-compilation
 
 $(build-rule):

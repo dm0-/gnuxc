@@ -1,12 +1,11 @@
-pcre                    := pcre-8.40
-pcre_sha1               := 12f338719b8b028a2eecbf9192fcc00a13fc04f6
-pcre_url                := ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/$(pcre).tar.bz2
+pcre                    := pcre-8.41
+pcre_key                := 45F68D54BBE23FB3039B46E59766E084FB0F43D8
+pcre_url                := http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/$(pcre).tar.bz2
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
-		--disable-silent-rules \
 		--enable-pcre16 \
 		--enable-pcre32 \
 		--enable-jit \

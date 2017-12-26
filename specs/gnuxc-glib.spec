@@ -1,13 +1,13 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-glib
-Version:        2.52.3
+Version:        2.54.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 URL:            http://developer.gnome.org/glib/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.52/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.54/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-libffi-devel
 BuildRequires:  gnuxc-pcre-devel
@@ -39,11 +39,10 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-debug \
     --enable-gc-friendly \
     --enable-static \
@@ -54,7 +53,7 @@ statically, which is highly discouraged.
     --disable-fam \
     --disable-libelf \
     --disable-selinux
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -93,15 +92,15 @@ while read -r l file ; do rm -f %{buildroot}$file ; done < %{gnuxc_name}20.lang
 %dir %{gnuxc_datadir}/glib-2.0/schemas
 %{gnuxc_libdir}/gio
 %{gnuxc_libdir}/libgio-2.0.so.0
-%{gnuxc_libdir}/libgio-2.0.so.0.5200.3
+%{gnuxc_libdir}/libgio-2.0.so.0.5400.2
 %{gnuxc_libdir}/libglib-2.0.so.0
-%{gnuxc_libdir}/libglib-2.0.so.0.5200.3
+%{gnuxc_libdir}/libglib-2.0.so.0.5400.2
 %{gnuxc_libdir}/libgmodule-2.0.so.0
-%{gnuxc_libdir}/libgmodule-2.0.so.0.5200.3
+%{gnuxc_libdir}/libgmodule-2.0.so.0.5400.2
 %{gnuxc_libdir}/libgobject-2.0.so.0
-%{gnuxc_libdir}/libgobject-2.0.so.0.5200.3
+%{gnuxc_libdir}/libgobject-2.0.so.0.5400.2
 %{gnuxc_libdir}/libgthread-2.0.so.0
-%{gnuxc_libdir}/libgthread-2.0.so.0.5200.3
+%{gnuxc_libdir}/libgthread-2.0.so.0.5400.2
 %doc AUTHORS* ChangeLog* NEWS* README
 %license COPYING*
 

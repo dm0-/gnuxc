@@ -7,6 +7,8 @@ $(prepare-rule):
 ifneq ($(host),$(build))
 	$(call apply,fix-bitness)
 
+$(call build-rule,native): private override export CFLAGS := $(CFLAGS_FOR_BUILD)
+$(call build-rule,native): private override export LDFLAGS := $(LDFLAGS_FOR_BUILD)
 $(call build-rule,native): $(configured)
 	$(MAKE) -C $(builddir) spotless
 	for util in makedefs tilemap tile2x11 dgn_comp lev_comp dlb ; do \
@@ -50,20 +52,21 @@ $(build-rule):
 
 $(install-rule): $$(call installed,font-adobe-100dpi libXaw)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/nethack.conf
-	$(INSTALL) -Dpm 644 $(call addon-file,xorg.conf) $(DESTDIR)/etc/X11/xorg.conf.d/nethack.conf
-	$(INSTALL) -Dpm 644 $(builddir)/sys/unix/sysconf $(DESTDIR)/etc/nethack.conf
-	$(INSTALL) -Dpm 644 $(builddir)/win/X11/fonts.dir $(DESTDIR)/usr/share/fonts/nethack/fonts.dir
-	$(INSTALL) -Dpm 644 $(builddir)/win/X11/ibm.bdf $(DESTDIR)/usr/share/fonts/nethack/ibm.bdf
-	$(INSTALL) -Dpm 644 $(builddir)/win/X11/nh10.bdf $(DESTDIR)/usr/share/fonts/nethack/nh10.bdf
-	$(INSTALL) -Dpm 644 $(builddir)/icon192.png32 $(DESTDIR)/usr/share/icons/hicolor/192x192/apps/nethack.png
-	$(INSTALL) -Dpm 644 $(builddir)/icon128.png32 $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/nethack.png
-	$(INSTALL) -Dpm 644 $(builddir)/icon96.png32 $(DESTDIR)/usr/share/icons/hicolor/96x96/apps/nethack.png
-	$(INSTALL) -Dpm 644 $(builddir)/icon96.png32 $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/nethack.png
-	$(INSTALL) -Dpm 644 $(builddir)/icon48.png32 $(DESTDIR)/usr/share/icons/hicolor/48x48/apps/nethack.png
-	$(INSTALL) -Dpm 644 $(builddir)/icon16.png32 $(DESTDIR)/usr/share/icons/hicolor/16x16/apps/nethack.png
-	$(INSTALL) -Dpm 644 $(builddir)/doc/nethack.6 $(DESTDIR)/usr/share/man/man6/nethack.6
-	$(INSTALL) -Dpm 644 $(builddir)/doc/recover.6 $(DESTDIR)/usr/share/man/man6/nethack-recover.6
+	$(INSTALL) -Dpm 0644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/nethack.conf
+	$(INSTALL) -Dpm 0644 $(call addon-file,xorg.conf) $(DESTDIR)/etc/X11/xorg.conf.d/nethack.conf
+	$(INSTALL) -Dpm 0644 $(builddir)/sys/unix/sysconf $(DESTDIR)/etc/nethack.conf
+	$(INSTALL) -Dpm 0644 $(builddir)/win/X11/fonts.dir $(DESTDIR)/usr/share/fonts/nethack/fonts.dir
+	$(INSTALL) -Dpm 0644 $(builddir)/win/X11/ibm.bdf $(DESTDIR)/usr/share/fonts/nethack/ibm.bdf
+	$(INSTALL) -Dpm 0644 $(builddir)/win/X11/nh10.bdf $(DESTDIR)/usr/share/fonts/nethack/nh10.bdf
+	$(INSTALL) -Dpm 0644 $(builddir)/icon192.png32 $(DESTDIR)/usr/share/icons/hicolor/192x192/apps/nethack.png
+	$(INSTALL) -Dpm 0644 $(builddir)/icon128.png32 $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/nethack.png
+	$(INSTALL) -Dpm 0644 $(builddir)/icon96.png32 $(DESTDIR)/usr/share/icons/hicolor/96x96/apps/nethack.png
+	$(INSTALL) -Dpm 0644 $(builddir)/icon96.png32 $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/nethack.png
+	$(INSTALL) -Dpm 0644 $(builddir)/icon48.png32 $(DESTDIR)/usr/share/icons/hicolor/48x48/apps/nethack.png
+	$(INSTALL) -Dpm 0644 $(builddir)/icon16.png32 $(DESTDIR)/usr/share/icons/hicolor/16x16/apps/nethack.png
+	$(INSTALL) -Dpm 0644 $(builddir)/doc/nethack.6 $(DESTDIR)/usr/share/man/man6/nethack.6
+	$(INSTALL) -Dpm 0644 $(builddir)/doc/recover.6 $(DESTDIR)/usr/share/man/man6/nethack-recover.6
+	$(INSTALL) -Dpm 0644 $(builddir)/doc/Guidebook.txt $(DESTDIR)/usr/share/doc/nethack/Guidebook.txt
 
 # Write inline files.
 $(call addon-file,gnu.mk tmpfiles.conf xorg.conf): | $$(@D)

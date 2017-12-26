@@ -10,7 +10,7 @@ Support cross-compiling for Hurd.
  # intentionally NOT "/usr/bin/env python".  On many systems
 --- configure.ac
 +++ configure.ac
-@@ -421,7 +421,7 @@ fi
+@@ -412,7 +412,7 @@ fi
  AC_SUBST(_PYTHON_HOST_PLATFORM)
  if test "$cross_compiling" = yes; then
  	case "$host" in
@@ -19,7 +19,7 @@ Support cross-compiling for Hurd.
  		case "$host_cpu" in
  		arm*)
  			_host_cpu=arm
-@@ -2806,7 +2806,7 @@
+@@ -2837,7 +2837,7 @@
  esac
  
  if test "$with_system_ffi" = "yes" && test -n "$PKG_CONFIG"; then

@@ -36,7 +36,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-version-%{version}
+%autosetup -n %{gnuxc_name}-version-%{version}
 autoreconf -fi
 
 %build
@@ -47,7 +47,7 @@ autoreconf -fi
     EXTRACFLAGS="$CFLAGS" \
     \
     --disable-opengl # This requires libGLUT.
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

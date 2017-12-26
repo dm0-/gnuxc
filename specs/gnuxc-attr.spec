@@ -36,12 +36,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     PLATFORM=gnu
-%gnuxc_make %{?_smp_mflags}
+%gnuxc_make_build
 
 %install
 %gnuxc_make_install install-lib install-dev
@@ -53,7 +53,7 @@ rm -f %{buildroot}%{gnuxc_bindir}/{attr,getfattr,setfattr}
 rm -f %{buildroot}%{gnuxc_libdir}/libattr.la
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
-chmod -c 755 %{buildroot}%{gnuxc_libdir}/libattr.so.1.1.0
+chmod -c 0755 %{buildroot}%{gnuxc_libdir}/libattr.so.1.1.0
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}

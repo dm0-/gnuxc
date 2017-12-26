@@ -1,20 +1,20 @@
-gcc                     := gcc-7.1.0
-gcc_sha1                := 9f1e907f27eadefe7d5f7567c09e17805d9c8837
-gcc_url                 := http://ftpmirror.gnu.org/gcc/$(gcc)/$(gcc).tar.bz2
+gcc                     := gcc-7.2.0
+gcc_key                 := 13975A70E63C361C73AE69EF6EEB81F8981C74C7
+gcc_url                 := http://ftpmirror.gnu.org/gcc/$(gcc)/$(gcc).tar.xz
 
 ifeq ($(host),$(build))
 export AR     = gcc-ar
-export CC     = gcc -march=$(arch) -mtune=$(or $(tune),generic)
-export CXX    = g++ -march=$(arch) -mtune=$(or $(tune),generic)
-export F77    = gfortran -march=$(arch) -mtune=$(or $(tune),generic)
+export CC     = gcc
+export CXX    = g++
+export F77    = gfortran
 export FC     = $(F77)
 export NM     = gcc-nm
 export RANLIB = gcc-ranlib
 else
 export AR     = $(host)-gcc-ar
-export CC     = $(host)-gcc -march=$(arch) -mtune=$(or $(tune),generic)
-export CXX    = $(host)-g++ -march=$(arch) -mtune=$(or $(tune),generic)
-export F77    = $(host)-gfortran -march=$(arch) -mtune=$(or $(tune),generic)
+export CC     = $(host)-gcc
+export CXX    = $(host)-g++
+export F77    = $(host)-gfortran
 export FC     = $(F77)
 export NM     = $(host)-gcc-nm
 export RANLIB = $(host)-gcc-ranlib
@@ -26,7 +26,7 @@ $(prepare-rule):
 # Work around a bad hard-coded setting that breaks all cross-compiling.
 	$(EDIT) '/system_bdw_gc_found=no/s/=no/=yes/g' $(builddir)/libobjc/configure{.ac,}
 
-$(configure-rule): CFLAGS := $(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=) -Wno-error=format-security
+$(configure-rule): private override export CFLAGS := $(filter-out -march=% -mtune=%,$(CFLAGS:-Wp,-D_FORTIFY_SOURCE%=)) -Wno-error=format-security
 $(configure-rule):
 	$(MKDIR) $(builddir)/build && cd $(builddir)/build && ../$(configure) \
 		--disable-libcilkrts \

@@ -4,7 +4,6 @@ xf86-video-fbdev_url    := http://xorg.freedesktop.org/releases/individual/drive
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-pciaccess \
 		--enable-static \
 		--enable-strict-compilation \

@@ -1,5 +1,5 @@
-gdb                     := gdb-8.0
-gdb_sha1                := 148c8e783ebf9b281241d0566db59961191ec64d
+gdb                     := gdb-8.0.1
+gdb_key                 := F40ADB902B24264AA42E50BF92EDB04BFF325CF3
 gdb_url                 := http://ftpmirror.gnu.org/gdb/$(gdb).tar.xz
 
 $(prepare-rule):

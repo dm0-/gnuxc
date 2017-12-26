@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gtk+
-Version:        3.22.16
+Version:        3.22.26
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -18,8 +18,8 @@ BuildRequires:  gnuxc-libXrandr-devel
 BuildRequires:  gnuxc-pango-devel
 BuildRequires:  gnuxc-pkg-config
 
-BuildRequires:  gettext-devel
-BuildRequires:  gobject-introspection-devel
+BuildRequires:  glib2-devel
+BuildRequires:  perl
 
 %description
 %{summary}.
@@ -43,14 +43,13 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-sed -i -e 's/ atk-bridge-2.0//' configure.ac
+%autosetup -n %{gnuxc_name}-%{version}
+sed -i.orig -e 's/ atk-bridge-2.0//' configure.ac configure
+for f in configure{.ac,} ; do touch --reference=$f.orig $f ; done
 sed -i -e '/atk[-_]bridge/d' gtk/a11y/gtkaccessibility.c
-autoreconf -fi
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-debug \
     --enable-modules \
     --enable-static \
@@ -66,7 +65,7 @@ autoreconf -fi
     --disable-glibtest \
     --disable-schemas-compile \
     --disable-xcomposite
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -113,9 +112,9 @@ while read -r l file ; do rm -f %{buildroot}$file ; done
 %{gnuxc_libdir}/libgailutil-3.so.0
 %{gnuxc_libdir}/libgailutil-3.so.0.0.0
 %{gnuxc_libdir}/libgdk-3.so.0
-%{gnuxc_libdir}/libgdk-3.so.0.2200.16
+%{gnuxc_libdir}/libgdk-3.so.0.2200.26
 %{gnuxc_libdir}/libgtk-3.so.0
-%{gnuxc_libdir}/libgtk-3.so.0.2200.16
+%{gnuxc_libdir}/libgtk-3.so.0.2200.26
 %doc AUTHORS ChangeLog* HACKING INSTALL NEWS* README
 %license COPYING
 

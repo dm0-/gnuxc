@@ -37,21 +37,21 @@ $(build-rule):
 
 $(install-rule): $$(call installed,liboop libXau nettle)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 755 $(call addon-file,scp.sh)          $(DESTDIR)/usr/bin/scp
-	$(INSTALL) -Dpm 755 $(call addon-file,sftp.sh)         $(DESTDIR)/usr/bin/sftp
-	$(INSTALL) -Dpm 755 $(call addon-file,ssh.sh)          $(DESTDIR)/usr/bin/ssh
-	$(INSTALL) -Dpm 644 $(call addon-file,lshd.scm)        $(DESTDIR)/etc/shepherd.d/lshd.scm
-	$(INSTALL) -Dpm 644 $(call addon-file,lshd.conf)       $(DESTDIR)/etc/lshd/lshd.conf
-	$(INSTALL) -Dpm 644 $(call addon-file,connection.conf) $(DESTDIR)/etc/lshd/lshd-connection.conf
-	$(INSTALL) -Dpm 644 $(call addon-file,userauth.conf)   $(DESTDIR)/etc/lshd/lshd-userauth.conf
-	$(INSTALL) -Dpm 644 $(call addon-file,syslog.conf)     $(DESTDIR)/etc/syslog.d/lsh.conf
-	$(INSTALL) -dm 755 $(DESTDIR)/var/lib/lsh
-	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/syslog/lshd.log
+	$(INSTALL) -Dpm 0755 $(call addon-file,scp.sh)          $(DESTDIR)/usr/bin/scp
+	$(INSTALL) -Dpm 0755 $(call addon-file,sftp.sh)         $(DESTDIR)/usr/bin/sftp
+	$(INSTALL) -Dpm 0755 $(call addon-file,ssh.sh)          $(DESTDIR)/usr/bin/ssh
+	$(INSTALL) -Dpm 0644 $(call addon-file,lshd.scm)        $(DESTDIR)/etc/shepherd.d/lshd.scm
+	$(INSTALL) -Dpm 0644 $(call addon-file,lshd.conf)       $(DESTDIR)/etc/lshd/lshd.conf
+	$(INSTALL) -Dpm 0644 $(call addon-file,connection.conf) $(DESTDIR)/etc/lshd/lshd-connection.conf
+	$(INSTALL) -Dpm 0644 $(call addon-file,userauth.conf)   $(DESTDIR)/etc/lshd/lshd-userauth.conf
+	$(INSTALL) -Dpm 0644 $(call addon-file,syslog.conf)     $(DESTDIR)/etc/syslog.d/lsh.conf
+	$(INSTALL) -dm 0755 $(DESTDIR)/var/lib/lsh
+	$(INSTALL) -Dm 0600 /dev/null $(DESTDIR)/var/log/syslog/lshd.log
 # Manually install man pages.
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/man/man{1,5,8}
-	$(INSTALL) -pm 644 $(builddir)/doc/*.1 $(DESTDIR)/usr/share/man/man1/
-	$(INSTALL) -pm 644 $(builddir)/doc/*.5 $(DESTDIR)/usr/share/man/man5/
-	$(INSTALL) -pm 644 $(builddir)/doc/*.8 $(DESTDIR)/usr/share/man/man8/
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/share/man/man{1,5,8}
+	$(INSTALL) -pm 0644 $(builddir)/doc/*.1 $(DESTDIR)/usr/share/man/man1/
+	$(INSTALL) -pm 0644 $(builddir)/doc/*.5 $(DESTDIR)/usr/share/man/man5/
+	$(INSTALL) -pm 0644 $(builddir)/doc/*.8 $(DESTDIR)/usr/share/man/man8/
 
 # Write inline files.
 $(call addon-file,connection.conf lshd.conf lshd.scm scp.sh sftp.sh ssh.sh syslog.conf userauth.conf): | $$(@D)

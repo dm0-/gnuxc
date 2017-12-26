@@ -1,8 +1,8 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-json-c
-Version:        0.12.1
-%global snap    20160607
+Version:        0.13
+%global snap    20171207
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -37,17 +37,13 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{gnuxc_name}-%{version}-%{snap}
-
-# Remove bad hard-coded settings.
-sed -i -e 's/ -Werror / /g' Makefile.am.inc
-
-autoreconf -fi
+%autosetup -n %{gnuxc_name}-%{gnuxc_name}-%{version}-%{snap}
 
 %build
 %gnuxc_configure \
-    --enable-rdrand
-%gnuxc_make %{?_smp_mflags} all
+    --enable-rdrand \
+    --enable-threading
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -57,9 +53,9 @@ rm -f %{buildroot}%{gnuxc_libdir}/libjson-c.la
 
 
 %files
-%{gnuxc_libdir}/libjson-c.so.2
-%{gnuxc_libdir}/libjson-c.so.2.0.2
-%doc AUTHORS ChangeLog NEWS README
+%{gnuxc_libdir}/libjson-c.so.3
+%{gnuxc_libdir}/libjson-c.so.3.0.1
+%doc AUTHORS ChangeLog issues_closed_for_0.13.md NEWS README.md
 %license COPYING
 
 %files devel

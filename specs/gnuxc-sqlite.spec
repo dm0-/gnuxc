@@ -1,8 +1,8 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-sqlite
-Version:        3.19.3
-%global realver 3190300
+Version:        3.21.0
+%global realver 3210000
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -38,7 +38,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-autoconf-%{realver}
+%autosetup -n %{gnuxc_name}-autoconf-%{realver}
 
 %build
 %gnuxc_configure \
@@ -51,7 +51,7 @@ statically, which is highly discouraged.
     --enable-threadsafe \
     CPPFLAGS='-DSQLITE_ENABLE_DBSTAT_VTAB -DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_SECURE_DELETE' \
     ac_cv_search_tgetent=-ltinfow
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -72,7 +72,6 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 %doc README.txt
 
 %files devel
-%{gnuxc_includedir}/msvc.h
 %{gnuxc_includedir}/sqlite3.h
 %{gnuxc_includedir}/sqlite3ext.h
 %{gnuxc_libdir}/libsqlite3.so

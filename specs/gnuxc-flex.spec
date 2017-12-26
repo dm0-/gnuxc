@@ -30,7 +30,7 @@ applications that use %{gnuxc_name} on GNU systems.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Skip tests.
 sed -i -e '/^SUBDIRS *=/,/^$/{/tests/d;}' Makefile.in
@@ -42,7 +42,7 @@ sed -i -e '/^SUBDIRS *=/,/^$/{/tests/d;}' Makefile.in
     --disable-rpath \
     --enable-libfl \
     --enable-warnings
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

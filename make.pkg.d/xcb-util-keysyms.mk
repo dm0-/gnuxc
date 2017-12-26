@@ -4,7 +4,6 @@ xcb-util-keysyms_url    := http://xcb.freedesktop.org/dist/$(xcb-util-keysyms).t
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-strict-compilation
 
 $(build-rule):

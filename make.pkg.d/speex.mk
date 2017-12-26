@@ -4,7 +4,6 @@ speex_url               := http://downloads.xiph.org/releases/speex/$(speex).tar
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-binaries \
 		--enable-sse \
 		--enable-vbr \

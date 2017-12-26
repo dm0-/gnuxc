@@ -1,17 +1,15 @@
-%if 0%{?_with_bootstrap:1}
-%global bootstrap 1
-%endif
+%bcond_with bootstrap
 
 %?gnuxc_package_header
-%if 0%{?bootstrap}
+%if %{with bootstrap}
 %global debug_package %{nil}
 %endif
 
 Name:           gnuxc-hurd
 Version:        0.9
-%global commit  3c0094e1244b649ca49482fadb850a2dfc2d4442
+%global commit  b37c7dd4dd0de064b7ae2c9ad5687ebb635677c8
 %global snap    %(c=%{commit} ; echo -n ${c:0:6})
-Release:        1.%{?bootstrap:0}%{!?bootstrap:1}.git%{snap}%{?dist}
+Release:        1.%{without bootstrap}.git%{snap}%{?dist}
 Summary:        GNU Hurd servers, libraries, and utilities
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
@@ -28,14 +26,14 @@ BuildRequires:  gnuxc-gcc
 BuildRequires:  gnuxc-gnumach-headers
 BuildRequires:  gnuxc-mig
 BuildRequires:  gnuxc-pkg-config
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 BuildRequires:  gnuxc-bzip2-devel
 BuildRequires:  gnuxc-zlib-devel
 %endif
 
 BuildRequires:  autoconf
 
-%if 0%{?bootstrap}
+%if %{with bootstrap}
 Provides:       gnuxc-bootstrap(%{gnuxc_name}) = %{version}-%{release}
 %else
 Obsoletes:      gnuxc-bootstrap(%{gnuxc_name}) <= %{version}-%{release}
@@ -53,7 +51,7 @@ Requires:       gnuxc-gnumach-headers
 This package provides system headers taken from the GNU Hurd kernel source for
 use with cross-compilers.
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %package libs
 Summary:        Cross-compiled versions of Hurd libraries for the GNU system
 
@@ -81,16 +79,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{commit}
-%patch101
-%patch102
-%patch103
-%patch104
+%autosetup -n %{gnuxc_name}-%{commit} -p0
 autoreconf -fi
 
 %build
 %gnuxc_configure \
-%if 0%{?bootstrap}
+%if %{with bootstrap}
     CC='%{gnuxc_cc} -nostdlib' \
 %else
     --with-libbz2 \
@@ -99,8 +93,8 @@ autoreconf -fi
     --without-libdaemon \
     --without-parted
 
-%if ! 0%{?bootstrap}
-%gnuxc_make %{?_smp_mflags} \
+%if %{without bootstrap}
+%gnuxc_make_build \
     lib{diskfs,fshelp,ihash,iohelp,netfs,pager} \
     lib{ports,ps,shouldbeinlibc,store,trivfs}
 %endif
@@ -112,7 +106,7 @@ autoreconf -fi
 
 install -Dpm 0644 %{SOURCE1} %{buildroot}%{gnuxc_includedir}/sys/audio.h
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %gnuxc_make \
     lib{diskfs,fshelp,ihash,iohelp,netfs,pager}-install \
     lib{ports,ps,shouldbeinlibc,store,trivfs}-install \
@@ -120,7 +114,7 @@ install -Dpm 0644 %{SOURCE1} %{buildroot}%{gnuxc_includedir}/sys/audio.h
     libdir=%{buildroot}%{gnuxc_libdir}
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
-chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
+chmod -c 0755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 %endif
 
 
@@ -132,7 +126,7 @@ chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 %doc BUGS ChangeLog INSTALL* NEWS README* tasks TODO
 %license COPYING
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %files libs
 %{gnuxc_libdir}/libdiskfs.so.0.3
 %{gnuxc_libdir}/libfshelp.so.0.3

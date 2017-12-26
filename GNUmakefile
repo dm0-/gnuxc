@@ -24,22 +24,40 @@ patchdir := $(dir $(makefile))patches
 arch  := i686
 build := $(MAKE_HOST)
 host  := $(arch)-pc-gnu
+
+# Customize these settings on the command-line, if desired.
+export DESTDIR := $(CURDIR)/gnu-root
+compiler-flags = -O2 -g -pipe -Wall -Werror=format-security \
+	-Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong \
+	--param=ssp-buffer-size=4 -grecord-gcc-switches
+linker-flags = -Wl,-z,relro
+export CFLAGS   = -march=$(arch) -mtune=$(or $(tune),generic) $(compiler-flags)
+export CXXFLAGS = $(CFLAGS)
+export FFLAGS   = $(FCFLAGS)
+export FCFLAGS  = $(CFLAGS)
+export LDFLAGS  = $(linker-flags)
+
+# Define native build settings for using the cross-compiler system.
 ifneq ($(host),$(build))
-native = env -i CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' PATH=/bin:/sbin
+native-compiler-flags = $(compiler-flags)
+native-linker-flags = $(linker-flags)
+export CFLAGS_FOR_BUILD   = $(native-compiler-flags)
+export CXXFLAGS_FOR_BUILD = $(CFLAGS_FOR_BUILD)
+export FFLAGS_FOR_BUILD   = $(FCFLAGS_FOR_BUILD)
+export FCFLAGS_FOR_BUILD  = $(CFLAGS_FOR_BUILD)
+export LDFLAGS_FOR_BUILD  = $(native-linker-flags)
+export RUST_TARGET_PATH   = /usr/lib/rustlib/$(host)
+native = env -i \
+	CFLAGS='$(CFLAGS_FOR_BUILD)' \
+	CXXFLAGS='$(CXXFLAGS_FOR_BUILD)' \
+	FFLAGS='$(FFLAGS_FOR_BUILD)' \
+	FCFLAGS='$(FCFLAGS_FOR_BUILD)' \
+	LDFLAGS='$(LDFLAGS_FOR_BUILD)' \
+	PATH=/usr/bin:/usr/sbin:/bin:/sbin
 sysroot = /usr/$(host)/sys-root
 export CONFIG_SITE = $(sysroot)/usr/share/config.site
 export .LIBPATTERNS = $(sysroot)/usr/lib/lib%.so $(sysroot)/usr/lib/lib%.a
 endif
-
-# Customize these settings on the command-line, if desired.
-export DESTDIR := $(CURDIR)/gnu-root
-export CFLAGS   = -O2 -g -pipe -Wall -Werror=format-security \
-	-Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong \
-	--param=ssp-buffer-size=4 -grecord-gcc-switches
-export CXXFLAGS = $(CFLAGS)
-export FCFLAGS  = $(CFLAGS)
-export FFLAGS   = $(FCFLAGS)
-export LDFLAGS  = -Wl,-z,relro
 
 # Set up GNU extensions, and don't pass command-line variables to the projects.
 override MAKEOVERRIDES :=
@@ -55,6 +73,7 @@ DOWNLOAD := wget --content-on-error --output-document=-
 ECHO     := echo
 EDIT     := sed --in-place
 GIT      := git -c user.name='GNU Hacker' -c user.email='root@localhost'
+GPG      := gpg$(and $(host:$(build)=),2)
 INSTALL  := install
 LINK     := ln --force
 MKDIR    := mkdir --parents
@@ -70,6 +89,7 @@ TOUCH    := touch
 configure = configure \
 	--build=$(build) --host=$(host) --target=$(host) \
 	--program-prefix= \
+	--disable-silent-rules \
 	--prefix=/usr \
 	--exec-prefix='$${prefix}' \
 	--bindir='$${exec_prefix}/bin' \
@@ -126,11 +146,17 @@ apply = $(1:%=$(PATCH) --directory=$(builddir) \
 enable-service = $(foreach r,$2,$(MKDIR) $(DESTDIR)/etc/rc$r.d && \
 	$(SYMLINK) ../shepherd.d/$1.scm $(DESTDIR)/etc/rc$r.d/ &&) :
 define verify-download =
-$(call addon-file,$(or $3,$(lastword $(subst /, ,$1)))): | $$$$(@D)
-	$(DOWNLOAD) $(1:%='%') | tee '$$@' | \
-	sha1sum | (read s x ; test "$$$$s" = '$2') || \
-	$(if $(skip_verify),$(ECHO) Bad SHA1 sum,! $(RM) '$$@')
-$(downloaded): $(call addon-file,$(or $3,$(lastword $(subst /, ,$1))))
+ifneq ($(skip_verify),)
+$(call addon-file,$1): private override verify-command = cat > /dev/null
+else ifneq ($4,)
+$(call addon-file,$1): private override export GNUPGHOME = $$(@D)/gnupg
+$(call addon-file,$1): private override verify-command = ($(MKDIR) --mode=0700 $$$${GNUPGHOME} ; $(GPG) --recv-keys $4 ; $(GPG) --verify <($(DOWNLOAD) '$(or $3,$2.sig)') -)
+else
+$(call addon-file,$1): private override verify-command = sha1sum | (read s x ; test "$$$$s" = '$3')
+endif
+$(call addon-file,$1): | $$$$(@D)
+	$(DOWNLOAD) $(2:%='%') | tee '$$@' | $$(verify-command) || ! $(RM) '$$@'
+$(downloaded): $(call addon-file,$1)
 endef
 
 # Declare variables to abstract packages' build states and time stamps.
@@ -152,23 +178,31 @@ installed  = $(foreach p,$(or $1,$(self)),$($p)/.gnuxc/install-stamp)
 
 # Define the skeleton targets for each package's build phases.
 define init-package-rules =
+ifneq ($$(skip_verify),)
+$$($1): private override verify-command = cat > /dev/null
+else ifneq ($$($1_key),)
+$$($1): private override export GNUPGHOME = $$($1)/.gnuxc/gnupg
+$$($1): private override verify-command = ($$(MKDIR) --mode=0700 $$$${GNUPGHOME} ; $$(GPG) --recv-keys $$($1_key) ; $$(GPG) --verify <($$(DOWNLOAD) '$$(or $$($1_sig),$$($1_url).sig)') -)
+else
+$$($1): private override verify-command = sha1sum | (read s x ; test "$$$$s" = '$$($1_sha1)')
+endif
 $$($1):
 ifeq ($$(firstword $$(subst ://, ,$$($1_url))),git)
 	$$(GIT) clone $$($1_branch:%=--branch=%) -n '$$($1_url)' $$@
 	$$(GIT) -C $$@ reset --hard $$($1_sha1)
+	$$(ECHO) /.gnuxc/ >> $$@/.git/info/exclude
 else ifneq ($$(filter tar tbz2 tgz,$$(subst ., ,$$($1_url))),)
 	$$(DOWNLOAD) '$$($1_url)' | tee >( \
 	$$(TAR) $$($1_branch:%=--transform='s,^/*%/*,$$@/,') \
 		$$(targ_$$(lastword $$(subst ., ,$$($1_url)))) -x \
-	) | sha1sum | (read s x ; test "$$$$s" = '$$($1_sha1)') || \
-	$$(if $$(skip_verify),$$(ECHO) Bad SHA1 sum,! $$(RM) --recursive $$@)
+	) | $$(verify-command) || ! $$(RM) --recursive $$@
 else
 	$$(MKDIR) $$@
 endif
 $$($1)/.gnuxc: | $$($1)
 	$$(MKDIR) $$@
 $$($1)/.gnuxc/downloaded: | $$($1)/.gnuxc
-	$$(TOUCH) $$@
+	$$(RM) --recursive $$(@D)/gnupg ; $$(TOUCH) $$@
 $$($1)/configure: $$($1)/.gnuxc/prepare-stamp
 	test '(' -f $$@.ac -o -f $$@.in ')' -a ! -x $$@ && \
 	$$(AUTOGEN) $$(@D) ; $$(TOUCH) $$@

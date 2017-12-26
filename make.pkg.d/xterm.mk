@@ -1,6 +1,12 @@
 xterm                   := xterm-330
-xterm_sha1              := 0b648aaba45715c156a25e7ff629c82eb9836bc0
+xterm_key               := C52048C0C0748FEE227D47A2702353E0F7E48EDB
 xterm_url               := http://invisible-mirror.net/archives/xterm/$(xterm).tgz
+xterm_sig               := $(xterm_url).asc
+
+$(prepare-rule):
+	$(call apply,pcre2)
+# Drop this ioctl or xterm can't start.
+	$(EDIT) /TIOCLSET,/,/ERROR_TIOCLSET/d $(builddir)/main.c
 
 $(configure-rule): configure := $(configure:--docdir%=)
 $(configure-rule): configure := $(configure:--localedir%=)
@@ -29,7 +35,7 @@ $(configure-rule):
 		--with-freetype-config=auto \
 		--with-icon-theme \
 		--with-icondir=/usr/share/icons \
-		--with-pcre \
+		--with-pcre2 \
 		--with-pkg-config='$(firstword $(PKG_CONFIG))' \
 		--with-x \
 		--with-xpm \
@@ -42,7 +48,7 @@ $(configure-rule):
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,font-adobe-100dpi font-misc-misc libXft libXaw ncurses)
+$(install-rule): $$(call installed,font-adobe-100dpi font-misc-misc libXft libXaw ncurses pcre2)
 	$(MAKE) -C $(builddir) install \
 		DESTDIR='$(DESTDIR)'
 # Manually create icon symlinks since they'd get installed in the wrong place.

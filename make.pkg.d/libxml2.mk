@@ -1,6 +1,7 @@
-libxml2                 := libxml2-2.9.4
-libxml2_sha1            := 958ae70baf186263a4bd801a81dd5d682aedd1db
+libxml2                 := libxml2-2.9.7
+libxml2_key             := C74415BA7C9C7F78F02E1DC34606B8A5DE95BC1F
 libxml2_url             := ftp://xmlsoft.org/libxml2/$(libxml2).tar.gz
+libxml2_sig             := $(libxml2_url).asc
 
 $(prepare-rule):
 # Use pkg-config for python configuration.
@@ -15,7 +16,6 @@ $(prepare-rule):
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--with-fexceptions \
 		--with-history \
 		--with-icu \

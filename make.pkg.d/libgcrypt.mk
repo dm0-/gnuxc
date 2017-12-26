@@ -1,5 +1,5 @@
-libgcrypt               := libgcrypt-1.7.8
-libgcrypt_sha1          := 65a4a495aa858483e66868199eaa8238572ca6cd
+libgcrypt               := libgcrypt-1.8.2
+libgcrypt_key           := D8692123C4065DEA5E0F3AB5249B39D24F25E3B6 031EC2536E580D8EA286A9F22071B08A33BD3F06
 libgcrypt_url           := ftp://ftp.gnupg.org/gcrypt/libgcrypt/$(libgcrypt).tar.bz2
 
 ifeq ($(host),$(build))
@@ -13,6 +13,7 @@ $(prepare-rule):
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
+		--enable-dev-random \
 		--enable-hmac-binary-check \
 		--enable-m-guard \
 		--enable-static \

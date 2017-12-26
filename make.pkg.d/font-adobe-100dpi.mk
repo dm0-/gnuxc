@@ -4,7 +4,6 @@ font-adobe-100dpi_url   := http://xorg.freedesktop.org/releases/individual/font/
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-all-encodings \
 		--enable-strict-compilation \
 		\
@@ -15,7 +14,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,font-util)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,fonts.alias) $(DESTDIR)/usr/share/X11/fonts/100dpi/fonts.alias
+	$(INSTALL) -Dpm 0644 $(call addon-file,fonts.alias) $(DESTDIR)/usr/share/X11/fonts/100dpi/fonts.alias
 
 # Provide a default font named "variable" (for NetHack) as chosen in Fedora.
 $(call addon-file,fonts.alias): | $$(@D)

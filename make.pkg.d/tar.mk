@@ -1,5 +1,5 @@
-tar                     := tar-1.29
-tar_sha1                := 03851c34c90f0656177f2dd375cd61bd1204c51d
+tar                     := tar-1.30
+tar_key                 := 325F650C4C2B6AD58807327A3602B07F55D0C732
 tar_url                 := http://ftpmirror.gnu.org/tar/$(tar).tar.xz
 
 $(configure-rule):
@@ -8,7 +8,6 @@ $(configure-rule):
 		--libexecdir='$${prefix}/libexec' \
 		\
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-acl \
 		--enable-backup-scripts \
 		--enable-gcc-warnings gl_cv_warn_c__Werror=no \
@@ -20,7 +19,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,acl)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/tar.sh
+	$(INSTALL) -Dpm 0644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/tar.sh
 
 # Write inline files.
 $(call addon-file,bashrc.sh): | $$(@D)

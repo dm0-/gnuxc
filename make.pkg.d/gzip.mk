@@ -1,12 +1,11 @@
 gzip                    := gzip-1.8
-gzip_sha1               := 224bc2af5202eccf47f22357023d222011f9de78
+gzip_key                := 155D3FC500C834486D1EEA677FD9FCCB000BEEEE
 gzip_url                := http://ftpmirror.gnu.org/gzip/$(gzip).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
-		--disable-silent-rules \
 		--disable-rpath \
 		--enable-gcc-warnings gl_cv_warn_c__Werror=no \
 		--enable-threads=posix

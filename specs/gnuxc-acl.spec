@@ -36,12 +36,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     PLATFORM=gnu
-%gnuxc_make %{?_smp_mflags} \
+%gnuxc_make_build \
     CPPFLAGS=-DPATH_MAX=4096
 
 %install
@@ -55,7 +55,7 @@ rm -f %{buildroot}%{gnuxc_bindir}/{chacl,getfacl,setfacl}
 rm -f %{buildroot}%{gnuxc_libdir}/libacl.la
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
-chmod -c 755 %{buildroot}%{gnuxc_libdir}/libacl.so.1.1.0
+chmod -c 0755 %{buildroot}%{gnuxc_libdir}/libacl.so.1.1.0
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}

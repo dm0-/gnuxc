@@ -1,6 +1,6 @@
-gnutls                  := gnutls-3.5.14
-gnutls_sha1             := cfb537e6c1da4c3676b273da2427bb5132f6b5fc
-gnutls_url              := ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/$(gnutls).tar.xz
+gnutls                  := gnutls-3.6.1
+gnutls_key              := 1F42418905D8206AA754CCDC29EE58B996865171
+gnutls_url              := ftp://ftp.gnutls.org/gcrypt/gnutls/v3.6/$(gnutls).tar.xz
 
 $(prepare-rule):
 # Cross-compiling wants to call libs.
@@ -9,7 +9,7 @@ $(prepare-rule):
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
-		--disable-silent-rules \
+		--disable-{sha1,ssl2,ssl3}-support \
 		--enable-cxx \
 		--enable-gcc-warnings \
 		--enable-guile \
@@ -17,13 +17,12 @@ $(configure-rule):
 		--enable-static \
 		--with-default-trust-store-file=/etc/ssl/ca-bundle.pem \
 		--with-idn \
-		--with-libidn2 \
 		--with-p11-kit \
-		--with-zlib \
 		--without-included-libtasn1 \
 		--without-included-unistring \
 		--without-nettle-mini \
 		\
+		--disable-guile \
 		--disable-libdane \
 		--without-tpm
 
@@ -32,4 +31,4 @@ $(build-rule):
 
 $(install-rule): $$(call installed,guile libidn2 nettle p11-kit zlib)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -dm 755 $(DESTDIR)/etc/ssl
+	$(INSTALL) -dm 0755 $(DESTDIR)/etc/ssl

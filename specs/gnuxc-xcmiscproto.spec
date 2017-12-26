@@ -20,7 +20,7 @@ Provides:       %{name}-devel = %{version}-%{release}
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Installed headers use types defined in xproto headers.
 echo 'Requires: xproto' >> %{gnuxc_name}.pc.in
@@ -30,7 +30,7 @@ echo 'Requires: xproto' >> %{gnuxc_name}.pc.in
     --disable-specs \
     \
     --enable-strict-compilation
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

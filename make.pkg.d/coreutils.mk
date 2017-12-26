@@ -1,5 +1,5 @@
-coreutils               := coreutils-8.27
-coreutils_sha1          := ee054c8a4c0c924de49e4f03266733f27f986fbb
+coreutils               := coreutils-8.28
+coreutils_key           := 6C37DC12121A5006BC1DB804DF6FD971306037D9
 coreutils_url           := http://ftpmirror.gnu.org/coreutils/$(coreutils).tar.xz
 
 export SORT = /bin/sort
@@ -9,7 +9,6 @@ $(configure-rule):
 		--exec-prefix= \
 		--libexecdir='$${prefix}/libexec' \
 		\
-		--disable-silent-rules \
 		--disable-single-binary \
 		--disable-rpath \
 		--enable-acl \
@@ -32,10 +31,10 @@ $(build-rule):
 $(install-rule): $$(call installed,acl gmp)
 	$(MAKE) -C $(builddir) install \
 		$(and $(filter-out $(host),$(build)),INSTALL=install man1_MANS=)
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/bin
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/bin
 	$(SYMLINK) ../../bin/env $(DESTDIR)/usr/bin/env
-	$(INSTALL) -Dpm 644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/coreutils.sh
-	$(INSTALL) -Dpm 644 $(call addon-file,profile.sh) $(DESTDIR)/etc/profile.d/coreutils.sh
+	$(INSTALL) -Dpm 0644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/coreutils.sh
+	$(INSTALL) -Dpm 0644 $(call addon-file,profile.sh) $(DESTDIR)/etc/profile.d/coreutils.sh
 
 # Write inline files.
 $(call addon-file,bashrc.sh profile.sh): | $$(@D)

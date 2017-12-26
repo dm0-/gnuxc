@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libogg
-Version:        1.3.2
+Version:        1.3.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -34,11 +34,11 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -55,8 +55,8 @@ rm -rf %{buildroot}%{gnuxc_docdir}
 
 %files
 %{gnuxc_libdir}/libogg.so.0
-%{gnuxc_libdir}/libogg.so.0.8.2
-%doc AUTHORS CHANGES README
+%{gnuxc_libdir}/libogg.so.0.8.3
+%doc AUTHORS CHANGES README.md
 %license COPYING
 
 %files devel

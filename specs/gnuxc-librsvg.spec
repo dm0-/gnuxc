@@ -4,19 +4,23 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-librsvg
-Version:        2.40.17
+Version:        2.41.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
 URL:            http://developer.gnome.org/rsvg/
-Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.40/%{gnuxc_name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/gnome/sources/%{gnuxc_name}/2.41/%{gnuxc_name}-%{version}.tar.xz
+Source1:        http://crates.io/api/v1/crates/libc/0.2.31/download#/libc-0.2.31.crate
+Source2:        rust-1.22.1-hurd-port.patch
 
 BuildRequires:  gnuxc-gdk-pixbuf-devel
 BuildRequires:  gnuxc-libcroco-devel
 BuildRequires:  gnuxc-pango-devel
 BuildRequires:  gnuxc-pkg-config
+BuildRequires:  gnuxc-rust-std-static
 
+BuildRequires:  cargo
 BuildRequires:  gdk-pixbuf2
 BuildRequires:  glib2-devel
 
@@ -46,16 +50,25 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
+
+# Update libc to the version shipped with Rust, just to share the patch.
+cd rust
+rm -rf vendor/libc
+tar --transform='s,^[^/]*,libc,' -C vendor -xf %{SOURCE1}
+echo > vendor/libc/.cargo-checksum.json \
+    '{"package":"'$(sha256sum %{SOURCE1} | sed 's/ .*//')'","files":{}}'
+sed -n '/liblibc/,/^---.*lib[m-z]/p' %{SOURCE2} | patch -d vendor/libc -fp2
+cargo update
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-pixbuf-loader \
     --enable-tools \
     \
-    --disable-vala --disable-introspection
-%gnuxc_make %{?_smp_mflags} all
+    --disable-introspection \
+    --disable-vala
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -64,21 +77,25 @@ statically, which is highly discouraged.
 rm -f %{buildroot}%{gnuxc_bindir}/rsvg-{convert,view-3}
 
 # We don't need libtool's help.
-rm -f %{buildroot}%{gnuxc_libdir}/librsvg-2.la \
- %{buildroot}%{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-*.la
+rm -f \
+    %{buildroot}%{gnuxc_libdir}/librsvg-2.la \
+    %{buildroot}%{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.la
 
 # This functionality should be used from the system package.
 rm -rf %{buildroot}%{gnuxc_datadir}/thumbnailers
 
 # Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
+rm -rf \
+    %{buildroot}%{gnuxc_datadir}/gtk-doc \
+    %{buildroot}%{gnuxc_docdir} \
+    %{buildroot}%{gnuxc_mandir}
 
 
 %files
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.so
 %{gnuxc_libdir}/librsvg-2.so.2
 %{gnuxc_libdir}/librsvg-2.so.%{version}
-%doc AUTHORS ChangeLog NEWS README TODO
+%doc AUTHORS ChangeLog CONTRIBUTING.md NEWS README.md
 %license COPYING COPYING.LIB
 
 %files devel

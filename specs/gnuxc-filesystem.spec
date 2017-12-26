@@ -1,4 +1,4 @@
-%global bootstrap 1
+%global with_bootstrap 1
 
 %global _docdir_fmt gnuxc/filesystem
 
@@ -93,25 +93,25 @@ EOF
 %build
 
 %install
-install -dm 755 \
+install -dm 0755 \
     %{buildroot}%{_defaultdocdir}/gnuxc \
     %{buildroot}%{_defaultlicensedir}/gnuxc
 
-install -Dpm 644 macros.gnuxc \
+install -Dpm 0644 macros.gnuxc \
     %{buildroot}%{_rpmconfigdir}/macros.d/macros.gnuxc
 
-install -Dpm 644 gnuxc.attr \
+install -Dpm 0644 gnuxc.attr \
     %{buildroot}%{_rpmconfigdir}/fileattrs/gnuxc.attr
-install -Dpm 644 gnuxcpkgconfig.attr \
+install -Dpm 0644 gnuxcpkgconfig.attr \
     %{buildroot}%{_rpmconfigdir}/fileattrs/gnuxcpkgconfig.attr
 
-install -Dpm 755 expand-pc-flags.sh \
+install -Dpm 0755 expand-pc-flags.sh \
     %{buildroot}%{_rpmconfigdir}/gnuxc-expand-pc-flags.sh
-install -Dpm 755 find-debuginfo.sh \
+install -Dpm 0755 find-debuginfo.sh \
     %{buildroot}%{_rpmconfigdir}/gnuxc-find-debuginfo.sh
 
 # Build a sysroot directory skeleton.
-install -dm 755 \
+install -dm 0755 \
     %{buildroot}%{gnuxc_root}/{bin,lib} \
     %{buildroot}%{gnuxc_bindir} \
     %{buildroot}%{gnuxc_datadir}/{aclocal,locale,themes,X11,xml} \
@@ -134,7 +134,7 @@ ln -fs usr/sbin %{buildroot}%{gnuxc_sysroot}/
 ln -fs ../run   %{buildroot}%{gnuxc_localstatedir}/
 
 # Place a cross-compiler config.site in the sysroot.
-install -pm 644 -t %{buildroot}%{gnuxc_datadir} config.site
+install -pm 0644 -t %{buildroot}%{gnuxc_datadir} config.site
 
 
 %files

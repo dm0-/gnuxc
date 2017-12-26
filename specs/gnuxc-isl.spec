@@ -11,8 +11,6 @@ Source0:        http://isl.gforge.inria.fr/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-gmp-devel
 
-BuildRequires:  python-devel
-
 %description
 %{summary}.
 
@@ -36,22 +34,24 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-portable-binary \
     --with-gcc-arch=%{gnuxc_arch} \
     --with-gmp=system \
     --with-int=gmp
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/libisl.la
+
+# This functionality should be used from the system package.
+rm -f %{buildroot}%{gnuxc_libdir}/libisl.so.15.3.0-gdb.py
 
 
 %files
@@ -63,9 +63,6 @@ rm -f %{buildroot}%{gnuxc_libdir}/libisl.la
 %files devel
 %{gnuxc_includedir}/isl
 %{gnuxc_libdir}/libisl.so
-%{gnuxc_libdir}/libisl.so.15.3.0-gdb.py
-%{gnuxc_libdir}/libisl.so.15.3.0-gdb.pyc
-%{gnuxc_libdir}/libisl.so.15.3.0-gdb.pyo
 %{gnuxc_libdir}/pkgconfig/isl.pc
 
 %files static

@@ -1,6 +1,7 @@
-file                    := file-5.31
-file_sha1               := d66f71fb29ec0e9cecbefe9d7433d7a315f3302c
+file                    := file-5.32
+file_key                := BE04995BA8F90ED0C0C176C471112AB16CB33B3A
 file_url                := ftp://ftp.astron.com/pub/file/$(file).tar.gz
+file_sig                := $(file_url).asc
 
 ifneq ($(host),$(build))
 $(call configure-rule,native): $(builddir)/configure
@@ -19,7 +20,6 @@ endif
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-elf \
 		--enable-elf-core \
 		--enable-fsect-man5 \
@@ -31,4 +31,4 @@ $(build-rule):
 
 $(install-rule): $$(call installed,python)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(builddir)/python/magic.py $(DESTDIR)/usr/lib/python`$(PKG_CONFIG) --modversion python3`/site-packages/magic.py
+	$(INSTALL) -Dpm 0644 $(builddir)/python/magic.py $(DESTDIR)/usr/lib/python`$(PKG_CONFIG) --modversion python3`/site-packages/magic.py

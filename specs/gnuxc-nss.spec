@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nss
-Version:        3.31
+Version:        3.34.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -42,7 +42,7 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 mv %{gnuxc_name}/{*,.[!.]*} .
-chmod -c 644 *.txt
+chmod -c 0644 *.txt
 %patch101
 
 %build
@@ -74,18 +74,18 @@ sed --in-place nss.pc nss-config \
 %gnuxc_make -j1 all %{nss_configuration}
 
 %install
-install -dm 755 %{buildroot}%{gnuxc_includedir}/nss
-install -pm 644 -t %{buildroot}%{gnuxc_includedir}/nss dist/public/nss/*
+install -dm 0755 %{buildroot}%{gnuxc_includedir}/nss
+install -pm 0644 -t %{buildroot}%{gnuxc_includedir}/nss dist/public/nss/*
 
-install -dm 755 %{buildroot}%{gnuxc_libdir}
-install -pm 755 -t %{buildroot}%{gnuxc_libdir} dist/gnu/lib/*.so
-install -pm 644 -t %{buildroot}%{gnuxc_libdir} dist/gnu/lib/*.{a,chk}
+install -dm 0755 %{buildroot}%{gnuxc_libdir}
+install -pm 0755 -t %{buildroot}%{gnuxc_libdir} dist/gnu/lib/*.so
+install -pm 0644 -t %{buildroot}%{gnuxc_libdir} dist/gnu/lib/*.{a,chk}
 
-install -Dpm 755 nss-config %{buildroot}%{gnuxc_root}/bin/nss-config
-install -Dpm 644 nss.pc %{buildroot}%{gnuxc_libdir}/pkgconfig/nss.pc
+install -Dpm 0755 nss-config %{buildroot}%{gnuxc_root}/bin/nss-config
+install -Dpm 0644 nss.pc %{buildroot}%{gnuxc_libdir}/pkgconfig/nss.pc
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/nss-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-nss-config
 

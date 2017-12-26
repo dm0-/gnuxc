@@ -43,7 +43,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n gtk+-%{version}
+%autosetup -n gtk+-%{version}
 
 %build
 %gnuxc_configure \
@@ -59,12 +59,12 @@ statically, which is highly discouraged.
     --with-xinput \
     \
     --disable-cups
-%__make -C gtk %{?_smp_mflags} gtk-update-icon-cache.build \
-    CC=gcc EXEEXT=.build GMODULE_CFLAGS= \
+%make_build -C gtk gtk-update-icon-cache.build \
+    CC=gcc CFLAGS="$CFLAGS_FOR_BUILD" EXEEXT=.build GMODULE_CFLAGS= LDFLAGS="$LDFLAGS_FOR_BUILD" \
     GTK_DEP_CFLAGS="$(pkg-config --cflags gdk-pixbuf-2.0)" \
     GDK_PIXBUF_LIBS="$(pkg-config --libs gdk-pixbuf-2.0)"
 rm -f gtk/updateiconcache.o
-%gnuxc_make %{?_smp_mflags} all \
+%gnuxc_make_build all \
     GTK_UPDATE_ICON_CACHE="$PWD/gtk/gtk-update-icon-cache.build"
 
 %install

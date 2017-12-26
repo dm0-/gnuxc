@@ -1,10 +1,9 @@
-pango                   := pango-1.40.6
-pango_sha1              := 83125850255f78f2130aa373d3fe46f61d064dab
+pango                   := pango-1.40.14
+pango_sha1              := 3a3073b79b07f92476276e2457842c92d8374064
 pango_url               := http://ftp.gnome.org/pub/gnome/sources/pango/1.40/$(pango).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-debug \
 		--enable-static \
 		--with-cairo \

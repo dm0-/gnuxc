@@ -1,6 +1,7 @@
-e2fsprogs               := e2fsprogs-1.43.4
-e2fsprogs_sha1          := f7cf8c82805103b53f89ad5da641e1085281d411
+e2fsprogs               := e2fsprogs-1.43.7
+e2fsprogs_key           := 2B69B954DBFE0879288137C9F2F95956950D81A3
 e2fsprogs_url           := http://prdownloads.sourceforge.net/e2fsprogs/$(e2fsprogs).tar.gz
+e2fsprogs_sig           := $(e2fsprogs_url).asc
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -14,9 +15,7 @@ $(configure-rule):
 		--enable-libuuid \
 		--enable-threads=posix \
 		--enable-verbose-makecmds \
-		--without-included-gettext \
-		\
-		CPPFLAGS=-DEUCLEAN=ED # Hurd doesn't define EUCLEAN.
+		--without-included-gettext
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

@@ -1,10 +1,9 @@
-libjpeg-turbo           := libjpeg-turbo-1.5.1
-libjpeg-turbo_sha1      := ebb3f9e94044c77831a3e8c809c7ea7506944622
+libjpeg-turbo           := libjpeg-turbo-1.5.3
+libjpeg-turbo_key       := 7D6293CC6378786E1B5C496885C7044E033FDE16
 libjpeg-turbo_url       := http://prdownloads.sourceforge.net/libjpeg-turbo/$(libjpeg-turbo).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--with-arith-{enc,dec} \
 		--with-simd \
 		--with-turbojpeg \

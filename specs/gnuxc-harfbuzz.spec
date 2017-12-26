@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-harfbuzz
-Version:        1.4.6
+Version:        1.7.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -38,11 +38,10 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-static \
     --with-cairo \
     --with-fontconfig \
@@ -55,7 +54,7 @@ statically, which is highly discouraged.
     --without-directwrite \
     --without-graphite2 \
     --without-uniscribe
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -72,11 +71,11 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc
 
 %files
 %{gnuxc_libdir}/libharfbuzz.so.0
-%{gnuxc_libdir}/libharfbuzz.so.0.10400.6
+%{gnuxc_libdir}/libharfbuzz.so.0.10704.0
 %{gnuxc_libdir}/libharfbuzz-gobject.so.0
-%{gnuxc_libdir}/libharfbuzz-gobject.so.0.10400.6
+%{gnuxc_libdir}/libharfbuzz-gobject.so.0.10704.0
 %{gnuxc_libdir}/libharfbuzz-icu.so.0
-%{gnuxc_libdir}/libharfbuzz-icu.so.0.10400.6
+%{gnuxc_libdir}/libharfbuzz-icu.so.0.10704.0
 %doc AUTHORS ChangeLog NEWS README THANKS TODO
 %license COPYING
 

@@ -2,7 +2,7 @@
 %global debug_package %{nil}
 
 Name:           gnuxc-xorg-server
-Version:        1.19.3
+Version:        1.19.6
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -43,7 +43,7 @@ Provides:       %{name}-devel = %{version}-%{release}
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 sed configure -i \
     -e '/MONOTONIC_CLOCK=.*cross/s/=.*/=yes/' \
     -e /sysconfigdir=/s/datadir/sysconfdir/
@@ -51,7 +51,6 @@ echo 'install-sdkHEADERS:' >> Makefile.in
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --disable-suid-wrapper \
     --enable-debug \
     --enable-dga \

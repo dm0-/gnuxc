@@ -1,6 +1,6 @@
-nspr                    := nspr-4.15
+nspr                    := nspr-4.17
 nspr_branch             := $(nspr)/nspr
-nspr_sha1               := 56030e0177849034ba3027a23ae2a7f8ed41f379
+nspr_sha1               := 5262abb243191d5fa3dcd72857d7d7f8ec47ad01
 nspr_url                := http://ftp.mozilla.org/pub/nspr/releases/v$(nspr:nspr-%=%)/src/$(nspr).tar.gz
 
 ifeq ($(host),$(build))
@@ -20,7 +20,7 @@ $(configure-rule):
 		--enable-ipv6 \
 		--enable-optimize \
 		--with-pthreads \
-		HOST_CC=gcc
+		HOST_CC=gcc HOST_CFLAGS='$(CFLAGS_FOR_BUILD)' HOST_LDFLAGS='$(LDFLAGS_FOR_BUILD)'
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

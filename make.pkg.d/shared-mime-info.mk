@@ -1,10 +1,9 @@
-shared-mime-info        := shared-mime-info-1.8
-shared-mime-info_sha1   := d7ea6a4e7537065de5d0766148be804eb4729cb7
+shared-mime-info        := shared-mime-info-1.9
+shared-mime-info_sha1   := aae41d8a93c665d25bae704f732fdb1c1551cb5c
 shared-mime-info_url    := http://freedesktop.org/~hadess/$(shared-mime-info).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--disable-update-mimedb
 
 $(build-rule):

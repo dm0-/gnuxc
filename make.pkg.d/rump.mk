@@ -5,7 +5,7 @@ rump-audio_sha1         := 607eef6ce828a432603c443d902dd86a9c7fd6df
 rump-audio_url          := git://github.com/dm0-/hurd-rump-audio.git
 
 rump-buildrump.sh_branch := master
-rump-buildrump.sh_sha1  := b9145795b0307293870040c4e11f49a81ec7b644
+rump-buildrump.sh_sha1  := 6cccd464a9675ce19eaca569b1c9c2837492038c
 rump-buildrump.sh_url   := git://github.com/rumpkernel/buildrump.sh.git
 
 rump-pci-userspace_branch := master
@@ -33,12 +33,14 @@ $(prepare-rule):
 	$(EDIT) 's/^MKCATPAGES=yes/MKCATPAGES=no/;s/ cat / /' $(builddir)/buildrump.sh/buildrump.sh
 # Build virtio network interface support.
 	$(EDIT) 's/^RUMP_VIRTIF=no/RUMP_VIRTIF=yes/' $(builddir)/buildrump.sh/buildrump.sh
+# Do not set RPATHs on the programs.
+	$(EDIT) 's/-Wl,-R[^ ]*//g' $(builddir)/buildrump.sh/buildrump.sh
 
 $(builddir)/configure: private override allow_rpaths = 1 # Don't mess with the tools' configure scripts.
 
-$(build-rule): CFLAGS := $(CFLAGS:-Werror%format-security=-Wformat) -Wno-error=implicit-fallthrough
+$(build-rule): private override export CFLAGS := $(CFLAGS:-Werror%format-security=-Wformat) -Wno-error=implicit-fallthrough
 $(build-rule):
-	cd $(builddir) && CC='$(firstword $(CC))' CXX='$(firstword $(CXX))' CFLAGS= LDFLAGS= \
+	cd $(builddir) && CFLAGS= LDFLAGS= \
 		buildrump.sh/buildrump.sh -F CFLAGS='$(CFLAGS)' -F LDFLAGS='$(LDFLAGS)' fullbuild
 	$(builddir)/obj/tooldir/rumpmake -C $(builddir)/pci-userspace/src-gnu NOGCCERROR=1
 # Move to a separate project file when sysroot rump libraries are packaged.
@@ -47,11 +49,11 @@ $(build-rule):
 		LDFLAGS="$(LDFLAGS) -L$$PWD/$(builddir)/obj/dest.stage/usr/lib"
 
 $(install-rule): $$(call installed,glibc)
-	cd $(builddir) && CC='$(firstword $(CC))' CXX='$(firstword $(CXX))' CFLAGS= LDFLAGS= \
+	cd $(builddir) && CFLAGS= LDFLAGS= \
 		buildrump.sh/buildrump.sh -d '$(DESTDIR)/usr' install
 	$(builddir)/obj/tooldir/rumpmake -C $(builddir)/pci-userspace/src-gnu install DESTDIR='$(DESTDIR)'
 	$(MAKE) -C $(builddir)/audio install
-	$(INSTALL) -Dpm 644 $(call addon-file,rump.scm) $(DESTDIR)/etc/shepherd.d/rump.scm
+	$(INSTALL) -Dpm 0644 $(call addon-file,rump.scm) $(DESTDIR)/etc/shepherd.d/rump.scm
 	$(call enable-service,rump,3 5)
 
 # Write inline files.
@@ -73,7 +75,7 @@ override define contents
     "unix:///run/rump.sock"))
 (define (rump-start . args)
   (let ((mask (umask)) (pid 0))
-    (umask #o077)
+    (umask #o0077)
     (set! pid (fork+exec-command rump-command))
     (umask mask)
     pid))

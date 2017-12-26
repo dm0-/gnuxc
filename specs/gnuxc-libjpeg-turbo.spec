@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libjpeg-turbo
-Version:        1.5.1
+Version:        1.5.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -37,18 +37,17 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-chmod -c 644 *.md
+%autosetup -n %{gnuxc_name}-%{version}
+chmod -c 0644 *.md
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --with-arith-{enc,dec} \
     --with-simd \
     --with-turbojpeg \
     \
     --without-java
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install \

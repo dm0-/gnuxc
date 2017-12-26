@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-e2fsprogs
-Version:        1.43.4
+Version:        1.43.7
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -69,7 +69,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-libs-%{version}
+%autosetup -n %{gnuxc_name}-libs-%{version}
 ln lib/uuid/COPYING COPYING.uuid
 
 %build
@@ -84,15 +84,15 @@ ln lib/uuid/COPYING COPYING.uuid
     --enable-verbose-makecmds \
     --without-included-gettext
 %gnuxc_make lib/dirpaths.h
-%gnuxc_make -C lib/uuid %{?_smp_mflags} all
-%gnuxc_make -C lib/blkid %{?_smp_mflags} all
+%gnuxc_make_build -C lib/uuid all
+%gnuxc_make_build -C lib/blkid all
 
 %install
 %gnuxc_make_install -C lib/uuid
 %gnuxc_make_install -C lib/blkid
 
 # Use a standard mode for static libraries.
-chmod -c 644 %{buildroot}%{gnuxc_libdir}/lib{blk,uu}id.a
+chmod -c 0644 %{buildroot}%{gnuxc_libdir}/lib{blk,uu}id.a
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_mandir}

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpciaccess
-Version:        0.13.5
+Version:        0.14
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -34,14 +34,13 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
     --with-zlib
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

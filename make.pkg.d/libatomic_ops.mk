@@ -1,6 +1,6 @@
-libatomic_ops           := libatomic_ops-7.6.0
-libatomic_ops_sha1      := b7236a3c3d6f3e5da69fe0c7b9508eb814a09825
-libatomic_ops_url       := http://www.ivmaisoft.com/_bin/atomic_ops/$(libatomic_ops).tar.gz
+libatomic_ops           := libatomic_ops-7.6.2
+libatomic_ops_sha1      := ebed1891250cc8e2c952b88fc07e1db2a213f7e2
+libatomic_ops_url       := http://github.com/ivmai/libatomic_ops/releases/download/v$(libatomic_ops:libatomic_ops-%=%)/$(libatomic_ops).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \

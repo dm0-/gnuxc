@@ -10,7 +10,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,glibc)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/which.sh
+	$(INSTALL) -Dpm 0644 $(call addon-file,bashrc.sh) $(DESTDIR)/etc/bashrc.d/which.sh
 
 # Write inline files.
 $(call addon-file,bashrc.sh): | $$(@D)

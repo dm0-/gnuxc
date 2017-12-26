@@ -4,7 +4,6 @@ font-misc-misc_url      := http://xorg.freedesktop.org/releases/individual/font/
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-all-encodings \
 		--enable-strict-compilation \
 		\

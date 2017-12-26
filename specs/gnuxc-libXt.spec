@@ -38,7 +38,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 sed -i -e '/^app/{s,@appdefaultdir@,${datarootdir}/X11/app-defaults,g;N;s/\(.*\)\n\(.*\)/\2\n\1/}' xt.pc.in
 
@@ -46,12 +46,11 @@ sed -i -e '/^app/{s,@appdefaultdir@,${datarootdir}/X11/app-defaults,g;N;s/\(.*\)
 %gnuxc_configure \
     --disable-specs \
     \
-    --disable-silent-rules \
     --enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
     --enable-xkb \
     --with-glib \
     --with-perl
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

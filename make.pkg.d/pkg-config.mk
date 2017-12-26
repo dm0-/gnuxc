@@ -1,6 +1,7 @@
 pkg-config              := pkg-config-0.29.2
-pkg-config_sha1         := 76e501663b29cb7580245720edfb6106164fad2b
+pkg-config_key          := 6B99CE97F17F48C27F722D71023A4420C7EC6914
 pkg-config_url          := http://pkg-config.freedesktop.org/releases/$(pkg-config).tar.gz
+pkg-config_sig          := $(pkg-config_url).asc
 
 ifeq ($(host),$(build))
 export PKG_CONFIG = /usr/bin/pkg-config
@@ -11,7 +12,6 @@ endif
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-host-tool \
-		--disable-silent-rules \
 		--with-pc-path=/usr/lib/pkgconfig:/usr/share/pkgconfig \
 		--with-system-include-path=/usr/include \
 		--with-system-library-path=/usr/lib:/lib \

@@ -27,9 +27,7 @@ BuildRequires:  python3-devel
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-%patch001 -p1
-%patch002 -p1
+%autosetup -n %{gnuxc_name}-%{version} -p1
 
 # Force the cross-libxcb configuration to use files from the sysroot.
 pyver=$(env -i %{gnuxc_pkgconfig} --modversion python3)
@@ -39,7 +37,7 @@ sed -i xcb-proto.pc.in \
 
 %build
 %gnuxc_configure
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

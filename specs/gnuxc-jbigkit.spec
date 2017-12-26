@@ -37,30 +37,28 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-%patch101
-%patch102
+%autosetup -n %{gnuxc_name}-%{version} -p0
 
 %build
 %gnuxc_env
-%gnuxc_make %{?_smp_mflags} lib \
+%gnuxc_make_build lib \
     AR='%{gnuxc_ar}' \
     RANLIB='%{gnuxc_ranlib}'
 
 %install
-install -Dpm 755 libjbig/libjbig.so.%{version} \
+install -Dpm 0755 libjbig/libjbig.so.%{version} \
     %{buildroot}%{gnuxc_libdir}/libjbig.so.%{version}
 ln -s libjbig.so.%{version} %{buildroot}%{gnuxc_libdir}/libjbig.so
-install -Dpm 755 libjbig/libjbig85.so.%{version} \
+install -Dpm 0755 libjbig/libjbig85.so.%{version} \
     %{buildroot}%{gnuxc_libdir}/libjbig85.so.%{version}
 ln -s libjbig85.so.%{version} %{buildroot}%{gnuxc_libdir}/libjbig85.so
 
-install -Dpm 644 libjbig/libjbig.a   %{buildroot}%{gnuxc_libdir}/libjbig.a
-install -Dpm 644 libjbig/libjbig85.a %{buildroot}%{gnuxc_libdir}/libjbig85.a
+install -Dpm 0644 libjbig/libjbig.a   %{buildroot}%{gnuxc_libdir}/libjbig.a
+install -Dpm 0644 libjbig/libjbig85.a %{buildroot}%{gnuxc_libdir}/libjbig85.a
 
-install -Dpm 644 libjbig/jbig.h    %{buildroot}%{gnuxc_includedir}/jbig.h
-install -Dpm 644 libjbig/jbig85.h  %{buildroot}%{gnuxc_includedir}/jbig85.h
-install -Dpm 644 libjbig/jbig_ar.h %{buildroot}%{gnuxc_includedir}/jbig_ar.h
+install -Dpm 0644 libjbig/jbig.h    %{buildroot}%{gnuxc_includedir}/jbig.h
+install -Dpm 0644 libjbig/jbig85.h  %{buildroot}%{gnuxc_includedir}/jbig85.h
+install -Dpm 0644 libjbig/jbig_ar.h %{buildroot}%{gnuxc_includedir}/jbig_ar.h
 
 
 %files

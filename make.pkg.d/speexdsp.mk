@@ -5,7 +5,6 @@ speexdsp_url            := http://downloads.xiph.org/releases/speex/$(speexdsp).
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-examples \
-		--disable-silent-rules \
 		--enable-sse \
 		--with-fft=smallft
 

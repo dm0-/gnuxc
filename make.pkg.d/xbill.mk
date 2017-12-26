@@ -21,4 +21,4 @@ $(build-rule):
 
 $(install-rule): $$(call installed,libXaw)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(builddir)/xbill.png32 $(DESTDIR)/usr/share/icons/hicolor/48x48/apps/xbill.png
+	$(INSTALL) -Dpm 0644 $(builddir)/xbill.png32 $(DESTDIR)/usr/share/icons/hicolor/48x48/apps/xbill.png

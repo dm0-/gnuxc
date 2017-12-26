@@ -1,5 +1,5 @@
 sed                     := sed-4.4
-sed_sha1                := a196cd036efd52a8e349cfe88ab4baa555fb29d5
+sed_key                 := 155D3FC500C834486D1EEA677FD9FCCB000BEEEE
 sed_url                 := http://ftpmirror.gnu.org/sed/$(sed).tar.xz
 
 export SED = /bin/sed
@@ -9,7 +9,6 @@ $(configure-rule):
 		--exec-prefix= \
 		\
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-acl \
 		--enable-assert \
 		--enable-gcc-warnings \

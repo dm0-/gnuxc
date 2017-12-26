@@ -41,21 +41,19 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{basever}
-%patch001
-%patch101
+%autosetup -n %{gnuxc_name}-%{basever} -p0
 
 %build
 %gnuxc_configure \
     --enable-multibyte \
     --with-curses
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
-chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib{history,readline}.so.*.*
+chmod -c 0755 %{buildroot}%{gnuxc_libdir}/lib{history,readline}.so.*.*
 
 # Skip the documentation.
 rm -rf \

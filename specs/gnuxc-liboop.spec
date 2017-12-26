@@ -38,7 +38,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Rewrite the old configure script to support a newer TCL version.
 sed -i -e '/for version in /s/ 8.4 / 8.6&/' configure.ac

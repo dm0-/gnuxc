@@ -1,27 +1,25 @@
-%if 0%{?_with_bootstrap:1}
-%global bootstrap 1
-%endif
+%bcond_with bootstrap
 
 %?gnuxc_package_header
 
 Name:           gnuxc-gc
-Version:        7.6.0
-Release:        1.%{?bootstrap:0}%{!?bootstrap:1}%{?dist}
+Version:        7.6.2
+Release:        1.%{without bootstrap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        BSD
 URL:            http://www.hboehm.info/gc/
-Source0:        http://www.hboehm.info/gc/gc_source/%{gnuxc_name}-%{version}.tar.gz
+Source0:        http://github.com/ivmai/bdwgc/releases/download/v%{version}/%{gnuxc_name}-%{version}.tar.gz
 
 BuildRequires:  gnuxc-libatomic_ops-devel
 BuildRequires:  gnuxc-pkg-config
-%if 0%{?bootstrap}
+%if %{with bootstrap}
 BuildRequires:  gnuxc-gcc
 %else
 BuildRequires:  gnuxc-gcc-c++
 %endif
 
-%if 0%{?bootstrap}
+%if %{with bootstrap}
 Provides:       gnuxc-bootstrap(%{gnuxc_name}) = %{version}-%{release}
 %else
 Obsoletes:      gnuxc-bootstrap(%{gnuxc_name}) <= %{version}-%{release}
@@ -48,7 +46,7 @@ The %{name}-static package contains the %{gnuxc_name} static libraries for
 -static linking on GNU systems.  You don't need these, unless you link
 statically, which is highly discouraged.
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %package c++
 Summary:        Cross-compiled version of %{gnuxc_name}-c++ for the GNU system
 Requires:       %{name} = %{version}-%{release}
@@ -78,10 +76,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
+    --disable-docs \
+    \
     --enable-cplusplus \
     --enable-large-config \
     --enable-parallel-mark \
@@ -91,13 +91,13 @@ statically, which is highly discouraged.
     --enable-gc-assertions \
     --enable-gc-debug \
     \
-%if 0%{?bootstrap}
+%if %{with bootstrap}
     --disable-cplusplus \
 %endif
     --disable-gcj-support \
     --disable-handle-fork \
     --disable-sigrt-signals
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -105,15 +105,12 @@ statically, which is highly discouraged.
 # We don't need libtool's help.
 rm -f %{buildroot}%{gnuxc_libdir}/lib{cord,gc,gccpp}.la
 
-# Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_datadir}/gc
-
 
 %files
 %{gnuxc_libdir}/libcord.so.1
-%{gnuxc_libdir}/libcord.so.1.0.3
-%{gnuxc_libdir}/libgc.so.1
-%{gnuxc_libdir}/libgc.so.1.0.3
+%{gnuxc_libdir}/libcord.so.1.3.0
+%{gnuxc_libdir}/libgc.so.2
+%{gnuxc_libdir}/libgc.so.2.2.1
 %doc AUTHORS ChangeLog doc README*
 
 %files devel
@@ -127,10 +124,10 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gc
 %{gnuxc_libdir}/libcord.a
 %{gnuxc_libdir}/libgc.a
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %files c++
 %{gnuxc_libdir}/libgccpp.so.1
-%{gnuxc_libdir}/libgccpp.so.1.0.3
+%{gnuxc_libdir}/libgccpp.so.1.3.0
 
 %files c++-devel
 %{gnuxc_includedir}/gc_cpp.h

@@ -1,5 +1,5 @@
-xorg-server             := xorg-server-1.19.3
-xorg-server_sha1        := 77f580ffa22a8bbcc3536e74e19114e446417a9c
+xorg-server             := xorg-server-1.19.6
+xorg-server_key         := 995ED5C8A6138EB0961F18474C09DD83CAAA50B2
 xorg-server_url         := http://xorg.freedesktop.org/releases/individual/xserver/$(xorg-server).tar.bz2
 
 $(prepare-rule):
@@ -7,10 +7,11 @@ $(prepare-rule):
 	$(EDIT) -e '/MONOTONIC_CLOCK=.*cross/s/=.*/=yes/' -e /sysconfigdir=/s/datadir/sysconfdir/ $(builddir)/configure
 # Fix the install-headers target.
 	$(ECHO) 'install-sdkHEADERS:' >> $(builddir)/Makefile.in
+# Work around a missing configure condition.
+	$(EDIT) 's/#include.*compositeext.h.*/#ifdef COMPOSITE\n&\n#endif/' $(builddir)/glx/glxscreens.c
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--disable-suid-wrapper \
 		--enable-debug \
 		--enable-dga \
@@ -62,7 +63,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,bigreqsproto damageproto fixesproto libpciaccess libXdmcp libXext libXfont2 libXinerama libxkbfile libxshmfence mesa pixman presentproto randrproto recordproto renderproto resourceproto videoproto xcb-util-keysyms xcmiscproto xf86dgaproto)
 	$(MAKE) -C $(builddir) install install-headers
-	$(INSTALL) -Dpm 644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/xorg-server.conf
+	$(INSTALL) -Dpm 0644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/xorg-server.conf
 # Lazily work around --enable-install-setuid requiring root.
 	chmod 4755 $(DESTDIR)/usr/bin/Xorg
 

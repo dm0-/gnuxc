@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libxml2
-Version:        2.9.4
+Version:        2.9.7
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -39,7 +39,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Use pkg-config for python configuration.
 sed -i configure \
@@ -56,7 +56,6 @@ sed -i -e '/^ *ICU_CONFIG=/s/=.*/=%{gnuxc_target}-icu-config/' configure
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
     \
-    --disable-silent-rules \
     --with-fexceptions \
     --with-history \
     --with-icu \
@@ -68,13 +67,13 @@ sed -i -e '/^ *ICU_CONFIG=/s/=.*/=%{gnuxc_target}-icu-config/' configure
     \
     --with-mem-debug \
     --with-run-debug
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/xml2-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-xml2-config
 

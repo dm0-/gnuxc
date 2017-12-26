@@ -38,7 +38,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Don't make even more data directories.
 sed -i -e '/^itsdir =/s/.(PACKAGE_SUFFIX)//' gettext-tools/its/Makefile.in
@@ -65,7 +65,7 @@ sed -i -e '/^itsdir =/s/.(PACKAGE_SUFFIX)//' gettext-tools/its/Makefile.in
     --without-included-regex \
     \
     --disable-java
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install -j1
@@ -92,7 +92,7 @@ rm -f \
 rm -f %{buildroot}%{gnuxc_libdir}/lib{asprintf,gettext{lib,po,src}}.la
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
-chmod -c 755 %{buildroot}%{gnuxc_libdir}/preloadable_libintl.so
+chmod -c 0755 %{buildroot}%{gnuxc_libdir}/preloadable_libintl.so
 
 # This functionality should be used from the system package.
 rm -rf %{buildroot}%{gnuxc_datadir}/{aclocal,emacs,gettext}

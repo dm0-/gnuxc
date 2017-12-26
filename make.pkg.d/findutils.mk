@@ -22,7 +22,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,glibc)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,updatedb.cron) $(DESTDIR)/etc/cron.d/updatedb
+	$(INSTALL) -Dpm 0644 $(call addon-file,updatedb.cron) $(DESTDIR)/etc/cron.d/updatedb
 
 # Provide a cron configuration to update the "locate" database daily.
 $(call addon-file,updatedb.cron): | $$(@D)

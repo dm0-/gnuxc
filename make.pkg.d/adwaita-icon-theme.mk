@@ -1,6 +1,6 @@
-adwaita-icon-theme      := adwaita-icon-theme-3.24.0
-adwaita-icon-theme_sha1 := 333b2d66efbd22e05585a73e4093a769bbee60e0
-adwaita-icon-theme_url  := http://ftp.gnome.org/pub/gnome/sources/adwaita-icon-theme/3.24/$(adwaita-icon-theme).tar.xz
+adwaita-icon-theme      := adwaita-icon-theme-3.26.1
+adwaita-icon-theme_sha1 := c59a9dcb5f80a31cc90efbb964a52e12710113a7
+adwaita-icon-theme_url  := http://ftp.gnome.org/pub/gnome/sources/adwaita-icon-theme/3.26/$(adwaita-icon-theme).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure)

@@ -1,5 +1,5 @@
 ed                      := ed-1.14.2
-ed_sha1                 := 3e8aa331ffbc929884107ff3f8fbd76d01252277
+ed_key                  := 1D41C14B272A2219A739FA4F8FE99503132D7742
 ed_url                  := http://ftpmirror.gnu.org/ed/$(ed).tar.lz
 
 $(configure-rule):

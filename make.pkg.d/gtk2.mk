@@ -20,7 +20,8 @@ $(configure-rule):
 ifneq ($(host),$(build))
 $(builddir)/gtk/gtk-update-icon-cache.build: $(configured)
 	$(RM) $(builddir)/gtk/updateiconcache.o
-	$(MAKE) -C $(builddir)/gtk gtk-update-icon-cache.build CC=gcc EXEEXT=.build GMODULE_CFLAGS= \
+	$(MAKE) -C $(builddir)/gtk gtk-update-icon-cache.build \
+		CC=gcc CFLAGS='$(CFLAGS_FOR_BUILD)' EXEEXT=.build GMODULE_CFLAGS= LDFLAGS='$(LDFLAGS_FOR_BUILD)' \
 		GTK_DEP_CFLAGS="`pkg-config --cflags gdk-pixbuf-2.0`" \
 		GDK_PIXBUF_LIBS="`pkg-config --libs gdk-pixbuf-2.0`"
 	$(RM) $(builddir)/gtk/updateiconcache.o
@@ -33,7 +34,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,atk gdk-pixbuf libXdamage libXi libXinerama libXrandr pango)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,gtkrc) $(DESTDIR)/etc/gtk-2.0/gtkrc
+	$(INSTALL) -Dpm 0644 $(call addon-file,gtkrc) $(DESTDIR)/etc/gtk-2.0/gtkrc
 
 # Write inline files.
 $(call addon-file,gtkrc): | $$(@D)

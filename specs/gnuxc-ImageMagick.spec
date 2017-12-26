@@ -1,8 +1,8 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-ImageMagick
-Version:        7.0.6
-%global snap    0
+Version:        7.0.7
+%global snap    15
 %global flavor  7.Q16HDRI
 Release:        1.%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
@@ -42,7 +42,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}-%{snap}
+%autosetup -n %{gnuxc_name}-%{version}-%{snap}
 
 %build
 %gnuxc_configure \
@@ -53,7 +53,6 @@ statically, which is highly discouraged.
     --enable-hdri \
     --enable-hugepages \
     --enable-openmp \
-    --disable-silent-rules \
     --with-bzlib \
     --with-fontconfig \
     --with-freetype \
@@ -87,13 +86,13 @@ statically, which is highly discouraged.
     --without-openexr \
     --without-openjp2 \
     --without-wmf
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide a cross-tools version of the config scripts.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 for prog in Magick{++,Core,Wand}
 do
         ln %{buildroot}%{gnuxc_root}/bin/$prog-config \
@@ -114,12 +113,12 @@ rm -f %{buildroot}%{gnuxc_libdir}/ImageMagick-%{version}/modules-Q16HDRI/*/*.la
 %files
 %{gnuxc_datadir}/ImageMagick-7
 %{gnuxc_libdir}/ImageMagick-%{version}
-%{gnuxc_libdir}/libMagick++-%{flavor}.so.2
-%{gnuxc_libdir}/libMagick++-%{flavor}.so.2.0.0
-%{gnuxc_libdir}/libMagickCore-%{flavor}.so.2
-%{gnuxc_libdir}/libMagickCore-%{flavor}.so.2.0.0
-%{gnuxc_libdir}/libMagickWand-%{flavor}.so.0
-%{gnuxc_libdir}/libMagickWand-%{flavor}.so.0.0.0
+%{gnuxc_libdir}/libMagick++-%{flavor}.so.4
+%{gnuxc_libdir}/libMagick++-%{flavor}.so.4.0.0
+%{gnuxc_libdir}/libMagickCore-%{flavor}.so.5
+%{gnuxc_libdir}/libMagickCore-%{flavor}.so.5.0.0
+%{gnuxc_libdir}/libMagickWand-%{flavor}.so.5
+%{gnuxc_libdir}/libMagickWand-%{flavor}.so.5.0.0
 %{gnuxc_sysconfdir}/ImageMagick-7
 %doc AUTHORS.txt ChangeLog NEWS.txt README.txt
 %license LICENSE NOTICE

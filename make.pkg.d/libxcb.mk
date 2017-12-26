@@ -2,7 +2,7 @@ libxcb                  := libxcb-1.12
 libxcb_sha1             := 2f03490d1c75c8a3f902f74b717af6501773926a
 libxcb_url              := http://xcb.freedesktop.org/dist/$(libxcb).tar.bz2
 
-$(eval $(call verify-download,http://cgit.freedesktop.org/xcb/libxcb/patch/?id=8740a288ca468433141341347aa115b9544891d3,de1397ebe27c6013bf2198804022b84a95aaf904,fix-tabs.patch))
+$(eval $(call verify-download,fix-tabs.patch,http://cgit.freedesktop.org/xcb/libxcb/patch/?id=8740a288ca468433141341347aa115b9544891d3,d34514a7c81d1d25e1f945c55bf8a6ff4ded53a3))
 
 $(prepare-rule):
 # Drop tabs in favor of spaces.
@@ -10,7 +10,6 @@ $(prepare-rule):
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-composite \
 		--enable-damage \
 		--enable-dpms \

@@ -1,5 +1,5 @@
-mesa                    := mesa-17.1.4
-mesa_sha1               := 70a6c971125f754b78e502ade668bd02e46074d6
+mesa                    := mesa-17.3.1
+mesa_key                := 8703B6700E7EE06D7A39B8D6EDAE37B02CEB490D
 mesa_url                := ftp://ftp.freedesktop.org/pub/mesa/$(mesa).tar.xz
 
 $(prepare-rule):
@@ -7,7 +7,6 @@ $(prepare-rule):
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--disable-texture-float \
 		--enable-asm \
 		--enable-dri \
@@ -31,7 +30,8 @@ $(configure-rule):
 		--disable-selinux \
 		--disable-static \
 		--disable-xa \
-		CPPFLAGS=-DPATH_MAX=4096
+		CPPFLAGS=-DPATH_MAX=4096 \
+		PYTHON2=$(PYTHON)
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all

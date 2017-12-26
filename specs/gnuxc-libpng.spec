@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpng
-Version:        1.6.30
+Version:        1.6.34
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -35,21 +35,20 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-%patch001 -p1
+%autosetup -n %{gnuxc_name}-%{version} -p1
 
 %build
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
     \
     --with-binconfigs
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/libpng16-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-libpng16-config
 ln -fs %{gnuxc_target}-libpng16-config \
@@ -67,7 +66,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpng16.so.16
-%{gnuxc_libdir}/libpng16.so.16.30.0
+%{gnuxc_libdir}/libpng16.so.16.34.0
 %doc ANNOUNCE CHANGES INSTALL README TODO
 %license LICENSE
 

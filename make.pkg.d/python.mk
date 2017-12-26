@@ -1,7 +1,8 @@
-python                  := python-3.6.1
+python                  := python-3.6.4
 python_branch           := $(python:p%=P%)
-python_sha1             := 91d880a2a9fcfc6753cbfa132bf47a47e17e7b16
+python_key              := 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
 python_url              := http://www.python.org/ftp/python/$(python:python-%=%)/$(python_branch).tar.xz
+python_sig              := $(python_url).asc
 
 export PYTHON = /usr/bin/python3
 

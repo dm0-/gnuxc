@@ -4,7 +4,7 @@
 %global gnuxc_drop_rpath :
 
 Name:           gnuxc-guile
-Version:        2.2.2
+Version:        2.2.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -49,7 +49,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Call the native guile for guile-config.
 sed -i -e 's,@bindir@/,%{_bindir}/,' meta/Makefile.in
@@ -57,9 +57,9 @@ sed -i -e 's,@bindir@/,%{_bindir}/,' meta/Makefile.in
 %build
 %global _configure ../configure
 mkdir native && (pushd native
-%configure --disable-shared --disable-silent-rules
+%configure --disable-shared
 popd)
-make -C native %{?_smp_mflags} all
+%make_build -C native all
 
 %global _configure ./configure
 %gnuxc_configure \
@@ -67,22 +67,21 @@ make -C native %{?_smp_mflags} all
     GUILE_FOR_BUILD="$PWD/native/meta/guile" \
     \
     --disable-rpath \
-    --disable-silent-rules \
     --enable-debug-malloc \
     --enable-guile-debug \
     --with-bdw-gc=bdw-gc \
     --with-threads \
     --without-included-regex
-%gnuxc_make %{?_smp_mflags} all \
+%gnuxc_make_build all \
     ELISP_SOURCES= # Drop this elisp file since it won't cross-compile.
 
 %install
 %gnuxc_make_install \
     ELISP_SOURCES= # Drop this elisp file since it won't cross-compile.
-install -dm 755 %{buildroot}%{gnuxc_datadir}/guile/site
+install -dm 0755 %{buildroot}%{gnuxc_datadir}/guile/site
 
 # Provide cross-tools versions of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/guile-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-guile-config
 
@@ -110,8 +109,8 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/guile/2.2/extensions/guile-readline.so.0
 %{gnuxc_libdir}/guile/2.2/extensions/guile-readline.so.0.0.0
 %{gnuxc_libdir}/libguile-2.2.so.1
-%{gnuxc_libdir}/libguile-2.2.so.1.2.0
-%doc AUTHORS ChangeLog* HACKING NEWS README THANKS TODO
+%{gnuxc_libdir}/libguile-2.2.so.1.3.0
+%doc AUTHORS ChangeLog* HACKING NEWS README THANKS
 %license COPYING COPYING.LESSER LICENSE
 
 %files devel
@@ -120,7 +119,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 %{gnuxc_includedir}/guile
 %{gnuxc_libdir}/guile/2.2/extensions/guile-readline.so
 %{gnuxc_libdir}/libguile-2.2.so
-%{gnuxc_libdir}/libguile-2.2.so.1.2.0-gdb.scm
+%{gnuxc_libdir}/libguile-2.2.so.1.3.0-gdb.scm
 %{gnuxc_libdir}/pkgconfig/guile-2.2.pc
 
 %files static

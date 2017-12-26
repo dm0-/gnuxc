@@ -52,13 +52,6 @@ to log out after this for new groups to take effect.
 
     sudo usermod -a -G disk,mock,tty "$USER"
 
-**Optionally, clean up Git output for project development.**  The build system
-creates a directory in the project sources which will show up in Git commands.
-This configuration will ignore that directory to make editing easier.
-
-    mkdir -p ~/.config/git
-    echo /.gnuxc/ >> ~/.config/git/ignore
-
 
 ## Sysroot and Cross-Tools
 
@@ -163,10 +156,10 @@ you built the sysroot packages on the same machine.
     sudo dnf -y install \
         autoconf213 bc bison ed flex gperf groff intltool nasm texinfo yasm \
         {dejavu-sans,gnu-free-{mono,sans,serif},unifont}-fonts \
-        ImageMagick libicns-utils xorg-x11-xkb-utils \
+        cargo ImageMagick libicns-utils xorg-x11-xkb-utils \
         help2man perl-ExtUtils-MakeMaker perl-Locale-gettext perl-podlators \
-        {flex,freetype,gdk-pixbuf2,gobject-introspection,guile{,22}}-devel \
-        {libffi,libtool-ltdl,libunistring,xorg-x11-proto}-devel
+        {flex,freetype,gdk-pixbuf2,guile{,22},libffi}-devel \
+        {libtool-ltdl,libunistring,ncurses,xorg-x11-proto}-devel
 
 The `hal` project requires a few native static libraries.
 
@@ -289,13 +282,6 @@ runtime usage and configuration manual.
 
 
 ### Tying up Loose Ends
-
-**Configure daemons to start on boot.**  Near the end of `/etc/shepherd.scm`,
-there are space-separated lists of services (defined in `/etc/shepherd.d`) to
-start on boot depending on the selected runlevel.  The provided configuration
-starts an appropriate login prompt and enables swap partitions.  You might want
-to include more services, such as `dhclient` or `syslog`.  Services also can be
-started at runtime with the `herd` command, e.g. `sudo herd start cron`.
 
 **Preempt the cron jobs.**  There are some cache databases being regenerated at
 random times daily.  Run the cron commands manually if you don't want to wait

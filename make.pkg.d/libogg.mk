@@ -1,5 +1,5 @@
-libogg                  := libogg-1.3.2
-libogg_sha1             := 5e525ec6a4135066932935c01d2c309ea5009f8d
+libogg                  := libogg-1.3.3
+libogg_sha1             := ba54760b8f44bd85b79222286faf5d6a21e356fe
 libogg_url              := http://downloads.xiph.org/releases/ogg/$(libogg).tar.xz
 
 $(configure-rule):

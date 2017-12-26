@@ -19,7 +19,7 @@ Provides:       %{name}-devel = %{version}-%{release}
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -31,13 +31,13 @@ Provides:       %{name}-devel = %{version}-%{release}
     --enable-strict-compilation \
     --enable-varargs-prototypes \
     --enable-wide-prototypes
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide these parent directories for GLX and Xext headers.
-install -dm 755 %{buildroot}%{gnuxc_includedir}/{GL,X11/extensions}
+install -dm 0755 %{buildroot}%{gnuxc_includedir}/{GL,X11/extensions}
 
 
 %files

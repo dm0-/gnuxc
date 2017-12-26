@@ -1,0 +1,241 @@
+Add Python 3 support to the build system.
+
+--- configure
++++ configure
+@@ -1580,9 +1580,11 @@
+ 
+ # Note that if the Python conditional here evaluates True we will exit
+ # with status 1 which is a shell 'false' value.
+-if ! $python -c 'import sys; sys.exit(sys.version_info < (2,6) or sys.version_info >= (3,))'; then
++if ! $python -c 'import sys; sys.exit(sys.version_info >= (3,) and sys.version_info < (3,6))'; then
++  error_exit "Cannot use '$python', Python 3.6 or later is required." \
++      "Use --python=/path/to/python3 to specify a supported Python 3."
++elif ! $python -c 'import sys; sys.exit(sys.version_info < (2,6))'; then
+   error_exit "Cannot use '$python', Python 2.6 or later is required." \
+-      "Note that Python 3 or later is not yet supported." \
+       "Use --python=/path/to/python to specify a supported Python."
+ fi
+ 
+--- scripts/qapi.py
++++ scripts/qapi.py
+@@ -15,9 +15,11 @@
+ import getopt
+ import os
+ import re
+-import string
+ import sys
+-from ordereddict import OrderedDict
++try:
++    from collections import OrderedDict
++except ImportError:
++    from ordereddict import OrderedDict
+ 
+ builtin_types = {
+     'null':     'QTYPE_QNULL',
+@@ -252,7 +254,7 @@
+                                "'Returns:' is only valid for commands")
+ 
+     def check(self):
+-        bogus = [name for name, section in self.args.iteritems()
++        bogus = [name for name, section in self.args.items()
+                  if not section.member]
+         if bogus:
+             raise QAPISemError(
+@@ -308,7 +310,7 @@
+                 if not isinstance(pragma, dict):
+                     raise QAPISemError(
+                         info, "Value of 'pragma' must be a dictionary")
+-                for name, value in pragma.iteritems():
++                for name, value in pragma.items():
+                     self._pragma(name, value, info)
+             else:
+                 expr_elem = {'expr': expr,
+@@ -1574,7 +1576,7 @@
+ 
+     def _make_members(self, data, info):
+         return [self._make_member(key, value, info)
+-                for (key, value) in data.iteritems()]
++                for (key, value) in data.items()]
+ 
+     def _def_struct_type(self, expr, info, doc):
+         name = expr['struct']
+@@ -1606,11 +1608,11 @@
+                 name, info, doc, 'base', self._make_members(base, info)))
+         if tag_name:
+             variants = [self._make_variant(key, value)
+-                        for (key, value) in data.iteritems()]
++                        for (key, value) in data.items()]
+             members = []
+         else:
+             variants = [self._make_simple_variant(key, value, info)
+-                        for (key, value) in data.iteritems()]
++                        for (key, value) in data.items()]
+             typ = self._make_implicit_enum_type(name, info,
+                                                 [v.name for v in variants])
+             tag_member = QAPISchemaObjectTypeMember('type', typ, False)
+@@ -1625,7 +1627,7 @@
+         name = expr['alternate']
+         data = expr['data']
+         variants = [self._make_variant(key, value)
+-                    for (key, value) in data.iteritems()]
++                    for (key, value) in data.items()]
+         tag_member = QAPISchemaObjectTypeMember('type', 'QType', False)
+         self._def_entity(
+             QAPISchemaAlternateType(name, info, doc,
+@@ -1735,7 +1737,11 @@
+         type_name = prefix
+     return camel_to_upper(type_name) + '_' + c_name(const_name, False).upper()
+ 
+-c_name_trans = string.maketrans('.-', '__')
++try:
++    c_name_trans = str.maketrans('.-', '__')
++except AttributeError:
++    import string
++    c_name_trans = string.maketrans('.-', '__')
+ 
+ 
+ # Map @name to a valid C identifier.
+@@ -2001,8 +2007,11 @@
+         if really:
+             return open(name, opt)
+         else:
+-            import StringIO
+-            return StringIO.StringIO()
++            try:
++                from StringIO import StringIO
++            except ImportError:
++                from io import StringIO
++            return StringIO()
+ 
+     fdef = maybe_open(do_c, c_file, 'w')
+     fdecl = maybe_open(do_h, h_file, 'w')
+--- scripts/qapi2texi.py
++++ scripts/qapi2texi.py
+@@ -147,7 +147,7 @@
+ def texi_members(doc, what, base, variants, member_func):
+     """Format the table of members"""
+     items = ''
+-    for section in doc.args.itervalues():
++    for section in doc.args.values():
+         # TODO Drop fallbacks when undocumented members are outlawed
+         if section.content:
+             desc = texi_format(str(section))
+@@ -285,15 +285,15 @@
+ def main(argv):
+     """Takes schema argument, prints result to stdout"""
+     if len(argv) != 2:
+-        print >>sys.stderr, "%s: need exactly 1 argument: SCHEMA" % argv[0]
++        sys.stderr.write("%s: need exactly 1 argument: SCHEMA\n" % argv[0])
+         sys.exit(1)
+ 
+     schema = qapi.QAPISchema(argv[1])
+     if not qapi.doc_required:
+-        print >>sys.stderr, ("%s: need pragma 'doc-required' "
+-                             "to generate documentation" % argv[0])
++        sys.stderr.write("%s: need pragma 'doc-required' "
++                         "to generate documentation\n" % argv[0])
+         sys.exit(1)
+-    print texi_schema(schema)
++    sys.stdout.write(texi_schema(schema) + "\n")
+ 
+ 
+ if __name__ == '__main__':
+--- scripts/signrom.py
++++ scripts/signrom.py
+@@ -18,7 +18,7 @@
+ fout = open(sys.argv[2], 'wb')
+ 
+ magic = fin.read(2)
+-if magic != '\x55\xaa':
++if magic != b'\x55\xaa':
+     sys.exit("%s: option ROM does not begin with magic 55 aa" % sys.argv[1])
+ 
+ size_byte = ord(fin.read(1))
+@@ -33,7 +33,7 @@
+     # Add padding if necessary, rounding the whole input to a multiple of
+     # 512 bytes according to the third byte of the input.
+     # size-1 because a final byte is added below to store the checksum.
+-    data = data.ljust(size-1, '\0')
++    data = data.ljust(size-1, b'\0')
+ else:
+     if ord(data[-1:]) != 0:
+         sys.stderr.write('WARNING: ROM includes nonzero checksum\n')
+--- ui/keycodemapdb/tools/keymap-gen
++++ ui/keycodemapdb/tools/keymap-gen
+@@ -356,19 +356,19 @@
+ 
+         if frommapname in database.ENUM_COLUMNS:
+             fromtype = self.TYPE_ENUM
+-        elif type(tolinux.keys()[0]) == str:
++        elif type(next(iter(tolinux))) == str:
+             fromtype = self.TYPE_STRING
+         else:
+             fromtype = self.TYPE_INT
+ 
+         if tomapname in database.ENUM_COLUMNS:
+             totype = self.TYPE_ENUM
+-        elif type(fromlinux.values()[0]) == str:
++        elif type(next(iter(fromlinux.values()))) == str:
+             totype = self.TYPE_STRING
+         else:
+             totype = self.TYPE_INT
+ 
+-        keys = tolinux.keys()
++        keys = list(tolinux)
+         keys.sort()
+         if fromtype == self.TYPE_INT:
+             keys = range(keys[-1] + 1)
+@@ -402,7 +402,7 @@
+             raise Exception("Unknown map %s, expected one of %s" % (
+                             mapname, ", ".join(database.mapto.keys())))
+ 
+-        keys = database.mapto[Database.MAP_LINUX].keys()
++        keys = list(database.mapto[Database.MAP_LINUX])
+         keys.sort()
+         names = [database.mapname[Database.MAP_LINUX].get(key, "unnamed") for key in keys]
+ 
+@@ -411,7 +411,7 @@
+ 
+         if mapname in database.ENUM_COLUMNS:
+             totype = self.TYPE_ENUM
+-        elif type(database.mapto[mapname].values()[0]) == str:
++        elif type(next(iter(database.mapto[mapname].values()))) == str:
+             totype = self.TYPE_STRING
+         else:
+             totype = self.TYPE_INT
+@@ -440,7 +440,7 @@
+         if varname is None:
+             varname = "name_map_%s_to_%s" % (frommapname, tomapname)
+ 
+-        keys = tolinux.keys()
++        keys = list(tolinux)
+         keys.sort()
+         if type(keys[0]) == int:
+             keys = range(keys[-1] + 1)
+@@ -470,7 +470,7 @@
+             raise Exception("Unknown map %s, expected one of %s" % (
+                             mapname, ", ".join(database.mapname.keys())))
+ 
+-        keys = database.mapto[Database.MAP_LINUX].keys()
++        keys = list(database.mapto[Database.MAP_LINUX])
+         keys.sort()
+         names = [database.mapname[Database.MAP_LINUX].get(key, "unnamed") for key in keys]
+ 
+@@ -514,7 +514,7 @@
+             raise Exception("Unknown map %s, expected one of %s" % (
+                             mapname, ", ".join(database.mapname.keys())))
+ 
+-        keys = database.mapto[Database.MAP_LINUX].keys()
++        keys = list(database.mapto[Database.MAP_LINUX])
+         keys.sort()
+         names = [database.mapname[Database.MAP_LINUX].get(key, "unnamed") for key in keys]
+ 
+@@ -537,7 +537,7 @@
+                             mapname, ", ".join(database.mapfrom.keys())))
+ 
+         tolinux = database.mapfrom[mapname]
+-        keys = tolinux.keys()
++        keys = list(tolinux)
+         keys.sort()
+         if mapname in database.mapname:
+             names = database.mapname[mapname]

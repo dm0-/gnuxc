@@ -1,12 +1,11 @@
-libidn2                 := libidn2-2.0.2
-libidn2_sha1            := 7c5d660f97383e46b6b736363ee4bf9f544b45a0
+libidn2                 := libidn2-2.0.4
+libidn2_key             := 1CB27DBC98614B2D5841646D08302DB6A2670428
 libidn2_url             := http://ftpmirror.gnu.org/libidn/$(libidn2).tar.lz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-doc \
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-gcc-warnings gl_cv_warn_c__Werror=no
 
 $(build-rule):

@@ -1,5 +1,5 @@
 liboop                  := liboop-1.0.1
-liboop_sha1             := 538be0d7a9fb7e9d88eb89bb15b65d6d7d9dcaa3
+liboop_key              := 343C2FF0FBEE5EC2EDBEF399F3599FF828C67298
 liboop_url              := http://ftp.lysator.liu.se/pub/liboop/$(liboop).tar.gz
 
 $(prepare-rule):

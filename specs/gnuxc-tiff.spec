@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-tiff
-Version:        4.0.8
+Version:        4.0.9
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -37,7 +37,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -63,7 +63,7 @@ statically, which is highly discouraged.
     --enable-thunder \
     --enable-zlib \
     --with-x
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -84,9 +84,9 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libtiff.so.5
-%{gnuxc_libdir}/libtiff.so.5.2.6
+%{gnuxc_libdir}/libtiff.so.5.3.0
 %{gnuxc_libdir}/libtiffxx.so.5
-%{gnuxc_libdir}/libtiffxx.so.5.2.6
+%{gnuxc_libdir}/libtiffxx.so.5.3.0
 %doc ChangeLog README TODO
 %license COPYRIGHT
 

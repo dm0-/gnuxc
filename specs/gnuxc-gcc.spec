@@ -1,30 +1,31 @@
-%if 0%{?_with_bootstrap:1}
-%global bootstrap 1
-%endif
+%bcond_with bootstrap
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %undefine _binaries_in_noarch_packages_terminate_build
 %global __gnuxc_path ^%{gnuxc_root}/
 %global __elf_exclude_path ^(%{?__elf_exclude_path}|%{gnuxc_root}/.*)$
 %global __libsymlink_exclude_path ^(%{?__libsymlink_exclude_path}|%{gnuxc_root}/.*)$
 %endif
 
+# Rename the debuginfo package because RPM 4.14 broke it.
+%global _debuginfo_template %gnuxc_debuginfo_template
+
 # Use the same GCC multiarch directory structure as Fedora.
 %global gcc_libdir %{_prefix}/lib
 
 Name:           gnuxc-gcc
-Version:        7.1.0
-Release:        1.%{?bootstrap:0}%{!?bootstrap:1}%{?dist}
+Version:        7.2.0
+Release:        1.%{without bootstrap}%{?dist}
 Summary:        Cross-compiler for C for pure GNU systems
 
 License:        GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions
 URL:            http://www.gnu.org/software/gcc/
-Source0:        http://ftpmirror.gnu.org/gcc/gcc-%{version}/%{gnuxc_name}-%{version}.tar.bz2
+Source0:        http://ftpmirror.gnu.org/gcc/gcc-%{version}/%{gnuxc_name}-%{version}.tar.xz
 
 Patch101:       %{gnuxc_name}-%{version}-no-add-needed.patch
 
 BuildRequires:  gnuxc-binutils
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 BuildRequires:  gnuxc-gc-devel
 %endif
 
@@ -35,13 +36,10 @@ BuildRequires:  gettext
 BuildRequires:  libmpc-devel
 BuildRequires:  libgomp
 BuildRequires:  zlib-devel
-%if ! 0%{?bootstrap}
-BuildRequires:  python-devel
-%endif
 
 Requires:       gnuxc-binutils
 Requires:       gnuxc-cpp = %{version}-%{release}
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 Requires:       gnuxc-libatomic = %{version}-%{release}
 Requires:       gnuxc-libgcc = %{version}-%{release}
 Requires:       gnuxc-libgomp = %{version}-%{release}
@@ -55,7 +53,7 @@ Provides:       gnuxc(bootstrapped)
 %endif
 Provides:       bundled(libiberty)
 
-%if 0%{?bootstrap}
+%if %{with bootstrap}
 Provides:       gnuxc-bootstrap(%{gnuxc_name}) = %{version}-%{release}
 %else
 Obsoletes:      gnuxc-bootstrap(%{gnuxc_name}) <= %{version}-%{release}
@@ -71,7 +69,7 @@ Requires:       gnuxc-filesystem
 %description -n gnuxc-cpp
 Cross-compiler version of a C preprocessor for pure GNU systems.
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %package c++
 Summary:        Cross-compiler for C++ for pure GNU systems
 Requires:       %{name} = %{version}-%{release}
@@ -210,8 +208,7 @@ Cross-compiled version of libstdc++ for the GNU system.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-%patch101
+%autosetup -n %{gnuxc_name}-%{version} -p0
 
 # Work around a bad hard-coded setting that breaks all cross-compiling.
 sed -i -e '/system_bdw_gc_found=no/s/=no/=yes/g' libobjc/configure{.ac,}
@@ -258,7 +255,7 @@ mkdir -p build && pushd build
     --without-included-gettext \
     --without-newlib \
     \
-%if 0%{?bootstrap}
+%if %{with bootstrap}
     --enable-languages=c \
     --disable-decimal-float \
     --disable-libgomp \
@@ -270,22 +267,22 @@ mkdir -p build && pushd build
     --enable-dependency-tracking #55930
 popd
 unset CFLAGS CXXFLAGS FFLAGS FCFLAGS LDFLAGS
-%if 0%{?bootstrap}
-make -C build %{?_smp_mflags} all-gcc all-target-libgcc \
+%if %{with bootstrap}
+%make_build -C build all-gcc all-target-libgcc \
 %else
-make -C build %{?_smp_mflags} all \
+%make_build -C build all \
 %endif
     CFLAGS_FOR_TARGET="${CFLAGS_FOR_TARGET/ -Wp,-D_FORTIFY_SOURCE=? / }" \
     CXXFLAGS_FOR_TARGET="${CXXFLAGS_FOR_TARGET/ -Wp,-D_FORTIFY_SOURCE=? / }"
 
 %install
-%if 0%{?bootstrap}
+%if %{with bootstrap}
 make -C build install-gcc install-target-libgcc DESTDIR=%{buildroot}
 %else
 %make_install -C build
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
-chmod -c 755 %{buildroot}%{gnuxc_root}/lib/libgcc_s.so.1
+chmod -c 0755 %{buildroot}%{gnuxc_root}/lib/libgcc_s.so.1
 
 # Link some problematic libraries where the linker can find them.
 mkdir -p %{buildroot}%{gnuxc_libdir}
@@ -294,6 +291,9 @@ ln -s ../../../lib/libstdc++.so.6 %{buildroot}%{gnuxc_libdir}/
 
 # These files conflict with existing installed files.
 rm -rf %{buildroot}%{_datadir}/gcc-%{version}
+
+# This functionality should be used from the system package.
+rm -f %{buildroot}%{gnuxc_root}/lib/libstdc++.so.6.0.24-gdb.py
 %endif
 
 # We don't need libtool's help.
@@ -304,7 +304,7 @@ rm -rf %{buildroot}%{_infodir} %{buildroot}%{_mandir}/man7
 rm -f %{buildroot}%{gcc_libdir}/libiberty.a
 
 %find_lang %{name}
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %find_lang gnuxc-cpplib
 
 # Drop cross-compiled library translations.
@@ -365,7 +365,7 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %{_mandir}/man1/%{gnuxc_target}-gcov.1.gz
 %{_mandir}/man1/%{gnuxc_target}-gcov-dump.1.gz
 %{_mandir}/man1/%{gnuxc_target}-gcov-tool.1.gz
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}/libgcc_eh.a
 %{gnuxc_root}/lib/libgomp.spec
 %{gnuxc_root}/lib/libitm.spec
@@ -388,7 +388,7 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %doc gcc/ChangeLog* gcc/FSFChangeLog* gcc/ONEWS
 %license gcc/COPYING*
 
-%files %{!?bootstrap:-f gnuxc-cpplib.lang} -n gnuxc-cpp
+%files %{!?with_bootstrap:-f gnuxc-cpplib.lang} -n gnuxc-cpp
 %{_bindir}/%{gnuxc_target}-cpp
 %dir %{gcc_libdir}/gcc/%{gnuxc_target}
 %dir %{gcc_libdir}/gcc/%{gnuxc_target}/%{version}
@@ -398,7 +398,7 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 %{_mandir}/man1/%{gnuxc_target}-cpp.1.gz
 %doc libcpp/ChangeLog
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %files c++
 %{_bindir}/%{gnuxc_target}-g++
 %{_bindir}/%{gnuxc_target}-c++
@@ -497,10 +497,7 @@ rm -f %{buildroot}%{_datadir}/locale/{de,fr}/LC_MESSAGES/libstdc++.mo
 
 %files -n gnuxc-libstdc++
 %{gnuxc_root}/lib/libstdc++.so.6
-%{gnuxc_root}/lib/libstdc++.so.6.0.23
-%{gnuxc_root}/lib/libstdc++.so.6.0.23-gdb.py
-%{gnuxc_root}/lib/libstdc++.so.6.0.23-gdb.pyc
-%{gnuxc_root}/lib/libstdc++.so.6.0.23-gdb.pyo
+%{gnuxc_root}/lib/libstdc++.so.6.0.24
 %{gnuxc_libdir}/libstdc++.so.6
 %doc libstdc++-v3/ChangeLog* libstdc++-v3/README
 %endif

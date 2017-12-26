@@ -34,18 +34,17 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}-stable
+%autosetup -n %{gnuxc_name}-%{version}-stable
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-clock-gettime \
     --enable-debug-mode \
     --enable-function-sections \
     --enable-thread-support \
     \
     --disable-gcc-warnings
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

@@ -1,33 +1,40 @@
 hal                     := hal-1
 
-hal-busybox             := busybox-1.27.0
-hal-busybox_sha1        := 02a0ff43e46bdcd4f040f1ef7897b3fb53c43ca6
+hal-busybox             := busybox-1.27.2
+hal-busybox_sha1        := 11669e223cc38de646ce26080e91ca29b8d42ad9
 hal-busybox_url         := http://www.busybox.net/downloads/$(hal-busybox).tar.bz2
 
-hal-linux-libre         := linux-libre-4.12
+hal-linux-libre         := linux-libre-4.14.8
 hal-linux-libre_branch  := $(hal-linux-libre:linux-libre-%=linux-%)
-hal-linux-libre_sha1    := ed8bcd44aec626e3eb56ae7ecf9b6de10e1f1d52
-hal-linux-libre_url     := http://ftpmirror.gnu.org/linux-libre/4.x/$(hal-linux-libre:linux-libre-%=%)-gnu/$(hal-linux-libre)-gnu.tar.lz
+hal-linux-libre_key     := 474402C8C582DAFBE389C427BCB7CF877E7D47A7
+hal-linux-libre_url     := http://linux-libre.fsfla.org/pub/linux-libre/releases/$(hal-linux-libre:linux-libre-%=%)-gnu/$(hal-linux-libre)-gnu.tar.lz
+hal-linux-libre_sig     := $(hal-linux-libre_url).sign
 
-hal-qemu                := qemu-2.9.0
-hal-qemu_sha1           := 5cc63c6cababaaa7d0685e8b32bacf5022873ebc
+hal-pixman              := pixman-0.34.0
+hal-pixman_sha1         := 367698744e74d6d4f363041482965b9ea7fbe4a5
+hal-pixman_url          := http://xorg.freedesktop.org/releases/individual/lib/$(hal-pixman).tar.bz2
+
+hal-qemu                := qemu-2.11.0
+hal-qemu_key            := CEACC9E15534EBABB82D3FA03353C9CEF108B584
 hal-qemu_url            := http://download.qemu.org/$(hal-qemu).tar.xz
 
 hal-wpa_supplicant      := wpa_supplicant-2.6
-hal-wpa_supplicant_sha1 := 8189704e257c3e9f8300c49dc6e49a381b1d6299
+hal-wpa_supplicant_key  := EC4AA0A991A5F2464582D52D2B6EF432EFC895FA
 hal-wpa_supplicant_url  := http://w1.fi/releases/$(hal-wpa_supplicant).tar.gz
+hal-wpa_supplicant_sig  := $(hal-wpa_supplicant_url).asc
 
 # Download all the sub-project sources.
-$(eval $(call verify-download,$(hal-busybox_url),$(hal-busybox_sha1)))
-$(eval $(call verify-download,$(hal-linux-libre_url),$(hal-linux-libre_sha1),$(hal-linux-libre).tar.lz))
-$(eval $(call verify-download,$(hal-qemu_url),$(hal-qemu_sha1)))
-$(eval $(call verify-download,$(hal-wpa_supplicant_url),$(hal-wpa_supplicant_sha1)))
+$(eval $(call verify-download,$(hal-busybox).tar.bz2,$(hal-busybox_url),$(hal-busybox_sha1)))
+$(eval $(call verify-download,$(hal-linux-libre).tar.lz,$(hal-linux-libre_url),$(hal-linux-libre_sig),$(hal-linux-libre_key)))
+$(eval $(call verify-download,$(hal-pixman).tar.bz2,$(hal-pixman_url),$(hal-pixman_sha1)))
+$(eval $(call verify-download,$(hal-qemu).tar.xz,$(hal-qemu_url),,$(hal-qemu_key)))
+$(eval $(call verify-download,$(hal-wpa_supplicant).tar.gz,$(hal-wpa_supplicant_url),$(hal-wpa_supplicant_sig),$(hal-wpa_supplicant_key)))
 
 # Download firmware for supported hardware.  (This could just be built from source, but it requires making an entire xtensa-elf cross-compiler toolchain.)
-$(eval $(call verify-download,http://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.git/plain/ath9k_htc/htc_9271-1.4.0.fw?id=3de1c437e75320c0d2f23dc990fac741f0bcc3ca,62686323432b63ec8091234f9b1b9ee6d746eec4,htc_9271-1.4.0.fw))
+$(eval $(call verify-download,htc_9271-1.4.0.fw,http://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.git/plain/ath9k_htc/htc_9271-1.4.0.fw?id=3de1c437e75320c0d2f23dc990fac741f0bcc3ca,62686323432b63ec8091234f9b1b9ee6d746eec4))
 
 ifneq ($(host),$(build))
-$(prepare-rule): $(call prepared,busybox linux-libre qemu wpa_supplicant)
+$(prepare-rule): $(call prepared,busybox linux-libre pixman qemu wpa_supplicant)
 #	t=../../../EFI/gnuxc/hal-vmlinuz.efi ; printf 'XSym\n%04u\n%.32s\n%-1024s' $${#t} "`echo -n $$t | md5sum`" $$t$$'\n' > $(builddir)/link.efi
 
 $(configure-rule): $(call configured,busybox linux-libre qemu wpa_supplicant)
@@ -35,13 +42,13 @@ $(builddir)/configure: private override allow_rpaths = 1 # Don't mess with QEMU'
 
 $(build-rule): $(call built,busybox linux-libre qemu wpa_supplicant)
 	$(RM) --recursive $(builddir)/iroot && $(MKDIR) $(builddir)/iroot/{bin,dev,etc,proc,sbin,sys,usr/share/qemu}
-	$(INSTALL) -Dpm 755 $(call addon-file,init.sh) $(builddir)/iroot/init
-	$(INSTALL) -Dpm 644 $(call addon-file,emacs2.kbd) $(builddir)/iroot/usr/share/kbd/emacs2
-	$(INSTALL) -Dpm 644 $(call addon-file,linux.terminfo) $(builddir)/iroot/usr/share/terminfo/l/linux
-	$(INSTALL) -Dpm 755 $(call addon-file,udhcpc.sh) $(builddir)/iroot/usr/share/udhcpc/default.script
-	$(INSTALL) -Dpm 644 $(call addon-file,htc_9271-1.4.0.fw) $(builddir)/iroot/lib/firmware/ath9k_htc/htc_9271-1.4.0.fw
+	$(INSTALL) -Dpm 0755 $(call addon-file,init.sh) $(builddir)/iroot/init
+	$(INSTALL) -Dpm 0644 $(call addon-file,emacs2.kbd) $(builddir)/iroot/usr/share/kbd/emacs2
+	$(INSTALL) -Dpm 0644 $(call addon-file,linux.terminfo) $(builddir)/iroot/usr/share/terminfo/l/linux
+	$(INSTALL) -Dpm 0755 $(call addon-file,udhcpc.sh) $(builddir)/iroot/usr/share/udhcpc/default.script
+	$(INSTALL) -Dpm 0644 $(call addon-file,htc_9271-1.4.0.fw) $(builddir)/iroot/lib/firmware/ath9k_htc/htc_9271-1.4.0.fw
 # Install BusyBox.
-	$(INSTALL) -pm 755 -st $(builddir)/iroot/sbin $(builddir)/$(hal-busybox)/busybox
+	$(INSTALL) -pm 0755 -st $(builddir)/iroot/sbin $(builddir)/$(hal-busybox)/busybox
 	$(SYMLINK) ../sbin/busybox $(builddir)/iroot/bin/ash
 	$(SYMLINK) ../sbin/busybox $(builddir)/iroot/bin/ctrl_is_down
 	$(SYMLINK) ../sbin/busybox $(builddir)/iroot/bin/loadkmap
@@ -54,10 +61,10 @@ $(build-rule): $(call built,busybox linux-libre qemu wpa_supplicant)
 	$(SYMLINK) busybox $(builddir)/iroot/sbin/route
 	$(SYMLINK) busybox $(builddir)/iroot/sbin/udhcpc
 # Install the WPA supplicant.
-	$(INSTALL) -pm 755 -st $(builddir)/iroot/sbin $(builddir)/$(hal-wpa_supplicant)/wpa_supplicant/wpa_supplicant
+	$(INSTALL) -pm 0755 -st $(builddir)/iroot/sbin $(builddir)/$(hal-wpa_supplicant)/wpa_supplicant/wpa_supplicant
 # Install QEMU.
-	$(INSTALL) -pm 755 -st $(builddir)/iroot/bin $(builddir)/$(hal-qemu)/x86_64-softmmu/qemu-system-x86_64
-	$(INSTALL) -pm 644 -t $(builddir)/iroot/usr/share/qemu \
+	$(INSTALL) -pm 0755 -st $(builddir)/iroot/bin $(builddir)/$(hal-qemu)/x86_64-softmmu/qemu-system-x86_64
+	$(INSTALL) -pm 0644 -t $(builddir)/iroot/usr/share/qemu \
 		$(builddir)/$(hal-qemu)/pc-bios/bios-256k.bin \
 		$(builddir)/$(hal-qemu)/pc-bios/efi-pcnet.rom \
 		$(builddir)/$(hal-qemu)/pc-bios/kvmvapic.bin \
@@ -67,18 +74,18 @@ $(build-rule): $(call built,busybox linux-libre qemu wpa_supplicant)
 	(cd $(builddir)/iroot && find * | cpio -co) | gzip -9 > $(builddir)/initrd.img
 
 $(install-rule):
-	$(INSTALL) -Dpm 755 $(call addon-file,grub.cfg) $(DESTDIR)/etc/grub.d/39_hal
+	$(INSTALL) -Dpm 0755 $(call addon-file,grub.cfg) $(DESTDIR)/etc/grub.d/39_hal
 # Write the files in a dedicated ESP location for persistent boot entries to use.
-	$(INSTALL) -Dpm 644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/EFI/gnuxc/hal-vmlinuz.efi
-	$(INSTALL) -Dpm 644 $(builddir)/initrd.img $(DESTDIR)/boot/efi/EFI/gnuxc/hal-initrd.img
+	$(INSTALL) -Dpm 0644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/EFI/gnuxc/hal-vmlinuz.efi
+	$(INSTALL) -Dpm 0644 $(builddir)/initrd.img $(DESTDIR)/boot/efi/EFI/gnuxc/hal-initrd.img
 # Write the kernel where Apple systems will find it.
 	test -e $(DESTDIR)/boot/efi/System/Library/CoreServices/boot.efi && \
 	$(ECHO) 'The Apple EFI boot program already exists; not overwiting' || \
-	$(INSTALL) -Dpm 644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/System/Library/CoreServices/boot.efi
+	$(INSTALL) -Dpm 0644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/System/Library/CoreServices/boot.efi
 # Write the kernel where everything else will find it.
 	test -e $(DESTDIR)/boot/efi/EFI/BOOT/BOOTX64.EFI && \
 	$(ECHO) 'The default EFI boot program already exists; not overwiting' || \
-	$(INSTALL) -Dpm 644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/EFI/BOOT/BOOTX64.EFI
+	$(INSTALL) -Dpm 0644 $(builddir)/vmlinuz $(DESTDIR)/boot/efi/EFI/BOOT/BOOTX64.EFI
 
 # Write inline files.
 $(call addon-file,busybox.config ctrl_is_down.c grub.cfg udhcpc.sh wpa_supplicant.config): | $$(@D)
@@ -114,12 +121,12 @@ $(call prepare-rule,busybox): $(call addon-file,busybox.config ctrl_is_down.c) |
 
 $(call configure-rule,busybox): $(call prepared,busybox)
 	$(SED) $(builddir)/$(hal-busybox)/all.config.in > $(builddir)/$(hal-busybox)/all.config \
-		-e '/^CONFIG[^ =]*_CFLAGS=/s/=.*/="$(CFLAGS)"/' \
-		-e '/^CONFIG[^ =]*_LDFLAGS=/s/=.*/="$(LDFLAGS)"/'
+		-e '/^CONFIG[^ =]*_CFLAGS=/s/=.*/="$(CFLAGS_FOR_BUILD)"/' \
+		-e '/^CONFIG[^ =]*_LDFLAGS=/s/=.*/="$(LDFLAGS_FOR_BUILD)"/'
 	KCONFIG_ALLCONFIG=all.config $(MAKE) -C $(builddir)/$(hal-busybox) allnoconfig V=1
 
 $(call build-rule,busybox): $(call configured,busybox)
-	$(MAKE) -C $(builddir)/$(hal-busybox) all V=1 \
+	CFLAGS='$(CFLAGS_FOR_BUILD)' LDFLAGS='$(LDFLAGS_FOR_BUILD)' $(MAKE) -C $(builddir)/$(hal-busybox) all V=1 \
 		CFLAGS_{dump,fflush_stdout_and_exit,wfopen,xfuncs_printf,ash,mount,decompress_gunzip}.o=-Wno-error=format-security
 
 
@@ -144,39 +151,50 @@ $(call addon-file,linux.config): $(patchdir)/$(hal)-linux.config | $$(@D)
 
 
 
+$(builddir)/$(hal-pixman): | $(call addon-file,$(hal-pixman).tar.bz2)
+	$(TAR) -C $(builddir) -xf $|
+
+$(call prepare-rule,pixman): | $(builddir)/$(hal-pixman)
+
+$(call configure-rule,pixman): $(call prepared,pixman)
+	cd $(builddir)/$(hal-pixman) && $(native) ./configure \
+		--prefix=/usr \
+		--disable-gtk \
+		--disable-libpng \
+		--disable-shared \
+		--disable-silent-rules \
+		--enable-static
+
+$(call build-rule,pixman): $(call configured,pixman)
+	$(MAKE) -C $(builddir)/$(hal-pixman) all
+
+
+
 $(builddir)/$(hal-qemu): | $(call addon-file,$(hal-qemu).tar.xz)
 	$(TAR) -C $(builddir) -xf $|
 
 $(call prepare-rule,qemu): | $(builddir)/$(hal-qemu)
 	$(PATCH) -d $(builddir)/$(hal-qemu) < $(patchdir)/$(hal-qemu)-fbdev.patch
-	$(AUTOGEN) $(builddir)/$(hal-qemu)/pixman
+	$(PATCH) -d $(builddir)/$(hal-qemu) < $(patchdir)/$(hal-qemu)-python3.patch
 # Work around the ncurses pkgconfig file.
 	$(EDIT) 's/ --libs ncursesw [^:]*/& -ldl/' $(builddir)/$(hal-qemu)/configure
 
-$(call configure-rule,qemu): $(call prepared,qemu)
-	cd $(builddir)/$(hal-qemu) && $(native) ./configure \
+$(call configure-rule,qemu): private override export LDFLAGS_FOR_BUILD := $(LDFLAGS_FOR_BUILD) -L'$(CURDIR)/$(builddir)/$(hal-pixman)/pixman/.libs'
+$(call configure-rule,qemu): $(call prepared,qemu) $(call built,pixman)
+	cd $(builddir)/$(hal-qemu) && $(native) PYTHON=$(PYTHON) ./configure \
 		--prefix=/usr --bindir=/bin --libdir=/lib --sysconfdir=/etc \
+		--audio-drv-list=oss \
 		--enable-curses --enable-fbdev \
 		--enable-kvm \
 		--enable-system --target-list=x86_64-softmmu \
 		--static \
-		--audio-drv-list=oss \
 		--disable-{gtk,sdl,spice,vnc} \
 		--disable-{blobs,docs,guest-agent,user,werror,xen} \
 		--disable-{glusterfs,libssh2,virtfs} \
 		--disable-{gcrypt,gnutls,nettle} \
 		--disable-{attr,bluez,brlapi,cap-ng,curl,linux-aio} \
 		--disable-{libiscsi,libusb,smartcard,usb-redir} \
-		--disable-{fdt,rdma,seccomp,vde,vhost-net,vhost-scsi} \
-		\
-		--without-system-pixman
-	cd $(builddir)/$(hal-qemu)/pixman && $(native) ./configure \
-		--prefix=/usr \
-		--disable-gtk \
-		--disable-libpng \
-		--disable-silent-rules \
-		--disable-shared \
-		--enable-static
+		--disable-{fdt,rdma,seccomp,vde,vhost-net,vhost-scsi}
 
 $(call build-rule,qemu): $(call configured,qemu)
 	$(MAKE) -C $(builddir)/$(hal-qemu) all V=1
@@ -200,8 +218,8 @@ endif
 # Provide a minimal set of BusyBox configuration options.
 override define contents
 CONFIG_STATIC=y
-CONFIG_EXTRA_CFLAGS="$(CFLAGS)"
-CONFIG_EXTRA_LDFLAGS="$(LDFLAGS)"
+CONFIG_EXTRA_CFLAGS="$(CFLAGS_FOR_BUILD)"
+CONFIG_EXTRA_LDFLAGS="$(LDFLAGS_FOR_BUILD)"
 CONFIG_FEATURE_FANCY_ECHO=y
 CONFIG_SLEEP=y
 CONFIG_CTRL_IS_DOWN=y

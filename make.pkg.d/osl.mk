@@ -4,7 +4,6 @@ osl_url                 := http://github.com/periscop/openscop/releases/download
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-portable-binary \
 		--with-gcc-arch=$(arch) \
 		--with-gmp=system

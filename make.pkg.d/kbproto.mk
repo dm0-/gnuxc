@@ -1,5 +1,5 @@
 kbproto                 := kbproto-1.0.7
-kbproto_sha1            := bc9c0fa7d39edf4ac043e6eeaa771d3e245ac5b2
+kbproto_key             := 4A193C06D35E7C670FA4EF0BA2FB9E081F2D130E
 kbproto_url             := http://xorg.freedesktop.org/releases/individual/proto/$(kbproto).tar.bz2
 
 $(prepare-rule):

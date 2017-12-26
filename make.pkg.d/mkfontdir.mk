@@ -6,7 +6,6 @@ export MKFONTDIR = /usr/bin/mkfontdir
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-strict-compilation
 
 $(build-rule):

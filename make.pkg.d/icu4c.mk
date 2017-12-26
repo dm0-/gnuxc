@@ -1,7 +1,8 @@
-icu4c                   := icu4c-59.1
+icu4c                   := icu4c-60.2
 icu4c_branch            := icu
-icu4c_sha1              := e86189f53c0a01cecf093a555e1ebbd14abf5b82
+icu4c_key               := 9731166CD8E23A83BEE7C6D3ACA5DBE1FD8FABF1
 icu4c_url               := http://download.icu-project.org/files/$(subst -,/,$(icu4c))/$(subst .,_,$(icu4c))-src.tgz
+icu4c_sig               := $(icu4c_url).asc
 
 ifeq ($(host),$(build))
 export ICU_CONFIG = /usr/bin/icu-config

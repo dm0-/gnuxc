@@ -1,6 +1,7 @@
 intltool                := intltool-0.51.0
-intltool_sha1           := a0c3bcb99d1bcfc5db70f8d848232a47c47da090
+intltool_key            := 9EBD001680E8C8F9FAC61A9BE1A701D4C9DE75B5
 intltool_url            := http://launchpad.net/intltool/trunk/$(intltool:intltool-%=%)/+download/$(intltool).tar.gz
+intltool_sig            := $(intltool_url).asc
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure)

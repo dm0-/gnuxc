@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-file
-Version:        5.31
+Version:        5.32
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -33,18 +33,17 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-elf \
     --enable-elf-core \
     --enable-fsect-man5 \
     --enable-static \
     --enable-warnings
-%gnuxc_make -C src %{?_smp_mflags} magic.h
-%gnuxc_make -C src %{?_smp_mflags} libmagic.la
+%gnuxc_make_build -C src magic.h
+%gnuxc_make_build -C src libmagic.la
 
 %install
 %gnuxc_make -C src install-{nodist_includeHEADERS,libLTLIBRARIES} \

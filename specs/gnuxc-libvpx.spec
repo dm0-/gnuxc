@@ -36,7 +36,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_env
@@ -61,7 +61,7 @@ CROSS='%{gnuxc_host}-' ./configure \
     \
     --disable-libyuv \
     --disable-unit-tests
-%gnuxc_make %{?_smp_mflags} all V=1
+%gnuxc_make_build all V=1
 
 %install
 %gnuxc_make_install V=1

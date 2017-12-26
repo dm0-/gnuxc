@@ -35,13 +35,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     --disable-oggtest \
     --disable-rpath \
-    --disable-silent-rules \
     --disable-werror \
     --enable-altivec \
     --enable-asm-optimizations \
@@ -54,7 +53,7 @@ statically, which is highly discouraged.
     --with-ogg=%{gnuxc_prefix} \
     \
     --disable-xmms-plugin
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

@@ -41,14 +41,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-%patch001 -p1
+%autosetup -n %{gnuxc_name}-%{version} -p1
 
 %build
 %gnuxc_configure \
     --disable-devel-docs \
     \
-    --disable-silent-rules \
     --enable-composite \
     --enable-damage \
     --enable-dpms \
@@ -75,7 +73,7 @@ statically, which is highly discouraged.
     --enable-xtest \
     --enable-xv \
     --enable-xvmc
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

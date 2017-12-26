@@ -1,5 +1,5 @@
 bc                      := bc-1.07.1
-bc_sha1                 := b4475c6d66590a5911d30f9747361db47231640a
+bc_key                  := 00E426232F384BF6D32D8B1881C24FF12FB7B14B
 bc_url                  := http://ftpmirror.gnu.org/bc/$(bc).tar.gz
 
 ifneq ($(host),$(build))

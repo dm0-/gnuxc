@@ -1,5 +1,5 @@
 mcron                   := mcron-1.0.8
-mcron_sha1              := de7df62e324a1c4e52b77b08dda0a0c428ad8e64
+mcron_key               := 856EA44B2DDC5C8BDF659F44E4A28AAC31182342
 mcron_url               := http://ftpmirror.gnu.org/mcron/$(mcron).tar.gz
 
 $(prepare-rule):
@@ -26,9 +26,9 @@ endif
 
 $(install-rule): $$(call installed,guile)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,mcron.scm) $(DESTDIR)/etc/shepherd.d/mcron.scm
-	$(INSTALL) -Dm 644 /dev/null $(DESTDIR)/etc/crontab
-	$(INSTALL) -dm 755 $(DESTDIR)/etc/cron.d
+	$(INSTALL) -Dpm 0644 $(call addon-file,mcron.scm) $(DESTDIR)/etc/shepherd.d/mcron.scm
+	$(INSTALL) -Dm 0644 /dev/null $(DESTDIR)/etc/crontab
+	$(INSTALL) -dm 0755 $(DESTDIR)/etc/cron.d
 	$(call enable-service,mcron,3 5)
 
 # Write inline files.

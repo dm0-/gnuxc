@@ -1,6 +1,6 @@
-binutils                := binutils-2.28
-binutils_sha1           := f8b033731f6baa437d429c60e2623570f1ef9d6b
-binutils_url            := http://ftpmirror.gnu.org/binutils/$(binutils).tar.bz2
+binutils                := binutils-2.29.1
+binutils_key            := 3A24BC1E8FB409FA9F14371813FCEF89DD9E3C4F
+binutils_url            := http://ftpmirror.gnu.org/binutils/$(binutils).tar.xz
 
 ifeq ($(host),$(build))
 export OBJCOPY = objcopy

@@ -37,7 +37,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -45,14 +45,13 @@ statically, which is highly discouraged.
     \
     --disable-device-mapper \
     --disable-rpath \
-    --disable-silent-rules \
     --enable-assert \
     --enable-debug \
     --enable-gcc-warnings gl_cv_warn_c__Werror=no \
     --enable-threads=posix \
     --with-readline \
     --without-included-regex
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

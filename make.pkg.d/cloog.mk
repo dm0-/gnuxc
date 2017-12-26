@@ -4,7 +4,6 @@ cloog_url               := http://www.bastoul.net/cloog/pages/download/$(cloog).
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-portable-binary \
 		--with-gcc-arch=$(arch) \
 		--with-gmp=system \

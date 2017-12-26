@@ -1,5 +1,5 @@
 attr                    := attr-2.4.47
-attr_sha1               := 5060f0062baee6439f41a433325b8b3671f8d2d8
+attr_key                := 600CD204FBCEA418BD2CA74F154343260542DF34
 attr_url                := http://download.savannah.gnu.org/releases/attr/$(attr).src.tar.gz
 
 $(configure-rule):

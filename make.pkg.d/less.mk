@@ -1,5 +1,5 @@
 less                    := less-487
-less_sha1               := 8a5c4be2a51f11543793defec7ccb77c525f007e
+less_key                := AE27252BD6846E7D6EAE1DD6F153A7C833235259
 less_url                := http://ftpmirror.gnu.org/less/$(less).tar.gz
 
 $(configure-rule):
@@ -16,7 +16,7 @@ $(build-rule):
 $(install-rule): $$(call installed,pcre)
 	$(MAKE) -C $(builddir) install \
 		DESTDIR='$(DESTDIR)'
-	$(INSTALL) -Dpm 644 $(call addon-file,profile.sh) $(DESTDIR)/etc/profile.d/less.sh
+	$(INSTALL) -Dpm 0644 $(call addon-file,profile.sh) $(DESTDIR)/etc/profile.d/less.sh
 
 # Write inline files.
 $(call addon-file,profile.sh): | $$(@D)

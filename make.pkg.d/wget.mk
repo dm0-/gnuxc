@@ -1,13 +1,12 @@
-wget                    := wget-1.19.1
-wget_sha1               := cde25e99c144191644406793cbd1c69c102c6970
-wget_url                := http://ftpmirror.gnu.org/wget/$(wget).tar.xz
+wget                    := wget-1.19.2
+wget_key                := 1CB27DBC98614B2D5841646D08302DB6A2670428
+wget_url                := http://ftpmirror.gnu.org/wget/$(wget).tar.lz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--exec-prefix= \
 		\
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-assert \
 		--enable-debug \
 		--enable-digest \

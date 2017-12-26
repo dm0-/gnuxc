@@ -2,7 +2,7 @@ xdm                     := xdm-1.1.11
 xdm_sha1                := 8195a8e17d71d18cb89813d04b69a3750e9e818e
 xdm_url                 := http://xorg.freedesktop.org/releases/individual/app/$(xdm).tar.bz2
 
-$(eval $(call verify-download,http://cgit.freedesktop.org/xorg/app/xdm/patch/?id=8d1eb5c74413e4c9a21f689fc106949b121c0117,dd1e25c3f2b1be36c4180106d9bc9d69f9cf05ce,new-crypt.patch))
+$(eval $(call verify-download,new-crypt.patch,http://cgit.freedesktop.org/xorg/app/xdm/patch/?id=8d1eb5c74413e4c9a21f689fc106949b121c0117,37af69833582d6cb904399017dfb64b42effdb50))
 
 $(prepare-rule):
 	$(call apply,empty-shadow-pass)
@@ -11,7 +11,6 @@ $(prepare-rule):
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-ipv6 \
 		--enable-local-transport \
 		--enable-secure-rpc \
@@ -43,7 +42,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,libXaw libXft libXinerama sessreg xinit xrdb)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,xdm.scm) $(DESTDIR)/etc/shepherd.d/xdm.scm
+	$(INSTALL) -Dpm 0644 $(call addon-file,xdm.scm) $(DESTDIR)/etc/shepherd.d/xdm.scm
 # Use the Xorg logos by default if there aren't any logos already.
 	test -e $(DESTDIR)/usr/share/pixmaps/login-logo.xpm || $(SYMLINK) xorg.xpm $(DESTDIR)/usr/share/pixmaps/login-logo.xpm
 	test -e $(DESTDIR)/usr/share/pixmaps/login-logo-bw.xpm || $(SYMLINK) xorg-bw.xpm $(DESTDIR)/usr/share/pixmaps/login-logo-bw.xpm

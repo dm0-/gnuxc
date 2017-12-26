@@ -1,5 +1,5 @@
 man-db                  := man-db-2.7.6.1
-man-db_sha1             := 919dcb34d604faac9b18a38ead07f457d0dab501
+man-db_key              := AC0A4FF12611B6FCCF01C111393587D97D86500B
 man-db_url              := http://download.savannah.gnu.org/releases/man-db/$(man-db).tar.xz
 
 $(prepare-rule):
@@ -13,7 +13,6 @@ $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
 		--disable-setuid \
-		--disable-silent-rules \
 		--enable-mandirs=GNU \
 		--enable-mb-groff \
 		--enable-static \
@@ -26,7 +25,7 @@ $(build-rule):
 
 $(install-rule): $$(call installed,gdbm groff less libpipeline)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,mandb.cron) $(DESTDIR)/etc/cron.d/mandb
+	$(INSTALL) -Dpm 0644 $(call addon-file,mandb.cron) $(DESTDIR)/etc/cron.d/mandb
 
 # Provide a cron configuration to update the "man" database daily.
 $(call addon-file,mandb.cron): | $$(@D)

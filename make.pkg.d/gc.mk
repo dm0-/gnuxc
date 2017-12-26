@@ -1,6 +1,6 @@
-gc                      := gc-7.6.0
-gc_sha1                 := bae6b3754ff8d3845b5171346bf924e13be6c693
-gc_url                  := http://www.hboehm.info/gc/gc_source/$(gc).tar.gz
+gc                      := gc-7.6.2
+gc_sha1                 := 55fc1fe8e0d81acdf6cc29455b151ab74c77c4f2
+gc_url                  := http://github.com/ivmai/bdwgc/releases/download/v$(gc:gc-%=%)/$(gc).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
@@ -23,4 +23,4 @@ $(build-rule):
 $(install-rule): $$(call installed,libatomic_ops)
 	$(MAKE) -C $(builddir) install \
 		pkgdatadir='$$(docdir)'
-	$(INSTALL) -Dpm 644 $(builddir)/doc/gc.man $(DESTDIR)/usr/share/man/man3/gc.3
+	$(INSTALL) -Dpm 0644 $(builddir)/doc/gc.man $(DESTDIR)/usr/share/man/man3/gc.3

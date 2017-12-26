@@ -1,22 +1,23 @@
-%global bootstrap 1
+%global with_bootstrap 1
 
 %?gnuxc_package_header
 
 Name:           gnuxc-glibc
 Version:        2.23
-%global commit  8be94e33d413e8c9685270b804c899f85389927a
+%global commit  1d9e154ebefa4525484c3fab2e0941c3bd55e41b
 %global snap    %(c=%{commit} ; echo -n ${c:0:6})
 Release:        1.git%{snap}%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 %global lpname  libpthread
-%global lpcomm  44873df420d128972644ef3901c7d917ca3b7dd7
+%global lpcomm  8f03a364f803ad878ea3ab226fd2955ed4565495
 
 License:        LGPLv2+ and LGPLv2+ with exceptions and GPLv2+
 URL:            http://www.gnu.org/software/glibc/
-# Savannah is too slow to get a tar.xz archive; it aborts after one minute.
-Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{commit}.tar.gz
+Source0:        http://git.savannah.gnu.org/cgit/hurd/%{gnuxc_name}.git/snapshot/%{gnuxc_name}-%{commit}.tar.xz
 Source1:        http://git.savannah.gnu.org/cgit/hurd/%{lpname}.git/snapshot/%{lpname}-%{lpcomm}.tar.xz
+
+Patch001:       http://sourceware.org/git/gitweb.cgi?p=glibc.git;a=blobdiff_plain;f=misc/regexp.c;hb=388b4f1a02f3a801965028bbfcd48d905638b797;hpb=bfff8b1becd7d01c074177df7196ab327cd8c844#/%{gnuxc_name}-%{version}-fix-binutils-2.29.patch
 
 Requires:       gnuxc-filesystem
 
@@ -50,14 +51,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{commit}
+%autosetup -n %{gnuxc_name}-%{commit} -p1
 %setup -q -D -T -a 1 -n %{gnuxc_name}-%{commit}
 mv %{lpname}-%{lpcomm} libpthread
 
-%if 0%{?bootstrap}
-# Don't require a real libihash for linking libpthread.
-sed -i -e 's/^LDLIBS-pthread.so[ :=].*/LDFLAGS-pthread.so = -Wl,--defsym=hurd_ihash_{add,create,find,free,remove}=0/' libpthread/Makefile
-%endif
+# Make sure this header can be located.
+sed -i -e 's/<fork.h>/"fork.h"/' libpthread/sysdeps/generic/pt-atfork.c
 
 # Avoid race conditions regenerating this with an incompatible bison version.
 touch intl/plural.c
@@ -85,11 +84,11 @@ mkdir -p build && pushd build
     --disable-nscd
 popd
 # Force libpthread to build before librt.
-%gnuxc_make -C build %{?_smp_mflags} mach/subdir_lib
-%gnuxc_make -C build %{?_smp_mflags} hurd/subdir_lib
-%gnuxc_make -C build %{?_smp_mflags} libpthread/subdir_lib
+%gnuxc_make_build -C build mach/subdir_lib
+%gnuxc_make_build -C build hurd/subdir_lib
+%gnuxc_make_build -C build libpthread/subdir_lib
 # Do the real build.
-%gnuxc_make -C build %{?_smp_mflags} all info build-programs=no
+%gnuxc_make_build -C build all info build-programs=no
 
 %install
 # These dirs are needed because ld scripts are dumb when it comes to sysroots.

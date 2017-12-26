@@ -1,24 +1,25 @@
-%if 0%{?_with_bootstrap:1}
-%global bootstrap 1
-%endif
+%bcond_with bootstrap
 
 %global _docdir_fmt gnuxc/binutils
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %global __elf_magic ELF.*for GNU/Linux
 %undefine _binaries_in_noarch_packages_terminate_build
 %endif
 
+# Rename the debuginfo package because RPM 4.14 broke it.
+%global _debuginfo_template %gnuxc_debuginfo_template
+
 Name:           gnuxc-binutils
-Version:        2.28
-Release:        1.%{?bootstrap:0}%{!?bootstrap:1}%{?dist}
+Version:        2.29.1
+Release:        1.%{without bootstrap}%{?dist}
 Summary:        Cross-compiler version of %{gnuxc_name} for the GNU system
 
 License:        GPLv2+ and LGPLv2+ and GPLv3+ and LGPLv3+
 URL:            http://www.gnu.org/software/binutils/
-Source0:        http://ftpmirror.gnu.org/binutils/%{gnuxc_name}-%{version}.tar.bz2
+Source0:        http://ftpmirror.gnu.org/binutils/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-filesystem
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 BuildRequires:  gnuxc-gcc-c++
 BuildRequires:  gnuxc-zlib-devel
 %endif
@@ -32,7 +33,7 @@ BuildRequires:  zlib-devel
 Requires:       gnuxc-filesystem
 Provides:       bundled(libiberty)
 
-%if 0%{?bootstrap}
+%if %{with bootstrap}
 Provides:       gnuxc-bootstrap(%{gnuxc_name}) = %{version}-%{release}
 %else
 Obsoletes:      gnuxc-bootstrap(%{gnuxc_name}) <= %{version}-%{release}
@@ -42,7 +43,7 @@ Obsoletes:      gnuxc-bootstrap(%{gnuxc_name}) <= %{version}-%{release}
 Cross-compiler binutils (utilities like "strip", "as", "ld") which understand
 GNU Hurd executables and libraries.
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %package libs
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 BuildArch:      noarch
@@ -72,7 +73,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Provide non-conflicting internationalized messages.
 for po in bfd binutils gas gold gprof ld opcodes
@@ -114,16 +115,16 @@ mkdir -p cross && (pushd cross
     --with-sysroot=%{gnuxc_sysroot}
 popd)
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 mkdir -p host && (pushd host
 %gnuxc_configure %{binutils_configuration} \
     --disable-nls
 popd)
 %endif
 
-make -C cross %{?_smp_mflags} all
-%if ! 0%{?bootstrap}
-%gnuxc_make -C host %{?_smp_mflags} all-{bfd,libiberty,opcodes}
+%make_build -C cross all
+%if %{without bootstrap}
+%gnuxc_make_build -C host all-{bfd,libiberty,opcodes}
 %endif
 
 %install
@@ -146,7 +147,7 @@ do
         cat gnuxc-$mo.lang >> %{name}.lang
 done
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %gnuxc_make -C host install-{bfd,libiberty,opcodes} DESTDIR=%{buildroot}
 
 # We don't need libtool's help.
@@ -206,7 +207,7 @@ rm -rf %{buildroot}%{gnuxc_infodir}
 %doc binutils/ChangeLog* binutils/MAINTAINERS binutils/NEWS binutils/README
 %license COPYING COPYING.LIB COPYING3 COPYING3.LIB
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %files libs
 %{gnuxc_libdir}/libbfd-%{version}.so
 %{gnuxc_libdir}/libopcodes-%{version}.so

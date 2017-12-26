@@ -1,5 +1,5 @@
-texinfo                 := texinfo-6.4
-texinfo_sha1            := 0812ffd078fc1f3b7600d43eec25ba1bddd4d4bd
+texinfo                 := texinfo-6.5
+texinfo_key             := EAF669B31E31E1DECBD11513DDBC579DAB37FBA9
 texinfo_url             := http://ftpmirror.gnu.org/texinfo/$(texinfo).tar.xz
 
 $(configure-rule):

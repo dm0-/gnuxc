@@ -9,7 +9,7 @@ License:        BSD
 URL:            http://www.speex.org/
 Source0:        http://downloads.xiph.org/releases/speex/%{gnuxc_name}-%{version}.tar.gz
 
-BuildRequires:  gnuxc-glibc-devel
+BuildRequires:  gnuxc-speexdsp-devel
 
 %description
 %{summary}.
@@ -34,11 +34,10 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-binaries \
     --enable-sse \
     --enable-vbr \
@@ -47,7 +46,7 @@ statically, which is highly discouraged.
     \
     --disable-binaries \
     PKG_CONFIG=%{gnuxc_pkgconfig}
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

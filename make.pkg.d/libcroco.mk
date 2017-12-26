@@ -9,7 +9,6 @@ $(configure-rule):
 		-e "s,@\(LIBXML2_CFLAGS\)@,-I`$(PKG_CONFIG) libxml-2.0 --variable=includedir`/libxml2,g" \
 		-e 's/@\(CROCO_CFLAGS\|\(GLIB\|LIBXML\)2_LIBS\)@//g'
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-checks
 
 $(build-rule):

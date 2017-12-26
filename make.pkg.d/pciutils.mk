@@ -1,6 +1,7 @@
-pciutils                := pciutils-3.5.4
-pciutils_sha1           := 097feb1afdc3a58b029f7636d07983cb66b7ab14
+pciutils                := pciutils-3.5.6
+pciutils_key            := 5558F9399CD7836850553C6EC28E7847ED70F82D
 pciutils_url            := ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/$(pciutils).tar.gz
+pciutils_sig            := $(pciutils_url).sign
 
 $(prepare-rule):
 	$(call apply,environment)

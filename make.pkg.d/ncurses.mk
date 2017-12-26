@@ -1,6 +1,7 @@
-ncurses                 := ncurses-6.0-20170701
-ncurses_sha1            := b1b74af8befc1f64cee7f3acfb07b3a5fac371bc
+ncurses                 := ncurses-6.0-20171223
+ncurses_key             := C52048C0C0748FEE227D47A2702353E0F7E48EDB
 ncurses_url             := http://invisible-mirror.net/archives/ncurses/current/$(ncurses).tgz
+ncurses_sig             := $(ncurses_url).asc
 
 ifeq ($(host),$(build))
 export NCURSES_CONFIG   = /usr/bin/ncurses6-config

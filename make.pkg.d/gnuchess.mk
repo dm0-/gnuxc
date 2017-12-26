@@ -1,5 +1,5 @@
-gnuchess                := gnuchess-6.2.4
-gnuchess_sha1           := 2dfc9eed04e51c4a57a5f8ea885234aac0269dd1
+gnuchess                := gnuchess-6.2.5
+gnuchess_key            := 766D3CA0FFB903333D2AE492A8AB893AE40251D9
 gnuchess_url            := http://ftpmirror.gnu.org/chess/$(gnuchess).tar.gz
 
 $(configure-rule):

@@ -1,5 +1,5 @@
-tiff                    := tiff-4.0.8
-tiff_sha1               := 88717c97480a7976c94d23b6d9ed4ac74715267f
+tiff                    := tiff-4.0.9
+tiff_sha1               := 87d4543579176cc568668617c22baceccd568296
 tiff_url                := http://download.osgeo.org/libtiff/$(tiff).tar.gz
 
 $(configure-rule):

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-freetype
-Version:        2.8
+Version:        2.8.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -36,7 +36,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -47,14 +47,14 @@ statically, which is highly discouraged.
     --with-old-mac-fonts \
     --with-png \
     --with-zlib
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 mv docs/{FTL,GPLv2,LICENSE}.TXT .
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/freetype-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-freetype-config
 
@@ -70,7 +70,7 @@ rm -rf %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libfreetype.so.6
-%{gnuxc_libdir}/libfreetype.so.6.14.0
+%{gnuxc_libdir}/libfreetype.so.6.15.0
 %doc ChangeLog* docs README*
 %license FTL.TXT GPLv2.TXT LICENSE.TXT
 

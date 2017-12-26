@@ -1,12 +1,15 @@
-cairo                   := cairo-1.14.10
-cairo_sha1              := 28c59d85d6b790c21b8b59ece73a6a1dda28d69a
-cairo_url               := http://cairographics.org/releases/$(cairo).tar.xz
+cairo                   := cairo-1.15.10
+cairo_sha1              := de180498ac563249b93ee5e17ba9aa26f90644b3
+cairo_url               := http://cairographics.org/snapshots/$(cairo).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
+		--enable-atomic \
+		--enable-egl \
 		--enable-fc \
 		--enable-ft \
+		--enable-gl --disable-glesv2 \
+		--enable-glx \
 		--enable-gobject \
 		--enable-interpreter \
 		--enable-pdf \
@@ -26,15 +29,17 @@ $(configure-rule):
 		--enable-xlib-xrender \
 		--enable-xml \
 		--with-x \
-		CPPFLAGS='-DMAP_NORESERVE=0' \
 		\
+		--disable-cogl \
+		--disable-directfb \
 		--disable-drm \
 		--disable-gallium \
 		--disable-qt \
-		--disable-vg
+		--disable-vg \
+		--disable-wgl
 
 $(build-rule):
 	$(MAKE) -C $(builddir) all
 
-$(install-rule): $$(call installed,binutils libXmu libXpm)
+$(install-rule): $$(call installed,binutils libXmu libXpm mesa)
 	$(MAKE) -C $(builddir) install

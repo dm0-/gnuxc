@@ -123,10 +123,10 @@ lsh_cv_lib_argp_works=yes
 lt_cv_dlopen_self=yes
 lt_cv_dlopen_self_static=no
 M4_cv_func_rename_open_file_works=yes
-tcl_cv_strstr_unbroken=yes
+tcl_cv_strstr_unbroken=ok
 tcl_cv_strtod_buggy=ok
-tcl_cv_strtod_unbroken=yes
-tcl_cv_strtoul_unbroken=yes
+tcl_cv_strtod_unbroken=ok
+tcl_cv_strtoul_unbroken=ok
 xorg_cv_malloc0_returns_null=yes
 
 # Read version-dependent settings based on installed packages.

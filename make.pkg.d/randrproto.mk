@@ -1,5 +1,5 @@
 randrproto              := randrproto-1.5.0
-randrproto_sha1         := bc420745dc4af011988e9dcabdadf8829cbc2374
+randrproto_key          := 10A6D91DA1B05BD29F6DEBAC0C74F35979C486BE
 randrproto_url          := http://xorg.freedesktop.org/releases/individual/proto/$(randrproto).tar.bz2
 
 $(prepare-rule):

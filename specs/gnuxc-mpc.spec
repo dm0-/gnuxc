@@ -9,6 +9,9 @@ License:        LGPLv3+ and GFDL
 URL:            http://www.gnu.org/software/mpc/
 Source0:        http://ftpmirror.gnu.org/%{gnuxc_name}/%{gnuxc_name}-%{version}.tar.gz
 
+Patch001:       https://scm.gforge.inria.fr/anonscm/gitweb?p=mpc/mpc.git;a=commitdiff_plain;h=36a84f43f326de14db888ba07936cc9621c23f19#/%{gnuxc_name}-%{version}-update-mpfr-1.patch
+Patch002:       https://scm.gforge.inria.fr/anonscm/gitweb?p=mpc/mpc.git;a=commitdiff_plain;h=5eaa17651b759c7856a118835802fecbebcf46ad#/%{gnuxc_name}-%{version}-update-mpfr-2.patch
+
 BuildRequires:  gnuxc-mpfr-devel
 
 %description
@@ -36,9 +39,16 @@ statically, which is highly discouraged.
 %prep
 %setup -q -n %{gnuxc_name}-%{version}
 
+# Backport patches for MPFR 4 support.
+sed \
+    -e '/8,6/,/endif/{s/8,6/8,7/;s/.*MPFR_MANT.*/ /;s/.*#endif/-\n&/;}' \
+    -e 's/macros/macroes/;s/MPFR_RNDN/GMP_RNDN/' \
+    %{patches} | patch -F2 -p1
+autoreconf -fi
+
 %build
 %gnuxc_configure
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

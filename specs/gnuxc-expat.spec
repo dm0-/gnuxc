@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-expat
-Version:        2.2.1
+Version:        2.2.5
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -34,11 +34,11 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -50,13 +50,13 @@ rm -f %{buildroot}%{gnuxc_bindir}/xmlwf
 rm -f %{buildroot}%{gnuxc_libdir}/libexpat.la
 
 # Skip the documentation.
-rm -rf %{buildroot}%{gnuxc_mandir}
+rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_mandir}
 
 
 %files
 %{gnuxc_libdir}/libexpat.so.1
-%{gnuxc_libdir}/libexpat.so.1.6.3
-%doc Changes README
+%{gnuxc_libdir}/libexpat.so.1.6.7
+%doc AUTHORS Changes README.md
 %license COPYING
 
 %files devel

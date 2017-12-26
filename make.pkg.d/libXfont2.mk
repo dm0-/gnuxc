@@ -1,10 +1,9 @@
-libXfont2               := libXfont2-2.0.1
-libXfont2_sha1          := 4cf056ab00bf631649e040051cf8e2b096cc245b
+libXfont2               := libXfont2-2.0.3
+libXfont2_key           := C41C985FDCF1E5364576638B687393EE37D128F8
 libXfont2_url           := http://xorg.freedesktop.org/releases/individual/lib/$(libXfont2).tar.bz2
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-{bdf,pcf,snf}format \
 		--enable-builtins \
 		--enable-devel-docs \

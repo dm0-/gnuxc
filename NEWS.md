@@ -1,5 +1,67 @@
 # GNU OS Cross-Compiler - News
 
+## 2017-12-25
+
+This snapshot is from around the release of Fedora 27.
+
+The following details highlight some of the bigger features that were added to
+the build system and OS.
+
+
+### Rust support
+
+Rust projects are now supported via cross-compilation.  Hurd target libraries
+are built and installed such that running `cargo build --target=i686-pc-gnu`
+will result in usable binaries.  This also requires the environment variable
+`RUST_TARGET_PATH=/usr/lib/rustlib/i686-pc-gnu` to be set until Rust defines a
+default target search path.
+
+To build Rust source without relying on Cargo, create the following alias (or
+wrapper script) to mimic a cross-compiler program.
+
+    alias i686-pc-gnu-rustc="\
+    RUST_TARGET_PATH=/usr/lib/rustlib/i686-pc-gnu rustc \
+    --codegen=ar=i686-pc-gnu-gcc-ar \
+    --codegen=linker=i686-pc-gnu-gcc \
+    --target=i686-pc-gnu"
+
+The librsvg package has been upgraded to a development snapshot which utilizes
+Rust and Cargo.
+
+
+### GnuPG
+
+The GNU Privary Guard is included in the operating system, and the build system
+uses it to verify all downloaded source packages that are signed by their
+upstream maintainers.
+
+
+### Color fonts
+
+Rendering color fonts is now supported by default in Cairo applications.
+
+Google's Noto color emoji font has been added, and GTK+ 3 has a new emoji
+chooser widget to exercise it.
+
+
+### Build system upgrades
+
+The build system and all upstream projects have completely dropped all reliance
+on Python 2 when run on Fedora 26 or later, with the exception of IceCat.  Run
+`gmake exclude=icecat ...` to skip it if Python 2 is not installed.
+
+Deprecated compiler definitions, where the `CC` variable specified the compiler
+program and machine-specific flags, have been removed.  All projects are now
+built using properly separated build and host `CFLAGS`.
+
+RPM macros have been better aligned with Fedora's conventions, so for example,
+user settings like `%_configure_disable_silent_rules` have the intended effect.
+
+The `debuginfo` subpackages were renamed to `debug` to work around new bad
+behavior hard-coded into RPM 4.14.
+
+
+
 ## 2017-07-04
 
 This snapshot is from around the release of Fedora 26.

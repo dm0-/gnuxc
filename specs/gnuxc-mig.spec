@@ -1,4 +1,4 @@
-%global bootstrap 1
+%global with_bootstrap 1
 
 %global _docdir_fmt gnuxc/mig
 
@@ -31,27 +31,26 @@ which is used for building GNU Mach and GNU Hurd.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{commit}
-%patch101
+%autosetup -n %{gnuxc_name}-%{commit}
 autoreconf -fi
 
 %build
 %global _program_prefix %{gnuxc_target}-
 %configure \
     --target=%{gnuxc_target}
-make %{?_smp_mflags} all \
+%make_build all \
     TARGET_CPPFLAGS=-I%{gnuxc_includedir}
 
 %install
 %make_install
 
 # Provide a cross-tools version of the program.
-install -dm 755 %{buildroot}%{gnuxc_root}/bin
+install -dm 0755 %{buildroot}%{gnuxc_root}/bin
 ln %{buildroot}%{_bindir}/%{gnuxc_target}-mig %{buildroot}%{gnuxc_root}/bin/mig
 
-%if ! 0%{?bootstrap}
+%if %{without bootstrap}
 %check
-make %{?_smp_mflags} check
+%make_build check
 %endif
 
 

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nettle
-Version:        3.3
+Version:        3.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -36,7 +36,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -44,7 +44,7 @@ statically, which is highly discouraged.
     \
     --disable-mini-gmp \
     --disable-openssl
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -55,14 +55,14 @@ rm -f \
     %{buildroot}%{gnuxc_bindir}/{pkcs1,sexp}-conv
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
-chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib{hogweed,nettle}.so.*.*
+chmod -c 0755 %{buildroot}%{gnuxc_libdir}/lib{hogweed,nettle}.so.*.*
 
 
 %files
 %{gnuxc_libdir}/libhogweed.so.4
-%{gnuxc_libdir}/libhogweed.so.4.3
+%{gnuxc_libdir}/libhogweed.so.4.4
 %{gnuxc_libdir}/libnettle.so.6
-%{gnuxc_libdir}/libnettle.so.6.3
+%{gnuxc_libdir}/libnettle.so.6.4
 %doc AUTHORS ChangeLog descore.README NEWS README TODO
 %license COPYING.LESSERv3 COPYINGv2 COPYINGv3
 

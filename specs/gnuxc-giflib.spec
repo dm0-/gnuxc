@@ -34,12 +34,11 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
-%gnuxc_configure \
-    --disable-silent-rules
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_configure
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

@@ -4,43 +4,42 @@ setup-protocols_url     := http://www.iana.org/assignments/protocol-numbers/prot
 setup-services_url      := http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv
 
 $(install-rule): $$(call installed,grep grub theme tzdb)
-	$(INSTALL) -dm 750 $(DESTDIR)/root
+	$(INSTALL) -dm 0750 $(DESTDIR)/root
 # Use an initialization script first as the system init to finish the install.
-	$(INSTALL) -Dpm 755 $(builddir)/setup.sh          $(DESTDIR)/hurd/setup.sh
+	$(INSTALL) -Dpm 0755 $(builddir)/setup.sh         $(DESTDIR)/hurd/setup.sh
 	$(SYMLINK) ../hurd/setup.sh                       $(DESTDIR)/sbin/init
 # Set up the system configuration.
-	$(INSTALL) -Dpm 644 $(builddir)/bashrc            $(DESTDIR)/etc/bashrc
-	$(INSTALL) -dm  755                               $(DESTDIR)/etc/bashrc.d
-	$(INSTALL) -Dpm 644 $(builddir)/fstab             $(DESTDIR)/etc/fstab
-	$(INSTALL) -Dpm 644 $(builddir)/group             $(DESTDIR)/etc/group
-	$(INSTALL) -Dpm 644 $(builddir)/hostname          $(DESTDIR)/etc/hostname
-	$(INSTALL) -Dpm 644 $(builddir)/hosts             $(DESTDIR)/etc/hosts
+	$(INSTALL) -Dpm 0644 $(builddir)/bashrc           $(DESTDIR)/etc/bashrc
+	$(INSTALL) -dm  0755                              $(DESTDIR)/etc/bashrc.d
+	$(INSTALL) -Dpm 0644 $(builddir)/fstab            $(DESTDIR)/etc/fstab
+	$(INSTALL) -Dpm 0644 $(builddir)/group            $(DESTDIR)/etc/group
+	$(INSTALL) -Dpm 0644 $(builddir)/hostname         $(DESTDIR)/etc/hostname
+	$(INSTALL) -Dpm 0644 $(builddir)/hosts            $(DESTDIR)/etc/hosts
 	$(SYMLINK) ../usr/share/zoneinfo/America/New_York $(DESTDIR)/etc/localtime
-	$(INSTALL) -Dpm 644 $(builddir)/nsswitch.conf     $(DESTDIR)/etc/nsswitch.conf
-	$(INSTALL) -Dpm 644 $(builddir)/passwd            $(DESTDIR)/etc/passwd
-	$(INSTALL) -Dpm 644 $(builddir)/profile           $(DESTDIR)/etc/profile
-	$(INSTALL) -dm  755                               $(DESTDIR)/etc/profile.d
-	$(INSTALL) -Dpm 644 $(builddir)/protocols         $(DESTDIR)/etc/protocols
-	$(INSTALL) -Dpm 644 $(builddir)/resolv.conf       $(DESTDIR)/etc/resolv.conf
-	$(INSTALL) -Dpm 644 $(builddir)/services          $(DESTDIR)/etc/services
-	$(INSTALL) -Dpm 000 $(builddir)/shadow            $(DESTDIR)/etc/shadow
-	$(INSTALL) -Dpm 644 $(builddir)/shells            $(DESTDIR)/etc/shells
-	$(INSTALL) -Dpm 644 $(builddir)/bash_profile      $(DESTDIR)/etc/skel/.bash_profile
-	$(INSTALL) -Dpm 644 $(builddir)/user-bashrc       $(DESTDIR)/etc/skel/.bashrc
-	$(INSTALL) -dm  755                               $(DESTDIR)/etc/skel/.local/bin
-	$(INSTALL) -Dpm 644 $(builddir)/Xdefaults         $(DESTDIR)/etc/skel/.Xdefaults
-	$(INSTALL) -Dpm 644 $(builddir)/xinitrc           $(DESTDIR)/etc/skel/.xinitrc
-	$(INSTALL) -Dpm 644 $(builddir)/xsession          $(DESTDIR)/etc/skel/.xsession
+	$(INSTALL) -Dpm 0644 $(builddir)/nsswitch.conf    $(DESTDIR)/etc/nsswitch.conf
+	$(INSTALL) -Dpm 0644 $(builddir)/passwd           $(DESTDIR)/etc/passwd
+	$(INSTALL) -Dpm 0644 $(builddir)/profile          $(DESTDIR)/etc/profile
+	$(INSTALL) -dm  0755                              $(DESTDIR)/etc/profile.d
+	$(INSTALL) -Dpm 0644 $(builddir)/protocols        $(DESTDIR)/etc/protocols
+	$(INSTALL) -Dpm 0644 $(builddir)/resolv.conf      $(DESTDIR)/etc/resolv.conf
+	$(INSTALL) -Dpm 0644 $(builddir)/services         $(DESTDIR)/etc/services
+	$(INSTALL) -Dpm 0000 $(builddir)/shadow           $(DESTDIR)/etc/shadow
+	$(INSTALL) -Dpm 0644 $(builddir)/shells           $(DESTDIR)/etc/shells
+	$(INSTALL) -Dpm 0644 $(builddir)/bash_profile     $(DESTDIR)/etc/skel/.bash_profile
+	$(INSTALL) -Dpm 0644 $(builddir)/user-bashrc      $(DESTDIR)/etc/skel/.bashrc
+	$(INSTALL) -dm  0755                              $(DESTDIR)/etc/skel/.local/bin
+	$(INSTALL) -Dpm 0644 $(builddir)/Xdefaults        $(DESTDIR)/etc/skel/.Xdefaults
+	$(INSTALL) -Dpm 0644 $(builddir)/xinitrc          $(DESTDIR)/etc/skel/.xinitrc
+	$(INSTALL) -Dpm 0644 $(builddir)/xsession         $(DESTDIR)/etc/skel/.xsession
 # Tack on a copy of the build system tailored for rebuilding system components.
-	$(INSTALL) -Dpm 644 $(dir $(makefile))RUNTIME.md $(DESTDIR)/root/README
-	$(INSTALL) -Dpm 644 $(builddir)/user-bashrc $(DESTDIR)/root/.bashrc
+	$(INSTALL) -Dpm 0644 $(dir $(makefile))RUNTIME.md $(DESTDIR)/root/README
+	$(INSTALL) -Dpm 0644 $(builddir)/user-bashrc $(DESTDIR)/root/.bashrc
 	$(ECHO) "alias gmake='make -C ~/wd.gnuxc -f /usr/share/gnuxc/GNUmakefile -k'" >> $(DESTDIR)/root/.bashrc
-	$(INSTALL) -dm 755 $(DESTDIR)/root/.config/git
-	$(ECHO) '/.gnuxc/' >> $(DESTDIR)/root/.config/git/ignore
-	$(INSTALL) -dm 755 $(DESTDIR)/root/wd.gnuxc
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/gnuxc/{make.pkg.d,patches}
-	$(INSTALL) -pm 644 -t $(DESTDIR)/usr/share/gnuxc/make.pkg.d $(pkgdir)/*.mk
-	$(INSTALL) -pm 644 -t $(DESTDIR)/usr/share/gnuxc/patches $(patchdir)/*-*-*
+	$(INSTALL) -dm 0755 $(DESTDIR)/root/.config/git
+	$(INSTALL) -dm 0755 $(DESTDIR)/root/wd.gnuxc
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/share/gnuxc/{make.pkg.d,patches}
+	$(INSTALL) -pm 0644 -t $(DESTDIR)/usr/share/gnuxc/make.pkg.d $(pkgdir)/*.mk
+	$(INSTALL) -pm 0644 -t $(DESTDIR)/usr/share/gnuxc/patches $(patchdir)/*-*-*
 	$(SED) < $(makefile) > $(DESTDIR)/usr/share/gnuxc/GNUmakefile \
 		-e 's/^\(export DESTDIR *:\?=\).*/\1/' \
 		-e 's/^DOWNLOAD .*/& --no-check-certificate/' \

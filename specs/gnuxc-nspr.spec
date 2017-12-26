@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-nspr
-Version:        4.15
+Version:        4.17
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -50,14 +50,14 @@ mv %{gnuxc_name}/{*,.[!.]*} .
     --enable-ipv6 \
     --enable-optimize \
     --with-pthreads \
-    HOST_CC=gcc
-%gnuxc_make %{?_smp_mflags} all
+    HOST_CC=gcc HOST_CFLAGS="$CFLAGS_FOR_BUILD" HOST_LDFLAGS="$LDFLAGS_FOR_BUILD"
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/nspr-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-nspr-config
 

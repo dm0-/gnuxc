@@ -1,14 +1,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-icu4c
-Version:        59.1
+Version:        60.2
 %global majorv  %(v=%{version} ; echo -n ${v%%.*})
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        MIT and UCD and Public Domain
 URL:            http://www.icu-project.org/
-Source0:        http://download.icu-project.org/files/icu4c/%{version}/%{gnuxc_name}-59_1-src.tgz
+Source0:        http://download.icu-project.org/files/icu4c/%{version}/%{gnuxc_name}-%{majorv}_2-src.tgz
 
 BuildRequires:  gnuxc-gcc-c++
 
@@ -35,7 +35,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n icu
+%autosetup -n icu
 
 %build
 %global _configure ../source/configure
@@ -43,7 +43,7 @@ mkdir native && (pushd native
 %configure
 popd)
 
-make -C native %{?_smp_mflags} all VERBOSE=1
+%make_build -C native all VERBOSE=1
 
 %global _configure ./configure
 (pushd source
@@ -63,13 +63,13 @@ make -C native %{?_smp_mflags} all VERBOSE=1
     --with-data-packaging=library
 popd)
 
-%gnuxc_make -C source %{?_smp_mflags} all VERBOSE=1
+%gnuxc_make_build -C source all VERBOSE=1
 
 %install
 %gnuxc_make_install -C source VERBOSE=1
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/icu-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-icu-config
 

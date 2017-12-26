@@ -1,10 +1,9 @@
-libwebp                 := libwebp-0.6.0
-libwebp_sha1            := 156d24fff454bfccd1f44434e226a10d9eb38186
+libwebp                 := libwebp-0.6.1
+libwebp_sha1            := 643aea0e04fd66b9251c89217c4e5133ae5dd980
 libwebp_url             := http://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(libwebp).tar.gz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-everything \
 		--enable-experimental \
 		--enable-{gif,jpeg,png,tiff} \

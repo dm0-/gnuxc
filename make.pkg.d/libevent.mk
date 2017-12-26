@@ -1,11 +1,11 @@
 libevent                := libevent-2.1.8
 libevent_branch         := $(libevent)-stable
-libevent_sha1           := 2a1b8bb7a262d3fd0ed6a080a20991a6eed675ec
+libevent_key            := 9E3AC83A27974B84D1B3401DB86086848EF8686D
 libevent_url            := http://github.com/libevent/libevent/releases/download/$(libevent_branch:libevent-%=release-%)/$(libevent_branch).tar.gz
+libevent_sig            := $(libevent_url).asc
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-clock-gettime \
 		--enable-debug-mode \
 		--enable-function-sections \

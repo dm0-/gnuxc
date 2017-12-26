@@ -2,7 +2,7 @@
 
 Name:           gnuxc-ncurses
 Version:        6.0
-%global snap    20170701
+%global snap    20171223
 Release:        1.%{snap}snap%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -34,7 +34,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}-%{snap}
+%autosetup -n %{gnuxc_name}-%{version}-%{snap}
 
 %build
 %global _configure ../configure
@@ -80,10 +80,10 @@ mkdir -p widec+pthread && pushd widec+pthread
     --enable-widec \
     --with-pthread
 popd
-%gnuxc_make -C classic       %{?_smp_mflags} libs
-%gnuxc_make -C pthread       %{?_smp_mflags} libs
-%gnuxc_make -C widec         %{?_smp_mflags} libs
-%gnuxc_make -C widec+pthread %{?_smp_mflags} all
+%gnuxc_make_build -C classic       libs
+%gnuxc_make_build -C pthread       libs
+%gnuxc_make_build -C widec         libs
+%gnuxc_make_build -C widec+pthread all
 
 %install
 %gnuxc_make -C classic       install.libs DESTDIR=%{buildroot}
@@ -92,7 +92,7 @@ popd
 %gnuxc_make -C widec+pthread install      DESTDIR=%{buildroot}
 
 # Provide a cross-tools version of the config scripts.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 for lib in 6 t6 tw6 w6
 do
         ln %{buildroot}%{gnuxc_root}/bin/ncurses$lib-config \
@@ -100,7 +100,7 @@ do
 done
 
 # Some libraries lack executable bits, befuddling the RPM scripts.
-chmod -c 755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
+chmod -c 0755 %{buildroot}%{gnuxc_libdir}/lib*.so.*.*
 
 # This isn't needed, especially not in the library path.
 rm -f %{buildroot}%{gnuxc_libdir}/terminfo

@@ -26,7 +26,7 @@ applications that use %{gnuxc_name} on GNU systems.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -34,7 +34,6 @@ applications that use %{gnuxc_name} on GNU systems.
     --disable-nls \
     \
     --disable-rpath \
-    --disable-silent-rules \
     --enable-debug=default \
     --enable-trust-module \
     --with-hash-impl=internal \
@@ -43,7 +42,7 @@ applications that use %{gnuxc_name} on GNU systems.
     \
     --disable-static \
     --disable-strict
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

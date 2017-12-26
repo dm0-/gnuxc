@@ -2,7 +2,7 @@ Set the defaults to work with PulseAudio.
 
 --- lisp/emms.el
 +++ lisp/emms.el
-@@ -62,7 +62,7 @@
+@@ -63,7 +63,7 @@
    :prefix "emms-source-"
    :group 'emms)
  

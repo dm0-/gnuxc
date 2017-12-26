@@ -1,5 +1,5 @@
 libXt                   := libXt-1.1.5
-libXt_sha1              := c79e2c4f7de5259a2ade458817a139b66a043d59
+libXt_key               := 4A193C06D35E7C670FA4EF0BA2FB9E081F2D130E
 libXt_url               := http://xorg.freedesktop.org/releases/individual/lib/$(libXt).tar.bz2
 
 $(prepare-rule):
@@ -7,7 +7,6 @@ $(prepare-rule):
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-strict-compilation xorg_cv_cc_flag__{Werror,errwarn}=no \
 		--enable-xkb \
 		--with-glib \

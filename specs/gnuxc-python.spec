@@ -1,7 +1,10 @@
 %?gnuxc_package_header
 
+# This isn't being populated correctly.
+%undefine _debugsource_packages
+
 Name:           gnuxc-python
-Version:        3.6.1
+Version:        3.6.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -39,8 +42,7 @@ applications that use %{gnuxc_name} on GNU systems.
 
 
 %prep
-%setup -q -n Python-%{version}
-%patch101
+%autosetup -n Python-%{version} -p0
 
 # Make the cross-config script report the prefix in the sysroot.
 sed -i -e '/^prefix_real=/s,=.*,=%{gnuxc_prefix},' Misc/python-config.sh.in
@@ -71,13 +73,16 @@ autoreconf -fi
     --without-system-libmpdec \
     CPPFLAGS="`%{gnuxc_pkgconfig} --cflags ncursesw`" \
     MACHDEP=gnu ac_sys_system=GNU
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install -j1
 
+# Some libraries lack writeable bits, befuddling the RPM scripts.
+chmod -c 0755 %{buildroot}%{gnuxc_libdir}/libpython*
+
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/python3.6m-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-python3.6m-config
 ln -s %{gnuxc_target}-python3.6m-config \
@@ -92,7 +97,7 @@ rm -f %{buildroot}%{gnuxc_root}/bin/python3{,.6{,m}}
 rm -rf \
     %{buildroot}%{gnuxc_libdir}/python3.6 \
     %{buildroot}%{gnuxc_root}/bin/{{2to3,pyvenv}{,-3.6},{idle,pydoc}3{,.6}}
-install -dm 755 %{buildroot}%{gnuxc_libdir}/python3.6/site-packages
+install -dm 0755 %{buildroot}%{gnuxc_libdir}/python3.6/site-packages
 
 # Skip the documentation.
 rm -rf %{buildroot}%{gnuxc_mandir}

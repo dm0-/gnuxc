@@ -1,6 +1,7 @@
-dhcp                    := dhcp-4.3.5
-dhcp_sha1               := 6140a0cf6b3385057d76c14278294284ba19e5a5
+dhcp                    := dhcp-4.3.6
+dhcp_key                := BE0E9748B718253A28BB89FFF1B11BF05CF02E57
 dhcp_url                := http://ftp.isc.org/isc/dhcp/$(dhcp:dhcp-%=%)/$(dhcp).tar.gz
+dhcp_sig                := $(dhcp_url).asc
 
 $(prepare-rule):
 	$(EDIT) "s,^DEFS=,&'-D_GNU_SOURCE -DUSE_LPF_HWADDR "-D_PATH_DHCLIENT_SCRIPT='\\"/usr/sbin/dhclient-script\\"'" '," $(builddir)/configure
@@ -30,9 +31,9 @@ $(build-rule):
 
 $(install-rule): $$(call installed,setup)
 	$(MAKE) -C $(builddir) install
-	$(INSTALL) -Dpm 644 $(call addon-file,dhclient.scm) $(DESTDIR)/etc/shepherd.d/dhclient.scm
-	$(INSTALL) -Dpm 755 $(call addon-file,dhclient-hurd.sh) $(DESTDIR)/usr/sbin/dhclient-script
-	$(INSTALL) -Dpm 644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/dhclient.conf
+	$(INSTALL) -Dpm 0644 $(call addon-file,dhclient.scm) $(DESTDIR)/etc/shepherd.d/dhclient.scm
+	$(INSTALL) -Dpm 0755 $(call addon-file,dhclient-hurd.sh) $(DESTDIR)/usr/sbin/dhclient-script
+	$(INSTALL) -Dpm 0644 $(call addon-file,tmpfiles.conf) $(DESTDIR)/usr/lib/tmpfiles.d/dhclient.conf
 	$(call enable-service,dhclient,3 5)
 
 # Write inline files.

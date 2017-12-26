@@ -74,7 +74,7 @@ override define CHUNK_O_GUILE
         (open-pipe* OPEN_READ "/usr/bin/rpmspec" "--parse"
           (string-append ; Pretend the RPM macros file was installed.
             "--define=gnuxc_package_header "
-            "%{?!bootstrap:BuildRequires:  gnuxc(bootstrapped)}")
+            "%{?!with_bootstrap:BuildRequires:  gnuxc(bootstrapped)}")
           (string-append "--define=_" (if env "without" "with") "_bootstrap 1")
           (string-append specdir "/" spec))))
     (do ((line (read-line port) (read-line port))) ((eof-object? line))
@@ -234,9 +234,10 @@ createrepo := createrepo_c --no-database --simple-md-filenames
 install: all
 	$(createrepo) '$(rpmdir)'
 	$(dnf-install) \
-'gnuxc-*-devel' gnuxc-gcc-{gfortran,objc++} gnuxc-mig gnuxc-pkg-config \
+'gnuxc-*-devel' gnuxc-gcc-{gfortran,objc++} gnuxc-mig \
 'gnuxc-*proto' gnuxc-{libpthread-stubs,spice-protocol,xorg-server,xtrans} \
-gnuxc-{bzip2,glibc,libuuid,parted,zlib}-static
+gnuxc-shared-mime-info \
+gnuxc-{bzip2,glibc,libuuid,parted,rust-std,zlib}-static
 
 # Also provide an easily typed target that only installs the complete GCC.
 bootstrap: " (hash-ref name-to-srpm "gnuxc-gcc-c++") "
@@ -265,6 +266,7 @@ $(dnf-builddep) $(bs) --setopt='$(repo_name).baseurl=file://$(repomd)' '$<' ; \
 $(call unlock,builddep) ; \
 rm --force --recursive '$(repomd)'
 	+rpmbuild --clean -ba '$<' $(bs) \
+--define='_configure_disable_silent_rules 1' \
 --define='_disable_source_fetch 0' \
 --define='_smp_mflags -m'
 

@@ -6,7 +6,6 @@ $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-oggtest \
 		--disable-rpath \
-		--disable-silent-rules \
 		--disable-werror \
 		--enable-altivec \
 		--enable-asm-optimizations \

@@ -1,5 +1,5 @@
 cpio                    := cpio-2.12
-cpio_sha1               := 60358408c76db354f6716724c4bcbcb6e18ab642
+cpio_key                := 325F650C4C2B6AD58807327A3602B07F55D0C732
 cpio_url                := http://ftpmirror.gnu.org/cpio/$(cpio).tar.bz2
 
 $(configure-rule):
@@ -8,7 +8,6 @@ $(configure-rule):
 		--libexecdir='$${prefix}/libexec' \
 		\
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-mt \
 		--with-rmt=/usr/libexec/rmt
 

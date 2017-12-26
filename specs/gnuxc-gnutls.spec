@@ -1,13 +1,14 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-gnutls
-Version:        3.5.14
+Version:        3.6.1
+%global mmver   %(v=%{version} ; IFS=. ; v=($v) ; echo -n "${v[*]:0:2}")
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        GPLv3+ and LGPLv2+
 URL:            http://www.gnutls.org/
-Source0:        ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/%{gnuxc_name}-%{version}.tar.xz
+Source0:        ftp://ftp.gnutls.org/gcrypt/gnutls/v%{mmver}/%{gnuxc_name}-%{version}.tar.xz
 
 BuildRequires:  gnuxc-guile-devel
 BuildRequires:  gnuxc-libidn2-devel
@@ -43,7 +44,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Cross-compiling wants to call libs.
 sed -i -e 's/GUILD=.*/GUILD=/' configure
@@ -55,7 +56,7 @@ sed -i -e 's/GUILD=.*/GUILD=/' configure
     --disable-tools \
     \
     --disable-rpath \
-    --disable-silent-rules \
+    --disable-{sha1,ssl2,ssl3}-support \
     --enable-cxx \
     --enable-gcc-warnings \
     --enable-guile \
@@ -63,17 +64,16 @@ sed -i -e 's/GUILD=.*/GUILD=/' configure
     --enable-static \
     --with-default-trust-store-file=%{gnuxc_sysconfdir}/ssl/ca-bundle.pem \
     --with-idn \
-    --with-libidn2 \
     --with-p11-kit \
-    --with-zlib \
     --without-included-libtasn1 \
     --without-included-unistring \
     --without-nettle-mini \
     GUILE_CONFIG=%{_bindir}/%{gnuxc_target}-guile-config \
     \
+    --disable-guile \
     --disable-libdane \
     --without-tpm
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -85,12 +85,12 @@ rm -f \
 
 
 %files
-%{gnuxc_datadir}/guile/site/2.0/gnutls
-%{gnuxc_datadir}/guile/site/2.0/gnutls.scm
-%{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so.0
-%{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so.0.0.0
+#{gnuxc_datadir}/guile/site/2.0/gnutls
+#{gnuxc_datadir}/guile/site/2.0/gnutls.scm
+#{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so.0
+#{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so.0.0.0
 %{gnuxc_libdir}/libgnutls.so.30
-%{gnuxc_libdir}/libgnutls.so.30.14.6
+%{gnuxc_libdir}/libgnutls.so.30.20.1
 %{gnuxc_libdir}/libgnutls-openssl.so.27
 %{gnuxc_libdir}/libgnutls-openssl.so.27.0.2
 %{gnuxc_libdir}/libgnutlsxx.so.28
@@ -100,14 +100,14 @@ rm -f \
 
 %files devel
 %{gnuxc_includedir}/gnutls
-%{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so
+#{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.so
 %{gnuxc_libdir}/libgnutls.so
 %{gnuxc_libdir}/libgnutls-openssl.so
 %{gnuxc_libdir}/libgnutlsxx.so
 %{gnuxc_libdir}/pkgconfig/gnutls.pc
 
 %files static
-%{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.a
+#{gnuxc_libdir}/guile/2.0/guile-gnutls-v-2.a
 %{gnuxc_libdir}/libgnutls.a
 %{gnuxc_libdir}/libgnutls-openssl.a
 %{gnuxc_libdir}/libgnutlsxx.a

@@ -1,11 +1,8 @@
-pulseaudio              := pulseaudio-10.0
-pulseaudio_sha1         := ab7cc41a2dc2b9da0794e3a51a4eb7e82e7da511
+pulseaudio              := pulseaudio-11.1
+pulseaudio_sha1         := 53bde72b6bfe715c19b1519db8845f7a58346b67
 pulseaudio_url          := http://www.freedesktop.org/software/pulseaudio/releases/$(pulseaudio).tar.xz
 
 $(prepare-rule):
-# Don't expect Solaris headers.
-	$(EDIT) 's,<sys/conf.h>,<poll.h>,' $(builddir)/src/modules/module-solaris.c
-#	cd $(builddir) && autopoint --force && AUTOPOINT='intltoolize --automake --copy' $(AUTOGEN)
 # Avoid calling old streams ioctls in the Solaris module.
 	$(EDIT) $(pulseaudio)/src/daemon/default.pa.in \
 		-e 's/^load-module module-suspend-on-idle/#&/' \
@@ -15,7 +12,6 @@ $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-legacy-database-entry-format \
 		--disable-rpath \
-		--disable-silent-rules \
 		--disable-static-bins \
 		--enable-glib2 \
 		--enable-gtk3 \
@@ -38,7 +34,7 @@ $(install-rule): $$(call installed,gdbm glib json-c libSM libsndfile libtool lib
 	$(INSTALL) -Dpm 0644 $(call addon-file,syslog.conf) $(DESTDIR)/etc/syslog.d/pulseaudio.conf
 	$(INSTALL) -Dm 0644 /dev/null $(DESTDIR)/var/log/syslog/pulseaudio.log
 # Symlink the modules' libraries into the real libdir.
-	cd $(DESTDIR)/usr/lib && $(SYMLINK) $(pulseaudio:pulseaudio-%=pulse-%)/modules/lib*.so ./
+	cd $(DESTDIR)/usr/lib && $(SYMLINK) pulse-*/modules/lib*.so ./
 
 # Write inline files.
 $(call addon-file,syslog.conf): | $$(@D)

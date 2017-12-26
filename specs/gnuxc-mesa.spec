@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/dri/
 
 Name:           gnuxc-mesa
-Version:        17.1.4
+Version:        17.3.1
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -38,12 +38,10 @@ applications that use %{gnuxc_name} on GNU systems.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-%patch101
+%autosetup -n %{gnuxc_name}-%{version} -p0
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --disable-texture-float \
     --enable-asm \
     --enable-dri \
@@ -67,8 +65,9 @@ applications that use %{gnuxc_name} on GNU systems.
     --disable-selinux \
     --disable-static \
     --disable-xa \
-    CPPFLAGS=-DPATH_MAX=4096
-%gnuxc_make %{?_smp_mflags} all
+    CPPFLAGS=-DPATH_MAX=4096 \
+    PYTHON2=python3
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

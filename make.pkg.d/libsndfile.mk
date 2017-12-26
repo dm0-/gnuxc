@@ -1,10 +1,10 @@
 libsndfile              := libsndfile-1.0.28
-libsndfile_sha1         := 85aa967e19f6b9bf975601d79669025e5f8bc77d
+libsndfile_key          := 6A91A5CF22C24C99A35E013FCFDCF91FB242ACED
 libsndfile_url          := http://www.mega-nerd.com/libsndfile/files/$(libsndfile).tar.gz
+libsndfile_sig          := $(libsndfile_url).asc
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--disable-werror \
 		--enable-cpu-clip \
 		--enable-external-libs \

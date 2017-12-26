@@ -1,12 +1,12 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libgcrypt
-Version:        1.7.8
+Version:        1.8.2
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-URL:            http://www.gnu.org/software/libgcrypt/
+URL:            http://gnupg.org/software/libgcrypt/
 Source0:        ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{gnuxc_name}-%{version}.tar.bz2
 
 Patch101:       %{gnuxc_name}-%{version}-build-fixes.patch
@@ -36,13 +36,13 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
-%patch101
+%autosetup -n %{gnuxc_name}-%{version} -p0
 
 %build
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
     \
+    --enable-dev-random \
     --enable-hmac-binary-check \
     --enable-m-guard \
     --enable-static \
@@ -51,13 +51,13 @@ statically, which is highly discouraged.
     --disable-asm \
     --disable-random-daemon \
     --without-capabilities
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/libgcrypt-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-libgcrypt-config
 
@@ -76,7 +76,7 @@ rm -rf %{buildroot}%{gnuxc_infodir} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libgcrypt.so.20
-%{gnuxc_libdir}/libgcrypt.so.20.1.8
+%{gnuxc_libdir}/libgcrypt.so.20.2.2
 %doc AUTHORS ChangeLog* NEWS README* THANKS TODO
 %license COPYING COPYING.LIB LICENSES
 

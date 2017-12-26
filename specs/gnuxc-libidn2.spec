@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libidn2
-Version:        2.0.2
+Version:        2.0.4
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -36,15 +36,14 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     --disable-doc \
     --disable-rpath \
-    --disable-silent-rules \
     --enable-gcc-warnings gl_cv_warn_c__Werror=no
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -63,7 +62,7 @@ rm -rf \
 
 %files
 %{gnuxc_libdir}/libidn2.so.0
-%{gnuxc_libdir}/libidn2.so.0.3.1
+%{gnuxc_libdir}/libidn2.so.0.3.3
 %doc AUTHORS ChangeLog CONTRIBUTING.md NEWS README.md
 %license COPYING COPYING.LESSERv3 COPYING.unicode COPYINGv2
 

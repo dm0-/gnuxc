@@ -1,5 +1,5 @@
-emacs                   := emacs-25.2
-emacs_sha1              := 3960d0b64031c645d98aafd4dc9ebf6f6ef4cf50
+emacs                   := emacs-25.3
+emacs_key               := 28D3BED851FDF3AB57FEF93C233587A47C207910
 emacs_url               := http://ftpmirror.gnu.org/emacs/$(emacs).tar.xz
 
 $(prepare-rule):
@@ -8,7 +8,6 @@ $(prepare-rule):
 ifeq ($(host),$(build))
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-acl \
 		--enable-check-lisp-object-type \
 		--enable-checking=all \
@@ -55,13 +54,13 @@ $(install-rule): $$(call installed,giflib gnutls gtk2 ImageMagick libXinerama)
 	$(MAKE) -C $(builddir) install
 else
 $(install-rule):
-	$(INSTALL) -Dm 664 /dev/null $(DESTDIR)/var/games/emacs/snake-scores
-	$(INSTALL) -Dm 664 /dev/null $(DESTDIR)/var/games/emacs/tetris-scores
+	$(INSTALL) -Dm 0664 /dev/null $(DESTDIR)/var/games/emacs/snake-scores
+	$(INSTALL) -Dm 0664 /dev/null $(DESTDIR)/var/games/emacs/tetris-scores
 endif
-	$(INSTALL) -Dpm 644 $(call addon-file,site-start.el) $(DESTDIR)/usr/share/emacs/site-lisp/site-start.el
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/share/emacs/site-lisp/site-start.d
-	$(INSTALL) -Dpm 644 $(call addon-file,emacs-user.el) $(DESTDIR)/etc/skel/.emacs
-	$(INSTALL) -dm 755 $(DESTDIR)/etc/skel/.local/share/emacs/backups
+	$(INSTALL) -Dpm 0644 $(call addon-file,site-start.el) $(DESTDIR)/usr/share/emacs/site-lisp/site-start.el
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/share/emacs/site-lisp/site-start.d
+	$(INSTALL) -Dpm 0644 $(call addon-file,emacs-user.el) $(DESTDIR)/etc/skel/.emacs
+	$(INSTALL) -dm 0755 $(DESTDIR)/etc/skel/.local/share/emacs/backups
 
 # Write inline files.
 $(call addon-file,emacs-user.el site-start.el): | $$(@D)

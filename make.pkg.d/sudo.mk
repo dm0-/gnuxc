@@ -1,5 +1,5 @@
-sudo                    := sudo-1.8.20p2
-sudo_sha1               := 7aa187518735312a82c5fcb3d253ed700cb8c68e
+sudo                    := sudo-1.8.21p2
+sudo_key                := 59D1E9CCBA2B376704FDD35BA9F4C021CEA470FB
 sudo_url                := http://www.sudo.ws/sudo/dist/$(sudo).tar.gz
 
 $(prepare-rule):
@@ -44,8 +44,8 @@ $(install-rule): $$(call installed,zlib)
 	$(MAKE) -C $(builddir) install \
 		INSTALL_OWNER=
 	$(RMDIR) $(DESTDIR)/usr/libexec/sudo
-	$(INSTALL) -Dpm 644 $(call addon-file,syslog.conf) $(DESTDIR)/etc/syslog.d/sudo.conf
-	$(INSTALL) -Dm 600 /dev/null $(DESTDIR)/var/log/syslog/sudo.log
+	$(INSTALL) -Dpm 0644 $(call addon-file,syslog.conf) $(DESTDIR)/etc/syslog.d/sudo.conf
+	$(INSTALL) -Dm 0600 /dev/null $(DESTDIR)/var/log/syslog/sudo.log
 
 # Write inline files.
 $(call addon-file,syslog.conf): | $$(@D)

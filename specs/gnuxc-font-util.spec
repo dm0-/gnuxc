@@ -27,14 +27,13 @@ applications that use %{gnuxc_name} on GNU systems.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-strict-compilation \
     --with-fontrootdir='${datadir}/X11/fonts'
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

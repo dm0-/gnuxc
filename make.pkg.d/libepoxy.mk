@@ -4,7 +4,6 @@ libepoxy_url            := http://ftp.gnome.org/pub/gnome/sources/libepoxy/1.4/$
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-glx \
 		--enable-static \
 		\

@@ -1,10 +1,9 @@
 libXtst                 := libXtst-1.2.3
-libXtst_sha1            := 27d004db631bee3a82155d3caf961d9584207d36
+libXtst_key             := C41C985FDCF1E5364576638B687393EE37D128F8
 libXtst_url             := http://xorg.freedesktop.org/releases/individual/lib/$(libXtst).tar.bz2
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
-		--disable-silent-rules \
 		--enable-strict-compilation
 
 $(build-rule):

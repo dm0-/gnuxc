@@ -1,5 +1,5 @@
-nettle                  := nettle-3.3
-nettle_sha1             := bf2b4d3a41192ff6177936d7bc3bee4cebeb86c4
+nettle                  := nettle-3.4
+nettle_key              := 343C2FF0FBEE5EC2EDBEF399F3599FF828C67298
 nettle_url              := http://ftpmirror.gnu.org/nettle/$(nettle).tar.gz
 
 $(configure-rule):

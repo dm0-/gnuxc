@@ -1,6 +1,6 @@
-tk                      := tk-8.6.6
+tk                      := tk-8.6.8
 tk_branch               := $(tk:tk-%=tk%)
-tk_sha1                 := 34d546496c05014349cf5edad6696c125ad4f9ea
+tk_sha1                 := 7d674881bcfda5acb937bea084b10fe271463632
 tk_url                  := http://prdownloads.sourceforge.net/tcl/$(tk_branch)-src.tar.gz
 
 export WISH = /usr/bin/wish

@@ -1,6 +1,6 @@
-tcl                     := tcl-8.6.6
+tcl                     := tcl-8.6.8
 tcl_branch              := $(tcl:tcl-%=tcl%)
-tcl_sha1                := 6a1bc424faeef44fed5e44d32198c7ff4ff05658
+tcl_sha1                := e13199c76a7d1eae02f35cc9a20fabded6f815f5
 tcl_url                 := http://prdownloads.sourceforge.net/tcl/$(tcl:tcl-%=tcl-core%)-src.tar.gz
 
 export TCLSH = /usr/bin/tclsh

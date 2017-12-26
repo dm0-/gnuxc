@@ -1,6 +1,6 @@
-nss                     := nss-3.31
+nss                     := nss-3.34.1
 nss_branch              := $(nss)/nss
-nss_sha1                := 006a13a5e52867c49ea1e7d986b7c02a3cd8ebfb
+nss_sha1                := 13bf0f2b6c6b39f3a85c54991a92f92a418c7822
 nss_url                 := http://ftp.mozilla.org/pub/security/nss/releases/NSS_$(subst .,_,$(nss:nss-%=%))_RTM/src/$(nss).tar.gz
 
 ifeq ($(host),$(build))
@@ -48,10 +48,10 @@ ifneq ($(host),$(build))
 endif
 
 $(install-rule): $$(call installed,nspr sqlite zlib)
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/bin $(DESTDIR)/usr/lib $(DESTDIR)/usr/include/nss
-	$(INSTALL) -pm 755 -t $(DESTDIR)/usr/bin $(builddir)/dist/gnu/bin/*
-	$(INSTALL) -Dpm 755 $(builddir)/nss-config $(DESTDIR)/usr/bin/nss-config
-	$(INSTALL) -pm 644 -t $(DESTDIR)/usr/include/nss $(builddir)/dist/public/nss/*
-	$(INSTALL) -pm 755 -t $(DESTDIR)/usr/lib $(builddir)/dist/gnu/lib/*.so
-	$(INSTALL) -pm 644 -t $(DESTDIR)/usr/lib $(builddir)/dist/gnu/lib/*.{a,chk}
-	$(INSTALL) -Dpm 644 $(builddir)/nss.pc $(DESTDIR)/usr/lib/pkgconfig/nss.pc
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/bin $(DESTDIR)/usr/lib $(DESTDIR)/usr/include/nss
+	$(INSTALL) -pm 0755 -t $(DESTDIR)/usr/bin $(builddir)/dist/gnu/bin/*
+	$(INSTALL) -Dpm 0755 $(builddir)/nss-config $(DESTDIR)/usr/bin/nss-config
+	$(INSTALL) -pm 0644 -t $(DESTDIR)/usr/include/nss $(builddir)/dist/public/nss/*
+	$(INSTALL) -pm 0755 -t $(DESTDIR)/usr/lib $(builddir)/dist/gnu/lib/*.so
+	$(INSTALL) -pm 0644 -t $(DESTDIR)/usr/lib $(builddir)/dist/gnu/lib/*.{a,chk}
+	$(INSTALL) -Dpm 0644 $(builddir)/nss.pc $(DESTDIR)/usr/lib/pkgconfig/nss.pc

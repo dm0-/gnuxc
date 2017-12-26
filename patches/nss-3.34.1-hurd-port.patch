@@ -50,7 +50,7 @@ projects but mysteriously missing from sources.
  ifdef BUILD_OPT
 --- lib/freebl/unix_rand.c
 +++ lib/freebl/unix_rand.c
-@@ -350,7 +350,7 @@
+@@ -344,7 +344,7 @@
  }
  #endif /* IBM R2 */
  

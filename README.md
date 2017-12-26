@@ -31,7 +31,7 @@ at runtime, especially the aspects that are unique to the `gnuxc` project.
 
 ## Requirements
 
-*Operating system*:  Fedora 26 is the current release targeted by this code.
+*Operating system*:  Fedora 27 is the current release targeted by this code.
 
 *Disk space*:  At least 20 GiB of total available storage is required when
 building everything on the same machine, plus however much space is desired for

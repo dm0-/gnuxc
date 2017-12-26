@@ -41,7 +41,7 @@ Linux.  Also, use the same page-related functions as Linux.
  }
 --- src/util/u_thread.h
 +++ src/util/u_thread.h
-@@ -61,7 +61,7 @@
+@@ -62,7 +62,7 @@
  {
  #if defined(HAVE_PTHREAD)
  #  if defined(__GNU_LIBRARY__) && defined(__GLIBC__) && defined(__GLIBC_MINOR__) && \

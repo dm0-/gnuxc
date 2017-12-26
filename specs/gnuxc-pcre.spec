@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-pcre
-Version:        8.40
+Version:        8.41
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -36,13 +36,12 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     --bindir=%{gnuxc_root}/bin \
     \
-    --disable-silent-rules \
     --enable-pcre16 \
     --enable-pcre32 \
     --enable-jit \
@@ -51,13 +50,13 @@ statically, which is highly discouraged.
     --enable-pcregrep-libz \
     --enable-pcregrep-libbz2 \
     --enable-pcretest-libreadline
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/pcre-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-pcre-config
 
@@ -73,15 +72,15 @@ rm -rf %{buildroot}%{gnuxc_docdir}/%{gnuxc_name} %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpcre.so.1
-%{gnuxc_libdir}/libpcre.so.1.2.8
+%{gnuxc_libdir}/libpcre.so.1.2.9
 %{gnuxc_libdir}/libpcre16.so.0
-%{gnuxc_libdir}/libpcre16.so.0.2.8
+%{gnuxc_libdir}/libpcre16.so.0.2.9
 %{gnuxc_libdir}/libpcre32.so.0
-%{gnuxc_libdir}/libpcre32.so.0.0.8
+%{gnuxc_libdir}/libpcre32.so.0.0.9
 %{gnuxc_libdir}/libpcrecpp.so.0
 %{gnuxc_libdir}/libpcrecpp.so.0.0.1
 %{gnuxc_libdir}/libpcreposix.so.0
-%{gnuxc_libdir}/libpcreposix.so.0.0.4
+%{gnuxc_libdir}/libpcreposix.so.0.0.5
 %doc AUTHORS ChangeLog HACKING NEWS README
 %license COPYING LICENCE
 

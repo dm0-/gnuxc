@@ -1,11 +1,10 @@
 gcal                    := gcal-4.1
-gcal_sha1               := 8ced243f2cca3910986a4649234fea5e40e80477
+gcal_key                := AC404C1C0BF735C63FF4D562263D6DF2E163E1EA
 gcal_url                := http://ftpmirror.gnu.org/gcal/$(gcal).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-assert \
 		--enable-easc \
 		--enable-threads=posix \

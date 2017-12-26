@@ -1,6 +1,7 @@
 zlib                    := zlib-1.2.11
-zlib_sha1               := e6d119755acdf9104d7ba236b1242696940ed6dd
+zlib_key                := 5ED46A6721D365587791E2AA783FCD8E58BCAFBA
 zlib_url                := http://zlib.net/$(zlib).tar.gz
+zlib_sig                := $(zlib_url).asc
 
 $(prepare-rule):
 	$(EDIT) 's/ -L.{sharedlibdir}//g' $(builddir)/zlib.pc.in

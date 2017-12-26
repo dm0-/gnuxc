@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/gdk-pixbuf-2.0/
 
 Name:           gnuxc-gdk-pixbuf
-Version:        2.36.6
+Version:        2.36.11
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -17,6 +17,7 @@ BuildRequires:  gnuxc-jasper-devel
 BuildRequires:  gnuxc-libpng-devel
 BuildRequires:  gnuxc-libX11-devel
 BuildRequires:  gnuxc-pkg-config
+BuildRequires:  gnuxc-shared-mime-info-devel
 BuildRequires:  gnuxc-tiff-devel
 
 BuildRequires:  glib2-devel
@@ -46,7 +47,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Drop a bad prerequisite.
 sed -i -e 's, [^ ]*/loaders.cache$,,' thumbnailer/Makefile.in
@@ -56,10 +57,8 @@ sed -i -e 's, [^ ]*/loaders.cache$,,' thumbnailer/Makefile.in
     --disable-nls \
     \
     --disable-rpath \
-    --disable-silent-rules \
     --enable-debug \
     --enable-explicit-deps \
-    --enable-gio-sniffing \
     --enable-modules \
     --enable-static \
     --with-libjasper \
@@ -70,7 +69,7 @@ sed -i -e 's, [^ ]*/loaders.cache$,,' thumbnailer/Makefile.in
     \
     --disable-glibtest \
     --disable-introspection
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -109,9 +108,9 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xbm.so
 %{gnuxc_libdir}/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xpm.so
 %{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0
-%{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0.3600.6
+%{gnuxc_libdir}/libgdk_pixbuf-2.0.so.0.3611.0
 %{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0
-%{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0.3600.6
+%{gnuxc_libdir}/libgdk_pixbuf_xlib-2.0.so.0.3611.0
 %doc AUTHORS NEWS README
 %license COPYING
 

@@ -6,7 +6,6 @@ $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-examples \
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-{kill,pidof,skill} \
 		--enable-modern-top \
 		--enable-numa \

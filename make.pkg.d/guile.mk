@@ -1,5 +1,5 @@
-guile                   := guile-2.2.2
-guile_sha1              := 34463df17bf4dbd75fd01cb19819ccae858f1914
+guile                   := guile-2.2.3
+guile_key               := 4FD4D288D445934E0A14F9A5A8803732E4436885
 guile_url               := http://ftpmirror.gnu.org/guile/$(guile).tar.xz
 
 export GUILE = /usr/bin/guile
@@ -27,7 +27,6 @@ endif
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-debug-malloc \
 		--enable-guile-debug \
 		--with-bdw-gc=bdw-gc \
@@ -42,8 +41,7 @@ $(build-rule):
 $(install-rule): $$(call installed,gc libffi libtool libunistring readline)
 	$(MAKE) -C $(builddir) install \
 		ELISP_SOURCES= # Drop this elisp file since it won't cross-compile.
-	$(SYMLINK) guile $(DESTDIR)/usr/bin/guile2.2
-	$(INSTALL) -Dpm 644 $(call addon-file,user.scm) $(DESTDIR)/etc/skel/.guile
+	$(INSTALL) -Dpm 0644 $(call addon-file,user.scm) $(DESTDIR)/etc/skel/.guile
 
 # Write inline files.
 $(call addon-file,user.scm): | $$(@D)

@@ -1,5 +1,5 @@
 gettext                 := gettext-0.19.8.1
-gettext_sha1            := e0fe90ede22f7f16bbde7bdea791a835f2773fc9
+gettext_key             := 462225C3B46F34879FC8496CD605848ED7E69871
 gettext_url             := http://ftpmirror.gnu.org/gettext/$(gettext).tar.xz
 
 $(prepare-rule):

@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libXfont2
-Version:        2.0.1
+Version:        2.0.3
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -37,11 +37,10 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-{bdf,pcf,snf}format \
     --enable-builtins \
     --enable-devel-docs \
@@ -53,7 +52,7 @@ statically, which is highly discouraged.
     --enable-tcp-transport \
     --enable-unix-transport \
     --with-bzip2
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

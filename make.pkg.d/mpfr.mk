@@ -1,10 +1,11 @@
-mpfr                    := mpfr-3.1.5
-mpfr_sha1               := c0fab77c6da4cb710c81cc04092fb9bea11a9403
+mpfr                    := mpfr-4.0.0
+mpfr_key                := 07F3DBBECC1A39605078094D980C197698C3739D
 mpfr_url                := http://ftpmirror.gnu.org/mpfr/$(mpfr).tar.xz
 
 $(configure-rule):
 	cd $(builddir) && ./$(configure) \
 		--enable-assert \
+		--enable-shared-cache \
 		--enable-thread-safe \
 		--enable-warnings
 

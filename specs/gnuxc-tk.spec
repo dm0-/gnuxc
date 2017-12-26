@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-tk
-Version:        8.6.6
+Version:        8.6.8
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -28,7 +28,7 @@ applications that use %{gnuxc_name} on GNU systems.
 
 
 %prep
-%setup -q -n %{gnuxc_name}%{version}
+%autosetup -n %{gnuxc_name}%{version}
 
 # Use an appropriate pkg-config.
 sed -i -e '/_\(CFLAG\|LIB\)S=/s/pkg-config/%{gnuxc_pkgconfig}/' unix/configure.in
@@ -54,7 +54,7 @@ autoreconf -fi unix
     --disable-64bit \
     --disable-64bit-vis \
     --disable-xss
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install install-private-headers

@@ -1,12 +1,14 @@
-glibc                   := glibc-2.23-8be94e
+glibc                   := glibc-2.23-1d9e15
 glibc_branch            := tschwinge/Roger_Whittaker
-glibc_sha1              := 8be94e33d413e8c9685270b804c899f85389927a
+glibc_sha1              := 1d9e154ebefa4525484c3fab2e0941c3bd55e41b
 glibc_url               := git://git.sv.gnu.org/hurd/glibc.git
 
-glibc-libpthread        := libpthread-0.3-44873d
+glibc-libpthread        := libpthread-0.3-8f03a3
 glibc-libpthread_branch := master
-glibc-libpthread_sha1   := 44873df420d128972644ef3901c7d917ca3b7dd7
+glibc-libpthread_sha1   := 8f03a364f803ad878ea3ab226fd2955ed4565495
 glibc-libpthread_url    := git://git.sv.gnu.org/hurd/libpthread.git
+
+$(eval $(call verify-download,fix-binutils-2.29.patch,http://sourceware.org/git/gitweb.cgi?p=glibc.git;a=blobdiff_plain;f=misc/regexp.c;hb=388b4f1a02f3a801965028bbfcd48d905638b797;hpb=bfff8b1becd7d01c074177df7196ab327cd8c844,10f5f65f14bb46ef3da326211aef13246db9466c))
 
 $(builddir)/libpthread: | $$(@D)
 	$(GIT) clone --branch=$(glibc-libpthread_branch) -n $(glibc-libpthread_url) $@
@@ -14,6 +16,9 @@ $(builddir)/libpthread: | $$(@D)
 $(downloaded): | $(builddir)/libpthread
 
 $(prepare-rule):
+	$(PATCH) -d $(builddir) -p1 < $(call addon-file,fix-binutils-2.29.patch)
+# Make sure this header can be located.
+	$(EDIT) 's/<fork.h>/"fork.h"/' $(builddir)/libpthread/sysdeps/generic/pt-atfork.c
 # Avoid race conditions regenerating this with an incompatible bison version.
 	$(TOUCH) $(builddir)/intl/plural.c
 # This static library does not exist.
@@ -51,4 +56,4 @@ $(build-rule):
 $(install-rule): $$(call installed,hurd)
 	$(MAKE) -C $(builddir)/build install
 	$(SYMLINK) ld.so.1 $(DESTDIR)/lib/ld.so
-	$(INSTALL) -dm 755 $(DESTDIR)/usr/lib/locale
+	$(INSTALL) -dm 0755 $(DESTDIR)/usr/lib/locale

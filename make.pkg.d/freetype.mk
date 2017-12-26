@@ -1,5 +1,5 @@
-freetype                := freetype-2.8
-freetype_sha1           := 42c6b1f733fe13a3eba135f5025b22cb68450f91
+freetype                := freetype-2.8.1
+freetype_key            := 58E0C111E39F5408C5D3EC76C1A60EACE707FDA5
 freetype_url            := http://download.savannah.gnu.org/releases/freetype/$(freetype).tar.bz2
 
 ifeq ($(host),$(build))

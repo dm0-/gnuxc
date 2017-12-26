@@ -1,5 +1,5 @@
 parted                  := parted-3.2
-parted_sha1             := 78db6ca8dd6082c5367c8446bf6f7ae044091959
+parted_key              := 1B49F933916A37A3F45A1812015F4DD4A70FB705
 parted_url              := http://ftpmirror.gnu.org/parted/$(parted).tar.xz
 
 $(configure-rule):
@@ -8,7 +8,6 @@ $(configure-rule):
 		\
 		--disable-device-mapper \
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-assert \
 		--enable-debug \
 		--enable-gcc-warnings gl_cv_warn_c__Werror=no \

@@ -4,7 +4,7 @@
 %global __requires_exclude_from ^%{gnuxc_libdir}/pango/
 
 Name:           gnuxc-pango
-Version:        1.40.6
+Version:        1.40.14
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -41,18 +41,17 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
-    --disable-silent-rules \
     --enable-debug \
     --enable-static \
     --with-cairo \
     --with-xft \
     \
     --disable-introspection
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -69,13 +68,13 @@ rm -rf %{buildroot}%{gnuxc_datadir}/gtk-doc %{buildroot}%{gnuxc_mandir}
 
 %files
 %{gnuxc_libdir}/libpango-1.0.so.0
-%{gnuxc_libdir}/libpango-1.0.so.0.4000.6
+%{gnuxc_libdir}/libpango-1.0.so.0.4000.14
 %{gnuxc_libdir}/libpangocairo-1.0.so.0
-%{gnuxc_libdir}/libpangocairo-1.0.so.0.4000.6
+%{gnuxc_libdir}/libpangocairo-1.0.so.0.4000.14
 %{gnuxc_libdir}/libpangoft2-1.0.so.0
-%{gnuxc_libdir}/libpangoft2-1.0.so.0.4000.6
+%{gnuxc_libdir}/libpangoft2-1.0.so.0.4000.14
 %{gnuxc_libdir}/libpangoxft-1.0.so.0
-%{gnuxc_libdir}/libpangoxft-1.0.so.0.4000.6
+%{gnuxc_libdir}/libpangoxft-1.0.so.0.4000.14
 %doc AUTHORS ChangeLog* HACKING MAINTAINERS NEWS README THANKS
 %license COPYING
 

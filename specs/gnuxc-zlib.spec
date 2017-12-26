@@ -34,7 +34,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # This variable is redundant and problematic in the sysroot.
 sed -i -e 's/ -L.{sharedlibdir}//g' zlib.pc.in
@@ -48,7 +48,7 @@ CHOST=%{gnuxc_host} %_configure \
     --libdir=%{gnuxc_libdir} \
     --sharedlibdir=%{gnuxc_libdir} \
     --uname=GNU
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

@@ -1,5 +1,5 @@
 grub                    := grub-2.02
-grub_sha1               := 3d7eb6eaab28b88cb969ba9ab24af959f4d1b178
+grub_key                := E53D497F3FA42AD8C9B4D1E835A93B74E82E4209
 grub_url                := http://ftpmirror.gnu.org/grub/$(grub).tar.xz
 
 ifeq ($(host),$(build))
@@ -8,9 +8,8 @@ else
 export MKFONT := grub2-mkfont --force-autohint
 endif
 
-$(call configure-rule,bios efi): CFLAGS := $(CFLAGS:-fstack-protector%=)
+$(call configure-rule,bios efi): private override export CFLAGS := $(CFLAGS:-fstack-protector%=)
 $(call configure-rule,bios efi): private override configuration := --libdir=/usr/lib \
-	SYSROOT='$(sysroot)' \
 	\
 	--disable-rpath \
 	--disable-werror \
@@ -23,9 +22,11 @@ $(call configure-rule,bios efi): private override configuration := --libdir=/usr
 	--without-included-regex
 
 $(prepare-rule):
-	$(call apply,smbios-module hurd-mkconfig fix-parallel-make)
+	$(call apply,smbios-module hurd-mkconfig)
 # Regenerate everything for the new SMBIOS module.
 	$(ECHO) ./grub-core/commands/smbios.c >> $(builddir)/po/POTFILES.in
+	cd $(builddir) && $(PYTHON) gentpl.py Makefile.util.def Makefile.utilgcry.def > Makefile.util.am
+	cd $(builddir)/grub-core && $(PYTHON) ../gentpl.py Makefile.core.def Makefile.gcry.def > Makefile.core.am
 	$(RM) $(builddir)/configure
 
 $(call configure-rule,bios): $(builddir)/configure
@@ -47,8 +48,8 @@ $(build-rule): $(call built,bios efi)
 $(install-rule): $$(call installed,bash freetype xz)
 	$(MAKE) -C $(builddir)/efi install
 	$(MAKE) -C $(builddir)/bios install bashcompletiondir=/usr/share/bash-completion/completions
-	$(INSTALL) -Dpm 644 $(call addon-file,settings.sh) $(DESTDIR)/etc/default/grub
-	$(INSTALL) -Dpm 644 $(DESTDIR)/usr/share/locale/en{'@quot',}/LC_MESSAGES/grub.mo
+	$(INSTALL) -Dpm 0644 $(call addon-file,settings.sh) $(DESTDIR)/etc/default/grub
+	$(INSTALL) -Dpm 0644 $(DESTDIR)/usr/share/locale/en{'@quot',}/LC_MESSAGES/grub.mo
 	$(SYMLINK) ../boot/grub/grub.cfg $(DESTDIR)/etc/grub.cfg
 
 # Write inline files.

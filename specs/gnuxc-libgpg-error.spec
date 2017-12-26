@@ -6,7 +6,7 @@ Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
 License:        LGPLv2+
-URL:            http://www.gnu.org/software/gpg/
+URL:            http://gnupg.org/software/libgpg-error/
 Source0:        ftp://ftp.gnupg.org/gcrypt/libgpg-error/%{gnuxc_name}-%{version}.tar.bz2
 
 BuildRequires:  gnuxc-glibc-devel
@@ -34,7 +34,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 # Don't include the standard sysroot paths in config flags.
 sed -i -e '/-[IL]/s/[^ ].*/:/' src/gpg-error-config.in
@@ -56,13 +56,13 @@ sed 's/i686-pc-gnu/%{gnuxc_target}/g' \
     --enable-languages \
     --enable-static \
     --enable-threads=posix
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
 
 # Provide a cross-tools version of the config script.
-install -dm 755 %{buildroot}%{_bindir}
+install -dm 0755 %{buildroot}%{_bindir}
 ln %{buildroot}%{gnuxc_root}/bin/gpg-error-config \
     %{buildroot}%{_bindir}/%{gnuxc_target}-gpg-error-config
 

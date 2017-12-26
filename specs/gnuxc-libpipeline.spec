@@ -1,7 +1,7 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libpipeline
-Version:        1.4.1
+Version:        1.5.0
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
@@ -34,16 +34,15 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
     --disable-rpath \
-    --disable-silent-rules \
     --enable-socketpair-pipe \
     --enable-static \
     --enable-threads=posix
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install

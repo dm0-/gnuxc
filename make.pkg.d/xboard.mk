@@ -13,7 +13,6 @@ $(configure-rule):
 # Hurd needs to support /dev/ptmx before grantpt can do anything.
 	cd $(builddir) && ./$(configure) \
 		--disable-rpath \
-		--disable-silent-rules \
 		--enable-ptys ac_cv_func_grantpt=no \
 		--enable-sigint \
 		--enable-zippy \

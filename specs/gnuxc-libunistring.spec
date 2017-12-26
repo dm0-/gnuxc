@@ -1,11 +1,11 @@
 %?gnuxc_package_header
 
 Name:           gnuxc-libunistring
-Version:        0.9.7
+Version:        0.9.8
 Release:        1%{?dist}
 Summary:        Cross-compiled version of %{gnuxc_name} for the GNU system
 
-License:        LGPLv3+
+License:        GPLv2+ or LGPLv3+
 URL:            http://www.gnu.org/software/libunistring/
 Source0:        http://ftpmirror.gnu.org/libunistring/%{gnuxc_name}-%{version}.tar.xz
 
@@ -34,7 +34,7 @@ statically, which is highly discouraged.
 
 
 %prep
-%setup -q -n %{gnuxc_name}-%{version}
+%autosetup -n %{gnuxc_name}-%{version}
 
 %build
 %gnuxc_configure \
@@ -43,7 +43,7 @@ statically, which is highly discouraged.
     PACKAGE_TARNAME=libunistring \
     \
     --disable-relocatable # This results in undefined symbols when linking.
-%gnuxc_make %{?_smp_mflags} all
+%gnuxc_make_build all
 
 %install
 %gnuxc_make_install
@@ -57,7 +57,7 @@ rm -rf %{buildroot}%{gnuxc_docdir} %{buildroot}%{gnuxc_infodir}
 
 %files
 %{gnuxc_libdir}/libunistring.so.2
-%{gnuxc_libdir}/libunistring.so.2.0.0
+%{gnuxc_libdir}/libunistring.so.2.1.0
 %doc AUTHORS BUGS ChangeLog HACKING NEWS README THANKS
 %license COPYING COPYING.LIB
 
